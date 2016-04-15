@@ -1,7 +1,7 @@
 # Harmony Jekyll theme general configurations 
 
 # Base URL
-baseurl: 
+baseurl:
 
 # Site live URL
 url: http://asvid.github.io/
@@ -25,7 +25,7 @@ harmony:
   author: # Author details
     name: Gayan Virajith
     email: gayanvirajith@gmail.com
-    url: http://asvid.github.io/
+    url: http://asvid.github.io
 
   # Google Analytics key, leave blank to ignore
   google_analytics_key: UA-xxxx-x
