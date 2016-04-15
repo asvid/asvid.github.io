@@ -1,101 +1,123 @@
-# Strata for Jekyll
+# Harmony
 
-A simple, responsive blog theme for the [Jekyll](http://jekyllrb.com) static site generator using [HTML5 UP's Strata](http://html5up.net/strata) design.
+Harmony is a responsive jekyll theme. 
 
-![preview](preview.jpg)
+- Built for jekyll 2.x
+- Supports Google analytics and RSS feeds
+- Sass based styles
+- Browser support: IE 8+, Chrome, Safari and Firefox 
+- Fluidly responsive 
 
-Browse the [demo](http://davidforster.com/strata-jekyll/).
+## Contents
 
-## How to use
+- [Harmony](#harmony)
+- [About Jekyll](#about-jekyll)
+- [How to install/run](#how-to-installrun)
+- [Options/Usage](#optionsusage)
+  - [Header navigation links](#header-navigation-links)
+  - [Footer links](#footer-links)
+  - [Copyrights/Disclaimer statements](#copyrightsdisclaimer-statements)
+- [Screenshots](#screenshots)
+- [Feedback/Bugs/Suggestions](#feedbackbugssuggestions)
+- [Version history](#version-history)
+- [License](#license)
 
-### Quick start
+## About jekyll 
 
-If you just want to get a blog up & running at [GitHub Pages](https://pages.github.com) then simply fork this repository to your own GitHub account and name the new repository *\<yourgithubusername\>.github.io*. GitHub should then start hosting your site at *http://\<yourrgithubusername\>.github.io/*. If you'd like to use your own domain name you can follow GitHub's guide to using a [custom domain](https://help.github.com/articles/using-a-custom-domain-with-github-pages/).
+[Jekyll](http://jekyllrb.com/) is a static site generator, an open-source tool for creating simple yet powerful websites of all shapes and sizes.
 
-Edit the `_config.yml` file and use the options available in the theme, as mentioned below in the features section, to customise your site.
+## How to install/run
 
-I recommend Development Seed's awesome [Prose](http://prose.io) editor to write your posts.
+1. [Fork](https://github.com/web-create/harmony/fork) this repository.
+2. Clone it: git clone https://github.com/YOUR-USERNAME/harmony.
+3. If you're completely new to jekyll, please read more about [Jekyll](http://jekyllrb.com/) and [Github pages](https://help.github.com/articles/using-jekyll-with-pages).
+4. Change your directory into cloned repository. 
+5. Run `bundle install`
+6. Edit the _config.yml on root directory. Change `url` property to to 
+`http://127.0.0.1:4000` since you are going to run on localhost.
+7. Run the jekyll server by having: `jekyll serve --baseurl ''` or `rake preview`   
 
-### Local development
+Point your browser to [http://localhost:4000](http://localhost:4000).
 
-If you want to run and develop locally on your own computer then you'll need the Ruby programming language and Jekyll installed. The Jekyll website has a handy [installation guide](http://jekyllrb.com/docs/installation/) in their online documentation. Once installed, you can download or clone this repository and run `bundle exec jekyll serve` from the root.
+Note: If you are a windows user please refer to this nice website - http://jekyll-windows.juthilo.com/ by Julian Thilo to configure ruby + jekyll on windows.
 
-## Features
+## Options/Usage
 
-### Disqus comments
+Harmony has some customizable options. All the configuration details are 
+configured in `_config.yml` file under root of the harmony directory. 
 
-[Disqus](https://disqus.com) comments appear beneath posts. Add your Disqus website's shortname to `_config.yml` as `disqus_shortname:`. Leave `disqus_shortname` blank to disable comments completely or add `disqus: disabled` to a post's front matter to disable comments just for that page.
+Feel free to change your `name`, `descriptionn`, `meta_description`, `author details`,
+`social media names` and `Google analytics id` accordingly. 
 
-### Open Graph (Facebook) and Twitter Card meta tags
+``` yml
+# Harmony theme configuration. Please change accordingly.
+harmony:
+  name: Harmony
+  # Little description about your site
+  description: Harmony is free responsive jekyll theme.
+  meta_description: Harmony is free responsive jekyll theme. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+  basetheme: theme-base-01 # pre defined the{{ site.url | prepend: site.baseurl }}mes are darken, blue-water, reddish.
+  author: # Author details
+    name: Gayan Virajith
+    email: gayanvirajith@gmail.com
+    url: http://gayanvirajith.github.io
 
-All pages have Open Graph metadata added.
+  # Google Analytics key, leave blank to ignore
+  google_analytics_key: UA-xxxx-x
 
-All pages have Twitter Card metadata, though this requires `twitter_username:` to be configured in `_config.yml`. Twitter Card titles are trunacted at 70 characters and descriptions at 200 characters as per Twitter requirements.
+  # Profile links, leave blank to ignore
+  social: 
+    github: gayanvirajith
+    twitter: gayanvirajith
+    facebook: gayanvirajith
+    gplus: +GayanVirajith
+    dribble: gayan
+    pinterest: 
+  # Toggle disclaimer in footer
+  show_disclaimer: true
+```
 
-Both Open Graph and Twitter Cards can show images if you specify `image: <image url>` in a page's front matter.
+### Includes 
 
-### RSS and Atom feeds
+All the partial includes are under `_includes` directory.
 
-The last 10 posts are available in RSS and Atom format at `rss.xml` and `atom.xml`. Both feeds are linked to from every page's metadata. The feed icon in the footer is configurable by setting `feed_icon:` in `_config.yml` to `rss` or `atom`, or the property can be left blank to remove it completely.
+#### Header navigation links
 
-### Feed footer
+Feel free to add/edit links for your header in the file `header-links.html`.
 
-A footer is added to every post in both the RSS and Atom feeds. This is configurable by editing `_includes/feed-footer.html`.
+#### Footer links
 
-### Sitemap
+Customize your footer links by editing `_includes/footer-links.html`
 
-Based on [David Ensinger's sitemap](http://davidensinger.com/2013/11/building-a-better-sitemap-xml-with-jekyll/), supported front matter is:
+#### Copyrights/Disclaimer statements
 
-- `sitemap.exclude: true` for pages, `post.published: false` for posts
-- `sitemap.lastmod` (defaults to the post or page date)
-- `sitemap.changefreq` (defaults to monthly)
-- `sitemap.priority` (defaults to 0.5)
+All copyright notes are under `_includes/footer.html`. Also note that you 
+can toggle on/off copyright notes from the front-end by setting up `show_disclaimer` 
+property in `_config.yml`. 
 
-### Footer social media links
+### Screenshots
+![Home page screenshot](https://raw.githubusercontent.com/web-create/harmony/master/assets/css/images/harmony-web.jpg "Desktop screen")
 
-Social media icon links in the footer are enabled by adding or removing values for the following sites in `_config.yml`.
+![Post page screenshot](https://raw.githubusercontent.com/web-create/harmony/master/assets/css/images/harmony-web-2.jpg "Post page screen-shot")
 
-- Facebook - `facebook_username:`
-- Twitter - `twitter_username:`
-- LinkedIn - `linkedin_username:`
-- Instagram - `instagram_username:`
-- Pinterest - `pinterest_username:`
-- Flickr - `flickr_username:`
-- GitHub - `github_username:`
+![Blog archive page screenshot](https://raw.githubusercontent.com/web-create/harmony/master/assets/css/images/harmony-web-3.jpg "Blog archive page screen-shot")
 
-You can change the icon order and add more options by editing `_includes/footer.html`. I recommended a maximum number of 5 icons in total (including the feed icon).
+#### Feedback/Bugs/Suggestions 
 
-### Reading time
+Please submit as an [issue](https://github.com/web-create/harmony/issues/new),
+I am happy to response back.
 
-Reading time appears on post pages alongside the date and categories if the time is 1 minute or more, based on a reading rate of 180 words per minute (3 per second).
+Version history
+---------------
 
-### Pagination
+| Version no. | Description  | Date |
+| --- | --- | --- |
+| 1.0 | Initial release | 9th September 2014 |
+| 1.0.1 | v1.0.1 with minor bug fix | 9th September 2014 |
+| 1.0.2 | v1.0.2 Optimize for Google | 24th October 2014 |
 
-Pagination is set at 5 posts per page, this can be altered by changing the `paginate:` property in `_config.yml`
-
-### Next/Previous posts
-
-The Next and Previous posts are displayed underneath every post (and Disqus comments if enabled) along with their excerpt.
-
-### Custom 404
-
-If you host your site with [GitHub Pages](https://pages.github.com) then a custom 404 page has been added (see `404.md`)
-
-### robots.txt and humans.txt
-
-The theme includes a basic robots.txt file which allows all robots to crawl the entire site and directs them to the sitemap.xml file. There is also a humans.txt file giving credit to Myself ([David Forster](http://davidforster.com)) and AJ, the designer of Strata.
-
-## Acknowledgements
-
-- [AJ](https://twitter.com/n33co) and [HTML5UP](http://html5up.net) for the design of Strata
-- [David Ensinger](http://davidensinger.com) for a bunch of tips and ideas related to Jekyll
-
-## Contributions
-
-Issues, Pull Requests, Tweets and Forks are all greatly appreciated!
 
 ## License
 
-The Jekyll theme is licensed under the [MIT](http://choosealicense.com/licenses/mit/) License
-
-The Strata design is licensed under the [Creative Commons Attribution 3.0 Unported](http://creativecommons.org/licenses/by/3.0/) license.
+Free / Open sourced under the 
+[MIT](https://github.com/web-create/harmony/blob/master/LICENSE.md).

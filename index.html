@@ -1,29 +1,39 @@
 ---
 layout: default
-image: /images/fulls/01.jpg
 ---
-<!-- This loops through the paginated posts -->
-{% for post in paginator.posts %}
-  <section>
-    <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
-    <p>
-      <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
-    </p>
-    <div>
-      {{ post.excerpt }}
-    </div>
-  </section>
-{% endfor %}
+<div id="home" class="page-content wc-container">
+	<div class="posts">
+  		{% for post in site.posts limit:10 %}
+  			<div class="post">
+    			<h3 class="post-title">
+			      <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}">
+			        {{ post.title }}
+			      </a>
+    			</h3>
 
-{% if paginator.total_pages > 1 %}
-<!-- Pagination links -->
-<section>
-  {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path }}">Previous</a>
-  {% endif %}
-  <span>Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
-  {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path }}">Next</a>
-  {% endif %}
-</section>
-{% endif %}
+          <p class="post-meta">
+            {% if (post.categories.size > 0 %}
+            <span class="categories">
+            {{ post.categories | array_to_sentence_string }}
+            </span> |
+            {% endif %}
+            <span class="post-date">
+            {{ post.date | date: "%b %-d, %Y" }} 
+            </span>
+          </p>          
+    			    			
+  				<p>
+	  				{{ post.excerpt }}	
+  				</p>
+  				<p>
+  					<a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}" title="{{ post.title}}">
+  						Read More
+					</a>
+  				</p>
+  			</div>
+  		{% endfor %}
+	</div>
+	<div class="post-footer">
+		<div class="column-full"><a href="{{ '/blog' | prepend: site.baseurl | prepend: site.url }}">Blog archive</a></div>
+	</div>
+</div>
