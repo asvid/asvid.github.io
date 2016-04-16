@@ -4,7 +4,7 @@
 baseurl:
 
 # Site live URL
-url:
+url: http://asvid.github.io
 
 # Localhost 
 # url: http://127.0.0.1:4000  
