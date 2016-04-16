@@ -6,7 +6,7 @@ permalink: /about/
 
 I'm Android developer at [fibaro.com][f], but I used to do web development too.
 
-In my spare time, I play with [arduino][ard], learn [pythpn][p], or make my own apps. I also like wasting time on computer games :)
+In my spare time, I play with [arduino][ard], learn [python][p], or make my own apps. I also like wasting time on computer games :)
 
 I want to use this space to blog about technical problems I experienced and how did I solve (or avoid) them, so others can make use of my work.
 
