@@ -6,7 +6,7 @@ description: This is first post, I'm just saying hello here :)
 categories:
 - blog
 - hello
----------------------
+---
 
 This is first post, so I just want to say HI!
 
