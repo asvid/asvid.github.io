@@ -49,7 +49,7 @@ Let's create new class extending Progres Bar
 And use it in Layout
 
 {% highlight xml %}
-    <com.aswiderski.frigo.customViews.ProductProgressBar
+    <com.example.app.customViews.ProductProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
