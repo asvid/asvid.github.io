@@ -11,8 +11,6 @@ categories:
 ---
 
 
-**Please remember fallowing code is in [Kotlin][kotlin]**
-
 In my project I wanted to have progress bar that shows how much time you have until
 your food is not good to eat any longer. I'm not UX specialist, but I know that
 usually when you see green color you think **it's all ok** and red is **some danger**.
@@ -21,6 +19,8 @@ showing time till it should land in trashcan.
 
 
 So we need a progressbar that goes from green to red (with ugly mid-green mid-red in middle...)
+
+**Please remember fallowing code is in [Kotlin][kotlin]**
 
 Standard Android ProgressBar can be set to value 0-100, by using
 
@@ -60,24 +60,24 @@ Let's override `setProgress` method :)
 
 {% highlight java %}
     override fun setProgress(progress: Int) {
-           super.setProgress(progress)
-           val progressDrawable: Drawable = getProgressDrawable()
-           progressDrawable.colorFilter = translateValueToColor(progress)
-           setProgressDrawable(progressDrawable)
-       }
+        super.setProgress(progress)
+        val progressDrawable: Drawable = getProgressDrawable()
+        progressDrawable.colorFilter = translateValueToColor(progress)
+        setProgressDrawable(progressDrawable)
+    }
 {% endhighlight %}
 
 All I've done here is taking current ProgressDrawable, and set color to value I get from `translateValueToColor`
 
 {% highlight java %}
    fun translateValueToColor(value: Int): PorterDuffColorFilter {
-           val R = (255 * value) / 100
-           val G = (255 * (100 - value)) / 100
-           val B = 0
-           val color = android.graphics.Color.argb(255, R, G, B)
-           val colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
-           return colorFilter
-       }
+       val R = (255 * value) / 100
+       val G = (255 * (100 - value)) / 100
+       val B = 0
+       val color = android.graphics.Color.argb(255, R, G, B)
+       val colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
+       return colorFilter
+   }
 {% endhighlight %}
 
 I'm setting RGB values (not variables :) ) accordingly to value so `value == 0` gets all green and `value == 100` gets all red.
