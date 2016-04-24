@@ -13,10 +13,10 @@ categories:
 
 **Please remember fallowing code is in [Kotlin][kotlin]**
 
-In my project I wanted to have progress bar that shows how much time you have untill
+In my project I wanted to have progress bar that shows how much time you have until
 your food is not good to eat any longer. I'm not UX specialist, but I know that
 usually when you see green color you think **it's all ok** and red is **some danger**.
-Sticking to that knowlage, I decided to have small progress bar in each product list item
+So I decided to have small progress bar in each product list item
 showing time till it should land in trashcan.
 
 
@@ -51,16 +51,15 @@ And use it in Layout
 {% highlight xml %}
     <com.example.app.customViews.ProductProgressBar
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
 {% endhighlight %}
 
-For now, it acts exacly like standard ProgressBar, so how to make it do what we want?
+For now, it acts exactly like standard ProgressBar, so how to make it do what we want?
 Let's override `setProgress` method :)
 
 {% highlight java %}
-    @Synchronized override fun setProgress(progress: Int) {
+    override fun setProgress(progress: Int) {
            super.setProgress(progress)
            val progressDrawable: Drawable = getProgressDrawable()
            progressDrawable.colorFilter = translateValueToColor(progress)
@@ -86,7 +85,7 @@ I'm setting RGB values (not variables :) ) accordingly to value so `value == 0` 
 And result can look like that:
 ![Frigo logo]({{site.url}}/assets/Screenshot_20160424-001620.png)
 
-If you need more specific behaviour or different colors, all you need to do is change **translateValueToColor** method, by using **switch** statement or anything you'll find suitable for your cause.
+If you need more specific behaviour or different colors, all you need to do is change **translateValueToColor** method, by using **if** statement or anything you'll find suitable for your case.
 
 Hope you enjoyed this quite short tutorial, be prepared for more :]
 
