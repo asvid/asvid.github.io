@@ -1,58 +1,39 @@
-# Harmony Jekyll theme general configurations 
+# visit https://github.com/mojombo/jekyll/wiki/Configuration for more settings
 
-# Base URL
-baseurl:
+paginate: 10 # pagination based on number of posts
+paginate_path: "page:num"
+exclude: ["README.md"] # files to exclude
+highlighter: pygments
+markdown: kramdown
+disqus: asvid
+google_analytics: UA-68530276-7
+title: Hi I'm Adam
 
-# Site live URL
-#url: http://asvid.github.io
+defaults:
+  -
+    scope:
+      path: "" # empty string for all files
+    values:
+      title: Asvid
 
-# Localhost 
-url: http://127.0.0.1:4000
+description: Hi I'm Adam
+author:
+  name: Adam
+  email: adam.swiderski89@gmail.com
+  github: asvid
+  twitter: _asvid
+  facebook: adam.swiderski.pmi
+  linkedin: pl.linkedin.com/in/aswiderski
+  bio: and I'm a programmer
 
-# Harmony theme configuration. Please change accordingly.
-harmony:
-  name: Hi I'm Adam
-  # Little description about your site
-  description: and I'm a programmer
-  # 'meta_description:' Write an awesome description for your new site here.
-  # It will appear in your document head meta (for Google search results) and 
-  # in your feed.xml site description.
-  meta_description: > # 
-   This is my personal site, where I blog about technology, programming and stuff that I'm interested in.
-  basetheme: theme-base-01 # pre defined thmes are darken, blue-water, redish.
-  author: # Author details
-    name: Adam Świderski
-    email: adam.swiderski89@gmail.com
-    url: http://asvid.github.io
+rss_path: feed.xml
+categories_path: categories.html
+tags_path: tags.html
 
-  # Google Analytics key, leave blank to ignore
-  google_analytics_key: UA-68530276-7
+# set it as url of an image
+sidebar_background_image: https://www.dropbox.com/s/g9h23zrycedxtk5/sky.png?raw=1
 
-  # Profile links, leave blank to ignore
-  social: 
-    github: asvid
-    facebook: adam.swiderski.pmi
-  # Toggle disclaimer in footer
-  show_disclaimer: false
+BASE_PATH:
 
-# Conversion / Build settings 
-markdown:    kramdown
-# This is how you put pygments config in jekyll 2.0 instead of pygments: true
-highlighter: rouge
-
-# Permalinks
-permalink:        pretty
-
-exclude: 
-  - CNAME
-  - Gemfile
-  - Rakefile
-  - README.md
-  - .gitignore
-  - .sass-cache
-  - Gemfile.lock
-
-# Sass conversion configs
-sass:
-    sass_dir: assets/css/_sass
-    style: :compressed
+gems:
+  - jekyll-paginate
