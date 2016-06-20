@@ -4,6 +4,7 @@ title:  "Color changing progress bar"
 date:   2016-04-24
 description: Simple guide to color changing progress bar
 permalink: color-changing-progress-bar
+comments: true
 categories:
 - blog
 - UI
