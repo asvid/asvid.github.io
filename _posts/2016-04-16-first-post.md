@@ -16,10 +16,7 @@ Currently I'm working on my graduation project at [Poznań University of Technol
 
 Project name is **Frigo** and logo looks like that:
 
-![Frigo logo]({{site.url}}/assets/ic_launcher-web.png)
-
-
-<img src="/assets/ic_launcher-web.png" alt="alt text" width="100px" height="100px">
+<img src="/assets/ic_launcher-web.png" alt="alt text" width="300px">
 
 Hopefully it will help you manage your food better.
 
