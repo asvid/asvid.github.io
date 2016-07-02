@@ -84,7 +84,7 @@ All I've done here is taking current ProgressDrawable, and set color to value I 
 I'm setting RGB values (not variables :) ) accordingly to value so `value == 0` gets all green and `value == 100` gets all red.
 
 And result can look like that:
-![Frigo logo]({{site.url}}/assets/Screenshot_20160424-001620.png)
+<img src="/assets/Screenshot_20160424-001620.png" alt="alt text" width="300px">
 
 If you need more specific behaviour or different colors, all you need to do is change **translateValueToColor** method, by using **if** statement or anything you'll find suitable for your case.
 
