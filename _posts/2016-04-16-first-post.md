@@ -18,6 +18,9 @@ Project name is **Frigo** and logo looks like that:
 
 ![Frigo logo]({{site.url}}/assets/ic_launcher-web.png)
 
+
+<img src="({{site.url}}/assets/ic_launcher-web.png)" alt="alt text" width="100px" height="100px">
+
 Hopefully it will help you manage your food better.
 
 [put]: http://www.put.poznan.pl/
