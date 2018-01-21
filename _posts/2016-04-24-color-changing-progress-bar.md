@@ -5,12 +5,14 @@ date:   2016-04-24
 description: Simple guide to color changing progress bar
 permalink: color-changing-progress-bar
 comments: true
-categories:
-- blog
+crosspost_to_medium: false
+tags:
 - UI
-- kotlin
+- Kotlin
+- Android
+categories:
+- Tutorial
 ---
-
 
 In my project I wanted to have progress bar that shows how much time you have until
 your food is not good to eat any longer. I'm not UX specialist, but I know that
@@ -34,18 +36,7 @@ have to change our other code where ProgressBar is used.
 
 Let's create new class extending Progres Bar
 
-{% highlight java %}
-    class ProductProgressBar : ProgressBar {
-        constructor(context: Context) : super(context) {
-        }
-    
-        constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        }
-    
-        constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        }
-    }
-{% endhighlight %}
+<script src="https://gist.github.com/asvid/ddcb0907c5fea68639b57b38ca03dabe.js"></script>
 
 And use it in Layout
 
@@ -85,7 +76,7 @@ I'm setting RGB values (not variables :) ) accordingly to value so `value == 0` 
 
 And result can look like that:
 
-<img src="/assets/Screenshot_20160424-001620.png" alt="alt text" width="300px">
+<img src="/assets/Screenshot_20160424-001620.png" alt="alt text" width="300px"/>
 
 If you need more specific behaviour or different colors, all you need to do is change **translateValueToColor** method, by using **if** statement or anything you'll find suitable for your case.
 

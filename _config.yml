@@ -6,23 +6,24 @@ highlighter: pygments
 markdown: kramdown
 disqus: asvid
 google_analytics: UA-68530276-7
-title: Hi I'm Adam
+title: Developers blog
+url: http://asvid.github.io/
 
 defaults:
   -
     scope:
       path: "" # empty string for all files
     values:
-      title: Asvid
+      title: Log.Adam()
 
 description: Hi I'm Adam
 author:
   name: Adam Świderski
   email: adam.swiderski89@gmail.com
   github: asvid
-  twitter: _asvid
-  linkedin: pl.linkedin.com/in/aswiderski
-  bio: and I'm a programmer
+  linkedin: aswiderski
+  bio: and I'm a software developer
+  disqus_bio: software developer
   email_md5: c0092be8e7a926ead4c4a818ea622858
 
 rss_path: feed.xml
@@ -33,6 +34,16 @@ tags_path: tags.html
 sidebar_background_image: /assets/sa.jpg
 
 BASE_PATH:
+ABOUT: about
 
 gems:
   - jekyll-paginate
+  - jekyll-crosspost-to-medium
+
+jekyll-crosspost_to_medium:
+  enabled: false
+  cache: .jekyll-crosspost_to_medium
+  status: draft
+  text: "<p><i>This article was originally posted <a href=\"http://asvid.github.io\" rel=\"canonical\">on my own site</a>.</i></p>"
+  license: all-rights-reserved
+  backdate: true
