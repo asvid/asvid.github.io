@@ -5,4 +5,5 @@ group :jekyll_plugins do
   gem "jekyll-paginate"
   gem "pygments.rb"
   gem "jekyll-crosspost-to-medium"
+  gem "wdm"
 end

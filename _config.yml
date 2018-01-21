@@ -41,7 +41,7 @@ gems:
   - jekyll-crosspost-to-medium
 
 jekyll-crosspost_to_medium:
-  enabled: false
+  enabled: true
   cache: .jekyll-crosspost_to_medium
   status: draft
   text: "<p><i>This article was originally posted <a href=\"http://asvid.github.io\" rel=\"canonical\">on my own site</a>.</i></p>"
