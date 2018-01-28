@@ -1,15 +1,42 @@
 ---
 layout: page
 title: About me
+highlighter: null
 permalink: /about/
 ---
 
 I'm Android developer at [Fibaro Home Inteligence][f], but I used to do web development too.
 I'm clean code fan interested in design patterns and dev-ops.
 
-In my spare time, I play with [arduino][ard], or make my own Android apps. I also like wasting time on computer games :) 
+In my spare time, I play with [arduino][ard], or make my own Android apps. I also like wasting time on computer games :)
 
 I want to use this space to blog about technical problems I experienced and how did I solve (or avoid) them, so others can make use of my work.
+
+### Projects
+
+{% for item in site.projects %}
+  <h4>{{ item.title }}</h4>
+  <p>{{ item.description }}</p>
+  {% if item.googlePlayLink %}  
+      {% include googlePlayLink.html %}
+  {% endif %}
+  {% if item.github %}  
+    <a href="{{ item.github }}"><img src="/assets/img/google-play.png"/></a>
+  {% endif %}
+{% endfor %}
+
+
+### Technologies
+
+<div class="chipsContainer">
+    <div class="row">
+      {% for tech in site.technologies %}
+      <a href=" {{ tech.link }}">
+          <div class="chips"><img src="{{ tech.icon }}">{{ tech.name }}</div>
+      </a>
+      {% endfor %}
+  </div>
+</div>
 
 ### Contact me
 

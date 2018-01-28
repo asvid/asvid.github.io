@@ -6,6 +6,7 @@
 
 	<div class="col-sm-10">
 	 <span class="post-date">
+
 	   {% assign d = page.date | date: "%d" | plus:'0' %}
 	   {{ page.date | date: "%B" }}
 	   {% case d %}
@@ -19,7 +20,6 @@
 	  <div class="article_body">
 	  {{ content }}
 	  </div>
-
 		{% unless page.categories == empty %}
 		<ul class="tag_box list-unstyled list-inline">
 		  <li><i class="fa fa-folder-open"></i></li>
