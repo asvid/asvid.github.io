@@ -47,3 +47,7 @@ jekyll-crosspost_to_medium:
   text: "<p><i>This article was originally posted <a href=\"http://asvid.github.io\" rel=\"canonical\">on my own site</a>.</i></p>"
   license: all-rights-reserved
   backdate: true
+
+collections:
+  - projects
+  - technologies

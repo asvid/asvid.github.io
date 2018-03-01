@@ -13,6 +13,7 @@ tags:
 - Kotlin
 categories:
 - Tutorial
+image: /assets/posts/local-maven-repo/lib.jpg
 ---
 
 * TOC
