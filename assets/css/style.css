@@ -207,7 +207,7 @@ ul.dropdown-menu>li>a>i.fa {
 }
 
 p {
-	text-indent: 1em
+	/* text-indent: 1em */
 }
 
 #about_link {
@@ -248,8 +248,8 @@ p {
 }
 
 .chips img {
-    height: 39px;
-    width: 39px;
+    height: 38px;
+    width: 38px;
     border-radius: 30px;
     margin: -16px 5px -16px -20px;
     background-color: darkgray;
@@ -275,4 +275,25 @@ p {
 
 .card-content a:hover {
     color: #FFA726;
+}
+
+.googlePlayLink{
+	width: 100px;
+	display: inline-block;
+	height: 30px;
+}
+.googlePlayLink img{
+	width: 100%;
+}
+
+.project{
+	margin: 10px 0 10px 0;
+	display: inline-block;
+}
+
+.aboutPageContainer{
+	margin: 0 80px;
+}
+.aboutContent{
+	width: 80%;
 }
