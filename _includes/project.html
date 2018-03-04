@@ -1,0 +1,10 @@
+<div class="project">
+  <h4>{{ item.title }}</h4>
+  <p>{{ item.description }}</p>
+  {% if item.googlePlayLink %}
+      {% include googlePlayLink.html %}
+  {% endif %}
+  {% if item.github %}
+      {% include github.html %}
+  {% endif %}
+</div>
