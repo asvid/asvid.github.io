@@ -39,6 +39,7 @@ ABOUT: about
 gems:
   - jekyll-paginate
   - jekyll-crosspost-to-medium
+  - jekyll-feed
 
 jekyll-crosspost_to_medium:
   enabled: true
