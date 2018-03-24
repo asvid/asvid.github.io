@@ -6,4 +6,5 @@ group :jekyll_plugins do
   gem "pygments.rb"
   gem "jekyll-crosspost-to-medium"
   gem "wdm"
+  gem 'jekyll-feed'
 end
