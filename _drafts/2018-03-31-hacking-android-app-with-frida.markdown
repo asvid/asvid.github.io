@@ -144,6 +144,27 @@ Method takes two callbacks: called when instance is found and other called when 
 So YAY! we've showed a toast.
 
 ### Bruteforce PIN breaking
-In some apps like `Evernote` you can set internal PIN to protect your data from unwanted access. 
+In some apps like `Evernote` you can set internal PIN to protect your data from unwanted access. It means PIN has to be stored locally on your device, encrypted of course and hashed. When user provides PIN you just compare hashes, so no plain text PIN is available at any point.
+In FridaApp I've provided just simple method that checks if PIN is "1234", but image that its reading hash from SharedPreferences and compares it with hashed user input. No matter what security precautions you take, at the end of a day you want method that takes a `String` and returns a `Boolean`. Lets hack it!
+In `brutal.js` we have our PIN destroyer. At first we need instance of class that contains PIN checking method. Than we can run this method for diferent PIN numbers and check which one returns `true`. I've done it in a loop that iterates from 0 to 100000, so it covers all 5 digit PIN numbers. Loop stopes when method returns `true` and prints number in console along with time it took.
+
+### Listing loaded objects
+We've already done this in console, but there we've go ALL of objects, it was impossible to find what we can hack. Gladly I've wrote `class_list.js` script that can list only ones in my app.
+```
+Java.enumerateLoadedClasses(
+      {
+      "onMatch": function(className){
+            if(className.includes("asvid")){
+                console.log(className);
+            }            
+        },
+      "onComplete":function(){}
+      }
+    );
+```
+Yes in console you can use `| grep asvid` but its usefull to do it inside script in case you would need to use it further.
+
+### Imaginary Security
+All previous scripts were working arount `MainActivity` class or instance, it's safe to assume 99% of apps has such class. But now since we've listed loaded objects we can see there is misterious `Security` object loaded. If we check app code, we can see its a field in `MainActivity` and its used to encode text from input and stores it in SharedPreferences. It also is used to read and decode this text that is next printed below input.
 
 ## Summarization
