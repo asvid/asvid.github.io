@@ -108,8 +108,9 @@
 	<div class="col-sm-3 sidebar hidden-xs"
 	style="
 	{% if page.image %}
-	background:	url({{page.image}}) no-repeat center center !important;
+	background:	url({{page.image}}) ;
 	background-size: auto 100%;
+	background-position: center;
 	{% elsif site.sidebar_background_image %}
 	background:	url({{site.sidebar_background_image}}) no-repeat center center !important;
 	background-size: auto 100%;
