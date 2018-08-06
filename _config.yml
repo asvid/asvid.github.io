@@ -36,7 +36,7 @@ sidebar_background_image: /assets/sa.jpg
 BASE_PATH:
 ABOUT: about
 
-gems:
+plugins:
   - jekyll-paginate
   - jekyll-crosspost-to-medium
   - jekyll-feed

@@ -97,8 +97,7 @@ article .share .gplus:hover {
 }
 
 .page-header {
-	color: #e74c3c;
-	text-shadow: 1px 1px 1px rgba(150, 150, 150, 1);
+	color: #4e556e;
 }
 
 @media only screen and (min-width: 768px) {
@@ -225,6 +224,10 @@ p {
 .chipsContainer{
 	margin-left: 15px;
 	margin-right: 15px;
+}
+
+.chipsContainer a:hover{
+	text-decoration: none;
 }
 
 .chips {

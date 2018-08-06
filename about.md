@@ -23,7 +23,7 @@ Here are listed some of my projects, with links to Google Play or code on GitHub
 
 ### Technologies
 
-Random order list of tech I like to use
+Alphabetically ordered list of tech I like to use
 
 <div class="chipsContainer">
     <div class="row">
