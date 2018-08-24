@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Android Build Hacks #1 - build types and product flavors"
+title: "Android Build Hacks #1 - build basics"
 date: "2018-07-23 22:24:27 +0200"
 description: Android build file tricks and hacks I've found at blogposts, YT videos etc.
-permalink: android-build-hacks
+permalink: android-build-hacks-1
 comments: true
 crosspost_to_medium: false
 tags:
@@ -28,7 +28,7 @@ This is not the most exciting part of software engineering. Each technology, lan
 In Android Studio you start new project, type app name and select minimum SDK and Android Studio generates some files that you don't event want to touch.
 But you should. The more complex app you are working on, bigger benefits you may get. Starting from faster builds, through work automation, to easer development and releasing process.
 
-## From the beginning
+## Types vs Flavors
 After we create new project we already have 2 build variants to select: `debug` and `release`. Even if only second one is mentioned in `build.gradle` file in `buildTypes` section.
 We can easily edit or add more `build types` and `product flavors`, creating way too many build variants we need. Each build type is by default combined with each product flavor, and product flavors are combined if they are set for different dimensions.
 
@@ -96,6 +96,9 @@ Please notice that `build type` name comes always on the end - order of names is
  If you have no idea what is `build variant`, its this thing you select here:
 ![build variants window in Android Studio](assets/posts/android-build-hacks/buildVariants.png)
 
+More info about build types and product flavors can be found at [this StackOverflow post](https://stackoverflow.com/questions/27905934/why-are-build-types-distinct-from-product-flavors
+)
+
 ### Dealing with Flavor Hell
 
 So if you enthusiastically started adding flavors and build types to your config you should notice one thing: number of build variants grows at a geometric rate. Each new flavor in existing dimension adds number of build types to build variants, each new dimension doubles number of build variants. And it's really hard to find this one variant you need to build fast in this jungle.
@@ -117,9 +120,154 @@ variantFilter { variant ->
         }
     }
 ```
-Using simple `if` statement that checks variant build type and flavors we can set them to be ignored.
+Using simple `if` statement that checks variant build type and flavors we can set them to be ignored. Take a note that `variant.getFlavors()` returns list of flavors added by `dimension` order, that's why I've used `get(0)` to get first dimension flavor - `stage` in my case.
 
 ## Config Settings
 Ok we have build types and product flavors, we've filtered out pointless variants but what can we actually set?
+[Official BuildType documentation](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html) mentions whole a lot of properties and methods that can be used for each build type. There's even more in [Official ProductFlavor documentation](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.ProductFlavor.html), but there are also many in common, so remember that build type will override those set in flavor.
+Oh also here is [Official DefaultConfig documentation](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.DefaultConfig.html), because some properties are available to set only here, nobody said it will be easy.
+
+I won't be going through all of above mentioned properties and methods, I'll just show what can be done with some of them.
+
+### applicationId
+This one is pretty important. By `applicationId` your app is recognized in Google Play Store and by user device. You cannot have 2 different apps with same `appliationId` on the same device or in Google Play Store - even from different accounts. You may have noticed that if you have your app installed from Google Play (official release) and want to install `debug` version from Android Studio it will ask to remove Google Play app - yes it's because different signing (with Android debug key) and even debug version installed from one machine will need to be erased if you install it from other machine. But because both apps have same `applicationId` Android will know it's the same app. And if we want to keep our released and configured app on our device and have `debug` build installed next to it?
+
+Well we need to change `applicationId` of `debug` build type of course!
+If you've looked through documentation you may have noticed that there is no way to change `applicationId` in build type config, it's set only in `defaultConfig` (and product flavors). But there is property `applicationIdSuffix` - it will add text to our `applicationId`. You can set it like:
+```
+buildTypes {
+    debug {
+        applicationIdSuffix '.debug'
+        ...
+productFlavors {
+    dev {                 
+         applicationIdSuffix '.dev'
+```
+Keep official release of your app and install debug just next to it.
+
+### buildConfigField
+During build process a static `BuildConfig` class is created. This class contains fields like `APPLICATION_ID`, `VERSION_CODE`, `VERSION_NAME` and others taken from - you've guest it - build config. Those fields are easily accessible in app, and are often used to modify it's behavior like turning off Google Analytics if app is in debug mode. We can add custom fields to this class in both build types and product flavors. Method takes 3 String arguments - type, name and value.
+```
+buildTypes {
+    debug {
+        buildConfigField "String", "FOO", '"debug"'
+       ...
+productFlavors {
+    dev {                 
+        buildConfigField "String", "FOO", '"dev"'
+```
+Those custom fields type can be `String`, `boolean` and `int`. If you set the same field in flavor and build type, it will be overridden with build type value.
+
+### resValue
+Setting custom `BuildConfig` field is cool, but it is also possible to **set** resource value. If you try to set a value that already exists in resources, you will get `Error: Duplicate resources` during build. Method looks similar to `buildConfigField`
+```
+buildTypes {
+    debug {
+        resValue "string", "some_string_value", '"debug"'
+       ...
+productFlavors {
+    dev {                 
+        resValue "string", "some_string_value", '"dev"'
+```
+
+### manifestPlaceholders
+There is one last place where we might want to set things according to our build variant - the manifest. Sometimes in manifest you need to add API key to some services used by libraries like Fabric, you may want to have a different keys for different build variants and this is a clean solution - no more checking `BuildConfig` and setting stuff in huge `switch` statement. I like to use `manifestPlaceholders` to set app name - for release builds (or by default) it is taken from resources because it may vary in different languages, but for debug build... I don't care so much about languages, I just want to know that it is debug build. It can be also achieved by creating `src/{buildTypeName | productFlavorName}` directory and adding `string.xml` with app name string there for each build type or flavor we want to switch app name... but if you don't change a lot of resources in build variants keeping changes in build config looks cleaner.
+```
+defaultConfit{
+    manifestPlaceholders = [appName: "@string/app_name"]
+}
+buildTypes {
+    debug {      
+        manifestPlaceholders = [appName: "App Name - Alfa"]
+       ...
+productFlavors {
+    dev {      
+        manifestPlaceholders = [appName: "App Name - Dev"]
+```
+and in `AndroidManifest.xml`
+```
+  android:label="${appName}"
+```
+
+### versionNameSuffix
+Ever been an app beta tester? So you might seen version names like `1.2.3-build-1223123` in system application settings. It can be added by using `versionNameSuffix` property in both product flavors and build types. Of course build number should be generated automatically, but this will be done in some future post.
+```
+buildTypes {
+    debug {
+        versionNameSuffix '-debug'
+        ...
+productFlavors {
+    dev {                 
+        versionNameSuffix '-dev'
+```
+### resConfigs
+Sometimes you add new language to your app and you need to test how bad your layouts will look with it. No need to change your device language - it's a pain if you don't know new language enough to go back to your native one... just force build variant to use specific resources:
+```
+productFlavors {
+    dev {                 
+        resConfigs "en", "xxhdpi"
+```
+You can specify list of all possible resource configurations including screen density - but it won't allow you do to it if you use APK density split.
+Also it shouldn't be used with build type `pseudoLocalesEnabled` property.
+
+## Splits
+Let's say you have an app with lots of images (not SVG) in few screen densities so app looks good on every phone. But you build single APK for all densities, so each user needs to download app with way more resources than will ever be used. Splits are here to save the day. It allows Gradle to generate multiple APK files of the same build variant but with single resources for density, language or ABI (Application Binary Interface). Google Play just sends fitting APK to user that want to download your app.
+```
+ext.densityList = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+ext.abiList = ['armeabi', 'armeabi-v7a', 'x86']
+
+splits {
+    abi {
+        enable true
+        reset()
+        include(*abiList)
+        def taskList = gradle.startParameter.taskNames.join(",")
+        def isRelease = taskList.contains("assembleRelease")
+        universalApk(isRelease)
+    }
+
+    density {
+        enable true
+    //  exclude 'ldpi', 'tvdpi', 'xxxhdpi'
+        reset()
+        include(*densityList)
+        compatibleScreens 'small', 'normal', 'large', 'xlarge'
+    }
+}
+```
+Above code will cause generation of 16 (5 densities * 3 ABI + universal APK) APK files, fitting exactly users device specs. More bitmap graphics your app uses, bigger gains in APK size will you get.
+In split config we have to specify if it's enabled, and then we use `reset()` to clear default density or ABI list. Then we can `include` array of values (ABI or densities) - or if you don't want to reset default one you can just `exclude` similar array of values. Universal APK is generated for release build, it contains all of resources and is compatible with all ABI - this file will be size of your app without using splits.
+
+I don't really see a point in using language split since `strings.xml` are lightweight files, but it's also possible. Also ABI split may be just overcomplicating your build process.
+
+It's worth mentioning that for each APK you want to release you need to generate different `versionCode` or Google Play wont allow you to send it.
+```
+import com.android.build.OutputFile
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def abiFilter = output.getFilter(OutputFile.ABI)
+        int abiVersionCode = (abiList.indexOf(abiFilter) + 1) * 10
+
+        def densityFilter = output.getFilter(OutputFile.DENSITY)
+        int densityVersionCode = (abiList.indexOf(densityList) + 1)
+
+        output.versionCodeOverride = variant.mergedFlavor.versionCode + abiVersionCode + densityVersionCode
+    }
+}
+```
+In above code I check for which ABI and density variant is being build, multiply position of variant ABI in `abiList` by 10 and add this number and variant density position in `densityList` to version code for current build. Example: default version code is 1230000 (needs to be < 2 100 000 000) and current split variant is x86 xxhdpi, so we have 1230000 + 30 + 4 = 1230034.
+
+## End of part #1
+It's top of an iceberg but I've tried to explain main building blocks of Android build configuration. In upcoming posts I'll show some build time optimizations and useful scripts to generate values used in builds. Below you can find links to documentation or blogposts that might extend this topic furthermore.
 
 ## Useful links
+
+- [Build Variants docs](https://developer.android.com/studio/build/build-variants)
+- [DefaultConfig docs](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.DefaultConfig.html)
+- [BuildType docs](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html)
+- [ProductFlavor docs](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.ProductFlavor.html)
+- [Splits dos](https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.Splits.html)
+- [Android Authority post about flavors by Obaro Ogbo](https://www.androidauthority.com/building-multiple-flavors-android-app-706436/)
+- [Medium post about flavors by Thiago Lopes Silva](https://medium.com/@thiagolopessilva/the-handling-multiple-java-source-and-resources-using-flavors-on-gradle-18a4b581285b)
+- [Another post about flavors](http://onebigfunction.com/android/2016/10/06/flavor-flav-android-product-flavors-explained/)
