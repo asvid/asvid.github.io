@@ -7,4 +7,5 @@ group :jekyll_plugins do
   gem "jekyll-crosspost-to-medium"
   gem "wdm"
   gem 'jekyll-feed'
+  gem 'jekyll-gist'
 end
