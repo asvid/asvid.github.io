@@ -13,7 +13,7 @@ tags:
 - DevOps
 categories:
 - Tools
-image: /assets/posts/android-build-hacks/build-hacks.jpg
+image: /assets/posts/android-build-hacks-2/bg-small.jpg
 ---
 
 [First part of article]({% post_url 2018-07-23-android-build-hacks %})
