@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Andrid build hacks 2"
+title: "Andrid build hacks 2 - Optimization"
 date: "2018-09-16 10:36:34 +0200"
-description: Android tricks to speed up builds I've found at blogposts, YT videos etc.
+description: Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc..
 permalink: android-build-hacks-2
 comments: true
 crosspost_to_medium: false
@@ -32,16 +32,9 @@ A lot of things I will mention comes from this [Google I/O '17 talk](https://www
 
 ### Limiting your build
 Your app may have 100 languages included and images in all possible densities - and it's cool, users like that, but you don't really need ALL of it when you are developing new features or fixing bugs. You can live with 1 language and 1 density. I've mentioned previously about this feature, but it's worth repeating - limiting image density makes build faster.
-```
-productFlavors {
-        dev {
-            ...
-            resConfigs("en", "xxhdpi")
-            // or if you use Splits
-            resConfig("en")
-            ...
-        }
-```
+
+{% gist b31450b7c104197f98e9d446999f0b20 %}
+
 `resConfig()` is available only for productFlavors, so using knowledge from previous post you can add something like `dev` and `prod` flavors and filter only reasonable use cases.
 I remember having build crashes when using density `split` and `resConfig` with density, but I cannot reproduce it on current version of Gradle Plugin *(3.3.0-alpha10)* so just keep in mind that it might cause some issues.
 
@@ -55,15 +48,9 @@ First checkbox on top allows you to compile app modules in the same time - as lo
 The most interesting setting here is `Command-line Options` where we can add arguments to build command that is run when you press green play button - so I guess each time you want to run app on device during development. I've put there `-PdevBuild` which means my build will have a property `devBuild`. This can be checked in `build.gradle` and changes might be included just for debug builds from Android Studio. Of course you can build exactly the same version of app from command line on CI server, but it's mostly useful for development builds.
 
 So how to use it in builds?
-```
-android {
-  ...
-  if (project.hasProperty('devBuild')) {
-    splits.abi.enable = false
-    splits.density.enable = false
-    aaptOptions.cruncherEnabled = false
-  }
-```
+
+{% gist 2897c9a0a04f4e5c27984f26e9bb8ef7 %}
+
 If we are building from Android Studio, splits can be disabled since we are running code only on our device and size of APK doesn't matter too much. Disabling splits makes builds faster - no need to divide resources into separate APK files. Also disabling crunching images makes build faster - again for development APK size doesn't matter so saving few KB on images won't compensate loosing few seconds of build if you are building app every few minutes.
 
 ### Use instant run
@@ -81,48 +68,29 @@ I remember how excited I was when `Instant Run` was announced, and how I was the
   - system UI elements are changed, like widgets or notifications
 
 If your app `versionCode` is generated dynamically, for example from date, `Instant Run` will not speed up your build, because you are changing app manifest each time. But it can be easily fixed with our friend `devBuild` parameter:
-```
-def buildVersion = project.hasProperty("devBuild") ? 100 : new Date().format("yyMMddHHmm").toInteger()
 
-android{
-  defaultConfig{    
-    versionCode buildVersion
-    ...
-```
+{% gist 34d4eb0a15266b75aaf550153e74b18a %}
+
 For development builds we are using the same `versionCode` - 100, but for every other build `versionCode` is generated from date.
 
 ### Other build boosters
 - use `jcenter` - it's faster, safer and bigger than `mavenCentral`
 - `preDexLibraries` - it makes clean build longer but every incremental build faster
-```
-dexOptions{
-  preDexLibraries true
-}
-```
+
+{% gist 7704af7e1a131520091d6d2b45973104 %}
+
 - update your Java - Android Studio uses it's own JVM by default, but if you are building also on CI server its good to keep Java updated
 
 #### Disable unneeded tools
 `Proguard` is a great tool - it removes unused classes and methods during build process and obfuscates code so it's harder (but not impossible) to decompile apps. But during development we don't really need that, so lets turn it off.
 
 Another great tool for your app is Fabric Crashlytics - it gathers all app crashes and its very useful for finding and fixing bugs. But during development you'll rather use `Logcat`, no need for external tool. Also Crashlytics is generating build ID number for each build so it can distinguish between them, it also slows build down because it's kept in string resource file, so `Instant Run` wont be able to run ***hot swap***.
-```
-buildTypes {
-    debug {
-      minifyEnabled false
-      ext.enableCrashlytics = false
-      ext.alwaysUpdateBuildId = false
-    }
-```
-After disabling crashlytics in `build.gradle` it is necessary to disable it in runtime:
-```
-// Set up Crashlytics, disabled for debug builds
-Crashlytics crashlyticsKit = new Crashlytics.Builder()
-    .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-    .build();
 
-// Initialize Fabric with the debug-disabled crashlytics.
-Fabric.with(this, crashlyticsKit);
-```
+{% gist e8f8365d069ce3b4f9a7bb758c1d3e69 %}
+
+After disabling crashlytics in `build.gradle` it is necessary to disable it in runtime:
+
+{% gist 1a15fa17526f0380b543eb60dc1cdca3 %}
 
 #### Don't use dynamic dependency versions
 Have you ever seen something like this in code:
@@ -133,12 +101,9 @@ Also forget about using `compile` for dependencies. Using `implementation` will 
 
 #### Gradle properties
 Following settings can seriously boost your builds:
-```
-org.gradle.jvmargs=-Xmx1536m
-org.gradle.parallel=true
-org.gradle.caching=true
-org.gradle.configureondemand=true
-```
+
+{% gist 1771826d173c54ecba9497ba59c27374 %}
+
 - `org.gradle.jvmargs` value is something you should experiment for your machine and project, general rule is that more is better but after some value it doesn't make a change so save some memory for watching cat videos on Youtube until build process is done. [Documentation](https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory)
 - `org.gradle.parallel` allows Gradle to run the same tasks in different projects in parallel, so it's kinda the same feature that `Compile Settings` gave us, just for Gradle tasks and not compilation itself [Documentation](https://guides.gradle.org/performance/#parallel_execution)
 - `org.gradle.caching` now that's a big one - a lot of tasks that Gradle runs will give the same output if input has not changed, so instead of running them Gradle can just read output from its cache. [Documentation](https://docs.gradle.org/current/userguide/build_cache.html)
@@ -148,5 +113,24 @@ org.gradle.configureondemand=true
 Gradle offers tool that allow to find out what time exactly it takes to finish each build step. It's called `profiler` and generates HTML summary after build is finished.
 Typing in console: `gradle app:assembleDebug --profile` will generate similar report to this:
 ![Gradle Profiler output](assets/posts/android-build-hacks-2/profiler.png)
+Other tools to profile your build are:
+- --dry-run - tells you how much time your project need for configuration, should be few seconds max
+- --info - will print in console why certain tasks are executed
+![Gradle --info output](assets/posts/android-build-hacks-2/gradle-info.png)
+- --scan - will send build result to [Gradle Scans website](https://scans.gradle.com) where you may find some additional info about your build process
 
 ### Gradle scripts
+Writing your own Gradle tasks is awesome, especially when you want to automate things with CI. But custom tasks can slow your build even when you think they are not executed. When you have simple task like:
+
+{% gist a736c21b97c8df9edb24256167ed5e6e %}
+
+The output will be always printed (because task gets executed) when you run **ANY** other task in project. This one was simple printing, but can you image generating some config files, HTTP requests, calculating `versionCode` etc? And all tasks needs to finish before your build is done.
+
+Solution is dead simple:
+
+{% gist 333e15745d74b47685ba80eba18d8cda %}
+
+Just move actual task work into `doLast` and leave configuration stuff like `group` outside.
+
+## Outro
+Knowing above things made my projects builds more efficient by saving my time on building process. You may not feel it right now, but projects tend to grow over time, and keeping build times at low value makes world a happier place. Be so kind and share this post with every Android developer you know - you might save them few seconds every day :)
