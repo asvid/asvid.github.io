@@ -23,7 +23,7 @@ showing time till it should land in trashcan.
 
 So we need a progressbar that goes from green to red (with ugly mid-green mid-red in middle...)
 
-**Please remember fallowing code is in [Kotlin][kotlin]**
+**Please remember following code is in [Kotlin][kotlin]**
 
 Standard Android ProgressBar can be set to value 0-100, by using
 

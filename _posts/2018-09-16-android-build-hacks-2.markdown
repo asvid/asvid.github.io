@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Andrid Build Hacks #2 - build time optimization"
+title: "Android Build Hacks #2 - build time optimization"
 date: "2018-09-16 10:36:34 +0200"
 description: Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc..
 permalink: android-build-hacks-2
