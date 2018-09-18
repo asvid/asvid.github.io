@@ -16,9 +16,9 @@ categories:
 image: /assets/posts/android-build-hacks/build-hacks.jpg
 ---
 
-*Disclaimer - I did not invent anything here, I've just collected some good practices and tricks from other articles (mentioned at the bottom) or official Android documentation or Google IO presentations*
-
-This is first part in series of articles about Android build configuration, next parts will be linked right below.
+This is first part in series of articles about Android build configuration, all parts will be linked right below.
+> **[#1 Build basics]({% post_url 2018-07-23-android-build-hacks %})**  
+> **[#2 Build time optimization]({% post_url 2018-09-16-android-build-hacks-2 %})**
 
 * TOC
 {:toc}

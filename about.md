@@ -6,11 +6,11 @@ permalink: /about/
 ---
 
 I'm Android developer at [Fibaro Home Inteligence][f], but I used to do web development too.
-I'm clean code fan interested in design patterns and dev-ops culture.
+I'm clean code fan interested in design patterns and dev-ops culture, I really like automating stuff.
 
-In my spare time, I play with [arduino][ard], or make my own Android apps. I also like wasting time on computer games :)
+In my spare time, I try not to forget how to play guitar, read books (mostly about programming), watch really bad movies, or make my own Android apps - usually as sandboxes to check new libraries or approaches. I also like wasting time on computer games :)
 
-I want to use this space to write about technical problems I've experienced and how I solved (or avoided) them, usefull tools and tricks and... well anything else I want to write here.
+I want to use this space to write about technical problems I've experienced and how I solved (or avoided) them, useful tools and tricks and... well anything else I want to write here.
 
 ### Projects
 
@@ -45,5 +45,4 @@ You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }}){:target="_
 [f]: http://www.fibaro.com
 [github]: https://github.com/gayanvirajith
 [linkedin]: https://pl.linkedin.com/in/aswiderski
-[ard]: https://www.arduino.cc/
 [fb]: https://www.facebook.com/adam.swiderski.pmi
