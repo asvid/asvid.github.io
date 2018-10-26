@@ -37,6 +37,15 @@ tagline:
     {% endif %}
   </div>
 
+  <p class="read_time">(read time:
+    {% assign words = post.content | number_of_words %}
+    {% if words < 360 %}
+      1 min)
+    {% else %}
+      {{ words | divided_by:180 }} mins)
+    {% endif %}
+    </p>
+
 </article>
 {% endfor %}
 <hr/>
