@@ -220,6 +220,11 @@ p {
 }
 #about_link a{
 	margin: 0 auto;
+	color: #5db4ff
+}
+#about_link a:hover{
+	margin: 0 auto;
+	color: #fff
 }
 .author-bio {
 	text-indent: 0em;
