@@ -71,28 +71,66 @@ class Group<T>(val name: String) {
 There are basically two things here: *block tags* like `@param` and *inline markup* like `[member]`.
 Available *block tags* are:
 - `@param` - method parameter description
-- `@return` - documents returned value (who would have expected)
+- `@return` - documents returned value
 - `@constructor` - documents primary constructor
 - `@receiver` - receiver for extension functions
 - `@property` - class property description
 - `@throws`, `@exception` - describes exceptions thrown by method, no need to put all of them here
 - `@sample` - link to code sample with documented element used
 - `@see` - link to another element
-- `@author` - when you feel especially proud of following code
+- `@author` - when you feel especially proud of your code
 - `@since` - version name where this element was introduced
 - `@suppress` - excludes element from documentation
 
 And *inline markup* is used to create links to other parts of code like methods, classes etc.
 
-### Extras
+To be honest I use only `@param @return @sample @throws` and some basic info about class or method.
 
-### Linking
+## Generating documents
+After adding few comments like above one, it would be nice to finaly see the documentation. Just few steps to do so:
+In project `build.gradle` add:
+```
+buildscript {
+    repositories {
+        jcenter()
+    }
 
-#### Modules
+    dependencies {
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+    }
+}
+```
 
-#### Library
+And in application `build.gradle`:
+```
+apply plugin: 'org.jetbrains.dokka'
 
-#### Repository
+dokka {
+    outputFormat = 'gfm'
+    outputDirectory = "$buildDir/docs"
+}
+```
+
+This should add task `dokka` in group `documentation`
+![Dokka task](assets/posts/android-build-hacks-3/dokka_task.png)
+Running this task will generate documentation in `docs` directory in project root, just as it was set in `outputDirectory`. Selected output format is `gfm` that stands for `GitHub flavored markdown`, it will be useful later. Other available formats are:
+- `html` - minimalistic html format used by default
+- `javadoc` - Dokka mimic to javadoc - forget about it, why even write Kotlin code if you generate Java documentation?
+- `html-as-java` - as html but using java syntax
+- `markdown` - Markdown structured as html
+  - `gfm` - GitHub flavored markdown
+  - `jekyll` - Jekyll compatible markdown
+- `kotlin-website`* - internal format used for documentation on kotlinlang.org
+
+## Linking
+
+### Samples
+
+### Modules
+
+### Library
+
+### Repository
 
 ## Publish it
 
