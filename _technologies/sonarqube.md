@@ -1,6 +1,6 @@
 ---
-name: git
+name: SonarQube
 description:
-icon: /assets/img/technology/git.png
-link: https://git-scm.com/
+icon: /assets/img/technology/sonar.png
+link: https://www.sonarqube.org/
 ---
