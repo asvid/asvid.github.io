@@ -12,6 +12,13 @@ In my spare time, I try not to forget how to play guitar, read books (mostly abo
 
 I want to use this space to write about technical problems I've experienced and how I solved (or avoided) them, useful tools and tricks and... well anything else I want to write here.
 
+### Contact me
+
+Find me on [Linekdin][linkedin] / [Github][github] / [Facebook][fb] or just say `Hello` at
+[adam.swiderski89@gmail.com](adam.swiderski89@gmail.com).
+
+You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }}){:target="_blank"}.
+
 ### Projects
 
 Here are listed some of my projects, with links to Google Play or code on GitHub.
@@ -35,12 +42,6 @@ Alphabetically ordered list of tech I like to use
   </div>
 </div>
 
-### Contact me
-
-Find me on [Linekdin][linkedin] / [Github][github] / [Facebook][fb] or just say `Hello` at
-[adam.swiderski89@gmail.com](adam.swiderski89@gmail.com).
-
-You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }}){:target="_blank"}.
 
 [f]: http://www.fibaro.com
 [github]: https://github.com/gayanvirajith
