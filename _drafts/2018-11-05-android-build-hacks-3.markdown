@@ -170,9 +170,23 @@ Distribution depends on your needs, and output format depends on your distributi
 ### When
 It also depend on your case. You may want to generate documentation after each push to `develop` branch, or just after creating a `release`. Or both :)  
 I suggest generating after (or during) each release.  
-Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for opensource library it would be nice to keep all releases, or at least major ones.
-Unfortunately `Dokka` doesn't provide any in-build method to keep multiple documentation versions, **BUT** since it's *Android build hacks* series, I'll show you how it's done with simple `Gradle` magic.
+Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for opensource library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
 
-TODO -> put gradle scripts to create output directory based on branch
+But for now lets focus on having at least most recent version of documentation, since `Dokka` doesn't have in-build tools to support documentation versioning and its kinda separate topic.
 
 ### GitHub Pages
+One of output formats of `Dokka` documentation is `gfm` which stands for `GitHub flavored markdown`. It allows you to publish for free your documentation via `GitHub Pages`. What are GitHub Pages? Well this blog is one :) basically they are `html` websites generated from `markdown` by `Jekyll`. It works kinda automagically, if you generate your documentation to `/docs` directory, and your GitHub repo settings you select GitHub Pages source as `master branch /docs folder` it will regenerate website each time you push to branch `master`.
+![GitHub Pages settings](assets/posts/android-build-hacks-3/github_pages.png)  
+
+Also you can select one of few themes for your documentation.  
+
+![GitHub Pages settings](assets/posts/android-build-hacks-3/github_pages_themes.png)
+
+Website generation takes a minute, and after your fresh documentation will be available at `http://{your GitHub nickname}.github.io/{your repo name}/` so for my project it's [http://asvid.github.io/GdzieTaBiedra/](http://asvid.github.io/GdzieTaBiedra/)
+
+Unfortunately GitHub pages does not support multiple versions of documentation
+
+More info: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
+
+### Other ways to publish
+TODO -> mention few other providers
