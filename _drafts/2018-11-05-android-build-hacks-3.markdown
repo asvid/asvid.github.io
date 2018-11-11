@@ -125,8 +125,30 @@ Running this task will generate documentation in `docs` directory in project roo
 Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning `Observable` to RxJava documentation. Also documenting methods may be even better with provided sample usage available right in generated HTML.
 
 ### Samples
-To add samples you need to create separate directory for code that will not be compiled with rest of the project.
-TODO -> add samples to GdzieTaBiedra
+To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:
+```
+rootProject
+  |-app
+    |-build
+    |-src
+      |-androidTest  
+      |-main
+        |-java
+        |-res
+      |-sample  <- here put sample code
+      |-test
+  |-otherModule  
+    |-build  
+    |-src  
+      |...  
+```
+It's best to keep package structure in `sample` directory identical to source code, just like with unit tests. Sample code does not has to be logical or actually do anything, it's just to show how to use documented methods.  
+To inform `Dokka` where is sample code in module you need to add one line to configuration:
+```
+dokka {
+  samples = ['src/sample']
+  ...
+```
 
 ### Modules
 To link other project modules you have to add `externalDocumentationLink` in `dokka` setup.
@@ -136,8 +158,12 @@ To link other project modules you have to add `externalDocumentationLink` in `do
   }
 ```
 The `url` should point to generated `package-list` file. I like to put main project documentation in root of `docs` directory, and each module in separate directory. Each module documentation is generated separately. Every module should be linked with all modules in dependencies, but there is no need to link everything to `app` module. If module `app` has dependency to module `A` that is dependent from modules `B` and `C`, module `app` should link only to module `A` documentation, and module `A` should have links to modules `B` and `C`.
-
-TODO -> set Dokka task dependency to linked modules tasks
+This may cause build failure if `app` documentation task runs before submodules tasks - it will try to use `package-list` files before they are created. To solve it just make `app` Dokka task dependent from modules linked in Dokka configuration.  
+```
+tasks.dokka{
+  dependsOn(':A:dokka')
+}
+```
 
 ### Library
 Linking 3rd party libraries works the same way like internal project modules, by adding `externalDocumentationLink` with `url` pointing to `package-list` of library creates hyperlinks. Not every library documentation provides `package-list`, but most popular ones do. Sometimes it's necessary to provide separate link to documentation and `package-list` itself - see `Android` documentation below.
@@ -161,16 +187,22 @@ Linking 3rd party libraries works the same way like internal project modules, by
 ### Code
 With linked modules, samples and 3rd party libraries your documentation should look pretty professional. But you can make it even better, by linking to code on repository. If documentation is for some reason still unclear, user reading it can with single click be redirected to code of class or method and check how it works directly. It's kinda last resort because if your documentation is so bad that anyone who reads it has to dig into code each time - you did something very wrong.
 
-TODO -> GitHub linking for GdzieTaBiedra
+```
+linkMapping {
+      dir = "src/main/java"
+      url = "https://github.com/asvid/GdzieTaBiedra/tree/master/app/src/main/java/"
+      suffix = "#L"
+    }
+```
 
 ## Publish it
-After creating awesome documentation it should be available for anyone who needs to use it. If its documentation of your employer product, maybe host it internally. If it's opensource library - share it with rest of the world just like your code.  
+After creating awesome documentation it should be available for anyone who needs to use it. If its documentation of your employer product, maybe host it internally. If it's open-source library - share it with rest of the world just like your code.  
 Distribution depends on your needs, and output format depends on your distribution way. `Html` may be best for internal hosting or putting it on your company website - copy generated files and provide link to main documentation `index.html`, also custom `css` can be added to style content.
 
 ### When
 It also depend on your case. You may want to generate documentation after each push to `develop` branch, or just after creating a `release`. Or both :)  
 I suggest generating after (or during) each release.  
-Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for opensource library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
+Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
 
 But for now lets focus on having at least most recent version of documentation, since `Dokka` doesn't have in-build tools to support documentation versioning and its kinda separate topic.
 
@@ -189,4 +221,4 @@ Unfortunately GitHub pages does not support multiple versions of documentation
 More info: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 
 ### Other ways to publish
-TODO -> mention few other providers
+**TODO -> mention few other providers**
