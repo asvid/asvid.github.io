@@ -307,4 +307,4 @@ Unfortunately GitHub pages does not support multiple versions of documentation
 More info about Github Pages: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 
 ## Summary
-`Dokka` is great tool for documenting `Kotlin` code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge.
+`Dokka` is great tool for documenting `Kotlin` code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge. All code mentioned above comes from my project [GdzieTaBiedra](https://github.com/asvid/GdzieTaBiedra) and generated documentation is available [HERE](http://asvid.github.io/GdzieTaBiedra/)
