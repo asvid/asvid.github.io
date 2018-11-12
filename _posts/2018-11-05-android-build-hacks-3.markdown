@@ -29,13 +29,13 @@ This is third part in series of articles about Android build configuration, all 
 
 ## Homework
 Wait what? You've wrote beautiful self-documenting code and someone tells you to create **DOCUMENTATION** for it? It's already there! Well named methods and variables, design patterns used.
-All that a person who wants to have basic idea of how it works needs to do, is read through it - *well named method by well named method*...  
+If anyone wants to know how it works, he just needs to read through it - *well named method by well named method*...  
 I know IDEs are supporting that and you just need to click on method name or class to go there but be a good person, create documentation of at least public methods. Forcing people **(or your future self)** to go through code each time you want to understand (or remind) how it works is cruel.
 
 **Self-documenting code is micro-documentation, it won't ever show the big picture.**
 
-So if you are working with more than yourself - docs can help others understand your intention during code review. If you create library - well I won't use it if it's not documented.
-I understand being rebellious about it - I was. Until I had to work with long-term undocumented project.
+So if you are working with someone more than yourself - docs can help others understand your intention during code review. If you are creating library - well I won't be using it if it's not documented.  
+I understand being rebellious about it - I was. Until I had to work with big undocumented project, that was dependent on few other projects, with many hacks done to meet those other projects requirements, without any trace of information **why** something was done in certain way.
 
 ## Where to start
 Start with attitude. It won't be rocket science, you've already wrote a code that works *(and it's unit tested obviously)*, now just describe it in more human manner. It might seem boring, but programmers often lack soft skills like basic ability to communicate intents - take it as an exercise to make yourself a better professional.
@@ -96,7 +96,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
     }
 }
 ```
@@ -114,6 +114,7 @@ dokka {
 
 This should add task `dokka` in group `documentation`  
 ![Dokka task](assets/posts/android-build-hacks-3/dokka_task.png)  
+
 Running this task will generate documentation in `docs` directory in project root, just as it was set in `outputDirectory`. Selected output format is `html` - minimalistic html format used by default. Other available formats are:
 - `javadoc` - Dokka mimic to javadoc
 - `html-as-java` - as html but using java syntax
@@ -125,7 +126,7 @@ Running this task will generate documentation in `docs` directory in project roo
 Adding `extra.md` to config allows you to write some info about documentation that will be added on top of `index.html` file. It can be changelog or TODOs in single or separate files.
 
 ## Linking
-Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning `Observable` to RxJava documentation. Also documenting methods may be even better with provided sample usage available right in generated HTML.
+Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning `Observable` to RxJava documentation. Also documenting methods may be even better with provided sample code in generated HTML.
 
 ### Samples
 Providing sample code usage makes documentation even clearer than describing method parameters and return value. For user it can look like that:  
@@ -135,19 +136,18 @@ Providing sample code usage makes documentation even clearer than describing met
 To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:
 ```
 rootProject
-  |-app
-    |-build
-    |-src
-      |-androidTest  
-      |-main
-        |-java
-        |-res
-      |-sample  <- here put sample code
-      |-test
-  |-otherModule  
-    |-build  
-    |-src  
-      |...  
+  ├── app
+  │   ├── build
+  │   ├── src
+  │   │   ├── androidTest
+  │   │   ├── main
+  │   │   │   ├── java
+  │   │   │   └── res
+  │   │   ├── sample  <- here put sample code
+  │   │   └── test
+  │   ├── ...
+  ├── otherModule
+  ├── ...
 ```
 It's best to keep package structure in `sample` directory identical to source code, just like with unit tests. Sample code does not has to be logical or actually do anything, it's just to show how to use documented methods.  
 To inform `Dokka` where is sample code in module you need to add one line to configuration:
@@ -156,14 +156,13 @@ dokka {
   samples = ['src/sample']
   ...
 ```  
-But this will cause your sample code to be documented, to avoid it add
+But for some reason your sample code is going to be documented like any other code, to avoid it add
 ```
 /**
  * @suppress
  * */
 ```
 over your sample class.
-
 
 ### Modules
 I've had few approaches to this and best solution I've found so far is to configure `Dokka` only in application module `build.gradle` and add dependency modules to `sourceDirs`. This way linking to modules documentation works perfectly, there are no problems with `<ERROR CLASS>` for 3rd party libraries classes, linking to source code works, and configuration for whole project is only in one file - easy to move to separate Gradle script.  
@@ -282,18 +281,18 @@ dokka {
 I've moved it to separate Gradle script `DokkaConfig.gradle` in project root directory, so in application `build.gradle` all I nedd to do is add `apply from: '../DokkaConfig.gradle'`
 
 ## Publish it
-After creating awesome documentation it should be available for anyone who needs to use it. If its documentation of your employer product, maybe host it internally. If it's open-source library - share it with rest of the world just like your code.  
+After creating awesome documentation it should be available for anyone who needs it. If its documentation of your employer product, maybe host it internally. If it's open-source library - share it with rest of the world just like your code.  
 Distribution depends on your needs, and output format depends on your distribution way. `Html` may be best for internal hosting or putting it on your company website - copy generated files and provide link to main documentation `index.html`, also custom `css` can be added to style content.
 
 ### When
 It also depend on your case. You may want to generate documentation after each push to `develop` branch, or just after creating a `release`. Or both :)  
 I suggest generating after (or during) each release.  
-Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
+Another thing is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
 
 But for now lets focus on having at least most recent version of documentation, since `Dokka` doesn't have in-build tools to support documentation versioning and this is whole new topic.
 
 ### GitHub Pages
-One of output formats of `Dokka` documentation is `gfm` which stands for `GitHub flavored markdown`. It allows you to publish for free your documentation via `GitHub Pages`. What are GitHub Pages? Well this blog is one :) basically they are `html` websites generated from `markdown` by `Jekyll`. It works kinda automagically, if you generate your documentation to `/docs` directory, and your GitHub repo settings you select GitHub Pages source as `master branch /docs folder` it will regenerate website each time you push to branch `master`.
+One of output formats of `Dokka` documentation is `gfm` which stands for `GitHub flavored markdown`. It allows you to publish for free your documentation via `GitHub Pages`. What are GitHub Pages? Well this blog is one :) basically they are `html` websites generated from `markdown` by `Jekyll`. It works kinda automagically, if you generate your documentation to `/docs` directory, and in your GitHub repo settings you select GitHub Pages source as `master branch /docs folder` it will regenerate website each time you push to branch `master`.
 ![GitHub Pages settings](assets/posts/android-build-hacks-3/github_pages.png)  
 
 Also you can select one of few themes for your documentation.
@@ -302,9 +301,9 @@ Also you can select one of few themes for your documentation.
 
 Website generation takes a minute, and after your fresh documentation will be available at `http://{your GitHub nickname}.github.io/{your repo name}/` so for my project it's [http://asvid.github.io/GdzieTaBiedra/](http://asvid.github.io/GdzieTaBiedra/)
 
-Unfortunately GitHub pages does not support multiple versions of documentation
+Unfortunately GitHub pages does not support multiple versions of documentation, at least out of the box.
 
 More info about Github Pages: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 
-## Summary
+## TL;DR
 `Dokka` is great tool for documenting `Kotlin` code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge. All code mentioned above comes from my project [GdzieTaBiedra](https://github.com/asvid/GdzieTaBiedra) and generated documentation is available [HERE](http://asvid.github.io/GdzieTaBiedra/)
