@@ -49,24 +49,7 @@ What if there's something *hacky* in your code that should be documented (for th
 Finaly some code! This post is targeting Android developers, so people who use, or should (or would love to) use `Kotlin` in their projects, so there will be no `JavaDoc` here, no no. Say hi to [Dokka](https://github.com/Kotlin/dokka) and [KDoc syntax](https://kotlinlang.org/docs/reference/kotlin-doc.html).  
 `Dokka` is documentation engine that uses `KDoc` syntaxed comments to generate documents in one of many formats, there is also `JavaDoc` but I see no reason to use it. What I like most about `KDoc` is that linking to other methods, classes or code samples is really easy and interactive. But besides that, it's just like `JavaDoc`.
 
-```
-/**
- * A group of *members*.
- *
- * This class has no useful logic; it's just a documentation example.
- *
- * @param T the type of a member in this group.
- * @property name the name of this group.
- * @constructor Creates an empty group.
- */
-class Group<T>(val name: String) {
-    /**
-     * Adds a [member] to this group.
-     * @return the new size of the group.
-     */
-    fun add(member: T): Int { ... }
-}
-```
+{% gist ce06150320153ea0747c6a974dad66f2 %}
 
 There are basically two things here: *block tags* like `@param` and *inline markup* like `[member]`.
 Available *block tags* are:
@@ -89,28 +72,12 @@ To be honest I use mostly `@param @return @sample @throws` and some basic info a
 ## Generating documents
 After adding few comments like above one, it would be nice to finaly see the documentation. Just few steps to do so:
 In project `build.gradle` add:
-```
-buildscript {
-    repositories {
-        jcenter()
-    }
 
-    dependencies {
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
-    }
-}
-```
+{% gist c2df0f0dc8dd6940e58a7c38582c6e3c %}
 
 And in application `build.gradle`:
-```
-apply plugin: 'org.jetbrains.dokka'
 
-dokka {
-    outputFormat = 'html'
-    outputDirectory = "$buildDir/docs"
-    includes = ['extra.md']
-}
-```
+{% gist 6c2a12f66044cac9643ee67a1d703164 %}
 
 This should add task `dokka` in group `documentation`  
 ![Dokka task](assets/posts/android-build-hacks-3/dokka_task.png)  
@@ -134,150 +101,43 @@ Providing sample code usage makes documentation even clearer than describing met
 
 
 To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:
-```
-rootProject
-  ├── app
-  │   ├── build
-  │   ├── src
-  │   │   ├── androidTest
-  │   │   ├── main
-  │   │   │   ├── java
-  │   │   │   └── res
-  │   │   ├── sample  <- here put sample code
-  │   │   └── test
-  │   ├── ...
-  ├── otherModule
-  ├── ...
-```
+
+{% gist adcdf38d83e3a5f6576070dd7f7f5725 %}
+
 It's best to keep package structure in `sample` directory identical to source code, just like with unit tests. Sample code does not has to be logical or actually do anything, it's just to show how to use documented methods.  
 To inform `Dokka` where is sample code in module you need to add one line to configuration:
-```
-dokka {
-  samples = ['src/sample']
-  ...
-```  
+
+{% gist 474914135109bba01805be57c7d5d19c %}
+
 But for some reason your sample code is going to be documented like any other code, to avoid it add
-```
-/**
- * @suppress
- * */
-```
+
+{% gist 11b34b01928a89cfc1201d4ba0e3cdda %}
+
 over your sample class.
 
 ### Modules
 I've had few approaches to this and best solution I've found so far is to configure `Dokka` only in application module `build.gradle` and add dependency modules to `sourceDirs`. This way linking to modules documentation works perfectly, there are no problems with `<ERROR CLASS>` for 3rd party libraries classes, linking to source code works, and configuration for whole project is only in one file - easy to move to separate Gradle script.  
 To add modules used by `app` to `Dokka` use fallowing code:
-```
-  Set<ProjectDependency> deps =
-      project.configurations.collectMany {
-        it.allDependencies
-      }.findAll {
-        it instanceof ProjectDependency
-      }
 
-  sourceDirs = files(deps.collect {
-    p ->
-      def path = new File(p.getDependencyProject().projectDir, "/src/main/java")
-      def relativePath = rootDir.toPath().relativize(path.toPath()).toString()
-      linkMapping {
-        dir = path
-        url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativePath"
-        suffix = "#L"
-      }
-      return path
-  })
-```
+{% gist b499e52512e945ae7ae2e57ea0f9b561 %}
+
 First part generates list of project dependencies that are local modules, and second part generates source code linking to each dependency and adds its path to `sourceDirs`.
 
 ### Libraries
 Linking 3rd party libraries easer than internal project modules, just by adding `externalDocumentationLink` with `url` pointing to `package-list` of library creates hyperlinks. Not every library documentation provides `package-list`, but most popular ones do. Sometimes it's necessary to provide separate link to documentation and `package-list` itself - see `Android` documentation below.
-```
- externalDocumentationLink {
-   url = new URL("https://developer.android.com/reference/")
-   packageListUrl =
-       new URL("https://developer.android.com/reference/android/support/package-list")
- }
- externalDocumentationLink {
-   url = new URL("https://docs.oracle.com/javase/7/docs/api/")
- }
- externalDocumentationLink {
-   url = new URL("http://reactivex.io/RxJava/javadoc/")
- }
- externalDocumentationLink {
-   url = new URL("http://jakewharton.github.io/timber/")
- }
-```
+
+{% gist d0964be797db32193a2b613e5205fb98 %}
 
 ### Code
 With linked modules, samples and 3rd party libraries your documentation should look pretty professional. But you can make it even better, by linking to code on repository. If documentation is for some reason still unclear, user reading it can with single click be redirected to code of class or method and check how it works directly. It's kinda last resort because if your documentation is so bad that anyone who reads it has to dig into code each time - you did something very wrong.
 
-```
-def appPath = new File(project.projectDir, "/src/main/java")
-def relativeAppPath = rootDir.toPath().relativize(appPath.toPath()).toString()
-linkMapping {
-  dir = appPath
-  url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativeAppPath"
-  suffix = "#L"
-}
-```
+{% gist ccd2624ebe618c34a3b50c814a77b4bc %}
 
 ### Whole config
 I've described parts of `Dokka` configuration, but I think it's best to show the whole thing now:
-```
-apply plugin: 'org.jetbrains.dokka-android'
 
-dokka {
-  moduleName = ""
+{% gist fe880bb2f1d2d41ce2a18cd1883df711 %}
 
-  outputDirectory = "$rootDir/docs"
-  outputFormat = "html"
-
-  includes = ['extra.md']
-  samples = ['src/sample']
-
-  includeNonPublic = false
-  skipDeprecated = false
-  reportUndocumented = false
-  skipEmptyPackages = true
-
-  externalDocumentationLink {
-    url = new URL("https://docs.oracle.com/javase/7/docs/api/")
-  }
-  externalDocumentationLink {
-    url = new URL("http://reactivex.io/RxJava/javadoc/")
-  }
-  externalDocumentationLink {
-    url = new URL("http://jakewharton.github.io/timber/")
-  }
-
-  def appPath = new File(project.projectDir, "/src/main/java")
-  def relativeAppPath = rootDir.toPath().relativize(appPath.toPath()).toString()
-  linkMapping {
-    dir = appPath
-    url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativeAppPath"
-    suffix = "#L"
-  }
-
-  Set<ProjectDependency> deps =
-      project.configurations.collectMany {
-        it.allDependencies
-      }.findAll {
-        it instanceof ProjectDependency
-      }
-
-  sourceDirs = files(deps.collect {
-    p ->
-      def path = new File(p.getDependencyProject().projectDir, "/src/main/java")
-      def relativePath = rootDir.toPath().relativize(path.toPath()).toString()
-      linkMapping {
-        dir = path
-        url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativePath"
-        suffix = "#L"
-      }
-      return path
-  })
-}
-```
 I've moved it to separate Gradle script `DokkaConfig.gradle` in project root directory, so in application `build.gradle` all I nedd to do is add `apply from: '../DokkaConfig.gradle'`
 
 ## Publish it
