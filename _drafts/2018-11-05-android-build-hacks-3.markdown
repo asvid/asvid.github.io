@@ -108,6 +108,7 @@ apply plugin: 'org.jetbrains.dokka'
 dokka {
     outputFormat = 'html'
     outputDirectory = "$buildDir/docs"
+    includes = ['extra.md']
 }
 ```
 
@@ -121,10 +122,16 @@ Running this task will generate documentation in `docs` directory in project roo
   - `jekyll` - Jekyll compatible markdown
 - `kotlin-website` - internal format used for documentation on kotlinlang.org
 
+Adding `extra.md` to config allows you to write some info about documentation that will be added on top of `index.html` file. It can be changelog or TODOs in single or separate files.
+
 ## Linking
 Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning `Observable` to RxJava documentation. Also documenting methods may be even better with provided sample usage available right in generated HTML.
 
 ### Samples
+Providing sample code usage makes documentation even clearer than describing method parameters and return value. For user it can look like that:  
+![Code sample in generated documentation](assets/posts/android-build-hacks-3/sample.png)  
+
+
 To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:
 ```
 rootProject
@@ -148,25 +155,43 @@ To inform `Dokka` where is sample code in module you need to add one line to con
 dokka {
   samples = ['src/sample']
   ...
+```  
+But this will cause your sample code to be documented, to avoid it add
 ```
+/**
+ * @suppress
+ * */
+```
+over your sample class.
+
 
 ### Modules
-To link other project modules you have to add `externalDocumentationLink` in `dokka` setup.
+I've had few approaches to this and best solution I've found so far is to configure `Dokka` only in application module `build.gradle` and add dependency modules to `sourceDirs`. This way linking to modules documentation works perfectly, there are no problems with `<ERROR CLASS>` for 3rd party libraries classes, linking to source code works, and configuration for whole project is only in one file - easy to move to separate Gradle script.  
+To add modules used by `app` to `Dokka` use fallowing code:
 ```
-  externalDocumentationLink {
-    url = new URL("file://$outputDirectory/domain/")
-  }
-```
-The `url` should point to generated `package-list` file. I like to put main project documentation in root of `docs` directory, and each module in separate directory. Each module documentation is generated separately. Every module should be linked with all modules in dependencies, but there is no need to link everything to `app` module. If module `app` has dependency to module `A` that is dependent from modules `B` and `C`, module `app` should link only to module `A` documentation, and module `A` should have links to modules `B` and `C`.
-This may cause build failure if `app` documentation task runs before submodules tasks - it will try to use `package-list` files before they are created. To solve it just make `app` Dokka task dependent from modules linked in Dokka configuration.  
-```
-tasks.dokka{
-  dependsOn(':A:dokka')
-}
-```
+  Set<ProjectDependency> deps =
+      project.configurations.collectMany {
+        it.allDependencies
+      }.findAll {
+        it instanceof ProjectDependency
+      }
 
-### Library
-Linking 3rd party libraries works the same way like internal project modules, by adding `externalDocumentationLink` with `url` pointing to `package-list` of library creates hyperlinks. Not every library documentation provides `package-list`, but most popular ones do. Sometimes it's necessary to provide separate link to documentation and `package-list` itself - see `Android` documentation below.
+  sourceDirs = files(deps.collect {
+    p ->
+      def path = new File(p.getDependencyProject().projectDir, "/src/main/java")
+      def relativePath = rootDir.toPath().relativize(path.toPath()).toString()
+      linkMapping {
+        dir = path
+        url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativePath"
+        suffix = "#L"
+      }
+      return path
+  })
+```
+First part generates list of project dependencies that are local modules, and second part generates source code linking to each dependency and adds its path to `sourceDirs`.
+
+### Libraries
+Linking 3rd party libraries easer than internal project modules, just by adding `externalDocumentationLink` with `url` pointing to `package-list` of library creates hyperlinks. Not every library documentation provides `package-list`, but most popular ones do. Sometimes it's necessary to provide separate link to documentation and `package-list` itself - see `Android` documentation below.
 ```
  externalDocumentationLink {
    url = new URL("https://developer.android.com/reference/")
@@ -188,12 +213,73 @@ Linking 3rd party libraries works the same way like internal project modules, by
 With linked modules, samples and 3rd party libraries your documentation should look pretty professional. But you can make it even better, by linking to code on repository. If documentation is for some reason still unclear, user reading it can with single click be redirected to code of class or method and check how it works directly. It's kinda last resort because if your documentation is so bad that anyone who reads it has to dig into code each time - you did something very wrong.
 
 ```
+def appPath = new File(project.projectDir, "/src/main/java")
+def relativeAppPath = rootDir.toPath().relativize(appPath.toPath()).toString()
 linkMapping {
-      dir = "src/main/java"
-      url = "https://github.com/asvid/GdzieTaBiedra/tree/master/app/src/main/java/"
-      suffix = "#L"
-    }
+  dir = appPath
+  url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativeAppPath"
+  suffix = "#L"
+}
 ```
+
+### Whole config
+I've described parts of `Dokka` configuration, but I think it's best to show the whole thing now:
+```
+apply plugin: 'org.jetbrains.dokka-android'
+
+dokka {
+  moduleName = ""
+
+  outputDirectory = "$rootDir/docs"
+  outputFormat = "html"
+
+  includes = ['extra.md']
+  samples = ['src/sample']
+
+  includeNonPublic = false
+  skipDeprecated = false
+  reportUndocumented = false
+  skipEmptyPackages = true
+
+  externalDocumentationLink {
+    url = new URL("https://docs.oracle.com/javase/7/docs/api/")
+  }
+  externalDocumentationLink {
+    url = new URL("http://reactivex.io/RxJava/javadoc/")
+  }
+  externalDocumentationLink {
+    url = new URL("http://jakewharton.github.io/timber/")
+  }
+
+  def appPath = new File(project.projectDir, "/src/main/java")
+  def relativeAppPath = rootDir.toPath().relativize(appPath.toPath()).toString()
+  linkMapping {
+    dir = appPath
+    url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativeAppPath"
+    suffix = "#L"
+  }
+
+  Set<ProjectDependency> deps =
+      project.configurations.collectMany {
+        it.allDependencies
+      }.findAll {
+        it instanceof ProjectDependency
+      }
+
+  sourceDirs = files(deps.collect {
+    p ->
+      def path = new File(p.getDependencyProject().projectDir, "/src/main/java")
+      def relativePath = rootDir.toPath().relativize(path.toPath()).toString()
+      linkMapping {
+        dir = path
+        url = "https://github.com/asvid/GdzieTaBiedra/tree/master/$relativePath"
+        suffix = "#L"
+      }
+      return path
+  })
+}
+```
+I've moved it to separate Gradle script `DokkaConfig.gradle` in project root directory, so in application `build.gradle` all I nedd to do is add `apply from: '../DokkaConfig.gradle'`
 
 ## Publish it
 After creating awesome documentation it should be available for anyone who needs to use it. If its documentation of your employer product, maybe host it internally. If it's open-source library - share it with rest of the world just like your code.  
@@ -204,13 +290,13 @@ It also depend on your case. You may want to generate documentation after each p
 I suggest generating after (or during) each release.  
 Other case is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is [https://www.11ty.io/docs/versions/](https://www.11ty.io/docs/versions/).
 
-But for now lets focus on having at least most recent version of documentation, since `Dokka` doesn't have in-build tools to support documentation versioning and its kinda separate topic.
+But for now lets focus on having at least most recent version of documentation, since `Dokka` doesn't have in-build tools to support documentation versioning and this is whole new topic.
 
 ### GitHub Pages
 One of output formats of `Dokka` documentation is `gfm` which stands for `GitHub flavored markdown`. It allows you to publish for free your documentation via `GitHub Pages`. What are GitHub Pages? Well this blog is one :) basically they are `html` websites generated from `markdown` by `Jekyll`. It works kinda automagically, if you generate your documentation to `/docs` directory, and your GitHub repo settings you select GitHub Pages source as `master branch /docs folder` it will regenerate website each time you push to branch `master`.
 ![GitHub Pages settings](assets/posts/android-build-hacks-3/github_pages.png)  
 
-Also you can select one of few themes for your documentation.  
+Also you can select one of few themes for your documentation.
 
 ![GitHub Pages settings](assets/posts/android-build-hacks-3/github_pages_themes.png)
 
@@ -218,7 +304,7 @@ Website generation takes a minute, and after your fresh documentation will be av
 
 Unfortunately GitHub pages does not support multiple versions of documentation
 
-More info: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
+More info about Github Pages: [https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 
-### Other ways to publish
-**TODO -> mention few other providers**
+## Summary
+`Dokka` is great tool for documenting `Kotlin` code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge.
