@@ -7,6 +7,11 @@ layout: null
 		<title>{{ site.title }}</title>
 		<description>{{ site.rss_description }}</description>
 		<link>{{ site.BASE_PATH }}/</link>
+		<enclosure 
+			url="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" 
+			type="image/jpeg" 
+			length="17239"
+			/>
 		<atom:link href="{{ site.BASE_PATH }}/{{ site.rss_path }}" rel="self" type="application/rss+xml" />
 		{% for post in site.posts limit:10 %}
 			<item>

@@ -14,10 +14,10 @@ defaults:
     scope:
       path: "" # empty string for all files
     values:
-      title: Log.Adam()
+      title: 
 
 description: Hi I'm Adam
-rss_description: Developers blog
+rss_description: Adam Świderski developer blog
 author:
   name: Adam Świderski
   email: adam.swiderski89@gmail.com
