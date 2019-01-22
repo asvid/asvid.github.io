@@ -74,6 +74,10 @@
 				<i class="fa fa-envelope"></i>
 			</a>
 			{% endif %}
+			
+			<a type="button" class="navbar-toggle nav-link" href="{{ site.BASE_PATH }}/{{ site.rss_path }}">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
 			<a class="navbar-brand" href="{{ site.BASE_PATH }}/">
 				<img src="http://www.gravatar.com/avatar/{{site.author.email_md5}}?s=35" class="img-circle" />
 			</a>
@@ -92,17 +96,10 @@
 
 	<!-- nav-menu-dropdown -->
 	<div class="btn-group hidden-xs" id="nav-menu">
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-			<i class="fa fa-bars"></i>
-		</button>
-		<ul class="dropdown-menu" role="menu">
-			<li><a href="{{ site.BASE_PATH}}/"><i class="fa fa-home"></i>Home</a></li>
-			<li><a href="{{ site.ABOUT}}/"><i class="fa fa-user-circle"></i>About</a></li>
-			<li><a href="{{ site.BASE_PATH}}/{{ site.categories_path }}"><i class="fa fa-folder"></i>Categories</a></li>
-			<li><a href="{{ site.BASE_PATH}}/{{ site.tags_path }}"><i class="fa fa-tags"></i>Tags</a></li>
-			<li class="divider"></li>
-			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
-		</ul>
+		<a type="button" class="navbar-toggle nav-link" href="{{ site.BASE_PATH}}/"><i class="fa fa-home"></i>Home</a>
+		<a type="button" class="navbar-toggle nav-link" href="{{ site.ABOUT}}/"><i class="fa fa-user-circle"></i>About</a>
+		<a type="button" class="navbar-toggle nav-link" href="{{ site.BASE_PATH}}/{{ site.categories_path }}"><i class="fa fa-folder"></i>Categories</a>
+		<a type="button" class="navbar-toggle nav-link" href="{{ site.BASE_PATH}}/{{ site.tags_path }}"><i class="fa fa-tags"></i>Tags</a>
 	</div>
 
 	<div class="col-sm-3 sidebar hidden-xs"

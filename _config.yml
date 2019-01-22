@@ -14,7 +14,7 @@ defaults:
     scope:
       path: "" # empty string for all files
     values:
-      title: 
+      title: DevLog
 
 description: Hi I'm Adam
 rss_description: Adam Świderski developer blog
