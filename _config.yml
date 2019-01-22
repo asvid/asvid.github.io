@@ -6,7 +6,7 @@ highlighter: rouge
 markdown: kramdown
 disqus: asvid
 google_analytics: UA-68530276-7
-title: Developers blog
+title: Adam Świderski blog
 url: http://asvid.github.io/
 
 defaults:
@@ -17,6 +17,7 @@ defaults:
       title: Log.Adam()
 
 description: Hi I'm Adam
+rss_description: Developers blog
 author:
   name: Adam Świderski
   email: adam.swiderski89@gmail.com

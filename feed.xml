@@ -5,7 +5,7 @@ layout: null
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>{{ site.title }}</title>
-		<description>{{ site.description }}</description>
+		<description>{{ site.rss_description }}</description>
 		<link>{{ site.BASE_PATH }}/</link>
 		<atom:link href="{{ site.BASE_PATH }}/{{ site.rss_path }}" rel="self" type="application/rss+xml" />
 		{% for post in site.posts limit:10 %}
