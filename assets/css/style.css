@@ -51,7 +51,9 @@ a.nav-link:hover { color: #777; }
 
 .bio span{
 	background: #000;
-	padding: 10px;
+	padding: 10px 0px;
+	line-height: 2;
+	box-shadow: 10px 0 0 black, -10px 0 0 black;
 }
 
 #contact-list{
@@ -98,6 +100,7 @@ article .share .gplus:hover {
 
 .page-header {
 	color: #4e556e;
+	margin-top: 0px;
 }
 
 @media only screen and (min-width: 768px) {
@@ -314,4 +317,16 @@ p {
 	text-transform: uppercase;
 	font-size: 14px;
 	letter-spacing: 3px;
+}
+
+#topMenu{
+	position: relative;
+	top: 0;
+	right: 0;
+	float: right;
+}
+
+#topMenu a{
+	margin-right: 8px;
+	font-size: 1.3em;
 }
