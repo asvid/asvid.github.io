@@ -21,9 +21,9 @@ image: /assets/posts/nyan-your-terminal/nyan.jpg
 * TOC
 {:toc}
 
-*Disclamer #1: I'm an Android developer, not sysadmin. I use terminal to help me with my workflow, not as my main tool, so please keep this in mind :)*
+*Disclaimer #1: I'm an Android developer, not sysadmin. I use terminal to help me with my workflow, not as my main tool, so please keep this in mind :)*
 
-*Disclamer #2: This is based on Linux (Ubuntu), but most stuff should work on OSX also.*
+*Disclaimer #2: This is based on Linux (Ubuntu), but most stuff should work on OSX also.*
 
 # Terminal?
 If you are a developer (and not a Windows peasant), you might had to use terminal for day to day stuff like installing node.js or python packages, or running scripts. But there is a lot more in this simple text user interface. Imagine you could do anything, and I mean **ANYTHING** you can do with GUI software or even more, in single window, just by typing orders. Unlimited power (and responsibility also...) available for those who are not afraid.
