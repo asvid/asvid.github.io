@@ -128,6 +128,21 @@ article {
 	padding: 0 5% 0;
 }
 
+@media screen and (max-width: 991px){	
+	article {
+		padding: 0 !important;
+	}
+	.aboutPageContainer{
+		margin: 0 !important;
+	}
+	.aboutContent {
+		width: 100% !important;
+	}
+}
+article {
+	padding: 0 5% 0;
+}
+
 article.home {
 	border-bottom: 1px solid #eee
 }
