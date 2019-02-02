@@ -20,8 +20,10 @@ tagline:
   </span>
 
   <h2>
-    <a href="{{ site.BASE_PATH }}{{ post.url }}">{{ post.title }}</a>
+    <a href="{{ site.BASE_PATH }}{{ post.url }}">{{ post.title }}</a> 
   </h2>
+
+  <p class="post_category">in <a href="/categories.html#{{ post.categories[0] | replace:' ','-' }}-ref">{{ post.categories }}</a></p>
 
   <div>
     {% if post.fullview %}
@@ -45,6 +47,14 @@ tagline:
       {{ words | divided_by:180 }} mins)
     {% endif %}
     </p>
+
+  <p>
+    {% for item in post.tags %}
+      <span class="post_tags">
+        <a href="/tags.html#{{ item | replace:' ','-' }}-ref">{{ item }}</a>
+      </span>
+    {% endfor %}
+  </p>
 
 </article>
 {% endfor %}

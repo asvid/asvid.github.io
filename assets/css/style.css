@@ -345,3 +345,14 @@ p {
 	margin-right: 8px;
 	font-size: 1.3em;
 }
+
+.post_tags {
+	background-color: gainsboro;
+	padding: 5px;
+	display: inline-block;
+	font-size: small;
+}
+
+.post_category {
+	font-weight: bold;
+}

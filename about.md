@@ -6,7 +6,7 @@ permalink: /about/
 ---
 
 I'm Android developer at [Fibaro Home Inteligence][f], but I used to do web development too.
-I'm clean code fan interested in design patterns and dev-ops culture, I really like automating stuff.
+I'm clean code fan interested in software architecture, design patterns and dev-ops culture, I really like automating stuff.
 
 In my spare time, I try not to forget how to play guitar, read books (mostly about programming), watch really bad movies, or make my own Android apps - usually as sandboxes to check new libraries or approaches. I also like wasting time on computer games :)
 
