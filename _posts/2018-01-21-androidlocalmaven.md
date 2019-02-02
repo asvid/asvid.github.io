@@ -11,8 +11,11 @@ tags:
 - Gradle
 - Android
 - Kotlin
+- library
+- modularization
+- build config
 categories:
-- Tutorial
+- Programming
 image: /assets/posts/local-maven-repo/lib.jpg
 ---
 

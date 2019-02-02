@@ -10,8 +10,9 @@ tags:
 - UI
 - Kotlin
 - Android
+- custom view
 categories:
-- Tutorial
+- Programming
 ---
 
 In my project I wanted to have progress bar that shows how much time you have until

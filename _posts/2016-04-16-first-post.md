@@ -6,7 +6,6 @@ description: This is first post, I'm just saying hello here :)
 permalink: first-post
 comments: false
 tags:
-- hello
 ---
 
 This is first post, so I just want to say HI!

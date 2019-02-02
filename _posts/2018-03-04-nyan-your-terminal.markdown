@@ -13,8 +13,7 @@ tags:
 - tools
 - Nyan Cat
 categories:
-- Tools
-- Linux
+- Technology
 image: /assets/posts/nyan-your-terminal/nyan.jpg
 ---
 

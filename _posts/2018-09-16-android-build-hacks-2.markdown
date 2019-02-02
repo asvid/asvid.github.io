@@ -9,10 +9,9 @@ crosspost_to_medium: true
 tags:
 - Android
 - Gradle
-- Build
-- DevOps
+- build config
 categories:
-- Tools
+- Programming
 image: /assets/posts/android-build-hacks-2/bg-small.jpg
 ---
 

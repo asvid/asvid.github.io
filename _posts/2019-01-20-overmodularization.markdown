@@ -8,10 +8,9 @@ comments: true
 crosspost_to_medium: false
 tags:
 - Android
-- Architecture
-- Library
-- Module
-
+- architecture
+- library
+- modularization
 categories:
 - Architecture
 image: /assets/posts/overmodularity/overmodularity.jpg

@@ -9,13 +9,11 @@ crosspost_to_medium: false
 tags:
 - Android
 - Gradle
-- Build
-- DevOps
+- build config
 - Dokka
-- Documentation
+- documentation
 categories:
-- Tools
-- Documentation
+- Programming
 image: /assets/posts/android-build-hacks-3/bg.jpg
 ---
 
