@@ -8,4 +8,5 @@ group :jekyll_plugins do
   gem "wdm" if Gem.win_platform?
   gem 'jekyll-feed'
   gem 'jekyll-gist'
+  gem 'jekyll-sitemap'
 end

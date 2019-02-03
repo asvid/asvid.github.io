@@ -37,12 +37,12 @@ sidebar_background_image: /assets/sa.jpg
 
 BASE_PATH:
 ABOUT: about
-
 plugins:
   - jekyll-paginate
   - jekyll-crosspost-to-medium
   - jekyll-feed
   - jekyll-gist
+  - jekyll-sitemap
 
 jekyll-crosspost_to_medium:
   enabled: false
