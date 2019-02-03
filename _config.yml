@@ -6,7 +6,6 @@ highlighter: rouge
 markdown: kramdown
 disqus: asvid
 google_analytics: UA-68530276-7
-title: Adam Świderski blog
 url: http://asvid.github.io/
 
 defaults:
@@ -14,15 +13,17 @@ defaults:
     scope:
       path: "" # empty string for all files
     values:
-      title: DevLog
+      title: DevLog | Adam Świderski | software engineer blog
+      description: Software engineering and architecture | Android | Programming
+      page_title: DevLog
 
-description: Hi I'm Adam
 rss_description: Adam Świderski developer blog
 author:
   name: Adam Świderski
   email: adam.swiderski89@gmail.com
   github: asvid
   linkedin: aswiderski
+  bio_title: Hi I'm Adam
   bio: and I'm a software engineer
   disqus_bio: software engineer
   email_md5: c0092be8e7a926ead4c4a818ea622858
