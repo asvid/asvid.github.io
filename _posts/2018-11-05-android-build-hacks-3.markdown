@@ -78,7 +78,7 @@ And in application `build.gradle`:
 {% gist 6c2a12f66044cac9643ee67a1d703164 %}
 
 This should add task `dokka` in group `documentation`  
-![Dokka task](assets/posts/android-build-hacks-3/dokka_task.png)  
+![Dokka task](assets/posts/android-build-hacks-3/dokka_task.png){: .center-image }  
 
 Running this task will generate documentation in `docs` directory in project root, just as it was set in `outputDirectory`. Selected output format is `html` - minimalistic html format used by default. Other available formats are:
 - `javadoc` - Dokka mimic to javadoc
@@ -95,7 +95,7 @@ Yay, documentation is generated! But it can be even better. For now, when using 
 
 ### Samples
 Providing sample code usage makes documentation even clearer than describing method parameters and return value. For user it can look like that:  
-![Code sample in generated documentation](assets/posts/android-build-hacks-3/sample.png)  
+![Code sample in generated documentation](assets/posts/android-build-hacks-3/sample.png){: .center-image }  
 
 
 To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:

@@ -427,3 +427,9 @@ p {
 .list-inline {
 	margin-left: 0 !important;
 }
+
+.center-image
+{
+    margin: 0 auto;
+    display: block;
+} 

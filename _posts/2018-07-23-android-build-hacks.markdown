@@ -60,7 +60,7 @@ Above configuration will give us variants: devOtherDebug, prodOtherDebug, devOth
 Please notice that `build type` name comes always on the end - order of names is important. It is similar to CSS, each dimension added to variant overrides previous settings with it's own, and then build type sets them on the end. Just remember this mechanism only overrides settings, it does not clear them.
 
 If you have no idea what is `build variant`, its this thing you select here:
-![build variants window in Android Studio](assets/posts/android-build-hacks/buildVariants.png)
+![build variants window in Android Studio](assets/posts/android-build-hacks/buildVariants.png){: .center-image }
 
 More info about build types and product flavors can be found at [this StackOverflow post](https://stackoverflow.com/questions/27905934/why-are-build-types-distinct-from-product-flavors
 )

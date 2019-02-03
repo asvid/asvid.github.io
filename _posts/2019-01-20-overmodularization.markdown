@@ -27,7 +27,8 @@ So some say it's good to create libraries, but why exactly?
 
 If you are (like me) an Android developer it's highly probable you've handled input fields, like email, password, IP address etc. Handling such fields usually means creating some `helper` class to verify if typed text is in correct form. Yes, there are libs for that, but checking input fields may be very usecase specific - I remember checking if typed IP address is available in local network or outside of it. For me it was faster to create and unit test my own solution than look for library providing such validator. After a while there were few `helpers` like that, and new project appeared were they could be used. So what now, copy and paste code from one project to another? Hell no. I've created library for internal usage that I've shared between both projects.
 <!-- some graph of shared components -->
-![Simple module dependency graph](assets/posts/overmodularity/simple_module.png)
+
+![Simple module dependency graph](assets/posts/overmodularity/simple_module.png){: .center-image }
 
 
 ## Story time
@@ -35,7 +36,8 @@ If you are (like me) an Android developer it's highly probable you've handled in
 
 Now imagine complex user flow shared between projects, like login or registration to cloud service. Basically it's few screens with inputs, some HTTP requests, maybe data persistence. On the end you want to know if user is properly logged in and get auth data for future HTTP requests. If the flow itself is not that straightforward, has some weird branches only business seems to understand, it appears really worthy to write it once and use in upcoming project that will share this functionality.
 <!-- complicated flow example -->
-![Complex module dependency graph](assets/posts/overmodularity/complex_module.png)
+
+![Complex module dependency graph](assets/posts/overmodularity/complex_module.png){: .center-image }
 
 ### Here fun begins
 But what to put into this login module? It needs to talk with cloud, so maybe HTTP client should be added. User email should be saved so some simple key-value persistence will come handy. Layouts, fragments, presenters and whole navigation - after all we just need to get logged user data from this module. Library is using other shared modules like `Commons Library` from first example, also some custom views like input fields with fancy error showing. Library API was made in fancy at the time RxJava 1. Everything versioned and kept on internal artifact server (like JFrog Artifactory), ready to use in future projects. Business assured that nothing will change in user login flow so developers were sure they are making good decision cuppling it all together.

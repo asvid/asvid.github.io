@@ -118,7 +118,7 @@ Typing in console: `gradle app:assembleDebug --profile` will generate similar re
 Other tools to profile your build are:
 - --dry-run - tells you how much time your project need for configuration, should be few seconds max
 - --info - will print in console why certain tasks are executed
-![Gradle --info output](assets/posts/android-build-hacks-2/gradle-info.png)
+![Gradle --info output](assets/posts/android-build-hacks-2/gradle-info.png){: .center-image }
 - --scan - will send build result to [Gradle Scans website](https://scans.gradle.com) where you may find some additional info about your build process
 
 ### Gradle scripts
