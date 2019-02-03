@@ -1,5 +1,38 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu:500&subset=latin,latin-ext);
 
+@media only screen and (min-width: 768px) {
+    .page-header{
+        margin-right: 70px;
+    }
+}
+@media screen and (max-width: 991px){	
+	article {
+		padding: 0 !important;
+	}
+	.aboutPageContainer{
+		margin: 0 !important;
+	}
+	.aboutContent {
+		width: 100% !important;
+	}
+	/* .cat-tag-menu {
+		margin-left: -15px;
+		margin-right: -15px;
+	}
+	.cat-tag-menu a{
+		padding: 10px 5px !important;
+	} */
+	.tab-content {
+		margin-top: 15px;
+	} 
+	.nav-tabs-vertical>li.active>a, .nav-tabs-vertical>li.active>a:hover, .nav-tabs-vertical>li.active>a:focus{
+		border-right-color: #ddd !important;
+	}
+	.nav-tabs-vertical {
+		border-right: transparent !important;
+	}
+}
+
 body{
 	color: #2c3e50;
 	font-family: 'Arial', sans-serif;
@@ -103,12 +136,6 @@ article .share .gplus:hover {
 	margin-top: 0px;
 }
 
-@media only screen and (min-width: 768px) {
-    .page-header{
-        margin-right: 70px;
-    }
-}
-
 article{
 	margin-bottom: 40px;
 }
@@ -126,18 +153,6 @@ article{
 
 article {
 	padding: 0 5% 0;
-}
-
-@media screen and (max-width: 991px){	
-	article {
-		padding: 0 !important;
-	}
-	.aboutPageContainer{
-		margin: 0 !important;
-	}
-	.aboutContent {
-		width: 100% !important;
-	}
 }
 article {
 	padding: 0 5% 0;
