@@ -36,7 +36,7 @@ Anyway, this text is not about just creating libraries and putting them online. 
 - no need to modify your project, just ```build.gradle``` file
 - you don't have to know where are your local libs stored, but its good to know:
   - Unix/Mac OS X – ~/.m2
-  - Windows – C:\Documents and Settings\{username}\.m2
+  - Windows – C:\Users\{username}\.m2
 - each local release **overrides previous one** with same version number, so there is no need to update version each time (like for [JitPack][JitPack] or other remote ```Maven``` repository)
 - you may have many local versions of your library, versioning works in the same way. You can even develop separate versions of your lib that are used in different projects, because of different ```minSdkVersion``` etc.
 
@@ -74,7 +74,7 @@ publishing {
         setArtifactId(artifactId)
         version android.defaultConfig.versionName
 
-        artifact(bundleRelease)
+        artifact(bundleReleaseAar)
       }
     }
 }
@@ -89,7 +89,7 @@ publishing {
         setGroupId(groupId)
         setArtifactId(artifactId)
         version android.defaultConfig.versionName
-        artifact(bundleRelease)
+        artifact(bundleReleaseAar)
 
         pom.withXml {
           def dependenciesNode = asNode().appendNode('dependencies')
