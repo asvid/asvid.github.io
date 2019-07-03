@@ -67,43 +67,47 @@ Now is the only tricky part. Following code should be added at the bottom of lib
 #### Typical case
 If your lib is single module, or you have many library modules in single project but without mutual dependencies:
 ```
-publishing {
-    publications {
-      library(MavenPublication) {
-        setGroupId(groupId)
-        setArtifactId(artifactId)
-        version android.defaultConfig.versionName
+project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
 
-        artifact(bundleReleaseAar)
+          artifact bundleReleaseAar
+        }
       }
-    }
+  }
 }
 ```
 
 #### Not-so-typical case
 If your library project contains many modules that are independent libs and one that is collection of them - it might sound stupid but sometimes it's useful. You can use it also for single module, but it's just an overkill. :
 ```
-publishing {
-    publications {
-      library(MavenPublication) {
-        setGroupId(groupId)
-        setArtifactId(artifactId)
-        version android.defaultConfig.versionName
-        artifact(bundleReleaseAar)
+project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
+          artifact bundleReleaseAar 
 
-        pom.withXml {
-          def dependenciesNode = asNode().appendNode('dependencies')
-          configurations.compile.allDependencies.each {
-            if (it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null) {
-            def dependencyNode = dependenciesNode.appendNode('dependency')
-            dependencyNode.appendNode('groupId', it.group)
-            dependencyNode.appendNode('artifactId', it.name)
-            dependencyNode.appendNode('version', it.version)
+          pom.withXml {
+            def dependenciesNode = asNode().appendNode('dependencies')
+            configurations.compile.allDependencies.each {
+              if (it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null) {
+              def dependencyNode = dependenciesNode.appendNode('dependency')
+              dependencyNode.appendNode('groupId', it.group)
+              dependencyNode.appendNode('artifactId', it.name)
+              dependencyNode.appendNode('version', it.version)
+              }
             }
           }
         }
       }
-    }
+  }
 }
 ```
 
@@ -140,6 +144,6 @@ I highly recommend using local repository only for development and testing your 
 This approach to library development saved me **tons** of useless work and waiting for publishing on remote repository. I hope with this tutorial I can save some of your time. Or maybe you've figure it out in better way? :)
 
 [AndroidArsenal]: https://android-arsenal.com/
-[JitPack]: [https://jitpack.io/]
+[JitPack]: https://jitpack.io/
 [How to JitPack your lib]: https://medium.com/@ome450901/publish-an-android-library-by-jitpack-a0342684cbd0
 [github]: https://github.com/asvid/local_maven_repo
