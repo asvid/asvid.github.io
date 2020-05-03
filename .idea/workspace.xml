@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/_drafts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_projects/0 Wedding App.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP new post">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_drafts/2020-05-03-shell-script-basics.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_drafts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +51,7 @@
     <option name="showVisibilityIcons" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="feed&#9;FILE&#9;file:///home/adam/repo/asvid.github.io/feed.xml" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -559,7 +558,7 @@
       <workItem from="1466446701416" duration="198000" />
       <workItem from="1466447144530" duration="4476000" />
       <workItem from="1467450768566" duration="889000" />
-      <workItem from="1588498935150" duration="8410000" />
+      <workItem from="1588498935150" duration="12536000" />
     </task>
     <task id="LOCAL-00001" summary="quick fix">
       <created>1467543297115</created>
@@ -568,7 +567,14 @@
       <option name="project" value="LOCAL" />
       <updated>1467543297115</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="WIP new post">
+      <created>1588512373705</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1588512373705</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -584,7 +590,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="quick fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="quick fix" />
+    <MESSAGE value="WIP new post" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP new post" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#Plugins" timestamp="1588499748855">
@@ -599,6 +606,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1588500882556" />
+    <state x="342" y="51" key="CommitChangelistDialog2" timestamp="1588512373359">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="342" y="51" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1588512373359" />
     <state x="523" y="356" key="Github.CreateGistDialog" timestamp="1588503343382">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -607,13 +618,17 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1588509356980" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1588512399495">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588512399495" />
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588499013923">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588499013923" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1588509297829">
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1588534610967">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1588509297829" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1588534610967" />
   </component>
 </project>

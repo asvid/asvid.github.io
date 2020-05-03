@@ -432,4 +432,18 @@ p {
 {
     margin: 0 auto;
     display: block;
-} 
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table, th, td {
+	padding: 5px;
+	text-align: left;
+}
+th {
+	background-color: #f2756a;
+	color: white;
+}
+tr:nth-child(even) {background-color: #f2f2f2;}
