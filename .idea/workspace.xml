@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP new post">
+      <change afterPath="$PROJECT_DIR$/_includes/default_no_sidebar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_layouts/default_no_sidebar.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wedding.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2020-05-03-shell-script-basics.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_drafts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,16 +57,20 @@
     <property name="SearchEverywhereHistoryKey" value="feed&#9;FILE&#9;file:///home/adam/repo/asvid.github.io/feed.xml" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/_projects" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/_layouts" />
     <property name="settings.editor.selected.configurable" value="editing.templates" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/_drafts" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/_layouts" />
+      <recent name="$PROJECT_DIR$/_includes" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/_projects" />
       <recent name="$PROJECT_DIR$/assets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/_posts" />
+      <recent name="$PROJECT_DIR$/_drafts" />
     </key>
   </component>
   <component name="RunManager">
@@ -558,7 +564,9 @@
       <workItem from="1466446701416" duration="198000" />
       <workItem from="1466447144530" duration="4476000" />
       <workItem from="1467450768566" duration="889000" />
-      <workItem from="1588498935150" duration="12536000" />
+      <workItem from="1588498935150" duration="12826000" />
+      <workItem from="1588592705509" duration="111000" />
+      <workItem from="1589622924147" duration="1046000" />
     </task>
     <task id="LOCAL-00001" summary="quick fix">
       <created>1467543297115</created>
@@ -594,10 +602,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="WIP new post" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="320" y="115" key="#Plugins" timestamp="1588499748855">
+    <state x="320" y="115" key="#Plugins" timestamp="1588572998881">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="115" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1588499748855" />
+    <state x="320" y="115" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1588572998881" />
     <state x="456" y="298" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1588509242218">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -618,17 +626,26 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1588509356980" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1588512399495">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1588536189283">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588512399495" />
-    <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588499013923">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
+    <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1588592705496">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588499013923" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1588534610967">
+    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-287.-1080.1920.1080@0.0.1440.900" timestamp="1588592705496" />
+    <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588536178249">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1588534610967" />
+    <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
+    <state x="353" y="-783" width="639" height="486" key="find.popup" timestamp="1589623461694">
+      <screen x="-287" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
+    <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup" timestamp="1589623449855">
+      <screen x="-287" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1588572964948" />
   </component>
 </project>
