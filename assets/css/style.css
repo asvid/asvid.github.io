@@ -451,7 +451,6 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 #wedding{
 	background: #c8e6c9;
 	padding: 100px;
-    position: absolute;
     top: 0;
     left: 0;
     height: 100%;
@@ -462,4 +461,8 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 #wedding h1{
     font-size: 80px;
     font-family: 'Zeyada', cursive;
+}
+
+#googlePlayButton{
+	width: 200px;
 }
