@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP new post">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default_no_sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default_no_sidebar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wedding.html" beforeDir="false" afterPath="$PROJECT_DIR$/wedding.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -544,6 +544,8 @@
       <workItem from="1588498935150" duration="12826000" />
       <workItem from="1588592705509" duration="111000" />
       <workItem from="1589622924147" duration="1046000" />
+      <workItem from="1591782017696" duration="31000" />
+      <workItem from="1591888571907" duration="323000" />
     </task>
     <task id="LOCAL-00001" summary="quick fix">
       <created>1467543297115</created>
@@ -612,10 +614,12 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
-    <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1588592705496">
+    <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1591888586830">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
+    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-1920.-118.1920.1080@0.0.1440.900" timestamp="1591888586830" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-287.-1080.1920.1080@0.0.1440.900" timestamp="1588592705496" />
+    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1591782022093" />
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588536178249">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
