@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="wedding app privacy policy added">
-      <change afterPath="$PROJECT_DIR$/_drafts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.18.24.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.20.38.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.27.20.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.31.03.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.01.34.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.12.31.png" afterDir="false" />
+    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post">
+      <change afterPath="$PROJECT_DIR$/assets/posts/ide-settings-repo/cockpit.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +48,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SONARLINT_PRECOMMIT_ANALYSIS" value="true" />
     <property name="SearchEverywhereHistoryKey" value="feed&#9;FILE&#9;file:///home/adam/repo/asvid.github.io/feed.xml" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -70,6 +66,7 @@
       <recent name="$PROJECT_DIR$/_includes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_posts" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/_drafts" />
     </key>
@@ -573,7 +570,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594148349886</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="New post">
+      <created>1595166613485</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1595166613486</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,7 +595,8 @@
     <MESSAGE value="quick fix" />
     <MESSAGE value="WIP new post" />
     <MESSAGE value="wedding app privacy policy added" />
-    <option name="LAST_COMMIT_MESSAGE" value="wedding app privacy policy added" />
+    <MESSAGE value="New post" />
+    <option name="LAST_COMMIT_MESSAGE" value="New post" />
   </component>
   <component name="WindowStateProjectService">
     <state x="427" y="134" key="#Plugins" timestamp="1589627833411">
@@ -611,11 +616,11 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1588500882556" />
-    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1594148348891">
+    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1595166612478">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="342" y="51" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1588512373359" />
-    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1594148348890" />
+    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1595166612478" />
     <state x="523" y="356" key="Github.CreateGistDialog" timestamp="1588503343382">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -624,22 +629,22 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1588509356980" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1594148600303">
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1595166616962">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1594148600303" />
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595166616962" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1591888586830">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-1920.-118.1920.1080@0.0.1440.900" timestamp="1591888586830" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-287.-1080.1920.1080@0.0.1440.900" timestamp="1588592705496" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1591782022093" />
-    <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1594148254515">
+    <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1595527293542">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
-    <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1594148254515" />
+    <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
     <state x="353" y="-783" width="639" height="486" key="find.popup" timestamp="1589623461694">
       <screen x="-287" y="-1080" width="1920" height="1080" />
     </state>

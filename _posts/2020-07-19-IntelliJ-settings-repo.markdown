@@ -13,7 +13,7 @@ tags:
 - settings
 categories:
 - Today I learned
-image: /assets/posts/shell-scripts-basics/shell.jpg
+image: /assets/posts/ide-settings-repo/cockpit.jpg
 ---
 
 * TOC
