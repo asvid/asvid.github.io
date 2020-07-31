@@ -1,64 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post">
-      <change afterPath="$PROJECT_DIR$/_data/i18n.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_data/pl/i18n.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_data/pl/projects.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_data/projects.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_data/technologies.yml" afterDir="false" />
+    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP adding PL language, fixing doubled RSS">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.jekyll-crosspost_to_medium/medium_crossposted.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/en/author.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/author.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/0 Wedding App.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/1 GdzieTaBiedra.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/2 AirRide.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/3 fibaro.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/4 Frigo.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/5 Dinegra.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/6 Counter.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/7 FirebaseLogin.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_projects/8 Notti.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/android.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/androidStudio.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/arduino.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/bamboo.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/ble.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/dagger.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/espresso.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/expressjs.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/firebase.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/genymotion.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/git.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/gradle.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/javascript.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/jira.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/junit.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/kotlin.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/linux.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/mongodb.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/nodejs.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/photoshop.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/realm.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/room.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/rxjava.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/sonarqube.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_technologies/spock.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2016-04-16-first-post.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2016-04-16-first-post.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2016-04-24-color-changing-progress-bar.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-01-21-androidlocalmaven.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-03-04-nyan-your-terminal.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-03-31-hacking-android-app-with-frida.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-07-23-android-build-hacks.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-09-16-android-build-hacks-2.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-11-05-android-build-hacks-3.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2019-01-20-overmodularization.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-05-03-shell-script-basics.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -634,7 +581,14 @@
       <option name="project" value="LOCAL" />
       <updated>1595166613486</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="WIP adding PL language, fixing doubled RSS">
+      <created>1596226770804</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1596226770805</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -653,7 +607,8 @@
     <MESSAGE value="WIP new post" />
     <MESSAGE value="wedding app privacy policy added" />
     <MESSAGE value="New post" />
-    <option name="LAST_COMMIT_MESSAGE" value="New post" />
+    <MESSAGE value="WIP adding PL language, fixing doubled RSS" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP adding PL language, fixing doubled RSS" />
   </component>
   <component name="WindowStateProjectService">
     <state x="427" y="134" key="#Plugins" timestamp="1589627833411">
@@ -673,11 +628,11 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1588500882556" />
-    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1595166612478">
+    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1596226769443">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="342" y="51" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1588512373359" />
-    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1595166612478" />
+    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1596226769443" />
     <state x="523" y="356" key="Github.CreateGistDialog" timestamp="1588503343382">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -686,11 +641,11 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1588509356980" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1595166616962">
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1596226774369">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595166616962" />
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1596226774369" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1591888586830">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -702,12 +657,12 @@
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
-    <state x="640" y="289" width="890" height="677" key="find.popup" timestamp="1596224133434">
+    <state x="640" y="289" width="890" height="677" key="find.popup" timestamp="1596227115633">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596211074021" />
-    <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596224133434" />
+    <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596227115633" />
     <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1596217168879">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>

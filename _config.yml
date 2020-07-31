@@ -17,6 +17,8 @@ defaults:
       description: Software engineering and architecture | Android | Programming
       page_title: DevLog
 
+rss_path: feed.xml
+
 feed:
   excerpt_only: true
   path: feed.xml
