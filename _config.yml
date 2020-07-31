@@ -17,10 +17,15 @@ defaults:
       description: Software engineering and architecture | Android | Programming
       page_title: DevLog
 
-rss_description: Adam Świderski developers blog
+feed:
+  excerpt_only: true
+  path: feed.xml
+  description: Adam Świderski developers blog
+  posts_limit: 5
+  tags:
+    except:
+      - no-rss
 
-
-rss_path: feed.xml
 categories_path: categories.html
 tags_path: tags.html
 
@@ -44,7 +49,7 @@ collections:
 languages: ["en", "pl"]
 default_lang: "en"
 exclude_from_localization: ["javascript", "images", "css", "README.md"]
-parallel_localization: true
+parallel_localization: false
 lang_from_path: true
 
 sass:

@@ -2,36 +2,63 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post">
-      <change afterPath="$PROJECT_DIR$/_data/en/author.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_data/pl/author.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2016-04-16-first-post.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2016-04-24-color-changing-progress-bar.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-01-21-androidlocalmaven.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-03-04-nyan-your-terminal.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-03-31-hacking-android-app-with-frida.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-07-23-android-build-hacks.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-09-16-android-build-hacks-2.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2018-11-05-android-build-hacks-3.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2019-01-20-overmodularization.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/about.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_data/i18n.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_data/pl/i18n.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_data/pl/projects.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_data/projects.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_data/technologies.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2019-02-25-codestyle.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_drafts/2019-02-25-codestyle.markdown" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_data/en/author.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/author.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default_no_sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default_no_sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_includes/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_layouts/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_layouts/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/0 Wedding App.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/1 GdzieTaBiedra.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/2 AirRide.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/3 fibaro.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/4 Frigo.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/5 Dinegra.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/6 Counter.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/7 FirebaseLogin.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_projects/8 Notti.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/android.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/androidStudio.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/arduino.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/bamboo.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/ble.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/dagger.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/espresso.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/expressjs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/firebase.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/genymotion.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/git.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/gradle.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/javascript.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/jira.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/junit.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/kotlin.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/linux.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/mongodb.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/nodejs.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/photoshop.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/realm.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/room.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/rxjava.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/sonarqube.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_technologies/spock.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2016-04-16-first-post.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2016-04-16-first-post.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2016-04-24-color-changing-progress-bar.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-01-21-androidlocalmaven.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-03-04-nyan-your-terminal.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-03-31-hacking-android-app-with-frida.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-07-23-android-build-hacks.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-09-16-android-build-hacks-2.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2018-11-05-android-build-hacks-3.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2019-01-20-overmodularization.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-05-03-shell-script-basics.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/about.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,19 +112,19 @@
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/_data/en" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="C:\Users\Adam\repo\asvid.github.io\_posts" />
-      <recent name="$PROJECT_DIR$/_posts" />
-      <recent name="$PROJECT_DIR$/_drafts" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_data\pl" />
       <recent name="$PROJECT_DIR$/_data/pl" />
       <recent name="$PROJECT_DIR$/pl" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\assets\posts\ide-settings-repo" />
-      <recent name="C:\Users\Adam\repo\asvid.github.io\_drafts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_data" />
+      <recent name="$PROJECT_DIR$/_data/en" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_posts" />
+      <recent name="$PROJECT_DIR$/_posts" />
     </key>
   </component>
   <component name="RunManager">
@@ -359,11 +386,11 @@
       <listeners />
       <method />
     </configuration>
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
-      <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
-      <option name="PROGRAM_PARAMETERS" />
-      <predefined_log_file enabled="true" id="idea.log" />
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -478,11 +505,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="TestNG">
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <properties />
-      <listeners />
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -555,6 +582,7 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -674,16 +702,18 @@
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
-    <state x="480" y="248" width="667" height="580" key="find.popup" timestamp="1596211074021">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="640" y="289" width="890" height="677" key="find.popup" timestamp="1596224133434">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596211074021" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1596207409209">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596224133434" />
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1596217168879">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596207409209" />
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596217168879" />
     <state x="513" y="228" width="894" height="790" key="search.everywhere.popup/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627979800" />
   </component>
 </project>

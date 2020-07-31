@@ -25,7 +25,7 @@ You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }}){:target="_
 
 Here are listed some of my projects, with links to Google Play or code on GitHub.
 
-{% for item in site.projects %}
+{% for item in site.data.projects %}
   {% include project.html %}
 {% endfor %}
 
@@ -36,7 +36,7 @@ Alphabetically ordered list of tech I like to use
 
 <div class="chipsContainer">
     <div class="row">
-      {% for tech in site.technologies %}
+      {% for tech in site.data.technologies %}
       <a href=" {{ tech.link }}">
           <div class="chips"><img src="{{ tech.icon }}">{{ tech.name }}</div>
       </a>
