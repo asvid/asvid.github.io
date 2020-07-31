@@ -1,0 +1,1490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title></title>
+		<description></description>
+		<link>/</link>
+		<enclosure 
+			url="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" 
+			type="image/jpeg" 
+			length="17239"
+			/>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>IntelliJ settings repo</title>
+				<description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#today-by-a-complete-accident-i-found-that-there-is-a-thing-called-settings-repository&quot; id=&quot;markdown-toc-today-by-a-complete-accident-i-found-that-there-is-a-thing-called-settings-repository&quot;&gt;Today by a complete accident I found that there is a thing called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;settings repository&lt;/code&gt;.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#how-to-set-this-up&quot; id=&quot;markdown-toc-how-to-set-this-up&quot;&gt;How to set this up&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#bonus-i-didnt-test-this-one&quot; id=&quot;markdown-toc-bonus-i-didnt-test-this-one&quot;&gt;Bonus (I didn’t test this one)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;My setup looks like this: I have Windows PC with Linux installed on a separate drive, also I have 2 MacBooks for work, and rarely used Linux ThinkPad. Keeping my IntelliJ settings in sync at all of those machines wasn’t really possible. If I find some setting that improves my workflow at my office machine, and after some time I want to work on a pet project on my own PC - I get this itch of not having this setting I had on MacBook… so I can export my settings and then import it. And the other way around multiplied by the number of machines.&lt;/p&gt;
+
+&lt;h1 id=&quot;today-by-a-complete-accident-i-found-that-there-is-a-thing-called-settings-repository&quot;&gt;Today by a complete accident I found that there is a thing called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;settings repository&lt;/code&gt;.&lt;/h1&gt;
+
+&lt;p&gt;What it does is basically storing your settings in the repository of your choice and automatically synchronizing local settings with those in the repo. So I used the same repo on all machines (ok on 2 yet) and it looks like it’s solving my problem. I use the same repo for Android Studio and IntelliJ settings since I like to have the same settings for keyboard shortcuts, macros, default code style, etc. So far so good, no issues. But as I said - I learned this today 😄&lt;/p&gt;
+
+&lt;p&gt;There is another option to sync your settings in IntelliJ Idea, with official JetBrains plugin IDE Settings Sync &lt;a href=&quot;https://plugins.jetbrains.com/plugin/9922-ide-settings-sync&quot;&gt;IDE Settings Sync&lt;/a&gt; but it has rating 2.1 out of 5 with a majority of 1s so… I stick with setting repo.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-to-set-this-up&quot;&gt;How to set this up&lt;/h1&gt;
+
+&lt;p&gt;I recommend starting with creating new repository for your settings on GitHub. I believe most developers already have an account there and since some time ago private repos are free.&lt;/p&gt;
+
+&lt;p&gt;After setting the repo copy its HTTPS address&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.18.24.png&quot; alt=&quot;Settings repo address&quot; height=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;And go to IntelliJ File→Manage IDE Settings→Settings Repository, or CMD+Shift+A and type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;settings repository&lt;/code&gt; if you are lazyass like me.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.20.38.png&quot; alt=&quot;Settings repo option&quot; height=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You will now have to paste the link to your new repo and click &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Override Remote&lt;/code&gt; - this is like initial commit and push for your settings.&lt;/p&gt;
+
+&lt;p&gt;You may be asked for GitHub login/password but it is recommended to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;an access token&lt;/code&gt; that you can generate for each machine separately on your GitHub Settings page. To generate new one you need to go to your account settings→Developer Settings→Personal Access Tokens and click “Generate new token” button&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.27.20.png&quot; alt=&quot;Adding GitHub token&quot; width=&quot;900px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now the worst part - picking up the name for token, so if you call your computer for example &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Anton&lt;/code&gt; I suggest something like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IDE settings - Anton&lt;/code&gt; so you know where it’s used and if you replace Anton with another machine you will know which token to remove. For Scopes all you need is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repo&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.31.03.png&quot; alt=&quot;Github token scopes&quot; height=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After you generate the token with a shiny green button on the bottom you will have one and only chance to copy it. When you paste token to IntelliJ popup it should work like a charm and send your settings to GitHub. If you inspect settings repository now you can see that your IDE code styles, color scheme, inspections, live templates a lot of other XML files are there. Also plugins settings but unfortunately not plugin list - you have to manually install plugins on every machine.&lt;/p&gt;
+
+&lt;p&gt;You will have to repeat this procedure on every machine with a new token, you don’t want to use the same token everywhere. After the initial commit with settings is pushed to a repository on the next computer you should rather pick “override local” or better “merge” button when adding the repository for synchronizing settings. This will try to merge your current IDE settings with those at the repository, and sometimes you may face a conflict 😄&lt;/p&gt;
+
+&lt;p&gt;Your settings will be synchronized with repo each time you open or close IDE or with every Project Update or a Push from IDE is performed. You can also manually request an update with going to VCS→Sync Settings→Merge&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.01.34.png&quot; alt=&quot;Force sync settings&quot; height=&quot;400px&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;bonus-i-didnt-test-this-one&quot;&gt;Bonus (I didn’t test this one)&lt;/h1&gt;
+
+&lt;p&gt;There is also an option to set additional setting sources as read-only repositories - for example, if in your organization you have some live templates, file templates, deployment options, etc. but you shouldn’t be able to randomly override those. You do it in Preferences→Tools→Settings Repository with little + on the bottom.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.12.31.png&quot; alt=&quot;Read-only sources&quot; height=&quot;600px&quot; /&gt;&lt;/p&gt;
+</description>
+				<pubDate>Sun, 19 Jul 2020 12:14:00 +0200</pubDate>
+				<link>/intellij-settings-repo</link>
+				<guid isPermaLink="true">/intellij-settings-repo</guid>
+			</item>
+		
+			<item>
+				<title>Shell script basics</title>
+				<description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#why&quot; id=&quot;markdown-toc-why&quot;&gt;Why&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#no-more-errors&quot; id=&quot;markdown-toc-no-more-errors&quot;&gt;No more errors&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#add-help&quot; id=&quot;markdown-toc-add-help&quot;&gt;Add Help&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#handling-arguments&quot; id=&quot;markdown-toc-handling-arguments&quot;&gt;Handling arguments&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#adding-some-colors&quot; id=&quot;markdown-toc-adding-some-colors&quot;&gt;Adding some colors&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#handle-user-input&quot; id=&quot;markdown-toc-handle-user-input&quot;&gt;Handle user input&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ifelse&quot; id=&quot;markdown-toc-ifelse&quot;&gt;IF|ELSE&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#run-commands&quot; id=&quot;markdown-toc-run-commands&quot;&gt;Run commands&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#print-ascii-header&quot; id=&quot;markdown-toc-print-ascii-header&quot;&gt;Print ASCII header&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#enough-basics&quot; id=&quot;markdown-toc-enough-basics&quot;&gt;Enough basics&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;why&quot;&gt;Why&lt;/h2&gt;
+&lt;p&gt;Recently I had to do some tasks that required me to fallowing a strict checklist. It wasn’t anything complex, no creativity required - just do as list tells you to do.
+I was also one of the creators of the checklist.&lt;/p&gt;
+
+&lt;p&gt;I had to do it a few times, almost regularly, sometimes in short notice but nothing extreme.&lt;/p&gt;
+
+&lt;p&gt;So &lt;strong&gt;obviously&lt;/strong&gt; I made errors because I knew the checklist so well &lt;strong&gt;I wasn’t paying attention&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;no-more-errors&quot;&gt;No more errors&lt;/h2&gt;
+&lt;p&gt;After a few failures that were the result of my &lt;em&gt;(looking for excuses)&lt;/em&gt; being bored with the checklist I decided to write some shell scripts that would prevent me from doing almost anything - so prevent me from making a human error.
+I’m not an expert but during this process I’ve learned a few things, here they are:&lt;/p&gt;
+
+&lt;h3 id=&quot;add-help&quot;&gt;Add Help&lt;/h3&gt;
+&lt;p&gt;Even when your script doesn’t have any switches or flags, doesn’t accept any parameters, etc. it’s really good to add simple help under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-h&lt;/code&gt; flag.
+Yes, you can keep scripts in a repository as part of the project they are used with, or separately, and add &lt;strong&gt;README&lt;/strong&gt; chapter but trust me, nobody will look there.
+If you are using the terminal you are already used to use this flag to get help about command or tool.&lt;/p&gt;
+
+&lt;p&gt;Here is one of ways to achieve this:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/ffb2105cbe60fe2364ccddd97a7a8291.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;There is a method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Help()&lt;/code&gt; that prints info about your script. You can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt; for printing line by line, but using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat &amp;lt;&amp;lt; &quot;EOF&quot;&lt;/code&gt; makes it way faster to edit and more readable.
+Then the switch-case is looking for arguments, for now, we are interested in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-h&lt;/code&gt; which will run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Help()&lt;/code&gt; and exit the script&lt;/p&gt;
+
+&lt;h3 id=&quot;handling-arguments&quot;&gt;Handling arguments&lt;/h3&gt;
+&lt;p&gt;You can already see some of it in previous Gist, here some more cases:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/d2882cdd9cbc9860ef7f327a4e777b99.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Note that we have a few types of arguments passed here:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;simple flag like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-a&lt;/code&gt; can be used to set the in-script variable that can be then used in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IF&lt;/code&gt; statement&lt;/li&gt;
+  &lt;li&gt;flag with a value like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--path&lt;/code&gt; can take string (and only string) argument&lt;/li&gt;
+  &lt;li&gt;all other arguments will be sent to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OTHER_ARGUMENTS&lt;/code&gt; array&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shift&lt;/code&gt; after each case is handled removes argument from further processing. For the flag with the value, it needs to be doubled because you want to remove the flag itself and value from processing.&lt;/p&gt;
+
+&lt;p&gt;It’s not necessary to have both short &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p&lt;/code&gt; and long &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--path&lt;/code&gt; flag names covered, but it’s a good habit.&lt;/p&gt;
+
+&lt;h3 id=&quot;adding-some-colors&quot;&gt;Adding some colors&lt;/h3&gt;
+&lt;p&gt;I love colors in terminal :) and your scripts can also make use of them&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/d605e2451ec13e544a58296ffa831825.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;It’s important to add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;${NC}&lt;/code&gt; at the end, otherwise, next printed line will be in last used color&lt;/p&gt;
+
+&lt;h3 id=&quot;handle-user-input&quot;&gt;Handle user input&lt;/h3&gt;
+&lt;p&gt;To handle simple &lt;strong&gt;yes/no&lt;/strong&gt; from user you can do:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/4975699f4f7694ebfb9d8fa612283b11.js&quot;&gt; &lt;/script&gt;
+
+&lt;h3 id=&quot;ifelse&quot;&gt;IF|ELSE&lt;/h3&gt;
+
+&lt;p&gt;General idea of IF looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &amp;lt;statement&amp;gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# &amp;lt;-- beginning of statement&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;then&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# &amp;lt;-- IF something THEN do something&lt;/span&gt;
+  &amp;lt;&lt;span class=&quot;k&quot;&gt;do &lt;/span&gt;some work&amp;gt; &lt;span class=&quot;c&quot;&gt;# &amp;lt;-- actuall work&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# &amp;lt;-- closing IF statement&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Indenting doesn’t matter, but it’s worth keeping it consistent - remember you are doing this to &lt;strong&gt;avoid&lt;/strong&gt; silly mistakes.&lt;/p&gt;
+
+&lt;p&gt;A bit more comple example:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/0eff5148b4c72710f49525e944c799c5.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;In this gist there are few examples of IF statement:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;; then&lt;/code&gt; is moved to the same line with the statement, it looks more like we are used to in “normal” code&lt;/li&gt;
+  &lt;li&gt;negation with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;!&lt;/code&gt; inside condition block&lt;/li&gt;
+  &lt;li&gt;nested IF&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;elsif&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;combined conditions with AND &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;amp;&amp;amp;&lt;/code&gt; but could be also with OR &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;||&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;List of typical operators &lt;a href=&quot;https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php&quot;&gt;shamelessly borrowed from here&lt;/a&gt;:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Operator&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;! EXPRESSION&lt;/td&gt;
+      &lt;td&gt;The EXPRESSION is false.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-n STRING&lt;/td&gt;
+      &lt;td&gt;The length of STRING is greater than zero.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-z STRING&lt;/td&gt;
+      &lt;td&gt;The length of STRING is zero (ie it is empty).&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;STRING1 = STRING2&lt;/td&gt;
+      &lt;td&gt;STRING1 is equal to STRING2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;STRING1 != STRING2&lt;/td&gt;
+      &lt;td&gt;STRING1 is not equal to STRING2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;INTEGER1 -eq INTEGER2&lt;/td&gt;
+      &lt;td&gt;INTEGER1 is numerically equal to INTEGER2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;INTEGER1 -gt INTEGER2&lt;/td&gt;
+      &lt;td&gt;INTEGER1 is numerically greater than INTEGER2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;INTEGER1 -lt INTEGER2&lt;/td&gt;
+      &lt;td&gt;INTEGER1 is numerically less than INTEGER2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-d FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists and is a directory.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-e FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-r FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists and the read permission is granted.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-s FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists and its size is greater than zero (ie. it is not empty).&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-w FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists and the write permission is granted.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;-x FILE&lt;/td&gt;
+      &lt;td&gt;FILE exists and the execute permission is granted.&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;run-commands&quot;&gt;Run commands&lt;/h3&gt;
+
+&lt;p&gt;My favorite part of using bash scripts is how easy it runs commands. If you can run it in the terminal - you can as easily run it in the script.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git pull &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1
+
+&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;./gradlew&quot;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'clean :app:assembleDebug --info'&lt;/span&gt;
+
+open &lt;span class=&quot;s2&quot;&gt;&quot;app/build/outputs/apk/app/debug/&quot;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ARG_PATH&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+   git checkout feature/awersome_feature &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1    &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+   ./scripts/awersome_release_script.sh&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What we have here is:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;using git, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;|| exit 1&lt;/code&gt; means the whole script will fail if there was a non-successful result of the command, which is pretty useful&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;eval&lt;/code&gt; takes a few strings and combines it into one command that is run after, it comes in handy when you want to pass some dynamic arguments&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open&lt;/code&gt; tries to open the thing that was passed to it, in my case its a directory so on OSX it will open this directory in finder&lt;/li&gt;
+  &lt;li&gt;the last example is few bounded commands - first, it goes to provided directory with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cd&lt;/code&gt;, then runs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git&lt;/code&gt; command in this directory, and then runs script - also from the perspective of the directory from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cd&lt;/code&gt;.
+After it’s done root directory is back to from where the script was running in the first place.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;print-ascii-header&quot;&gt;Print ASCII header&lt;/h3&gt;
+&lt;p&gt;This one is the most important thing in this post, if you can remember only 1 thing from it please make it this one.
+All cool scripts have ASCII header displayed after you run it. There might be very good scripts that don’t have it, but for sure they are not cool.&lt;/p&gt;
+
+&lt;p&gt;I like to generate my headers in &lt;a href=&quot;http://patorjk.com/software/taag/#p=display&amp;amp;f=Big&amp;amp;t=My%20Shell%20Script&quot;&gt;this tool&lt;/a&gt;. 
+It has many fonts and some additional options.&lt;/p&gt;
+
+&lt;p&gt;Then just copy-paste it like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot; 
+
+ __  __          _____ _          _ _    _____           _       _   
+ |  &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;  |        / ____| |        | | |  / ____|         (_)     | |  
+ | &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; / |_   _  | (___ | |__   ___| | | | (___   ___ _ __ _ _ __ | |_ 
+ | |&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\/&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;| | | | |  &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;__ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\|&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; '_ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;/ _ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;| |  &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;__ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;/ __| '__| | '_ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\|&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; __|
+ | |  | | |_| |  ____) | | | |  __/ | |  ____) | (__| |  | | |_) | |_ 
+ |_|  |_|&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;_, | |_____/|_| |_|&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;__|_|_| |_____/ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;__|_|  |_| .__/ &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;_|
+          __/ |                                            | |        
+         |___/                                             |_|        
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;enough-basics&quot;&gt;Enough basics&lt;/h2&gt;
+&lt;p&gt;This post is just about basics, enough to start writing scripts that do some work for you.
+If you need some more info about IF statements, file handling, or running commands please do it yourself :) or it might appear in some future posts.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 03 May 2020 12:14:00 +0200</pubDate>
+				<link>/shellscriptbasics</link>
+				<guid isPermaLink="true">/shellscriptbasics</guid>
+			</item>
+		
+			<item>
+				<title>Overlibrarization</title>
+				<description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#it-seems-great&quot; id=&quot;markdown-toc-it-seems-great&quot;&gt;It seems great&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#but-why&quot; id=&quot;markdown-toc-but-why&quot;&gt;But why?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#story-time&quot; id=&quot;markdown-toc-story-time&quot;&gt;Story time&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#here-fun-begins&quot; id=&quot;markdown-toc-here-fun-begins&quot;&gt;Here fun begins&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#more-fun&quot; id=&quot;markdown-toc-more-fun&quot;&gt;More fun&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#please-stahp&quot; id=&quot;markdown-toc-please-stahp&quot;&gt;Please stahp&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#too-much-love-will-kill-you&quot; id=&quot;markdown-toc-too-much-love-will-kill-you&quot;&gt;Too much love will kill you&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#final-thought&quot; id=&quot;markdown-toc-final-thought&quot;&gt;Final thought&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;it-seems-great&quot;&gt;It seems great&lt;/h2&gt;
+&lt;p&gt;Write code once use it many times. Creating smaller pieces of code forces developers to write encapsulated software that follows single responsibility principle and is easy to test. Such code piece (AKA module) can be then published as a versioned artifact - a private library, that can be reused in more than one project. We are getting quality and reusability, how cool is that! Well that’s the theory. I’d like to share fictional story (that could be real) when modularization went wrong and some ideas how to avoid that.&lt;/p&gt;
+
+&lt;h2 id=&quot;but-why&quot;&gt;But why?&lt;/h2&gt;
+&lt;p&gt;So some say it’s good to create libraries, but why exactly?&lt;/p&gt;
+
+&lt;p&gt;If you are (like me) an Android developer it’s highly probable you’ve handled input fields, like email, password, IP address etc. Handling such fields usually means creating some &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helper&lt;/code&gt; class to verify if typed text is in correct form. Yes, there are libs for that, but checking input fields may be very usecase specific - I remember checking if typed IP address is available in local network or outside of it. For me it was faster to create and unit test my own solution than look for library providing such validator. After a while there were few &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helpers&lt;/code&gt; like that, and new project appeared were they could be used. So what now, copy and paste code from one project to another? Hell no. I’ve created library for internal usage that I’ve shared between both projects.
+&lt;!-- some graph of shared components --&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/overmodularity/simple_module.png&quot; alt=&quot;Simple module dependency graph&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;story-time&quot;&gt;Story time&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Disclaimer: This is pure fictional story, based on my own experience and other developer stories I’ve heard, oversimplified and overcolorized&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Now imagine complex user flow shared between projects, like login or registration to cloud service. Basically it’s few screens with inputs, some HTTP requests, maybe data persistence. On the end you want to know if user is properly logged in and get auth data for future HTTP requests. If the flow itself is not that straightforward, has some weird branches only business seems to understand, it appears really worthy to write it once and use in upcoming project that will share this functionality.
+&lt;!-- complicated flow example --&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/overmodularity/complex_module.png&quot; alt=&quot;Complex module dependency graph&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;here-fun-begins&quot;&gt;Here fun begins&lt;/h3&gt;
+&lt;p&gt;But what to put into this login module? It needs to talk with cloud, so maybe HTTP client should be added. User email should be saved so some simple key-value persistence will come handy. Layouts, fragments, presenters and whole navigation - after all we just need to get logged user data from this module. Library is using other shared modules like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Commons Library&lt;/code&gt; from first example, also some custom views like input fields with fancy error showing. Library API was made in fancy at the time RxJava 1. Everything versioned and kept on internal artifact server (like JFrog Artifactory), ready to use in future projects. Business assured that nothing will change in user login flow so developers were sure they are making good decision cuppling it all together.&lt;/p&gt;
+
+&lt;h3 id=&quot;more-fun&quot;&gt;More fun&lt;/h3&gt;
+&lt;p&gt;The second project is launched some time after development of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt; was finished and it has been released with first project. New project is also developed by other team than first. There is the same requirement of logging to cloud service in new project, so developers decided to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt; from first project. But how to use it if there is no &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;README&lt;/code&gt; or example in library repository? Just check the first project… Second project business requirement was to have all persisted data encoded but &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt; was using internaly simple key-value storage without any encoding possibilities. It can be easly fixed since it’s internal project.&lt;/p&gt;
+
+&lt;p&gt;Second project team updated &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt; so it can go along with various business requirements (for faster development they’ve used &lt;strong&gt;&lt;a href=&quot;/android-local-maven&quot;&gt;local Maven library&lt;/a&gt;&lt;/strong&gt;), and created pull request with changes, original authors of library were added as rewievers. But the reviewers were busy with their own project so it took them a week to check the PR, it got accepted, new version of library was released and used in second project.&lt;/p&gt;
+
+&lt;p&gt;Then business has great idea to change look of login screens in second app to be more up to date. Developers added injecting styles to library, but they broke backwards compatibility during the process. Another change in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt;, another pull request, another week.
+Meanwhile developers of first project have found a bug in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt;, they created fix and wanted to release it fast… but now they need to change their application because of changes made by second team, or fork it and begin linux-distro-like hell.&lt;/p&gt;
+
+&lt;p&gt;And now business has another great idea to change flow for second project only…&lt;/p&gt;
+
+&lt;h3 id=&quot;please-stahp&quot;&gt;Please stahp&lt;/h3&gt;
+&lt;p&gt;You see where I’m going with it? And list of potential problems can be easily extended: second project uses RxJava2, HTTP client headers may be different for each project, analytics of login flow should be separate for each project, diferent ideas how to maintain library, etc.&lt;/p&gt;
+
+&lt;p&gt;At the end creating such shared module didn’t solve any problems, but generated new ones. It didn’t speed up development but made it slower and annoying, possibly creating useless tension between teams and people.&lt;/p&gt;
+
+&lt;h2 id=&quot;too-much-love-will-kill-you&quot;&gt;Too much love will kill you&lt;/h2&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/ivbO3s1udic&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;p&gt;Somehow this song fits to above story: great idea of sharing code, so much passion in developing library module that would solve so many problems, team cooperation… so much love. But yet it sucks. But it doesn’t have to, here is how:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Never believe when business tells you “we won’t be changing that”&lt;/li&gt;
+  &lt;li&gt;Each shared module should have an owner, person who knows why and how it works and decides about direction of module development. And I mean 1 person, not team - any project will die with big enough decision committee. Shared ownership means shared responsibility - will work as great as communism.&lt;/li&gt;
+  &lt;li&gt;Creating shared library is no different from adding new internal service or class and the same rules apply.
+    &lt;ul&gt;
+      &lt;li&gt;reduce outside dependencies&lt;/li&gt;
+      &lt;li&gt;consciously design your API&lt;/li&gt;
+      &lt;li&gt;think about various configuration variants rather than current use cases&lt;/li&gt;
+      &lt;li&gt;shared code is to be used by application so don’t force clients of your lib to change application architecture just to use it&lt;/li&gt;
+      &lt;li&gt;SOLID, DRY bla bla bla…&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Think few times do you really need to create shared library, talk with other teams what they think about it. Something that seems a great idea at first may be overkill or not be used at all on the end. Sometimes well designed module or even package in monolith app is good enough, and can be moved to library when the need comes.&lt;/li&gt;
+  &lt;li&gt;Create README, and make it a good one. Examples, explanations, &lt;strong&gt;&lt;a href=&quot;/android-build-hacks-3-documentation&quot;&gt;generated documentation&lt;/a&gt;&lt;/strong&gt;. You will thank me later.&lt;/li&gt;
+  &lt;li&gt;Create example application that uses your shared code, so going through old projects won’t be necessary to understand it.&lt;/li&gt;
+  &lt;li&gt;Always add tests (unit, functional) in your library&lt;/li&gt;
+  &lt;li&gt;CI/CD will make your life easer&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So for my example with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Login Library&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Putting views and whole navigation is asking for problems: UI will change for different reasons than business logic and each change has to be released as new version of library and updated dependency in app, it may also limit navigation control and changing user flows.&lt;/li&gt;
+  &lt;li&gt;Putting HTTP client and persistence directly into library is easy, but also may cause problems. Such dependencies should be injected by application that uses library.&lt;/li&gt;
+  &lt;li&gt;External dependency used for library public API is risky, it’s probably better idea to keep it bare bones and then add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reactive extensions&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Select owner - faster pull requests and better overall library maintenance.&lt;/li&gt;
+  &lt;li&gt;Add README, code examples, documentation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;final-thought&quot;&gt;Final thought&lt;/h2&gt;
+&lt;p&gt;It’s good to learn from yor own mistakes, but engineers should mostly learn from mistakes made by others. If you rush into creating libraries without learning a lesson from other developers errors - you will surely recreate some of them. And those errors cost a lot of time, frustration and useless work.&lt;/p&gt;
+
+&lt;p&gt;If you are working with a lot of short term projects, you’ll probably need only something like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;commons library&lt;/code&gt; or not even that. For bigger/longer projects creating library should be conscious decision made by mature developers creating balanced teams. Each internal library requires time for setup and maintenance, and even more if you decide to publish it as open source.&lt;/p&gt;
+
+&lt;p&gt;There are other ways to share code between projects, like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monorepo&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git subtree&lt;/code&gt;, but they cause other problems. As they say in IBM - &lt;em&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Think_(IBM)&quot;&gt;THINK&lt;/a&gt;&lt;/em&gt; and select best solution for your case.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 20 Jan 2019 18:57:02 +0100</pubDate>
+				<link>/overlibrarization</link>
+				<guid isPermaLink="true">/overlibrarization</guid>
+			</item>
+		
+			<item>
+				<title>Android build hacks #3 - documentation with Dokka</title>
+				<description>&lt;p&gt;This is third part in series of articles about Android build configuration, all parts will be linked right below.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-1&quot;&gt;#1 Build basics&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-2&quot;&gt;#2 Build time optimization&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-3-documentation&quot;&gt;#3 Documentation with Dokka&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#homework&quot; id=&quot;markdown-toc-homework&quot;&gt;Homework&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#where-to-start&quot; id=&quot;markdown-toc-where-to-start&quot;&gt;Where to start&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#whats-worth-documenting&quot; id=&quot;markdown-toc-whats-worth-documenting&quot;&gt;What’s worth documenting?&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#basic-dokka-syntax&quot; id=&quot;markdown-toc-basic-dokka-syntax&quot;&gt;Basic Dokka syntax&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#generating-documents&quot; id=&quot;markdown-toc-generating-documents&quot;&gt;Generating documents&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#linking&quot; id=&quot;markdown-toc-linking&quot;&gt;Linking&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#samples&quot; id=&quot;markdown-toc-samples&quot;&gt;Samples&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#modules&quot; id=&quot;markdown-toc-modules&quot;&gt;Modules&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#libraries&quot; id=&quot;markdown-toc-libraries&quot;&gt;Libraries&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#code&quot; id=&quot;markdown-toc-code&quot;&gt;Code&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#whole-config&quot; id=&quot;markdown-toc-whole-config&quot;&gt;Whole config&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#publish-it&quot; id=&quot;markdown-toc-publish-it&quot;&gt;Publish it&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#when&quot; id=&quot;markdown-toc-when&quot;&gt;When&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#github-pages&quot; id=&quot;markdown-toc-github-pages&quot;&gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#tldr&quot; id=&quot;markdown-toc-tldr&quot;&gt;TL;DR&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;homework&quot;&gt;Homework&lt;/h2&gt;
+&lt;p&gt;Wait what? You’ve wrote beautiful self-documenting code and someone tells you to create &lt;strong&gt;DOCUMENTATION&lt;/strong&gt; for it? It’s already there! Well named methods and variables, design patterns used.
+If anyone wants to know how it works, he just needs to read through it - &lt;em&gt;well named method by well named method&lt;/em&gt;…&lt;br /&gt;
+I know IDEs are supporting that and you just need to click on method name or class to go there but be a good person, create documentation of at least public methods. Forcing people &lt;strong&gt;(or your future self)&lt;/strong&gt; to go through code each time you want to understand (or remind) how it works is cruel.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Self-documenting code is micro-documentation, it won’t ever show the big picture.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;So if you are working with someone more than yourself - docs can help others understand your intention during code review. If you are creating library - well I won’t be using it if it’s not documented.&lt;br /&gt;
+I understand being rebellious about it - I was. Until I had to work with big undocumented project, that was dependent on few other projects, with many hacks done to meet those other projects requirements, without any trace of information &lt;strong&gt;why&lt;/strong&gt; something was done in certain way.&lt;/p&gt;
+
+&lt;h2 id=&quot;where-to-start&quot;&gt;Where to start&lt;/h2&gt;
+&lt;p&gt;Start with attitude. It won’t be rocket science, you’ve already wrote a code that works &lt;em&gt;(and it’s unit tested obviously)&lt;/em&gt;, now just describe it in more human manner. It might seem boring, but programmers often lack soft skills like basic ability to communicate intents - take it as an exercise to make yourself a better professional.&lt;/p&gt;
+
+&lt;h3 id=&quot;whats-worth-documenting&quot;&gt;What’s worth documenting?&lt;/h3&gt;
+&lt;p&gt;Not everything of course. What is the point of documenting methods like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fun add(a: Int, b: Int): Int&lt;/code&gt;? And private methods, as they are not exposed to a class or library client? It actually depends on your organization standards. I’m in favor of documenting &lt;strong&gt;ALL&lt;/strong&gt; public methods, interfaces, classes, variables etc. but the same time keeping as much as possible as internal or private implementations. This way you’ll need to document as little as possible and keep implementation nicely separated from exposed interfaces.&lt;/p&gt;
+
+&lt;p&gt;What if there’s something &lt;em&gt;hacky&lt;/em&gt; in your code that should be documented (for those who’ll wander into it), but it’s deeply in the implementation layer? Make a good old comment explaining it. Try to avoid it, give descriptive names or talk with colleagues if you have gut feeling something fishy is going on in your code, but making comment is not a sin if everything fails. Just remember: &lt;strong&gt;commenting code is not documenting it&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;basic-dokka-syntax&quot;&gt;Basic Dokka syntax&lt;/h3&gt;
+&lt;p&gt;Finaly some code! This post is targeting Android developers, so people who use, or should (or would love to) use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Kotlin&lt;/code&gt; in their projects, so there will be no &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;JavaDoc&lt;/code&gt; here, no no. Say hi to &lt;a href=&quot;https://github.com/Kotlin/dokka&quot;&gt;Dokka&lt;/a&gt; and &lt;a href=&quot;https://kotlinlang.org/docs/reference/kotlin-doc.html&quot;&gt;KDoc syntax&lt;/a&gt;.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; is documentation engine that uses &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KDoc&lt;/code&gt; syntaxed comments to generate documents in one of many formats, there is also &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;JavaDoc&lt;/code&gt; but I see no reason to use it. What I like most about &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KDoc&lt;/code&gt; is that linking to other methods, classes or code samples is really easy and interactive. But besides that, it’s just like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;JavaDoc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/ce06150320153ea0747c6a974dad66f2.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;There are basically two things here: &lt;em&gt;block tags&lt;/em&gt; like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@param&lt;/code&gt; and &lt;em&gt;inline markup&lt;/em&gt; like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[member]&lt;/code&gt;.
+Available &lt;em&gt;block tags&lt;/em&gt; are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@param&lt;/code&gt; - method parameter description&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@return&lt;/code&gt; - documents returned value&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@constructor&lt;/code&gt; - documents primary constructor&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@receiver&lt;/code&gt; - receiver for extension functions&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@property&lt;/code&gt; - class property description&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@throws&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@exception&lt;/code&gt; - describes exceptions thrown by method, no need to put all of them here&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@sample&lt;/code&gt; - link to code sample with documented element used&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@see&lt;/code&gt; - link to another element&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@author&lt;/code&gt; - when you feel especially proud of your code&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@since&lt;/code&gt; - version name where this element was introduced&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@suppress&lt;/code&gt; - excludes element from documentation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And &lt;em&gt;inline markup&lt;/em&gt; is used to create links to other parts of code like methods, classes etc.&lt;/p&gt;
+
+&lt;p&gt;To be honest I use mostly &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@param @return @sample @throws&lt;/code&gt; and some basic info about class or method.&lt;/p&gt;
+
+&lt;h2 id=&quot;generating-documents&quot;&gt;Generating documents&lt;/h2&gt;
+&lt;p&gt;After adding few comments like above one, it would be nice to finaly see the documentation. Just few steps to do so:
+In project &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; add:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/c2df0f0dc8dd6940e58a7c38582c6e3c.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;And in application &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt;:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/6c2a12f66044cac9643ee67a1d703164.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;This should add task &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dokka&lt;/code&gt; in group &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;documentation&lt;/code&gt;&lt;br /&gt;
+&lt;img src=&quot;assets/posts/android-build-hacks-3/dokka_task.png&quot; alt=&quot;Dokka task&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Running this task will generate documentation in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docs&lt;/code&gt; directory in project root, just as it was set in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;outputDirectory&lt;/code&gt;. Selected output format is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html&lt;/code&gt; - minimalistic html format used by default. Other available formats are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;javadoc&lt;/code&gt; - Dokka mimic to javadoc&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html-as-java&lt;/code&gt; - as html but using java syntax&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;markdown&lt;/code&gt; - Markdown structured as html
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gfm&lt;/code&gt; - GitHub flavored markdown&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll&lt;/code&gt; - Jekyll compatible markdown&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kotlin-website&lt;/code&gt; - internal format used for documentation on kotlinlang.org&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;extra.md&lt;/code&gt; to config allows you to write some info about documentation that will be added on top of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.html&lt;/code&gt; file. It can be changelog or TODOs in single or separate files.&lt;/p&gt;
+
+&lt;h2 id=&quot;linking&quot;&gt;Linking&lt;/h2&gt;
+&lt;p&gt;Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Observable&lt;/code&gt; to RxJava documentation. Also documenting methods may be even better with provided sample code in generated HTML.&lt;/p&gt;
+
+&lt;h3 id=&quot;samples&quot;&gt;Samples&lt;/h3&gt;
+&lt;p&gt;Providing sample code usage makes documentation even clearer than describing method parameters and return value. For user it can look like that:&lt;br /&gt;
+&lt;img src=&quot;assets/posts/android-build-hacks-3/sample.png&quot; alt=&quot;Code sample in generated documentation&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/adcdf38d83e3a5f6576070dd7f7f5725.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;It’s best to keep package structure in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sample&lt;/code&gt; directory identical to source code, just like with unit tests. Sample code does not has to be logical or actually do anything, it’s just to show how to use documented methods.&lt;br /&gt;
+To inform &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; where is sample code in module you need to add one line to configuration:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/474914135109bba01805be57c7d5d19c.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;But for some reason your sample code is going to be documented like any other code, to avoid it add&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/11b34b01928a89cfc1201d4ba0e3cdda.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;over your sample class.&lt;/p&gt;
+
+&lt;h3 id=&quot;modules&quot;&gt;Modules&lt;/h3&gt;
+&lt;p&gt;I’ve had few approaches to this and best solution I’ve found so far is to configure &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; only in application module &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; and add dependency modules to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sourceDirs&lt;/code&gt;. This way linking to modules documentation works perfectly, there are no problems with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;ERROR CLASS&amp;gt;&lt;/code&gt; for 3rd party libraries classes, linking to source code works, and configuration for whole project is only in one file - easy to move to separate Gradle script.&lt;br /&gt;
+To add modules used by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; use fallowing code:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/b499e52512e945ae7ae2e57ea0f9b561.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;First part generates list of project dependencies that are local modules, and second part generates source code linking to each dependency and adds its path to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sourceDirs&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;libraries&quot;&gt;Libraries&lt;/h3&gt;
+&lt;p&gt;Linking 3rd party libraries easer than internal project modules, just by adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;externalDocumentationLink&lt;/code&gt; with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;url&lt;/code&gt; pointing to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package-list&lt;/code&gt; of library creates hyperlinks. Not every library documentation provides &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package-list&lt;/code&gt;, but most popular ones do. Sometimes it’s necessary to provide separate link to documentation and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;package-list&lt;/code&gt; itself - see &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Android&lt;/code&gt; documentation below.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/d0964be797db32193a2b613e5205fb98.js&quot;&gt; &lt;/script&gt;
+
+&lt;h3 id=&quot;code&quot;&gt;Code&lt;/h3&gt;
+&lt;p&gt;With linked modules, samples and 3rd party libraries your documentation should look pretty professional. But you can make it even better, by linking to code on repository. If documentation is for some reason still unclear, user reading it can with single click be redirected to code of class or method and check how it works directly. It’s kinda last resort because if your documentation is so bad that anyone who reads it has to dig into code each time - you did something very wrong.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/ccd2624ebe618c34a3b50c814a77b4bc.js&quot;&gt; &lt;/script&gt;
+
+&lt;h3 id=&quot;whole-config&quot;&gt;Whole config&lt;/h3&gt;
+&lt;p&gt;I’ve described parts of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; configuration, but I think it’s best to show the whole thing now:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/fe880bb2f1d2d41ce2a18cd1883df711.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;I’ve moved it to separate Gradle script &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DokkaConfig.gradle&lt;/code&gt; in project root directory, so in application &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; all I nedd to do is add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply from: '../DokkaConfig.gradle'&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;publish-it&quot;&gt;Publish it&lt;/h2&gt;
+&lt;p&gt;After creating awesome documentation it should be available for anyone who needs it. If its documentation of your employer product, maybe host it internally. If it’s open-source library - share it with rest of the world just like your code.&lt;br /&gt;
+Distribution depends on your needs, and output format depends on your distribution way. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Html&lt;/code&gt; may be best for internal hosting or putting it on your company website - copy generated files and provide link to main documentation &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.html&lt;/code&gt;, also custom &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;css&lt;/code&gt; can be added to style content.&lt;/p&gt;
+
+&lt;h3 id=&quot;when&quot;&gt;When&lt;/h3&gt;
+&lt;p&gt;It also depend on your case. You may want to generate documentation after each push to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;develop&lt;/code&gt; branch, or just after creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt;. Or both :)&lt;br /&gt;
+I suggest generating after (or during) each release.&lt;br /&gt;
+Another thing is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is &lt;a href=&quot;https://www.11ty.io/docs/versions/&quot;&gt;https://www.11ty.io/docs/versions/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;But for now lets focus on having at least most recent version of documentation, since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; doesn’t have in-build tools to support documentation versioning and this is whole new topic.&lt;/p&gt;
+
+&lt;h3 id=&quot;github-pages&quot;&gt;GitHub Pages&lt;/h3&gt;
+&lt;p&gt;One of output formats of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; documentation is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gfm&lt;/code&gt; which stands for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GitHub flavored markdown&lt;/code&gt;. It allows you to publish for free your documentation via &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GitHub Pages&lt;/code&gt;. What are GitHub Pages? Well this blog is one :) basically they are &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html&lt;/code&gt; websites generated from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;markdown&lt;/code&gt; by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Jekyll&lt;/code&gt;. It works kinda automagically, if you generate your documentation to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/docs&lt;/code&gt; directory, and in your GitHub repo settings you select GitHub Pages source as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master branch /docs folder&lt;/code&gt; it will regenerate website each time you push to branch &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;master&lt;/code&gt;.
+&lt;img src=&quot;assets/posts/android-build-hacks-3/github_pages.png&quot; alt=&quot;GitHub Pages settings&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Also you can select one of few themes for your documentation.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/android-build-hacks-3/github_pages_themes.png&quot; alt=&quot;GitHub Pages settings&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Website generation takes a minute, and after your fresh documentation will be available at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://{your GitHub nickname}.github.io/{your repo name}/&lt;/code&gt; so for my project it’s &lt;a href=&quot;http://asvid.github.io/GdzieTaBiedra/&quot;&gt;http://asvid.github.io/GdzieTaBiedra/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Unfortunately GitHub pages does not support multiple versions of documentation, at least out of the box.&lt;/p&gt;
+
+&lt;p&gt;More info about Github Pages: &lt;a href=&quot;https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/&quot;&gt;https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;tldr&quot;&gt;TL;DR&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dokka&lt;/code&gt; is great tool for documenting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Kotlin&lt;/code&gt; code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge. All code mentioned above comes from my project &lt;a href=&quot;https://github.com/asvid/GdzieTaBiedra&quot;&gt;GdzieTaBiedra&lt;/a&gt; and generated documentation is available &lt;a href=&quot;http://asvid.github.io/GdzieTaBiedra/&quot;&gt;HERE&lt;/a&gt;&lt;/p&gt;
+</description>
+				<pubDate>Mon, 05 Nov 2018 20:05:58 +0100</pubDate>
+				<link>/android-build-hacks-3-documentation</link>
+				<guid isPermaLink="true">/android-build-hacks-3-documentation</guid>
+			</item>
+		
+			<item>
+				<title>Android Build Hacks #2 - build time optimization</title>
+				<description>&lt;p&gt;This is second part in series of articles about Android build configuration, all parts will be linked right below.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-1&quot;&gt;#1 Build basics&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-2&quot;&gt;#2 Build time optimization&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#motivation&quot; id=&quot;markdown-toc-motivation&quot;&gt;Motivation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#optimization&quot; id=&quot;markdown-toc-optimization&quot;&gt;Optimization&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#limiting-your-build&quot; id=&quot;markdown-toc-limiting-your-build&quot;&gt;Limiting your build&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#compiler-options&quot; id=&quot;markdown-toc-compiler-options&quot;&gt;Compiler options&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#use-instant-run&quot; id=&quot;markdown-toc-use-instant-run&quot;&gt;Use instant run&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#other-build-boosters&quot; id=&quot;markdown-toc-other-build-boosters&quot;&gt;Other build boosters&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#disable-unneeded-tools&quot; id=&quot;markdown-toc-disable-unneeded-tools&quot;&gt;Disable unneeded tools&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#dont-use-dynamic-dependency-versions&quot; id=&quot;markdown-toc-dont-use-dynamic-dependency-versions&quot;&gt;Don’t use dynamic dependency versions&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#gradle-properties&quot; id=&quot;markdown-toc-gradle-properties&quot;&gt;Gradle properties&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#profile-your-build&quot; id=&quot;markdown-toc-profile-your-build&quot;&gt;Profile your build&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#gradle-scripts&quot; id=&quot;markdown-toc-gradle-scripts&quot;&gt;Gradle scripts&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#outro&quot; id=&quot;markdown-toc-outro&quot;&gt;Outro&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;Main reason I’ve been interested in build config tricks was to speed up development builds. As developer I’m building apps many times each day, often just to change one small thing and check if it works. Each second took of build time means a lot if you build often. And if you work at large project with lots of images and libraries you may die of old age before build is finished.&lt;/p&gt;
+
+&lt;p&gt;But there are ways to avoid sad death in front of computer displaying:
+&lt;img src=&quot;assets/posts/android-build-hacks-2/gradle-build-running.png&quot; alt=&quot;Gradle build running&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;optimization&quot;&gt;Optimization&lt;/h2&gt;
+&lt;p&gt;A lot of things I will mention comes from this &lt;a href=&quot;https://www.youtube.com/watch?v=7ll-rkLCtyk&quot;&gt;Google I/O ‘17 talk&lt;/a&gt;, you might want to watch it.&lt;/p&gt;
+
+&lt;h3 id=&quot;limiting-your-build&quot;&gt;Limiting your build&lt;/h3&gt;
+&lt;p&gt;Your app may be available in 100 languages and have images in all possible densities - and it’s cool, users like that, but you don’t really need &lt;strong&gt;ALL&lt;/strong&gt; of it when you are developing new features or fixing bugs. You can live with 1 language and 1 density. I’ve mentioned previously about this feature, but it’s worth repeating - limiting image density makes build faster.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/b31450b7c104197f98e9d446999f0b20.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resConfig()&lt;/code&gt; is available only for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;productFlavors&lt;/code&gt;, so using info from previous post you can add something like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dev&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prod&lt;/code&gt; flavors and filter only reasonable use cases.&lt;br /&gt;
+I remember having build crashes when using density &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;split&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resConfig&lt;/code&gt; with density, but I cannot reproduce it on current version of Gradle Plugin &lt;em&gt;(3.3.0-alpha10)&lt;/em&gt; so just keep in mind that it might cause some issues.&lt;/p&gt;
+
+&lt;p&gt;At Google I/O talk they mention also usage of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minSdkVersion 21&lt;/code&gt; in your development flavor config - it overrides default app &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minSdkVersion&lt;/code&gt; to allow usage of current &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;multidex&lt;/code&gt; version that is much faster than legacy one. But this is now &lt;del&gt;depricated&lt;/del&gt; - Gradle Plugin checks target device API for debug builds and sets &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minSdkVersion&lt;/code&gt; for it.&lt;/p&gt;
+
+&lt;h3 id=&quot;compiler-options&quot;&gt;Compiler options&lt;/h3&gt;
+&lt;p&gt;Builds can also be faster after some changes in Android Studio compiler settings.
+&lt;img src=&quot;assets/posts/android-build-hacks-2/compiler-options.png&quot; alt=&quot;Android Studio compiler options&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;First checkbox on top allows you to compile app modules in the same time - as long as they don’t depend on each other. Yes it is an &lt;em&gt;“incubating”&lt;/em&gt; feature but it works most of the time, and yes if your app is in single module it won’t make anything faster. I strongly encourage using multiple modules anytime it makes sense - it makes app architecture clean and organized, and speeds up build process.&lt;/p&gt;
+
+&lt;p&gt;The most interesting setting here is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Command-line Options&lt;/code&gt; where we can add arguments to build executed when you press green play button - so I guess each time you want to run app on device during development. I’ve put there &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-PdevBuild&lt;/code&gt; which means my build will have a property &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;devBuild&lt;/code&gt;. This can be validated in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; and some build changes may be included just for debug builds from Android Studio. Of course you can build exactly the same version of app from command line on CI server, but it’s mostly useful for development builds.&lt;/p&gt;
+
+&lt;p&gt;So how to use it in builds?&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/2897c9a0a04f4e5c27984f26e9bb8ef7.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;If we are building from Android Studio, splits can be disabled since we are running code only on our device and size of APK doesn’t matter too much. Disabling splits makes builds faster - no need to divide resources into separate APK files. Also disabling crunching images makes build faster - again for development APK size doesn’t matter so saving few KB on images won’t compensate loosing few seconds of build if you are building app every few minutes.&lt;/p&gt;
+
+&lt;h3 id=&quot;use-instant-run&quot;&gt;Use instant run&lt;/h3&gt;
+&lt;p&gt;I remember how excited I was when &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instant Run&lt;/code&gt; was announced, and how I was then not using it because it wasn’t working well, at least for projects I was working on. But now it’s different (for most cases) and this is what we should be using during development. How it’s working? &lt;strong&gt;TL;DR:&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instant Run&lt;/code&gt; doesn’t always compile whole app and send it to the device - it compiles changes and swaps only them on device so app can run &lt;em&gt;instantly&lt;/em&gt;. There are few types of swaps, depending on what was changed from last build:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;hot swap&lt;/em&gt;&lt;/strong&gt; - &lt;strong&gt;fastest&lt;/strong&gt; - implementation change of already existing method, by default it restarts Activity, but it can be turned off&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;warm swap&lt;/em&gt;&lt;/strong&gt; - &lt;strong&gt;fast&lt;/strong&gt; - change or removal of existing resource file, mandatory Activity restart&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;cold swap&lt;/em&gt;&lt;/strong&gt; - &lt;strong&gt;not-so-fast&lt;/strong&gt; - mandatory App restart, it’s done for:
+    &lt;ul&gt;
+      &lt;li&gt;adding, changing, or removing annotation, class field, static field, static method or method signature&lt;/li&gt;
+      &lt;li&gt;inheritance changes&lt;/li&gt;
+      &lt;li&gt;change of implemented interfaces&lt;/li&gt;
+      &lt;li&gt;element order in layouts that use dynamic ID&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;no swap&lt;/em&gt;&lt;/strong&gt; - &lt;strong&gt;sloooooooow&lt;/strong&gt; - it compiles whole new APK and runs it on device when:
+    &lt;ul&gt;
+      &lt;li&gt;changes are made in app manifest&lt;/li&gt;
+      &lt;li&gt;there are changes in resources linked in app manifest&lt;/li&gt;
+      &lt;li&gt;system UI elements are changed, like widgets or notifications&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If your app &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionCode&lt;/code&gt; is generated dynamically, for example from date, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instant Run&lt;/code&gt; will not speed up your build, because you are changing app manifest each time. But it can be easily fixed with our friend &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;devBuild&lt;/code&gt; parameter:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/34d4eb0a15266b75aaf550153e74b18a.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;For development builds we are using the same &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionCode&lt;/code&gt; - &lt;strong&gt;100&lt;/strong&gt;, but for every other build &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionCode&lt;/code&gt; is generated from date.&lt;/p&gt;
+
+&lt;h3 id=&quot;other-build-boosters&quot;&gt;Other build boosters&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jcenter&lt;/code&gt; - it’s faster, safer and bigger than &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mavenCentral&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;preDexLibraries&lt;/code&gt; - it makes clean build a bit longer but every incremental build faster&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/7704af7e1a131520091d6d2b45973104.js&quot;&gt; &lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;update your Java - Android Studio uses it’s own JDK by default, but if you are building also on CI server it’s good to keep Java updated&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;disable-unneeded-tools&quot;&gt;Disable unneeded tools&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Proguard&lt;/code&gt; is a great tool - it removes unused classes and methods during build process and obfuscates code so it’s harder (but not impossible) to decompile apps. But during development we don’t really need that, turn it off.&lt;/p&gt;
+
+&lt;p&gt;Another great tool for your app is Fabric Crashlytics - it gathers all app crashes and it’s very useful for finding and fixing bugs. But during development you’ll rather use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Logcat&lt;/code&gt;, no need for external tool. Also Crashlytics is generating build ID number for each build, it also slows build down because it’s kept in string resource file, so &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instant Run&lt;/code&gt; wont be able to run &lt;strong&gt;&lt;em&gt;hot swap&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/e8f8365d069ce3b4f9a7bb758c1d3e69.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;After disabling crashlytics in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; it is necessary to disable it in runtime:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/1a15fa17526f0380b543eb60dc1cdca3.js&quot;&gt; &lt;/script&gt;
+
+&lt;h4 id=&quot;dont-use-dynamic-dependency-versions&quot;&gt;Don’t use dynamic dependency versions&lt;/h4&gt;
+&lt;p&gt;Have you ever seen something like this in code:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;implementation 'com.android.support:appcompat-v7:+'&lt;/code&gt;
+It’s cool right? you always will have newest version of library in your project! No need to update it manually each time. Unless you actually want to know what version are you using and not waste time looking for bug that wasn’t there just yesterday and you haven’t change anything in your code yet. &lt;strong&gt;Using dynamic dependency version is reckless&lt;/strong&gt;. It also slows builds down, because Gradle needs to check if new version of dependency is available, it does it once every 24h.&lt;/p&gt;
+
+&lt;p&gt;Also forget about using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compile&lt;/code&gt; for dependencies. Using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;implementation&lt;/code&gt; will make your builds faster and here is talk that explains why &lt;a href=&quot;https://youtu.be/7ll-rkLCtyk?t=22m19s&quot;&gt;Jerome Dochez at Google I/O ‘17&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;gradle-properties&quot;&gt;Gradle properties&lt;/h4&gt;
+&lt;p&gt;Following settings can seriously boost your builds:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/1771826d173c54ecba9497ba59c27374.js&quot;&gt; &lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.gradle.jvmargs&lt;/code&gt; value is something you should experiment with, general rule is that more is better but after certain value it doesn’t make a change so save some memory for watching cat videos on Youtube until build process is done. &lt;a href=&quot;https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory&quot;&gt;Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.gradle.parallel&lt;/code&gt; allows Gradle to run the same tasks in different projects in parallel, so it’s kinda the same feature that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Compile Settings&lt;/code&gt; gave us, just for Gradle tasks and not compilation itself &lt;a href=&quot;https://guides.gradle.org/performance/#parallel_execution&quot;&gt;Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.gradle.caching&lt;/code&gt; now that’s a big one - a lot of tasks that Gradle runs during build will return the same output if input has not changed, so instead of running them Gradle can just read output from it’s cache. &lt;a href=&quot;https://docs.gradle.org/current/userguide/build_cache.html&quot;&gt;Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.gradle.configureondemand&lt;/code&gt; will allow Gradle to configure only projects (modules in app) that need that, not every module each time, build configuration can also take some time. &lt;a href=&quot;https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:configuration_on_demand&quot;&gt;Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;profile-your-build&quot;&gt;Profile your build&lt;/h4&gt;
+&lt;p&gt;Gradle offers a tool that provides info about exact time needed to finish each build step. It’s called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;profiler&lt;/code&gt; and generates HTML summary after build is finished.
+Typing in console: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gradle app:assembleDebug --profile&lt;/code&gt; will generate similar report to this:
+&lt;img src=&quot;assets/posts/android-build-hacks-2/profiler.png&quot; alt=&quot;Gradle Profiler output&quot; /&gt;
+Other tools to profile your build are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;–dry-run - tells you how much time your project need for configuration, should be few seconds max&lt;/li&gt;
+  &lt;li&gt;–info - will print in console why certain tasks are executed
+&lt;img src=&quot;assets/posts/android-build-hacks-2/gradle-info.png&quot; alt=&quot;Gradle --info output&quot; class=&quot;center-image&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;–scan - will send build result to &lt;a href=&quot;https://scans.gradle.com&quot;&gt;Gradle Scans website&lt;/a&gt; where you may find some additional info about your build process&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;gradle-scripts&quot;&gt;Gradle scripts&lt;/h3&gt;
+&lt;p&gt;Writing your own Gradle tasks is awesome, especially when you want to automate things with CI. But custom tasks can slow your build even when you think they are not executed. When you have simple task like:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/a736c21b97c8df9edb24256167ed5e6e.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;The output will be always printed (because task gets executed) when you run &lt;strong&gt;ANY&lt;/strong&gt; other task in project. This one was simple printing, but can you image generating some config files, HTTP requests, calculating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionCode&lt;/code&gt; etc? And all tasks needs to finish before your build is done.&lt;/p&gt;
+
+&lt;p&gt;Solution is dead simple:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/333e15745d74b47685ba80eba18d8cda.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Just move actual task work into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;doLast&lt;/code&gt; and leave configuration stuff like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;group&lt;/code&gt; outside.&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+&lt;p&gt;Knowing above things made my builds more efficient. You may not feel it right now, but projects tend to grow over time, and keeping build times at low value makes world a happier place. Be so kind and share this post with every Android developer you know - you might save them few seconds every day :)&lt;/p&gt;
+</description>
+				<pubDate>Sun, 16 Sep 2018 10:36:34 +0200</pubDate>
+				<link>/android-build-hacks-2</link>
+				<guid isPermaLink="true">/android-build-hacks-2</guid>
+			</item>
+		
+			<item>
+				<title>Android Build Hacks #1 - build basics</title>
+				<description>&lt;p&gt;This is first part in series of articles about Android build configuration, all parts will be linked right below.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-1&quot;&gt;#1 Build basics&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&quot;/android-build-hacks-2&quot;&gt;#2 Build time optimization&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#build-configuration&quot; id=&quot;markdown-toc-build-configuration&quot;&gt;Build configuration!&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#types-and-flavors&quot; id=&quot;markdown-toc-types-and-flavors&quot;&gt;Types and Flavors&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#build-types&quot; id=&quot;markdown-toc-build-types&quot;&gt;Build Types&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#product-flavors&quot; id=&quot;markdown-toc-product-flavors&quot;&gt;Product Flavors&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#dealing-with-flavor-hell&quot; id=&quot;markdown-toc-dealing-with-flavor-hell&quot;&gt;Dealing with Flavor Hell&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#build-settings&quot; id=&quot;markdown-toc-build-settings&quot;&gt;Build settings&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#applicationid&quot; id=&quot;markdown-toc-applicationid&quot;&gt;applicationId&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#buildconfigfield&quot; id=&quot;markdown-toc-buildconfigfield&quot;&gt;buildConfigField&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#resvalue&quot; id=&quot;markdown-toc-resvalue&quot;&gt;resValue&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#manifestplaceholders&quot; id=&quot;markdown-toc-manifestplaceholders&quot;&gt;manifestPlaceholders&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#versionnamesuffix&quot; id=&quot;markdown-toc-versionnamesuffix&quot;&gt;versionNameSuffix&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#resconfigs&quot; id=&quot;markdown-toc-resconfigs&quot;&gt;resConfigs&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#splits&quot; id=&quot;markdown-toc-splits&quot;&gt;Splits&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#end-of-part-1&quot; id=&quot;markdown-toc-end-of-part-1&quot;&gt;End of part #1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#useful-links&quot; id=&quot;markdown-toc-useful-links&quot;&gt;Useful links&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;build-configuration&quot;&gt;Build configuration!&lt;/h2&gt;
+&lt;p&gt;This is not the most exciting part of software engineering. Each technology, language, framework has it’s own rules so there are no universal patterns, &lt;a href=&quot;https://en.wikipedia.org/wiki/Robert_C._Martin&quot;&gt;Uncle Bob&lt;/a&gt; will not help us here. But just like this worker on left, tightening the screw of &lt;a href=&quot;https://en.wikipedia.org/wiki/Empire_State_Building&quot;&gt;Empire State Building&lt;/a&gt; skeleton, developers should polish their builds - build config itself is not the application (like skeleton is not the building), but application is useless if you cannot build release version. It also sucks if you have to wait minutes until build is finished, or manually change config for releases.&lt;/p&gt;
+
+&lt;p&gt;In Android Studio you start new project, type app name and select minimum SDK and Android Studio generates some files that you don’t event want to touch.
+But you should. The more complex app you are working on, bigger benefits you may get. Starting from faster builds, through work automation, to easer development and releasing process.&lt;/p&gt;
+
+&lt;h2 id=&quot;types-and-flavors&quot;&gt;Types and Flavors&lt;/h2&gt;
+&lt;p&gt;After we create new project we already have 2 build variants to select: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt;. Even if only second one is mentioned in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; file in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildTypes&lt;/code&gt; section.
+We can easily edit or add more &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build types&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;product flavors&lt;/code&gt;, creating way too many build variants we need. Each build type is by default combined with each product flavor, and product flavors are combined if they are defined for different dimensions.&lt;/p&gt;
+
+&lt;p&gt;Above build types and product flavors your config should also have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultConfig&lt;/code&gt; - just to avoid repeating yourself in build types or flavors.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/7d82b6a888bde3c753f564c3a0d2c2e8.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;But what are build types and product flavors even for?&lt;/p&gt;
+
+&lt;h3 id=&quot;build-types&quot;&gt;Build Types&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;The same app, different builds&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If you want to build exactly the same app (same look, same features etc.) but sometimes you need to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; it, sometimes you want to build &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt;, sometimes you want different signing configuration, switched on/of Proguard and Crashlytics  - separate those variants with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build types&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Build types can kinda &lt;em&gt;inherit&lt;/em&gt; from each other, for example: you have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt; build type and want to have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;alpha&lt;/code&gt; build that is exactly the same BUT with different app name. No need to copy-paste whole config:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/62aea4a659497c2e78e3824cbea70b15.js&quot;&gt; &lt;/script&gt;
+
+&lt;h3 id=&quot;product-flavors&quot;&gt;Product Flavors&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;The same build, different app&lt;/strong&gt; - like bubble gum, same process of creating product, but you can have many flavors (mint, fruit etc.)&lt;/p&gt;
+
+&lt;p&gt;If your business model requires &lt;em&gt;free, demo, premium&lt;/em&gt; app variants, you need apps in different color schemes, you want to build &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt; app but talking with staging server (bit debatable - it could be also a build type but IMO if it talks with different server, its a different app), you want to build the same app but with different IAP (in app purchases) for different app shops, or you build your app with different features for specific client - use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;product flavors&lt;/code&gt; for separating those variants.&lt;/p&gt;
+
+&lt;p&gt;Product flavors are scoped with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flavorDimensions&lt;/code&gt;. Each flavor needs to be in one dimension, flavors from same dimension are excluding each other from build variant. For example:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/8608ab5d6165a92c904eabc7c0ee4132.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Above configuration will give us variants: devOtherDebug, prodOtherDebug, devOther2Debug, prodOther2Debug - and the same for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt; build type, but you wont see &lt;strong&gt;devProdDebug&lt;/strong&gt; or &lt;strong&gt;devOtherOther2Debug&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Please notice that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build type&lt;/code&gt; name comes always on the end - order of names is important. It is similar to CSS, each dimension added to variant overrides previous settings with it’s own, and then build type sets them on the end. Just remember this mechanism only overrides settings, it does not clear them.&lt;/p&gt;
+
+&lt;p&gt;If you have no idea what is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build variant&lt;/code&gt;, its this thing you select here:
+&lt;img src=&quot;assets/posts/android-build-hacks/buildVariants.png&quot; alt=&quot;build variants window in Android Studio&quot; class=&quot;center-image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;More info about build types and product flavors can be found at &lt;a href=&quot;https://stackoverflow.com/questions/27905934/why-are-build-types-distinct-from-product-flavors&quot;&gt;this StackOverflow post&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;dealing-with-flavor-hell&quot;&gt;Dealing with Flavor Hell&lt;/h3&gt;
+
+&lt;p&gt;So if you enthusiastically started adding flavors and build types to your config you should notice one thing: number of build variants grows at a geometric rate. Each new flavor in existing dimension adds number of build types to build variants, each new dimension doubles number of build variants. And it’s really hard to find this one variant you need to build fast in this jungle.&lt;/p&gt;
+
+&lt;p&gt;Reducing number of dimensions or flavors is not really a solution if they were created according to business needs - if they are not you may consider rethinking this whole division.
+What you should do is ask yourself a question: do I really need ALL of those build variants? If you are releasing Alpha build from your CI server, you don’t really need &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dev&lt;/code&gt; flavor. Also &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dev&lt;/code&gt; flavor (will be explained later) makes sense only with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; build.&lt;/p&gt;
+
+&lt;p&gt;There are many cases that cause certain build variants to be pointless, so lets filter them out!&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/1b2ccce9f4eaaf752b95188581e49f1e.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Using simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if&lt;/code&gt; statement that checks variant build type and flavors we can set them to be ignored. Take a note that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variant.getFlavors()&lt;/code&gt; returns list of flavors added by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dimension&lt;/code&gt; order, that’s why I’ve used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get(0)&lt;/code&gt; to get first dimension flavor - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; in my case.&lt;/p&gt;
+
+&lt;h2 id=&quot;build-settings&quot;&gt;Build settings&lt;/h2&gt;
+&lt;p&gt;Ok we have build types and product flavors, we’ve filtered out pointless variants but what can we actually set?
+&lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html&quot;&gt;Official BuildType documentation&lt;/a&gt; mentions whole a lot of properties and methods that can be used for each build type. There’s even more in &lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.ProductFlavor.html&quot;&gt;Official ProductFlavor documentation&lt;/a&gt;, but there are also many in common, so remember that build type will override those set in flavor.
+Oh also here is &lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.DefaultConfig.html&quot;&gt;Official DefaultConfig documentation&lt;/a&gt;, because some properties are available only here, nobody said it will be easy.&lt;/p&gt;
+
+&lt;p&gt;I won’t be going through all of above mentioned properties and methods, I’ll just show what can be done with some of them.&lt;/p&gt;
+
+&lt;h3 id=&quot;applicationid&quot;&gt;applicationId&lt;/h3&gt;
+&lt;p&gt;This one is pretty important. By &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationId&lt;/code&gt; your app is recognized in Google Play Store and on Android device. You cannot have 2 different apps with same &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appliationId&lt;/code&gt; on the same device or in Google Play Store - even from different accounts. You may have noticed that if you have your app installed from Google Play (official release) and want to install &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; version from Android Studio it will ask to remove Google Play app - yes it’s because different signing (with Android debug key) and even debug version installed from one machine will need to be erased if you install it from other machine. But because both apps have same &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationId&lt;/code&gt; Android will know it’s the same app. And if we want to keep our released and configured app on our device and have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; build installed next to it?&lt;/p&gt;
+
+&lt;p&gt;Well we need to change &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationId&lt;/code&gt; of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; build type of course!
+If you’ve looked through documentation you may have noticed that there is no way to change &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationId&lt;/code&gt; in build type config, it’s set only in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultConfig&lt;/code&gt; (and product flavors). But there is property &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationIdSuffix&lt;/code&gt; - it will add text to our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applicationId&lt;/code&gt;. You can set it like:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/37f95a28d4b837baa608e6537e591d34.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Keep official release of your app and install debug just next to it.&lt;/p&gt;
+
+&lt;h3 id=&quot;buildconfigfield&quot;&gt;buildConfigField&lt;/h3&gt;
+&lt;p&gt;During build process a static &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BuildConfig&lt;/code&gt; class is created. This class contains fields like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;APPLICATION_ID&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;VERSION_CODE&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;VERSION_NAME&lt;/code&gt; and others taken from - you’ve guest it - build config. Those fields are easily accessible in app, and are often used to modify it’s behavior like turning off Google Analytics if app is in debug mode. We can add custom fields to this class in both build types and product flavors. Method takes 3 String arguments - type, name and value.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/b88e04711e62d335f429a344aaac993e.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Those custom fields type can be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;String&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boolean&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;int&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;long&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;float&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;double&lt;/code&gt;. If you set the same field in flavor and build type, it will be overridden with build type value.&lt;/p&gt;
+
+&lt;h3 id=&quot;resvalue&quot;&gt;resValue&lt;/h3&gt;
+&lt;p&gt;Setting custom &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BuildConfig&lt;/code&gt; field is cool, but it is also possible to &lt;strong&gt;add&lt;/strong&gt; resource value. If you try to set a value that already exists in resources, you will get &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Error: Duplicate resources&lt;/code&gt; during build. Method looks similar to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildConfigField&lt;/code&gt;&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/0b91b53cc2dc3d374d251ad2c7708089.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Types are diferent thant for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildConfigField&lt;/code&gt; and you can use: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;array, attr, bool, color, declare-styleable, dimen, fraction, id, integer, plurals, string, style&lt;/code&gt; but most common will be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;string, bool, dimen, integer&lt;/code&gt; I guess&lt;/p&gt;
+
+&lt;h3 id=&quot;manifestplaceholders&quot;&gt;manifestPlaceholders&lt;/h3&gt;
+&lt;p&gt;There is one last place where we might want to set things according to our build variant - the manifest. Sometimes in manifest you need to add API key to some services used by libraries like Fabric, you may want to have a different keys for different build variants and this is a clean solution - no more checking &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BuildConfig&lt;/code&gt; and setting stuff in huge &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;switch&lt;/code&gt; statement. I like to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;manifestPlaceholders&lt;/code&gt; to set app name - for release builds (or by default) it is taken from resources because it may vary in different languages, but for debug build… I don’t care so much about languages, I just want to know that it is debug build. It can be also achieved by creating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;src/{buildTypeName | productFlavorName}&lt;/code&gt; directory and adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;string.xml&lt;/code&gt; with app name string there for each build type or flavor we want to switch app name… but if you don’t change a lot of resources in build variants keeping changes in build config looks cleaner.&lt;/p&gt;
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/0c74f1af1a421f2483c8b24802e807ae.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;and in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AndroidManifest.xml&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  android:label=&quot;${appName}&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There is also more complex usage of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;manifestPlaceholders&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildConfigField&lt;/code&gt; at &lt;a href=&quot;https://developer.android.com/studio/build/gradle-tips#share-properties-with-the-manifest&quot;&gt;Android docs&lt;/a&gt; that might be useful.&lt;/p&gt;
+
+&lt;h3 id=&quot;versionnamesuffix&quot;&gt;versionNameSuffix&lt;/h3&gt;
+&lt;p&gt;Ever been an app beta tester? So you might seen version names like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1.2.3-build-1223123-RC&lt;/code&gt; in system application settings. It can be added by using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionNameSuffix&lt;/code&gt; property in both product flavors and build types. Of course build number should be generated automatically, but this will be done in some future post.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/4b30b3b0f32e444229de650394dd5b3b.js&quot;&gt; &lt;/script&gt;
+
+&lt;h3 id=&quot;resconfigs&quot;&gt;resConfigs&lt;/h3&gt;
+&lt;p&gt;Sometimes you add new language to your app and you need to test how bad your layouts will look with it. No need to change your device language - it’s a pain if you don’t know new language enough to go back to your native one… just force build variant to use specific resources:&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/0bdf3e0ffb2fe3f28eb8aaeff5fe7ea4.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;You can specify list of all possible resource configurations including screen density - but it won’t allow you do to it if you use APK density split.
+Also it shouldn’t be used with build type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pseudoLocalesEnabled&lt;/code&gt; property.&lt;/p&gt;
+
+&lt;h2 id=&quot;splits&quot;&gt;Splits&lt;/h2&gt;
+&lt;p&gt;Let’s say you have an app with lots of images (not SVG) in few screen densities so app looks good on every device. But you build single APK for all densities, so each user needs to download app with way more resources than will ever be used. Splits are here to save the day. It allows Gradle to generate multiple APK files of the same build variant but with single resources for density, language or ABI (Application Binary Interface). Google Play just sends fitting APK to user that want to download your app.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/ea7a74124edf1c3881e6475f0a683bb3.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;Above code will cause generation of 16 (5 densities * 3 ABI + universal APK) APK files, fitting exactly users device specs. More bitmap graphics your app uses, bigger gains in APK size will you get.&lt;/p&gt;
+
+&lt;p&gt;In split config we have to specify if it’s enabled, and then we use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reset()&lt;/code&gt; to clear default density or ABI list. Then we can &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;include&lt;/code&gt; array of values (ABI or densities) - or if you don’t want to reset default one you can just &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exclude&lt;/code&gt; some with array of unwanted values. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;universalApk&lt;/code&gt; takes boolean argument and in my case it’s generated for release build only, it contains all of resources and is compatible with all ABI - this file will be size of your app without using splits.&lt;/p&gt;
+
+&lt;p&gt;I don’t really see a point in using language split since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strings.xml&lt;/code&gt; are lightweight files, but it’s also possible. Also ABI split may be just overcomplicating your build process.&lt;/p&gt;
+
+&lt;p&gt;It’s worth mentioning that for each APK you want to release you need to generate different &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;versionCode&lt;/code&gt; or Google Play wont allow you to send it.&lt;/p&gt;
+
+&lt;noscript&gt;&lt;pre&gt;400: Invalid request&lt;/pre&gt;&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/a0120bc0cf1e02a1a8ac4aba67714a60.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;In above code I check for which ABI and density variant is being build, multiply position of variant ABI in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;abiList&lt;/code&gt; by 10 and add this number and variant density position in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;densityList&lt;/code&gt; to version code for current build. Example: default version code is &lt;strong&gt;1230000&lt;/strong&gt; (needs to be &amp;lt; 2 100 000 000) and current split variant is &lt;strong&gt;x86 xxhdpi&lt;/strong&gt;, so we have 1230000 + 30 + 4 = &lt;strong&gt;1230034&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;end-of-part-1&quot;&gt;End of part #1&lt;/h2&gt;
+&lt;p&gt;It’s top of an iceberg but I’ve tried to explain main building blocks of Android build configuration. In upcoming posts I’ll show some build time optimizations and useful scripts to generate values used in builds. Below you can find links to documentation or blogposts that might extend this topic furthermore.&lt;/p&gt;
+
+&lt;h2 id=&quot;useful-links&quot;&gt;Useful links&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.android.com/studio/build/build-variants&quot;&gt;Build Variants docs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.DefaultConfig.html&quot;&gt;DefaultConfig docs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html&quot;&gt;BuildType docs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.ProductFlavor.html&quot;&gt;ProductFlavor docs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.Splits.html&quot;&gt;Splits dos&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.androidauthority.com/building-multiple-flavors-android-app-706436/&quot;&gt;Android Authority post about flavors by Obaro Ogbo&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@thiagolopessilva/the-handling-multiple-java-source-and-resources-using-flavors-on-gradle-18a4b581285b&quot;&gt;Medium post about flavors by Thiago Lopes Silva&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://onebigfunction.com/android/2016/10/06/flavor-flav-android-product-flavors-explained/&quot;&gt;Another post about flavors&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Mon, 23 Jul 2018 22:24:27 +0200</pubDate>
+				<link>/android-build-hacks-1</link>
+				<guid isPermaLink="true">/android-build-hacks-1</guid>
+			</item>
+		
+			<item>
+				<title>Hacking Android app with Frida</title>
+				<description>&lt;p&gt;&lt;em&gt;Side image is of course &lt;a href=&quot;https://en.wikipedia.org/wiki/Frida_Kahlo&quot;&gt;Frida Kahlo&lt;/a&gt; auto portrait, besides her name she has no connection with topic&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#motivation&quot; id=&quot;markdown-toc-motivation&quot;&gt;Motivation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#preparation&quot; id=&quot;markdown-toc-preparation&quot;&gt;Preparation&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#getting-ready&quot; id=&quot;markdown-toc-getting-ready&quot;&gt;Getting ready&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#pc&quot; id=&quot;markdown-toc-pc&quot;&gt;PC&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#phone&quot; id=&quot;markdown-toc-phone&quot;&gt;phone&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#you&quot; id=&quot;markdown-toc-you&quot;&gt;you&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#installing-stuff&quot; id=&quot;markdown-toc-installing-stuff&quot;&gt;Installing stuff&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#hello-frida&quot; id=&quot;markdown-toc-hello-frida&quot;&gt;Hello Frida&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#action&quot; id=&quot;markdown-toc-action&quot;&gt;Action&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#repo&quot; id=&quot;markdown-toc-repo&quot;&gt;Repo&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#change-method-implementation&quot; id=&quot;markdown-toc-change-method-implementation&quot;&gt;Change method implementation&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#run-method&quot; id=&quot;markdown-toc-run-method&quot;&gt;Run method&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#bruteforce-pin-breaking&quot; id=&quot;markdown-toc-bruteforce-pin-breaking&quot;&gt;Bruteforce PIN breaking&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#listing-loaded-objects&quot; id=&quot;markdown-toc-listing-loaded-objects&quot;&gt;Listing loaded objects&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#imaginary-security&quot; id=&quot;markdown-toc-imaginary-security&quot;&gt;Imaginary Security&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#let-there-be-instance&quot; id=&quot;markdown-toc-let-there-be-instance&quot;&gt;Let there be instance&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#debug-release&quot; id=&quot;markdown-toc-debug-release&quot;&gt;Debug release&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#summarization&quot; id=&quot;markdown-toc-summarization&quot;&gt;Summarization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;Lately I attended to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sekurak hacking party&lt;/code&gt; - it’s event organized by &lt;a href=&quot;https://sekurak.pl/&quot;&gt;Sekurak&lt;/a&gt; where they show how easy is to hack stuff like IP cameras, routers, phones. I guess Sekurak is known mainly in Poland, but they are real professionals in area of security. During this event Michał Bentkowski was showing how easy it is to spy on Android app communication and also change app behavior using tool named Frida. It was cool but scary at the same time from developers perspective.
+Gladly in company I work for, we have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Community of Practise&lt;/code&gt; so with my colleague we’ve decided to make similar show about hacking Android apps for others during next CoP meeting. I’ve extended a bit things that Michał showed at Sekurak meeting and it took me some time to find them on various blog posts or Youtube videos, so I’d like to share.&lt;/p&gt;
+
+&lt;h2 id=&quot;preparation&quot;&gt;Preparation&lt;/h2&gt;
+&lt;p&gt;Even if Frida is pretty easy to use, there are some steps you will need to take to make it work.&lt;/p&gt;
+
+&lt;h3 id=&quot;getting-ready&quot;&gt;Getting ready&lt;/h3&gt;
+
+&lt;h4 id=&quot;pc&quot;&gt;PC&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;python installed - I’ve got 2.7 and it works just fine, not sure if there are any issues with Python 3.x&lt;/li&gt;
+  &lt;li&gt;pip installed (its now bundled with Python distributions)&lt;/li&gt;
+  &lt;li&gt;reasonable console - if you are on Linux or Mac you already have one, for Windows…I use ConEmu with git bash commands installed&lt;/li&gt;
+  &lt;li&gt;ADB working from console - you already have ADB installed with Android Studio (well Android SDK to be accurate), but if you haven’t been using separate console app it’s possible that it’s not added to PATH&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;phone&quot;&gt;phone&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;Frida works on Android OS between 4.2 and 6&lt;/li&gt;
+  &lt;li&gt;it needs to use Dalvik, not ART&lt;/li&gt;
+  &lt;li&gt;it should be rooted - well… there is a way to avoid this but I did not check it.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To achieve it all pretty easly and cheap, I just used emulator :) with following details:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Name: Pixel_2_API_22
+CPU/ABI: Google APIs Intel Atom (x86)
+Target: google_apis [Google APIs] (API level 22)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;you&quot;&gt;you&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;you need to know what architecture your Android device, for my emulator it’s x86&lt;/li&gt;
+  &lt;li&gt;if you already have neat console app, it would be super cool to know how to use it&lt;/li&gt;
+  &lt;li&gt;also basics of Python and JavaScript will help - if you know ANY other language it will be just enough, we wont be making enterprise scale banking app, just simple hacking scripts&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;installing-stuff&quot;&gt;Installing stuff&lt;/h3&gt;
+&lt;p&gt;To install Frida on your PC just go to console and type
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pip install frida&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we’d like to send &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida-server&lt;/code&gt; to our device and run it, so Frida on our PC can communicate with it. On &lt;a href=&quot;https://github.com/frida/frida/releases&quot;&gt;GitHub release page&lt;/a&gt; are versions for all possible uses (also Windows or OSX), but we are hacking Android so we need to find &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida-server-10.7.7-android-x86.xz&lt;/code&gt; or newer, but always exactly for our device architecture.
+Now unpack the archive and send &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida-server&lt;/code&gt; file to your device using:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;adb push {frida-server-file-name} /data/local/tmp&lt;/code&gt;
+So Frida is on device, but not running. Yet. We have to go to device shell, change file permissions, and run it like any other executable type on linux machine.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;adb shell&lt;/code&gt; will get us to device shell&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cd /data/local/tmp&lt;/code&gt; will take us to where we’ve send frida-server&lt;/li&gt;
+  &lt;li&gt;(optional) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mv {frida-server-file-name} frida-server&lt;/code&gt; to change file name for easer to use, without version and architecture name&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod 755 frida-server&lt;/code&gt; to change permissions&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./frida-server&lt;/code&gt; to finally run it&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Notice that you wont get any info in console, it will just start running. Every other command should be run from separate terminal. It’s also a good idea to open logcat in separate terminal &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;adb logcat&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;hello-frida&quot;&gt;Hello Frida&lt;/h3&gt;
+&lt;p&gt;We are all good to go :) Let’s check if Frida on PC is getting along with Frida-server on device:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida -U asvid.github.io.fridaapp&lt;/code&gt; - It’s necessary to know full app package name, and to have app running on device. Flag &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-U&lt;/code&gt; tells Frida to check the USB connected device, or in my case, Android emulator.&lt;/p&gt;
+
+&lt;p&gt;Console should now look like that:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;frida -U asvid.github.io.fridaapp
+     ____
+    / _  |   Frida 10.7.7 - A world-class dynamic instrumentation toolkit
+   | (_| |
+    &amp;gt; _  |   Commands:
+   /_/ |_|       help      -&amp;gt; Displays the help system
+   . . . .       object?   -&amp;gt; Display information about 'object'
+   . . . .       exit/quit -&amp;gt; Exit
+   . . . .
+   . . . .   More info at http://www.frida.re/docs/home/
+
+[Android Emulator 5554::asvid.github.io.fridaapp]-&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We are officially in. Now we can type commands here and our app should obey. Lets just do something simple:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.androidVersion&lt;/code&gt; will just return in console which Android is our device running. Pretty…lame. Lets run something better:
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.perform(function(){Java.enumerateLoadedClasses({&quot;onMatch&quot;:function(className){ console.log(className) },&quot;onComplete&quot;:function(){}})})&lt;/code&gt; - now we are printing name of every object that Dalivik has created. And if we have object instance, maybe we can run its methods? We’ll get to that shortly.&lt;/p&gt;
+
+&lt;h2 id=&quot;action&quot;&gt;Action&lt;/h2&gt;
+&lt;p&gt;Running frida commands in console is a bit annoying, it’s extremely easy to mistype or forget to close some braces.
+Other way is to write script to file and run it by Frida.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida -U -l script.js asvid.github.io.fridaapp&lt;/code&gt;
+It can be even better with Python script that will run JavaScript script.
+Why we need Python and JavaScript if we want to hack app written in Java or Kotlin compiled to bytecode and that runs on Dalvik Virtual Machine? Well Python is just to make it easer to run JavaScript files, that will fool Dalvik to run them instead of app instructions.&lt;/p&gt;
+
+&lt;h3 id=&quot;repo&quot;&gt;Repo&lt;/h3&gt;
+&lt;p&gt;I’ve made very simple app for hacking with Frida demonstration that is available &lt;a href=&quot;https://github.com/asvid/FridaApp&quot;&gt;here&lt;/a&gt;. There is signing key provided so you can build yourself a signed release APK, but since it’s not obfuscaded in anyway by ProGuard hacking scripts will work the same as on debug version.
+In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools&lt;/code&gt; directory we have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dex2jar&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jd-gui&lt;/code&gt; that we wont be using this time, but they are worth checking if you like to hack APK without having it’s code. For now all we are interested about is in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;frida-server&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;If we look into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;script.py&lt;/code&gt; we can see that it does similar thing as we did in console, it looks for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pid&lt;/code&gt; for our app package and attatches JavaScript file to run with it. It also have all JavaScript files already listed, we will go through all of them. To run this script just type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python script.py&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;change-method-implementation&quot;&gt;Change method implementation&lt;/h3&gt;
+&lt;p&gt;First script shows how we can change method implementation. Sample app is running method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sum()&lt;/code&gt; every second and loggs output. We can change it’s implementation without app even noticing it :) In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;change_method.js&lt;/code&gt; file in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.perform()&lt;/code&gt; block we first find class that contains &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sum()&lt;/code&gt; method - we have whole app project so it’s not hard to find methods and classes, but if we want to hack someone’s APK, even after obfuscating with Proguard it works the same way. APK can be extracted with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dex2jar&lt;/code&gt; tool.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.use()&lt;/code&gt; returns us class object with access to it’s variables and methods (note that it is NOT an instance of this class). To change method implementation we just need to overwrite it with new method.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;activity.sum.implementation = function (x, y) {
+        //print the original arguments
+        console.log(&quot;original call: sum(&quot; + x + &quot;, &quot; + y + &quot;)&quot;);
+        //call the original implementation of `fun` with args (2,5)
+        var ret_value = this.sum(2, 5);
+        return ret_value;
+    }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Interesting thing is that we can still use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;this.sum()&lt;/code&gt; - it’s because we haven’t change original method or class, we just told Dalvik to run our JavaScript instead. In this case we are printing in console original method parameters and then run it with completely others, and return value.
+At this point I felt absolute power!&lt;/p&gt;
+
+&lt;h3 id=&quot;run-method&quot;&gt;Run method&lt;/h3&gt;
+&lt;p&gt;We’ve changed method implementation, but we still needed app to run method, it’s because we didn’t have access to actual object. But we can have it, why not, we are world class hackers at this point. In file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;instance.js&lt;/code&gt; we use a bit different method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.choose()&lt;/code&gt; that looks for loaded objects and select one with fitting name.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Java.choose(&quot;asvid.github.io.fridaapp.MainActivity&quot; , {
+      onMatch : function(instance){ //This function will be called for every instance found by frida
+        console.log(&quot;Found instance: &quot;+instance);
+        instance.showToast();
+      },
+      onComplete:function(){}
+    });
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Method takes two callbacks: called when instance is found and other called when method is completed. In first callback we get access to instance of class we were looking for, and we can call it’s methods. Remember that it means method will be called when instance is found, not at start of your app, because looking for instances takes a while.
+So YAY! we’ve showed a toast.&lt;/p&gt;
+
+&lt;h3 id=&quot;bruteforce-pin-breaking&quot;&gt;Bruteforce PIN breaking&lt;/h3&gt;
+&lt;p&gt;In some apps like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Evernote&lt;/code&gt; you can set internal PIN to protect your data from unwanted access. It means PIN has to be stored locally on your device, encrypted of course and hashed. When user provides PIN you just compare hashes, so no plain text PIN is available at any point.
+In FridaApp I’ve provided just simple method that checks if PIN is “1234”, but image that its reading hash from SharedPreferences and compares it with hashed user input. No matter what security precautions you take, at the end of a day you want method that takes a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;String&lt;/code&gt; and returns a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Boolean&lt;/code&gt;. Lets hack it!
+In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;brutal.js&lt;/code&gt; we have our PIN destroyer. At first we need instance of class that contains PIN checking method. Than we can run this method for diferent PIN numbers and check which one returns &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;true&lt;/code&gt;. I’ve done it in a loop that iterates from 0 to 100000, so it covers all 5 digit PIN numbers. Loop stopes when method returns &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;true&lt;/code&gt; and prints number in console along with time it took.&lt;/p&gt;
+
+&lt;h3 id=&quot;listing-loaded-objects&quot;&gt;Listing loaded objects&lt;/h3&gt;
+&lt;p&gt;We’ve already done this in console, but there we’ve go ALL of objects, it was impossible to find what we can hack. Gladly I’ve wrote &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;class_list.js&lt;/code&gt; script that can list only ones in my app.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Java.enumerateLoadedClasses(
+      {
+      &quot;onMatch&quot;: function(className){
+            if(className.includes(&quot;asvid&quot;)){
+                console.log(className);
+            }            
+        },
+      &quot;onComplete&quot;:function(){}
+      }
+    );
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Yes in console you can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;| grep asvid&lt;/code&gt; but its usefull to do it inside script in case you would need to use it further.&lt;/p&gt;
+
+&lt;h3 id=&quot;imaginary-security&quot;&gt;Imaginary Security&lt;/h3&gt;
+&lt;p&gt;All previous scripts were working arount &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MainActivity&lt;/code&gt; class or instance, it’s safe to assume 99% of apps has such class. But now since we’ve listed loaded objects we can see there is mysterious &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Security&lt;/code&gt; object loaded. If we check app code, we can see its a field in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MainActivity&lt;/code&gt; and its used to encode text from input and stores it in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SharedPreferences&lt;/code&gt;. It’s also used to read and decode this text that is next printed below input. If you check &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SharedPreferences&lt;/code&gt; of sample app it might contain something like that:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;string name=&quot;password&quot;&amp;gt;cNeUD7lWCcd01X4aQfSsgi+YvbP2m9/I5f1zeLmDNmIzPV9A4oUYf68HsCa8r/st7zi8qZnpZLf8
++dPwTWuNZZSsKnFRHlDK7G8f23kq5vf6luIzrjob4ZzzVs/wi2iAEyDD482uQBxTxq9UlE0C2+Wb
+Nw3tza5OTFIDoqf9HFBLJmqhKPXE7vmGp7XXJTdcHQhPfNeg/g0LzUXOXhFROUOOc8kzekwaBgmZ
+aWf5g0prOONetqr7xRdR4VprNlBhZA0DmhbCXP4vLEj8FWadvkwvtfL7uLQviW0iUVAuGXBfLdCG
+Qb7jUeX/jbWxSRLnyXZaUkG0VhuRQt7jXT2H7A==
+    &amp;lt;/string&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Looks serious, but why even bother cracking it when we can read it like it wasn’t even encoded? In script &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;security.js&lt;/code&gt; I’m using some old tricks: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Java.choose()&lt;/code&gt; to find instance of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Security&lt;/code&gt; class, and running method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getPassword()&lt;/code&gt; on found instance.&lt;/p&gt;
+
+&lt;h3 id=&quot;let-there-be-instance&quot;&gt;Let there be instance&lt;/h3&gt;
+&lt;p&gt;In sample app there is one class left - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SomeClass&lt;/code&gt;. But it wasn’t listed on loaded classes, in Android Studio its name is gray so it’s not being used anywhere. Is there a way to use it somehow? Yeap, we just need to create instance of it. There is a log of code in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;some_class.js&lt;/code&gt; script but most important is this:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var someClass = Java.use(&quot;asvid.github.io.fridaapp.SomeClass&quot;);
+var someClassInstance = someClass.$new()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So here I’m getting a class that I want to create instance of, and just… create an instance. And now I can do whatever I want with this instance.
+At first script is just printing in console output from methods with same name but different signatures - easy. Then it’s changing both implementations with help of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;overload()&lt;/code&gt; method, because we need to specify which ones implementation we are changing.
+Finally, script is printing values in public and private field of our &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SomeClass&lt;/code&gt; instance. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Private&lt;/code&gt; doesn’t really mean anything for us now, script will change its value (which was also &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;final&lt;/code&gt;) to anything we order it.&lt;/p&gt;
+
+&lt;h3 id=&quot;debug-release&quot;&gt;Debug release&lt;/h3&gt;
+&lt;p&gt;Last script is inspired by silly idea, that developers can hide things from users simply checking if build is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;release&lt;/code&gt;. Like additional buttons used for testing, app logic changes or logging. Remember that in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MainActivity&lt;/code&gt; there is a method that runs every second and prints in console result of adding 30 and 50, we were changing this method implementation before. This method uses two types of logging, standard &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Log.d()&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Logger.log()&lt;/code&gt;. This second method is checking build type, and prints only for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug&lt;/code&gt;. So if you build release app you will see only first log.
+Script &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;debug.js&lt;/code&gt; is at first looking for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Logger&lt;/code&gt; instance in memory, and then changes its &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;showLogs&lt;/code&gt; flag to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;true&lt;/code&gt;, from its original value of kinda &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;isDebug()&lt;/code&gt;. And now we get both logs in logcat.&lt;/p&gt;
+
+&lt;h2 id=&quot;summarization&quot;&gt;Summarization&lt;/h2&gt;
+&lt;p&gt;I’ve tried to show some basic functions of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Frida&lt;/code&gt; with easy to use scripts. Hope you had fun and will experiment on your own apps, I surely will. Real world app would have obfuscated code, so it will be much harder to know which class and method you need to use to achieve what you want, but it will still work the same way. I’m just an Android developer - not really a hacker, or security guru, but learning about &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Frida&lt;/code&gt; pushed me to think way more about my apps security. It’s always better to break (and fix) your own app before someone else does it.&lt;/p&gt;
+</description>
+				<pubDate>Sat, 31 Mar 2018 17:43:37 +0200</pubDate>
+				<link>/android-frida-hacking</link>
+				<guid isPermaLink="true">/android-frida-hacking</guid>
+			</item>
+		
+			<item>
+				<title>Nyan your terminal</title>
+				<description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#terminal&quot; id=&quot;markdown-toc-terminal&quot;&gt;Terminal?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#anything-i-want-nyancat&quot; id=&quot;markdown-toc-anything-i-want-nyancat&quot;&gt;Anything? I want NyanCat&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#guake&quot; id=&quot;markdown-toc-guake&quot;&gt;Guake&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#tabs&quot; id=&quot;markdown-toc-tabs&quot;&gt;Tabs&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#themes&quot; id=&quot;markdown-toc-themes&quot;&gt;Themes&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#zsh&quot; id=&quot;markdown-toc-zsh&quot;&gt;Zsh&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#plugins&quot; id=&quot;markdown-toc-plugins&quot;&gt;plugins&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#other-tools&quot; id=&quot;markdown-toc-other-tools&quot;&gt;Other Tools&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#ccat&quot; id=&quot;markdown-toc-ccat&quot;&gt;ccat&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#htop&quot; id=&quot;markdown-toc-htop&quot;&gt;htop&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#bmon&quot; id=&quot;markdown-toc-bmon&quot;&gt;bmon&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#images-and-movies-in-terminal&quot; id=&quot;markdown-toc-images-and-movies-in-terminal&quot;&gt;Images and movies in terminal&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fun-stuff&quot; id=&quot;markdown-toc-fun-stuff&quot;&gt;Fun stuff&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#terminal-slack&quot; id=&quot;markdown-toc-terminal-slack&quot;&gt;Terminal Slack&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#internet-browser-in-terminal&quot; id=&quot;markdown-toc-internet-browser-in-terminal&quot;&gt;Internet browser in terminal&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#what-does-the-cow-say&quot; id=&quot;markdown-toc-what-does-the-cow-say&quot;&gt;What does the cow say?&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#enough&quot; id=&quot;markdown-toc-enough&quot;&gt;Enough&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Disclaimer #1: I’m an Android developer, not sysadmin. I use terminal to help me with my workflow, not as my main tool, so please keep this in mind :)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Disclaimer #2: This is based on Linux (Ubuntu), but most stuff should work on OSX also.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;terminal&quot;&gt;Terminal?&lt;/h1&gt;
+&lt;p&gt;If you are a developer (and not a Windows peasant), you might had to use terminal for day to day stuff like installing node.js or python packages, or running scripts. But there is a lot more in this simple text user interface. Imagine you could do anything, and I mean &lt;strong&gt;ANYTHING&lt;/strong&gt; you can do with GUI software or even more, in single window, just by typing orders. Unlimited power (and responsibility also…) available for those who are not afraid.
+Also, using terminal is something that distinguishes casual PC user (those internet == Facebook type) from true super users.&lt;/p&gt;
+
+&lt;h1 id=&quot;anything-i-want-nyancat&quot;&gt;Anything? I want NyanCat&lt;/h1&gt;
+&lt;p&gt;We’ll get to that, don’t worry. But you have to eat your meat before you can have pudding &lt;sup id=&quot;fnref:pink_floyd&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:pink_floyd&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. You know already how the terminal window looks like, right? It’s pretty boring and not really encouraging. But we can make it better, both looking and functional.&lt;/p&gt;
+
+&lt;h2 id=&quot;guake&quot;&gt;Guake&lt;/h2&gt;
+&lt;p&gt;First thing I get on fresh Linux installation is Guake terminal. Not only it reminds me one of my favorite games, it’s also a productivity monster. This is terminal that overlays any application, provide tabs, lots of customization options. For more info check website &lt;a href=&quot;http://guake-project.org/&quot;&gt;Guake&lt;/a&gt;. If you are using Ubuntu for install you just type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo apt-get install guake&lt;/code&gt; in your current terminal window, and then type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;guake&lt;/code&gt; to run it and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;F12&lt;/code&gt; to show it, should look like this:
+&lt;img src=&quot;assets/posts/nyan-your-terminal/guake.png&quot; alt=&quot;Guake terminal image&quot; /&gt;
+How cool is that? :) It’s a good idea to add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;guake&lt;/code&gt; to start programs, so it will always be turned on when you need it. Let’s customize it a bit. Right click anywhere in guake terminal and then find and open &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Preferences&lt;/code&gt;. Lots of interesting and confusing stuff, but first I recommend to change some keyboard shortcuts. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;F12&lt;/code&gt; for me at least is not optimal way to open terminal. Some people have it set for tilde key (this one below Esc) because its rarely used but easy to reach. I personally prefer to have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + `&lt;/code&gt; so I don’t loose backtick sign access (that is pretty useful when writing in Markdown… like this post).&lt;/p&gt;
+
+&lt;h3 id=&quot;tabs&quot;&gt;Tabs&lt;/h3&gt;
+&lt;p&gt;Another thing is creating and closing tabs - we can have many terminal windows open in bars and we should use it! I use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + t&lt;/code&gt; to open new tab, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + w&lt;/code&gt; to close it. Ok so we have tabs, you can switch them by clicking on them… but wait, we use terminal, why even bother with mouse? I’ve set switching to next tab to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + right arrow&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + left arrow&lt;/code&gt; for previous one. There are also setting for selecting tab you want i.e. third from left, but I don’t really use them.&lt;/p&gt;
+
+&lt;h3 id=&quot;themes&quot;&gt;Themes&lt;/h3&gt;
+&lt;p&gt;At first Guake may not look any more interesting than standard terminal app, but it has build-in themes that you should check out in preferences. All popular ones are here like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Monokai&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Solarized&lt;/code&gt;. I used to be a fan of Hombrew (this green Matrix-like style), but recently I use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Spixel&lt;/code&gt;. Choose whatever makes you happy, but don’t forget about adjusting transparency of terminal. Also remember main purpose of theme is to make text in terminal be readable in pleasant way, not just look good :)&lt;/p&gt;
+
+&lt;h2 id=&quot;zsh&quot;&gt;Zsh&lt;/h2&gt;
+&lt;p&gt;You are probably familiar with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash&lt;/code&gt; because it’s default shell in most Linux distributions. But it’s not the only one, actually you can have many at the same time. This chapter will be focused on shell called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zsh (Z shell)&lt;/code&gt; and tool &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Oh-My-Zsh&lt;/code&gt;&lt;sup id=&quot;fnref:ohmyzsh&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ohmyzsh&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; with its plugins. You can find details on how to install both of them &lt;a href=&quot;https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH&quot;&gt;here&lt;/a&gt;. After installation, you have to switch your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;guake&lt;/code&gt; default shell to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zsh&lt;/code&gt;. To be honest I can’t see much diference between &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zsh&lt;/code&gt; but there are articles compering those two. I use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zsh&lt;/code&gt; mostly for plugins in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Oh-My-Zsh&lt;/code&gt;. And this cool &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git&lt;/code&gt; directories look:
+&lt;img src=&quot;assets/posts/nyan-your-terminal/zshgit.png&quot; alt=&quot;git zsh terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;plugins&quot;&gt;plugins&lt;/h3&gt;
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Oh-My-Zsh&lt;/code&gt; tool has build in plugins for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git, brew, django, gradle, jira, node, pearl, ruby, python&lt;/code&gt; and way more stuff, full list here: &lt;a href=&quot;https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins&quot;&gt;Oh-My-Zsh plugins&lt;/a&gt;. But those are only build-in plugins, you can add custom made ones if you find something interesting. There is also &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chucknorris&lt;/code&gt; plugin that will return you random Chuck Norris joke. And something that you came for to this post - NyanCat plugin.
+To enable build-in plugins you just need to edit your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.zshrc&lt;/code&gt; file, find where plugins list begins and add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nyan&lt;/code&gt;. Now when you type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nyan&lt;/code&gt; in terminal (remember it needs to be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zsh&lt;/code&gt; shell, not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash&lt;/code&gt;) your eyes will be burned with the image of flying cat shooting rainbow from his back.&lt;/p&gt;
+
+&lt;h2 id=&quot;other-tools&quot;&gt;Other Tools&lt;/h2&gt;
+&lt;p&gt;Ok we’ve got NyanCat covered so you may leave now if that was seriously the only thing why you are reading this post. But if you are still interested in some useful tools there is a list below of ones I’m using. It may grow overtime, I will keep this post updated.&lt;/p&gt;
+
+&lt;h3 id=&quot;ccat&quot;&gt;ccat&lt;/h3&gt;
+&lt;p&gt;If you want to see contents of a file (well text file only) in terminal without opening it in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nano&lt;/code&gt; or if you feel suicidal in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vim&lt;/code&gt;, you use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt; command. And it prints you contents of the file in terminal. In the same color. If file contained shopping list it’s fine, but if it was some script… well we are spoiled with IDE using colors to distinguish methods from values and stuff. And here comes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ccat&lt;/code&gt; (color cat?) to rescue. You can get it from &lt;a href=&quot;https://github.com/jingweno/ccat&quot;&gt;here&lt;/a&gt;. Usage is the same as standard &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cat&lt;/code&gt;, and it looks like that:
+&lt;img src=&quot;assets/posts/nyan-your-terminal/ccat.png&quot; alt=&quot;ccat terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;htop&quot;&gt;htop&lt;/h3&gt;
+&lt;p&gt;For sure you are familiar with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;monitor&lt;/code&gt; tool that shows you usage of processor, RAM, network and list of processes. There are same looking tools on Windows, Ubuntu, OSX working in nice GUI. But you live in terminal now, so how to get info about which process is eating all your memory? &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;htop&lt;/code&gt; is best tool for me. &lt;a href=&quot;https://www.tecmint.com/install-htop-linux-process-monitoring-for-rhel-centos-fedora/&quot;&gt;Here&lt;/a&gt; is how to install it on few linux distributions. You run it by typing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;htop&lt;/code&gt; in terminal. It should look familiar to those GUI tools, but build with components available in terminal :) It allows you to sort processes by their memory or CPU usage, also filter and kill them. All you would want from resources monitoring tool.
+&lt;img src=&quot;assets/posts/nyan-your-terminal/htop.png&quot; alt=&quot;htop terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;bmon&quot;&gt;bmon&lt;/h3&gt;
+&lt;p&gt;All but network monitoring. This can be achieved with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bmon&lt;/code&gt; tool. It’s available for Linux and OSX, you can get it from &lt;a href=&quot;https://github.com/tgraf/bmon&quot;&gt;here&lt;/a&gt;. I personally like how RX/TX graphs are drawn :)
+&lt;img src=&quot;assets/posts/nyan-your-terminal/bmon.png&quot; alt=&quot;htop terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;images-and-movies-in-terminal&quot;&gt;Images and movies in terminal&lt;/h3&gt;
+&lt;p&gt;So we have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ccat&lt;/code&gt; to see nicely colored code in termianal but sometimes you just need to check if image in catalog is correct, why bother with GUI? There is a tool &lt;a href=&quot;https://github.com/stefanhaustein/TerminalImageViewer&quot;&gt;tiv&lt;/a&gt;. Usage is pretty simple, just type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tiv &amp;lt;image_file&amp;gt;&lt;/code&gt; and it should work, but for me I need to add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-256&lt;/code&gt; flag because colors don’t render correctly. You can also show all images in folder using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tiv *&lt;/code&gt;, it looks… well it does what is terminal-possible:
+&lt;img src=&quot;assets/posts/nyan-your-terminal/tiv.png&quot; alt=&quot;tiv terminal&quot; /&gt;
+There is also another tool &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;caca&lt;/code&gt; that does similar thing, just in separate window. It’s installed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo apt-get install caca-utils&lt;/code&gt; and usage is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cacaview &amp;lt;image_file&amp;gt;&lt;/code&gt;. Image window is closed when you kill process with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctrl + c&lt;/code&gt;.
+Movie files can be played from terminal using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mplayer&lt;/code&gt; tool, installed and used just like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;caca&lt;/code&gt;. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Mplayer&lt;/code&gt; also opens new window to display media. And you know what’s cool about those 2 tools? You can combine them, to display movie in ASCI :) useless as hell, but why not &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mplayer -vo caca &amp;lt;movie_file&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;fun-stuff&quot;&gt;Fun stuff&lt;/h1&gt;
+&lt;p&gt;This is the end of actual tools, now begins fun part with stuff you may find interesting, or just show to other nerds to be this cool-terminal-guy.&lt;/p&gt;
+
+&lt;h2 id=&quot;terminal-slack&quot;&gt;Terminal Slack&lt;/h2&gt;
+&lt;p&gt;Slack has pretty good app for all platforms, but you can still run it in terminal, because why not? &lt;a href=&quot;https://github.com/evanyeung/terminal-slack&quot;&gt;This tool&lt;/a&gt; runs on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Node.js&lt;/code&gt; and allows you to connect to only one Slack Workspace, but still it looks cool and runs fast. I’m not sure how notifications would work…&lt;/p&gt;
+
+&lt;h2 id=&quot;internet-browser-in-terminal&quot;&gt;Internet browser in terminal&lt;/h2&gt;
+&lt;p&gt;We’ve already covered showing images, playing movies and using Slack in terminal, why stop there? Let’s google from terminal! Just &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo apt-get install w3m&lt;/code&gt; and then &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;w3m google.com&lt;/code&gt;. How &lt;del&gt;useless&lt;/del&gt; cool is that? If you use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xterm&lt;/code&gt; terminal it even displays images.
+&lt;img src=&quot;assets/posts/nyan-your-terminal/w3m.png&quot; alt=&quot;w3m in terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;what-does-the-cow-say&quot;&gt;What does the cow say?&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cowsay&lt;/code&gt; is kinda easter egg that was available for Linux users for 2 decades&lt;sup id=&quot;fnref:cowsay&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:cowsay&quot; class=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;. It just prints and ASCII comics image with a cow saying provided text. So you can get something basic like:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/nyan-your-terminal/cow1.png&quot; alt=&quot;cowsay in terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;a bit more spicy like:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/nyan-your-terminal/cow2.png&quot; alt=&quot;cowsay in terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;or combined with our old friend - plugin &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chucknorris&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Oh-My-Zsh&lt;/code&gt; (I’ve decided to censorship this one):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/posts/nyan-your-terminal/cow3.png&quot; alt=&quot;cowsay in terminal&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;enough&quot;&gt;Enough&lt;/h1&gt;
+&lt;p&gt;Even though &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cowsay&lt;/code&gt; has many other options to render meaningful images I think I will stop here. As mentioned this post may be updated when I find some useful tools that will improve my workflow. Anyway I hope at least some of you will now start using more terminal apps, because they are cool. Let me know if there is something I should start using or is just useless fun thing to have in terminal :)&lt;/p&gt;
+
+&lt;hr /&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:pink_floyd&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=YR5ApYxkU-U&quot;&gt;Pink Floyd - Another Brick In The Wall&lt;/a&gt; &lt;a href=&quot;#fnref:pink_floyd&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:ohmyzsh&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://ohmyz.sh/&quot;&gt;Oh-My-Zsh&lt;/a&gt; &lt;a href=&quot;#fnref:ohmyzsh&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:cowsay&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Cowsay&quot;&gt;Cowsay on Wikipedia &lt;/a&gt; &lt;a href=&quot;#fnref:cowsay&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+				<pubDate>Sun, 18 Mar 2018 08:23:03 +0100</pubDate>
+				<link>/nyan-your-terminal</link>
+				<guid isPermaLink="true">/nyan-your-terminal</guid>
+			</item>
+		
+			<item>
+				<title>Android local libraries with Maven</title>
+				<description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#intro&quot; id=&quot;markdown-toc-intro&quot;&gt;Intro&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#why-even&quot; id=&quot;markdown-toc-why-even&quot;&gt;Why even&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#entry-info&quot; id=&quot;markdown-toc-entry-info&quot;&gt;Entry info&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#how-to&quot; id=&quot;markdown-toc-how-to&quot;&gt;How to&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#library&quot; id=&quot;markdown-toc-library&quot;&gt;Library&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#typical-case&quot; id=&quot;markdown-toc-typical-case&quot;&gt;Typical case&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#not-so-typical-case&quot; id=&quot;markdown-toc-not-so-typical-case&quot;&gt;Not-so-typical case&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#protip&quot; id=&quot;markdown-toc-protip&quot;&gt;Protip&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#publish-your-lib&quot; id=&quot;markdown-toc-publish-your-lib&quot;&gt;Publish your lib&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#project&quot; id=&quot;markdown-toc-project&quot;&gt;Project&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#outro&quot; id=&quot;markdown-toc-outro&quot;&gt;Outro&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+&lt;p&gt;Have you ever created Android library? You know, when you are working on specific functionality in some project and get enlightenment “hey, I could use this in some other project!”. No? Well… you should - at least sometimes :) I don’t mean creating new ultimate architecture framework every week (we are not JavaScript developers after all), but writing simple tools that you know how to use and that will make your work easer on future projects. I recommend trying this, getting stars on GitHub and showing friends your library at &lt;a href=&quot;https://android-arsenal.com/&quot;&gt;AndroidArsenal&lt;/a&gt; is cool.&lt;/p&gt;
+
+&lt;p&gt;Here is some random tutorial on how to put your lib on &lt;a href=&quot;https://jitpack.io/&quot;&gt;JitPack&lt;/a&gt;: &lt;a href=&quot;https://medium.com/@ome450901/publish-an-android-library-by-jitpack-a0342684cbd0&quot;&gt;How to JitPack your lib&lt;/a&gt;. When it’s there, you can use it like every other dependency in project.&lt;/p&gt;
+
+&lt;h3 id=&quot;why-even&quot;&gt;Why even&lt;/h3&gt;
+&lt;p&gt;Anyway, this text is not about just creating libraries and putting them online. You may not want to make your libs opensource or store them externally, but still benefit from having great tools you’ve made. Solution is local &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Maven&lt;/code&gt; repository. It also gives you a &lt;strong&gt;very&lt;/strong&gt; easy way to work on your library and test it immediately on project you need this library for. Without this, every time you want to fix or add something to your lib, you need to update it’s version, make release on Github, send it to &lt;a href=&quot;https://jitpack.io/&quot;&gt;JitPack&lt;/a&gt;, wait until it builds, hope it won’t fail, update version of lib in your project, and then if everything goes well check if it does it’s work. Of course your lib should contain sample application that shows usage of all library features, so you can test if it’s working without this whole release process, but sometimes it’s not enough and you need to test on real project.&lt;/p&gt;
+
+&lt;h2 id=&quot;entry-info&quot;&gt;Entry info&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;you dont need to install anything in your system, it’s all in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gradle&lt;/code&gt; plugin&lt;/li&gt;
+  &lt;li&gt;no need to use command line&lt;/li&gt;
+  &lt;li&gt;no need to modify your project, just &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; file&lt;/li&gt;
+  &lt;li&gt;you don’t have to know where are your local libs stored, but its good to know:
+    &lt;ul&gt;
+      &lt;li&gt;Unix/Mac OS X – ~/.m2&lt;/li&gt;
+      &lt;li&gt;Windows – C:\Users{username}.m2&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;each local release &lt;strong&gt;overrides previous one&lt;/strong&gt; with same version number, so there is no need to update version each time (like for &lt;a href=&quot;https://jitpack.io/&quot;&gt;JitPack&lt;/a&gt; or other remote &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Maven&lt;/code&gt; repository)&lt;/li&gt;
+  &lt;li&gt;you may have many local versions of your library, versioning works in the same way. You can even develop separate versions of your lib that are used in different projects, because of different &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minSdkVersion&lt;/code&gt; etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Sample code in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Kotlin&lt;/code&gt; is available on &lt;a href=&quot;https://github.com/asvid/local_maven_repo&quot;&gt;GitHub&lt;/a&gt;. There are 2 projects in repo: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app&lt;/code&gt; that contains application using locally published libraries from project &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;library&lt;/code&gt;. Library project has sample application and 2 library modules: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;firstlib&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;secondlib&lt;/code&gt;. They are dead simple and contain just custom button class that overrides initial background color.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-to&quot;&gt;How to&lt;/h2&gt;
+
+&lt;p&gt;Sounds too good to be true? Don’t worry, there is no catch.&lt;/p&gt;
+
+&lt;h3 id=&quot;library&quot;&gt;Library&lt;/h3&gt;
+
+&lt;p&gt;In your library module &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; you have to add (usually on top of file):&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apply plugin: 'maven-publish'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you publishing your lib to JitPack, there is a chance you have below variables set. If not, just add below lines before &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;android&lt;/code&gt; block.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def artifactId = 'your-library-name}'
+def groupId = 'com.your.package.name'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now is the only tricky part. Following code should be added at the bottom of lib module &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt;, after any blocks you already have there.&lt;/p&gt;
+
+&lt;h4 id=&quot;typical-case&quot;&gt;Typical case&lt;/h4&gt;
+&lt;p&gt;If your lib is single module, or you have many library modules in single project but without mutual dependencies:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
+
+          artifact bundleReleaseAar
+        }
+      }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;not-so-typical-case&quot;&gt;Not-so-typical case&lt;/h4&gt;
+&lt;p&gt;If your library project contains many modules that are independent libs and one that is collection of them - it might sound stupid but sometimes it’s useful. You can use it also for single module, but it’s just an overkill. :&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
+          artifact bundleReleaseAar 
+
+          pom.withXml {
+            def dependenciesNode = asNode().appendNode('dependencies')
+            configurations.compile.allDependencies.each {
+              if (it.group != null &amp;amp;&amp;amp; (it.name != null || &quot;unspecified&quot;.equals(it.name)) &amp;amp;&amp;amp; it.version != null) {
+              def dependencyNode = dependenciesNode.appendNode('dependency')
+              dependencyNode.appendNode('groupId', it.group)
+              dependencyNode.appendNode('artifactId', it.name)
+              dependencyNode.appendNode('version', it.version)
+              }
+            }
+          }
+        }
+      }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;protip&quot;&gt;Protip&lt;/h4&gt;
+
+&lt;p&gt;You can create file with publishing code and apply it in each module instead of copy-paste whole thing. You can see it used in &lt;a href=&quot;https://github.com/asvid/local_maven_repo&quot;&gt;Github project&lt;/a&gt; in module &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;secondLib&lt;/code&gt; of library project. There is a file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;publish_local.gradle&lt;/code&gt; in library project root folder that contains publishing code. In library module you can now just add&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apply from: '../publish_local.gradle'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Just remember to set variables &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artifactId&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;groupId&lt;/code&gt;, they are individual for each module.&lt;/p&gt;
+
+&lt;h4 id=&quot;publish-your-lib&quot;&gt;Publish your lib&lt;/h4&gt;
+&lt;p&gt;All you need to do now is run task: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;publishToMavenLocal&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://asvid.github.io//assets/posts/local-maven-repo/gradle_task.png&quot; alt=&quot;Gradle task&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So what is it for actually? You are telling &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maven-publish&lt;/code&gt; to release your library module to local &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Maven&lt;/code&gt; repository with name you’ve set in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;artifactId&lt;/code&gt; and package set in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;groupId&lt;/code&gt;. For multi-module project, it just iterates over modules and if they have &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;publishing&lt;/code&gt; code they are also published to local repository.&lt;/p&gt;
+
+&lt;h3 id=&quot;project&quot;&gt;Project&lt;/h3&gt;
+
+&lt;p&gt;All you have to do in project you want to use locally published library, is add in project root &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build.gradle&lt;/code&gt; file &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mavenLocal()&lt;/code&gt; in repository list, so it looks like that:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;allprojects {
+  repositories {
+    mavenLocal()
+    jcenter()
+    ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;How it works: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gradle&lt;/code&gt; while building your project will look for dependencies first in local &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Maven&lt;/code&gt; repository, then if it won’t find requested dependency it will try &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;JCenter&lt;/code&gt; etc. So if you are using CI, your library should be released on source that CI have access to, like remote repository (private Nexus server, JitPack).
+I highly recommend using local repository only for development and testing your lib, and then publishing it somewhere when you are sure your work is done.&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;This approach to library development saved me &lt;strong&gt;tons&lt;/strong&gt; of useless work and waiting for publishing on remote repository. I hope with this tutorial I can save some of your time. Or maybe you’ve figure it out in better way? :)&lt;/p&gt;
+
+</description>
+				<pubDate>Sun, 21 Jan 2018 00:00:00 +0100</pubDate>
+				<link>/android-local-maven</link>
+				<guid isPermaLink="true">/android-local-maven</guid>
+			</item>
+		
+			<item>
+				<title>Color changing progress bar</title>
+				<description>&lt;p&gt;In my project I wanted to have progress bar that shows how much time you have until
+your food is not good to eat any longer. I’m not UX specialist, but I know that
+usually when you see green color you think &lt;strong&gt;it’s all ok&lt;/strong&gt; and red is &lt;strong&gt;some danger&lt;/strong&gt;.
+So I decided to have small progress bar in each product list item
+showing time till it should land in trashcan.&lt;/p&gt;
+
+&lt;p&gt;So we need a progressbar that goes from green to red (with ugly mid-green mid-red in middle…)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Please remember following code is in &lt;a href=&quot;https://kotlinlang.org/&quot;&gt;Kotlin&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Standard Android ProgressBar can be set to value 0-100, by using&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;    &lt;span class=&quot;n&quot;&gt;progressBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setProgress&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;69&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s keep it, all we need is ProgressBar to set color according to this value, so we don’t
+have to change our other code where ProgressBar is used.&lt;/p&gt;
+
+&lt;p&gt;Let’s create new class extending Progres Bar&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/asvid/ddcb0907c5fea68639b57b38ca03dabe.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;And use it in Layout&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;    &lt;span class=&quot;nt&quot;&gt;&amp;lt;com.example.app.customViews.ProductProgressBar&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;@+id/progressBar&quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;fill_parent&quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;wrap_content&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;For now, it acts exactly like standard ProgressBar, so how to make it do what we want?
+Let’s override &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setProgress&lt;/code&gt; method :)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;    &lt;span class=&quot;n&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fun&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setProgress&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;progress:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setProgress&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;progress&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;progressDrawable:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Drawable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getProgressDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;progressDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;colorFilter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;translateValueToColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;progress&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;setProgressDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;progressDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;All I’ve done here is taking current ProgressDrawable, and set color to value I get from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;translateValueToColor&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;   &lt;span class=&quot;n&quot;&gt;fun&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;translateValueToColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;value:&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PorterDuffColorFilter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;R&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;255&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;G&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;255&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;graphics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;argb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;255&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;G&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;colorFilter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PorterDuffColorFilter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PorterDuff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MULTIPLY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+       &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;colorFilter&lt;/span&gt;
+   &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;I’m setting RGB values (not variables :) ) accordingly to value so &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;value == 0&lt;/code&gt; gets all green and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;value == 100&lt;/code&gt; gets all red.&lt;/p&gt;
+
+&lt;p&gt;And result can look like that:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/Screenshot_20160424-001620.png&quot; alt=&quot;alt text&quot; width=&quot;300px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you need more specific behaviour or different colors, all you need to do is change &lt;strong&gt;translateValueToColor&lt;/strong&gt; method, by using &lt;strong&gt;if&lt;/strong&gt; statement or anything you’ll find suitable for your case.&lt;/p&gt;
+
+&lt;p&gt;Hope you enjoyed this quite short tutorial, be prepared for more :]&lt;/p&gt;
+
+</description>
+				<pubDate>Sun, 24 Apr 2016 00:00:00 +0200</pubDate>
+				<link>/color-changing-progress-bar</link>
+				<guid isPermaLink="true">/color-changing-progress-bar</guid>
+			</item>
+		
+	</channel>
+</rss>

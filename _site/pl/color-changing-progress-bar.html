@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Color changing progress bar</title>
+	
+	<meta name="description" content="Simple guide to color changing progress bar">
+	
+	<meta name="author" content="Adam Świderski">
+	
+	<meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo" />
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/pl/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/pl/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/pl/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/pl/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<link rel="apple-touch-icon" sizes="57x57" href="/pl/assets/ico/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/pl/assets/ico/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/pl/assets/ico/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/pl/assets/ico/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/pl/assets/ico/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/pl/assets/ico/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/pl/assets/ico/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/pl/assets/ico/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/pl/assets/ico/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/pl/assets/ico/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/pl/assets/ico/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/pl/assets/ico/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/pl/assets/ico/favicon-16x16.png">
+	<link rel="manifest" href="/pl/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/pl/feed.xml">
+
+	<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Color changing progress bar</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Color changing progress bar" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Simple guide to color changing progress bar" />
+<meta property="og:description" content="Simple guide to color changing progress bar" />
+<link rel="canonical" href="http://asvid.github.io//pl/color-changing-progress-bar" />
+<meta property="og:url" content="http://asvid.github.io//color-changing-progress-bar" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-04-24T00:00:00+02:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://asvid.github.io//color-changing-progress-bar"},"datePublished":"2016-04-24T00:00:00+02:00","url":"http://asvid.github.io//color-changing-progress-bar","headline":"Color changing progress bar","dateModified":"2016-04-24T00:00:00+02:00","description":"Simple guide to color changing progress bar","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin"></i>
+			</a>
+			
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="/pl/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+			<a class="navbar-brand" href="/pl/">
+				<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle" />
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/pl/">Strona Główna</a></li>
+				<li><a href="about">O mnie</a></li>
+				<li><a href="/pl/categories.html">Kategorie</a></li>
+				<li><a href="/pl/tags.html">Tagi</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+		<a type="button" class="" href="/pl/"><i class="fa fa-home"></i>Home</a>
+		<a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+		<a type="button" class="" href="/pl/categories.html"><i class="fa fa-folder"></i>Categories</a>
+		<a type="button" class="" href="/pl/tags.html"><i class="fa fa-tags"></i>Tags</a>
+	</div> -->
+
+	<div class="col-sm-3 sidebar hidden-xs"
+	style="
+	
+	background:	url(/assets/sa.jpg) no-repeat center center !important;
+	background-size: auto 100%;
+	">
+		<!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/pl/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Siema jestem Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>I jestem programistą</span>
+</div>
+
+<div id="about_link" class="bio text-center">
+	<span>More <a href="/pl/about/">about me</a></span>
+</div>
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/pl/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/pl/"><li><i class="fa fa-home"></i>Strona Główna</li></a>
+		<a type="button" class="" href="about/"><li><i class="fa fa-user-circle"></i>O mnie</li></a>
+		<a type="button" class="" href="/pl/categories.html"><li><i class="fa fa-folder"></i>Kategorie</li></a>
+		<a type="button" class="" href="/pl/tags.html"><li><i class="fa fa-tags"></i>Tagi</li></a>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Color changing progress bar </h1>
+</div>
+
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   April
+	   24th,
+	   
+	   2016
+
+    <span class="read_time">(read time:
+      
+      
+        2 mins)
+      
+      </span>
+	 </span>
+
+   <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+	  <div class="article_body">
+	  <p>In my project I wanted to have progress bar that shows how much time you have until
+your food is not good to eat any longer. I’m not UX specialist, but I know that
+usually when you see green color you think <strong>it’s all ok</strong> and red is <strong>some danger</strong>.
+So I decided to have small progress bar in each product list item
+showing time till it should land in trashcan.</p>
+
+<p>So we need a progressbar that goes from green to red (with ugly mid-green mid-red in middle…)</p>
+
+<p><strong>Please remember following code is in <a href="https://kotlinlang.org/">Kotlin</a></strong></p>
+
+<p>Standard Android ProgressBar can be set to value 0-100, by using</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">    <span class="n">progressBar</span><span class="o">.</span><span class="na">setProgress</span><span class="o">(</span><span class="mi">69</span><span class="o">);</span></code></pre></figure>
+
+<p>Let’s keep it, all we need is ProgressBar to set color according to this value, so we don’t
+have to change our other code where ProgressBar is used.</p>
+
+<p>Let’s create new class extending Progres Bar</p>
+
+<script src="https://gist.github.com/asvid/ddcb0907c5fea68639b57b38ca03dabe.js"></script>
+
+<p>And use it in Layout</p>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml">    <span class="nt">&lt;com.example.app.customViews.ProductProgressBar</span>
+            <span class="na">android:id=</span><span class="s">"@+id/progressBar"</span>
+            <span class="na">android:layout_width=</span><span class="s">"fill_parent"</span>
+            <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span><span class="nt">/&gt;</span></code></pre></figure>
+
+<p>For now, it acts exactly like standard ProgressBar, so how to make it do what we want?
+Let’s override <code class="language-plaintext highlighter-rouge">setProgress</code> method :)</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">    <span class="n">override</span> <span class="n">fun</span> <span class="nf">setProgress</span><span class="o">(</span><span class="nl">progress:</span> <span class="nc">Int</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">setProgress</span><span class="o">(</span><span class="n">progress</span><span class="o">)</span>
+        <span class="n">val</span> <span class="nl">progressDrawable:</span> <span class="nc">Drawable</span> <span class="o">=</span> <span class="n">getProgressDrawable</span><span class="o">()</span>
+        <span class="n">progressDrawable</span><span class="o">.</span><span class="na">colorFilter</span> <span class="o">=</span> <span class="n">translateValueToColor</span><span class="o">(</span><span class="n">progress</span><span class="o">)</span>
+        <span class="n">setProgressDrawable</span><span class="o">(</span><span class="n">progressDrawable</span><span class="o">)</span>
+    <span class="o">}</span></code></pre></figure>
+
+<p>All I’ve done here is taking current ProgressDrawable, and set color to value I get from <code class="language-plaintext highlighter-rouge">translateValueToColor</code></p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">   <span class="n">fun</span> <span class="nf">translateValueToColor</span><span class="o">(</span><span class="nl">value:</span> <span class="nc">Int</span><span class="o">):</span> <span class="nc">PorterDuffColorFilter</span> <span class="o">{</span>
+       <span class="n">val</span> <span class="no">R</span> <span class="o">=</span> <span class="o">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">value</span><span class="o">)</span> <span class="o">/</span> <span class="mi">100</span>
+       <span class="n">val</span> <span class="no">G</span> <span class="o">=</span> <span class="o">(</span><span class="mi">255</span> <span class="o">*</span> <span class="o">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">value</span><span class="o">))</span> <span class="o">/</span> <span class="mi">100</span>
+       <span class="n">val</span> <span class="no">B</span> <span class="o">=</span> <span class="mi">0</span>
+       <span class="n">val</span> <span class="n">color</span> <span class="o">=</span> <span class="n">android</span><span class="o">.</span><span class="na">graphics</span><span class="o">.</span><span class="na">Color</span><span class="o">.</span><span class="na">argb</span><span class="o">(</span><span class="mi">255</span><span class="o">,</span> <span class="no">R</span><span class="o">,</span> <span class="no">G</span><span class="o">,</span> <span class="no">B</span><span class="o">)</span>
+       <span class="n">val</span> <span class="n">colorFilter</span> <span class="o">=</span> <span class="nc">PorterDuffColorFilter</span><span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="nc">PorterDuff</span><span class="o">.</span><span class="na">Mode</span><span class="o">.</span><span class="na">MULTIPLY</span><span class="o">)</span>
+       <span class="k">return</span> <span class="n">colorFilter</span>
+   <span class="o">}</span></code></pre></figure>
+
+<p>I’m setting RGB values (not variables :) ) accordingly to value so <code class="language-plaintext highlighter-rouge">value == 0</code> gets all green and <code class="language-plaintext highlighter-rouge">value == 100</code> gets all red.</p>
+
+<p>And result can look like that:</p>
+
+<p><img src="/assets/Screenshot_20160424-001620.png" alt="alt text" width="300px" /></p>
+
+<p>If you need more specific behaviour or different colors, all you need to do is change <strong>translateValueToColor</strong> method, by using <strong>if</strong> statement or anything you’ll find suitable for your case.</p>
+
+<p>Hope you enjoyed this quite short tutorial, be prepared for more :]</p>
+
+
+	  </div>
+		
+		<ul class="tag_box list-unstyled list-inline">
+		  <li><i class="fa fa-folder-open"></i></li>
+		  
+		  
+			
+				<li><a href="/categories.html#Programming-ref">
+					Programming <span>(5)</span>
+					
+				</a></li>
+			
+		  
+		</ul>
+		
+
+		
+		<ul class="list-inline">
+		  <li><i class="fa fa-tags"></i></li>
+		  
+		  
+			
+				<li>
+					<a href="/tags.html#UI-ref">
+					UI <span>(1)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#Kotlin-ref">
+					Kotlin <span>(3)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#Android-ref">
+					Android <span>(7)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#custom view-ref">
+					custom view <span>(1)</span>
+					
+					</a>
+				</li>
+			
+		  
+		  
+		</ul>
+		
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Color changing progress bar"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858" class="img-rounded author-image" />
+        <h4 class="section-title author-name">Adam Świderski</h4>
+        <p class="author-bio">software engineer</p>
+      </section>
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/pl/first-post" title="First post">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/pl/android-local-maven" title="Android local libraries with Maven">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+
+	<div class="col-sm-2 sidebar-2">
+
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'asvid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+		<footer>
+			<hr/>
+			<p>
+				&copy; 2020 Adam Świderski with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+			</p>
+		</footer>
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

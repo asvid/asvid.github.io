@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Shell script basics</title>
+	
+	<meta name="description" content="If you are lazy and you know it clap your han... write shell scripts">
+	
+	<meta name="author" content="Adam Świderski">
+	
+	<meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo" />
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<link rel="apple-touch-icon" sizes="57x57" href="/assets/ico/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/assets/ico/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/assets/ico/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/assets/ico/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/assets/ico/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/assets/ico/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/assets/ico/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/assets/ico/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/assets/ico/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/assets/ico/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+
+	<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Shell script basics</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Shell script basics" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="If you are lazy and you know it clap your han… write shell scripts" />
+<meta property="og:description" content="If you are lazy and you know it clap your han… write shell scripts" />
+<link rel="canonical" href="http://asvid.github.io//shellscriptbasics" />
+<meta property="og:url" content="http://asvid.github.io//shellscriptbasics" />
+<meta property="og:image" content="http://asvid.github.io//assets/posts/shell-scripts-basics/shell.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-03T12:14:00+02:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://asvid.github.io//shellscriptbasics"},"image":"http://asvid.github.io//assets/posts/shell-scripts-basics/shell.jpg","datePublished":"2020-05-03T12:14:00+02:00","url":"http://asvid.github.io//shellscriptbasics","headline":"Shell script basics","dateModified":"2020-05-03T12:14:00+02:00","description":"If you are lazy and you know it clap your han… write shell scripts","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin"></i>
+			</a>
+			
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle" />
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="about">About</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+		<a type="button" class="" href="/"><i class="fa fa-home"></i>Home</a>
+		<a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+		<a type="button" class="" href="/categories.html"><i class="fa fa-folder"></i>Categories</a>
+		<a type="button" class="" href="/tags.html"><i class="fa fa-tags"></i>Tags</a>
+	</div> -->
+
+	<div class="col-sm-3 sidebar hidden-xs"
+	style="
+	
+	background:	url(/assets/posts/shell-scripts-basics/shell.jpg) ;
+	background-size: auto 100%;
+	background-position: center;
+	">
+		<!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Hi I'm Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>and I'm a software engineer</span>
+</div>
+
+<div id="about_link" class="bio text-center">
+	<span>More <a href="/about/">about me</a></span>
+</div>
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/"><li><i class="fa fa-home"></i>Home</li></a>
+		<a type="button" class="" href="about/"><li><i class="fa fa-user-circle"></i>About</li></a>
+		<a type="button" class="" href="/categories.html"><li><i class="fa fa-folder"></i>Categories</li></a>
+		<a type="button" class="" href="/tags.html"><li><i class="fa fa-tags"></i>Tags</li></a>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Shell script basics </h1>
+</div>
+
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   May
+	   3rd,
+	     
+	   2020
+
+    <span class="read_time">(read time:
+      
+      
+        7 mins)
+      
+      </span>
+	 </span>
+
+   <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+	  <div class="article_body">
+	  <ul id="markdown-toc">
+  <li><a href="#why" id="markdown-toc-why">Why</a></li>
+  <li><a href="#no-more-errors" id="markdown-toc-no-more-errors">No more errors</a>    <ul>
+      <li><a href="#add-help" id="markdown-toc-add-help">Add Help</a></li>
+      <li><a href="#handling-arguments" id="markdown-toc-handling-arguments">Handling arguments</a></li>
+      <li><a href="#adding-some-colors" id="markdown-toc-adding-some-colors">Adding some colors</a></li>
+      <li><a href="#handle-user-input" id="markdown-toc-handle-user-input">Handle user input</a></li>
+      <li><a href="#ifelse" id="markdown-toc-ifelse">IF|ELSE</a></li>
+      <li><a href="#run-commands" id="markdown-toc-run-commands">Run commands</a></li>
+      <li><a href="#print-ascii-header" id="markdown-toc-print-ascii-header">Print ASCII header</a></li>
+    </ul>
+  </li>
+  <li><a href="#enough-basics" id="markdown-toc-enough-basics">Enough basics</a></li>
+</ul>
+
+<h2 id="why">Why</h2>
+<p>Recently I had to do some tasks that required me to fallowing a strict checklist. It wasn’t anything complex, no creativity required - just do as list tells you to do.
+I was also one of the creators of the checklist.</p>
+
+<p>I had to do it a few times, almost regularly, sometimes in short notice but nothing extreme.</p>
+
+<p>So <strong>obviously</strong> I made errors because I knew the checklist so well <strong>I wasn’t paying attention</strong>.</p>
+
+<h2 id="no-more-errors">No more errors</h2>
+<p>After a few failures that were the result of my <em>(looking for excuses)</em> being bored with the checklist I decided to write some shell scripts that would prevent me from doing almost anything - so prevent me from making a human error.
+I’m not an expert but during this process I’ve learned a few things, here they are:</p>
+
+<h3 id="add-help">Add Help</h3>
+<p>Even when your script doesn’t have any switches or flags, doesn’t accept any parameters, etc. it’s really good to add simple help under <code class="language-plaintext highlighter-rouge">-h</code> flag.
+Yes, you can keep scripts in a repository as part of the project they are used with, or separately, and add <strong>README</strong> chapter but trust me, nobody will look there.
+If you are using the terminal you are already used to use this flag to get help about command or tool.</p>
+
+<p>Here is one of ways to achieve this:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/ffb2105cbe60fe2364ccddd97a7a8291.js"> </script>
+
+<p>There is a method <code class="language-plaintext highlighter-rouge">Help()</code> that prints info about your script. You can use <code class="language-plaintext highlighter-rouge">echo</code> for printing line by line, but using <code class="language-plaintext highlighter-rouge">cat &lt;&lt; "EOF"</code> makes it way faster to edit and more readable.
+Then the switch-case is looking for arguments, for now, we are interested in <code class="language-plaintext highlighter-rouge">-h</code> which will run <code class="language-plaintext highlighter-rouge">Help()</code> and exit the script</p>
+
+<h3 id="handling-arguments">Handling arguments</h3>
+<p>You can already see some of it in previous Gist, here some more cases:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/d2882cdd9cbc9860ef7f327a4e777b99.js"> </script>
+
+<p>Note that we have a few types of arguments passed here:</p>
+<ul>
+  <li>simple flag like <code class="language-plaintext highlighter-rouge">-a</code> can be used to set the in-script variable that can be then used in <code class="language-plaintext highlighter-rouge">IF</code> statement</li>
+  <li>flag with a value like <code class="language-plaintext highlighter-rouge">-p</code> or <code class="language-plaintext highlighter-rouge">--path</code> can take string (and only string) argument</li>
+  <li>all other arguments will be sent to <code class="language-plaintext highlighter-rouge">OTHER_ARGUMENTS</code> array</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">shift</code> after each case is handled removes argument from further processing. For the flag with the value, it needs to be doubled because you want to remove the flag itself and value from processing.</p>
+
+<p>It’s not necessary to have both short <code class="language-plaintext highlighter-rouge">-p</code> and long <code class="language-plaintext highlighter-rouge">--path</code> flag names covered, but it’s a good habit.</p>
+
+<h3 id="adding-some-colors">Adding some colors</h3>
+<p>I love colors in terminal :) and your scripts can also make use of them</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/d605e2451ec13e544a58296ffa831825.js"> </script>
+
+<p>It’s important to add <code class="language-plaintext highlighter-rouge">${NC}</code> at the end, otherwise, next printed line will be in last used color</p>
+
+<h3 id="handle-user-input">Handle user input</h3>
+<p>To handle simple <strong>yes/no</strong> from user you can do:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/4975699f4f7694ebfb9d8fa612283b11.js"> </script>
+
+<h3 id="ifelse">IF|ELSE</h3>
+
+<p>General idea of IF looks like this:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">[</span> &lt;statement&gt; <span class="o">]</span> <span class="c"># &lt;-- beginning of statement</span>
+<span class="k">then</span> <span class="c"># &lt;-- IF something THEN do something</span>
+  &lt;<span class="k">do </span>some work&gt; <span class="c"># &lt;-- actuall work</span>
+<span class="k">fi</span> <span class="c"># &lt;-- closing IF statement</span>
+</code></pre></div></div>
+
+<p>Indenting doesn’t matter, but it’s worth keeping it consistent - remember you are doing this to <strong>avoid</strong> silly mistakes.</p>
+
+<p>A bit more comple example:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/0eff5148b4c72710f49525e944c799c5.js"> </script>
+
+<p>In this gist there are few examples of IF statement:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">; then</code> is moved to the same line with the statement, it looks more like we are used to in “normal” code</li>
+  <li>negation with <code class="language-plaintext highlighter-rouge">!</code> inside condition block</li>
+  <li>nested IF</li>
+  <li><code class="language-plaintext highlighter-rouge">elsif</code></li>
+  <li>combined conditions with AND <code class="language-plaintext highlighter-rouge">&amp;&amp;</code> but could be also with OR <code class="language-plaintext highlighter-rouge">||</code></li>
+</ul>
+
+<p>List of typical operators <a href="https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php">shamelessly borrowed from here</a>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Operator</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>! EXPRESSION</td>
+      <td>The EXPRESSION is false.</td>
+    </tr>
+    <tr>
+      <td>-n STRING</td>
+      <td>The length of STRING is greater than zero.</td>
+    </tr>
+    <tr>
+      <td>-z STRING</td>
+      <td>The length of STRING is zero (ie it is empty).</td>
+    </tr>
+    <tr>
+      <td>STRING1 = STRING2</td>
+      <td>STRING1 is equal to STRING2</td>
+    </tr>
+    <tr>
+      <td>STRING1 != STRING2</td>
+      <td>STRING1 is not equal to STRING2</td>
+    </tr>
+    <tr>
+      <td>INTEGER1 -eq INTEGER2</td>
+      <td>INTEGER1 is numerically equal to INTEGER2</td>
+    </tr>
+    <tr>
+      <td>INTEGER1 -gt INTEGER2</td>
+      <td>INTEGER1 is numerically greater than INTEGER2</td>
+    </tr>
+    <tr>
+      <td>INTEGER1 -lt INTEGER2</td>
+      <td>INTEGER1 is numerically less than INTEGER2</td>
+    </tr>
+    <tr>
+      <td>-d FILE</td>
+      <td>FILE exists and is a directory.</td>
+    </tr>
+    <tr>
+      <td>-e FILE</td>
+      <td>FILE exists.</td>
+    </tr>
+    <tr>
+      <td>-r FILE</td>
+      <td>FILE exists and the read permission is granted.</td>
+    </tr>
+    <tr>
+      <td>-s FILE</td>
+      <td>FILE exists and its size is greater than zero (ie. it is not empty).</td>
+    </tr>
+    <tr>
+      <td>-w FILE</td>
+      <td>FILE exists and the write permission is granted.</td>
+    </tr>
+    <tr>
+      <td>-x FILE</td>
+      <td>FILE exists and the execute permission is granted.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="run-commands">Run commands</h3>
+
+<p>My favorite part of using bash scripts is how easy it runs commands. If you can run it in the terminal - you can as easily run it in the script.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull <span class="o">||</span> <span class="nb">exit </span>1
+
+<span class="nb">eval</span> <span class="s2">"./gradlew"</span> <span class="s1">'clean :app:assembleDebug --info'</span>
+
+open <span class="s2">"app/build/outputs/apk/app/debug/"</span>
+
+<span class="o">(</span><span class="nb">cd</span> <span class="nv">$ARG_PATH</span>  <span class="o">&amp;&amp;</span>
+   git checkout feature/awersome_feature <span class="o">||</span> <span class="nb">exit </span>1    <span class="o">&amp;&amp;</span>
+   ./scripts/awersome_release_script.sh<span class="o">)</span>
+</code></pre></div></div>
+
+<p>What we have here is:</p>
+<ul>
+  <li>using git, <code class="language-plaintext highlighter-rouge">|| exit 1</code> means the whole script will fail if there was a non-successful result of the command, which is pretty useful</li>
+  <li><code class="language-plaintext highlighter-rouge">eval</code> takes a few strings and combines it into one command that is run after, it comes in handy when you want to pass some dynamic arguments</li>
+  <li><code class="language-plaintext highlighter-rouge">open</code> tries to open the thing that was passed to it, in my case its a directory so on OSX it will open this directory in finder</li>
+  <li>the last example is few bounded commands - first, it goes to provided directory with <code class="language-plaintext highlighter-rouge">cd</code>, then runs <code class="language-plaintext highlighter-rouge">git</code> command in this directory, and then runs script - also from the perspective of the directory from <code class="language-plaintext highlighter-rouge">cd</code>.
+After it’s done root directory is back to from where the script was running in the first place.</li>
+</ul>
+
+<h3 id="print-ascii-header">Print ASCII header</h3>
+<p>This one is the most important thing in this post, if you can remember only 1 thing from it please make it this one.
+All cool scripts have ASCII header displayed after you run it. There might be very good scripts that don’t have it, but for sure they are not cool.</p>
+
+<p>I like to generate my headers in <a href="http://patorjk.com/software/taag/#p=display&amp;f=Big&amp;t=My%20Shell%20Script">this tool</a>. 
+It has many fonts and some additional options.</p>
+
+<p>Then just copy-paste it like this:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="sh">"</span><span class="no">EOF</span><span class="sh">" 
+
+ __  __          _____ _          _ _    _____           _       _   
+ |  </span><span class="se">\/</span><span class="sh">  |        / ____| |        | | |  / ____|         (_)     | |  
+ | </span><span class="se">\ </span><span class="sh"> / |_   _  | (___ | |__   ___| | | | (___   ___ _ __ _ _ __ | |_ 
+ | |</span><span class="se">\/</span><span class="sh">| | | | |  </span><span class="se">\_</span><span class="sh">__ </span><span class="se">\|</span><span class="sh"> '_ </span><span class="se">\ </span><span class="sh">/ _ </span><span class="se">\ </span><span class="sh">| |  </span><span class="se">\_</span><span class="sh">__ </span><span class="se">\ </span><span class="sh">/ __| '__| | '_ </span><span class="se">\|</span><span class="sh"> __|
+ | |  | | |_| |  ____) | | | |  __/ | |  ____) | (__| |  | | |_) | |_ 
+ |_|  |_|</span><span class="se">\_</span><span class="sh">_, | |_____/|_| |_|</span><span class="se">\_</span><span class="sh">__|_|_| |_____/ </span><span class="se">\_</span><span class="sh">__|_|  |_| .__/ </span><span class="se">\_</span><span class="sh">_|
+          __/ |                                            | |        
+         |___/                                             |_|        
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<h2 id="enough-basics">Enough basics</h2>
+<p>This post is just about basics, enough to start writing scripts that do some work for you.
+If you need some more info about IF statements, file handling, or running commands please do it yourself :) or it might appear in some future posts.</p>
+
+	  </div>
+		
+		<ul class="tag_box list-unstyled list-inline">
+		  <li><i class="fa fa-folder-open"></i></li>
+		  
+		  
+			
+				<li><a href="/categories.html#programming-ref">
+					programming <span>(1)</span>
+					
+				</a></li>
+			
+		  
+		</ul>
+		
+
+		
+		<ul class="list-inline">
+		  <li><i class="fa fa-tags"></i></li>
+		  
+		  
+			
+				<li>
+					<a href="/tags.html#shell-ref">
+					shell <span>(1)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#bash-ref">
+					bash <span>(1)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#automatization-ref">
+					automatization <span>(1)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#scripts-ref">
+					scripts <span>(1)</span>
+					
+					</a>
+				</li>
+			
+		  
+		  
+		</ul>
+		
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Shell script basics"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858" class="img-rounded author-image" />
+        <h4 class="section-title author-name">Adam Świderski</h4>
+        <p class="author-bio">software engineer</p>
+      </section>
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/overlibrarization" title="Overlibrarization">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/intellij-settings-repo" title="IntelliJ settings repo">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+
+	<div class="col-sm-2 sidebar-2">
+
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'asvid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+		<footer>
+			<hr/>
+			<p>
+				&copy; 2020 Adam Świderski with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+			</p>
+		</footer>
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

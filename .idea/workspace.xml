@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP adding PL language, fixing doubled RSS">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.jekyll-crosspost_to_medium/medium_crossposted.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -657,12 +655,12 @@
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
-    <state x="640" y="289" width="890" height="677" key="find.popup" timestamp="1596227115633">
+    <state x="640" y="289" width="890" height="677" key="find.popup" timestamp="1596227748812">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596211074021" />
-    <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596227115633" />
+    <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596227748812" />
     <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1596217168879">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>

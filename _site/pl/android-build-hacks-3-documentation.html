@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Android build hacks #3 - documentation with Dokka</title>
+	
+	<meta name="description" content="Generating documentation with Dokka and publishing it on GitHub walkthrough">
+	
+	<meta name="author" content="Adam Świderski">
+	
+	<meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo" />
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/pl/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/pl/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/pl/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/pl/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<link rel="apple-touch-icon" sizes="57x57" href="/pl/assets/ico/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/pl/assets/ico/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/pl/assets/ico/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/pl/assets/ico/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/pl/assets/ico/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/pl/assets/ico/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/pl/assets/ico/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/pl/assets/ico/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/pl/assets/ico/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/pl/assets/ico/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/pl/assets/ico/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/pl/assets/ico/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/pl/assets/ico/favicon-16x16.png">
+	<link rel="manifest" href="/pl/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/pl/feed.xml">
+
+	<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Android build hacks #3 - documentation with Dokka</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Android build hacks #3 - documentation with Dokka" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Generating documentation with Dokka and publishing it on GitHub walkthrough" />
+<meta property="og:description" content="Generating documentation with Dokka and publishing it on GitHub walkthrough" />
+<link rel="canonical" href="http://asvid.github.io//pl/android-build-hacks-3-documentation" />
+<meta property="og:url" content="http://asvid.github.io//android-build-hacks-3-documentation" />
+<meta property="og:image" content="http://asvid.github.io//assets/posts/android-build-hacks-3/bg.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-11-05T20:05:58+01:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://asvid.github.io//android-build-hacks-3-documentation"},"image":"http://asvid.github.io//assets/posts/android-build-hacks-3/bg.jpg","datePublished":"2018-11-05T20:05:58+01:00","url":"http://asvid.github.io//android-build-hacks-3-documentation","headline":"Android build hacks #3 - documentation with Dokka","dateModified":"2018-11-05T20:05:58+01:00","description":"Generating documentation with Dokka and publishing it on GitHub walkthrough","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin"></i>
+			</a>
+			
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="/pl/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+			<a class="navbar-brand" href="/pl/">
+				<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle" />
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/pl/">Strona Główna</a></li>
+				<li><a href="about">O mnie</a></li>
+				<li><a href="/pl/categories.html">Kategorie</a></li>
+				<li><a href="/pl/tags.html">Tagi</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+		<a type="button" class="" href="/pl/"><i class="fa fa-home"></i>Home</a>
+		<a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+		<a type="button" class="" href="/pl/categories.html"><i class="fa fa-folder"></i>Categories</a>
+		<a type="button" class="" href="/pl/tags.html"><i class="fa fa-tags"></i>Tags</a>
+	</div> -->
+
+	<div class="col-sm-3 sidebar hidden-xs"
+	style="
+	
+	background:	url(/assets/posts/android-build-hacks-3/bg.jpg) ;
+	background-size: auto 100%;
+	background-position: center;
+	">
+		<!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/pl/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Siema jestem Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>I jestem programistą</span>
+</div>
+
+<div id="about_link" class="bio text-center">
+	<span>More <a href="/pl/about/">about me</a></span>
+</div>
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/pl/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/pl/"><li><i class="fa fa-home"></i>Strona Główna</li></a>
+		<a type="button" class="" href="about/"><li><i class="fa fa-user-circle"></i>O mnie</li></a>
+		<a type="button" class="" href="/pl/categories.html"><li><i class="fa fa-folder"></i>Kategorie</li></a>
+		<a type="button" class="" href="/pl/tags.html"><li><i class="fa fa-tags"></i>Tagi</li></a>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Android build hacks #3 - documentation with Dokka </h1>
+</div>
+
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   November
+	   5th,
+	   
+	   2018
+
+    <span class="read_time">(read time:
+      
+      
+        11 mins)
+      
+      </span>
+	 </span>
+
+   <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+	  <div class="article_body">
+	  <p>This is third part in series of articles about Android build configuration, all parts will be linked right below.</p>
+<blockquote>
+  <p><strong><a href="/pl/android-build-hacks-1">#1 Build basics</a></strong><br />
+<strong><a href="/pl/android-build-hacks-2">#2 Build time optimization</a></strong><br />
+<strong><a href="/pl/android-build-hacks-3-documentation">#3 Documentation with Dokka</a></strong></p>
+</blockquote>
+
+<ul id="markdown-toc">
+  <li><a href="#homework" id="markdown-toc-homework">Homework</a></li>
+  <li><a href="#where-to-start" id="markdown-toc-where-to-start">Where to start</a>    <ul>
+      <li><a href="#whats-worth-documenting" id="markdown-toc-whats-worth-documenting">What’s worth documenting?</a></li>
+      <li><a href="#basic-dokka-syntax" id="markdown-toc-basic-dokka-syntax">Basic Dokka syntax</a></li>
+    </ul>
+  </li>
+  <li><a href="#generating-documents" id="markdown-toc-generating-documents">Generating documents</a></li>
+  <li><a href="#linking" id="markdown-toc-linking">Linking</a>    <ul>
+      <li><a href="#samples" id="markdown-toc-samples">Samples</a></li>
+      <li><a href="#modules" id="markdown-toc-modules">Modules</a></li>
+      <li><a href="#libraries" id="markdown-toc-libraries">Libraries</a></li>
+      <li><a href="#code" id="markdown-toc-code">Code</a></li>
+      <li><a href="#whole-config" id="markdown-toc-whole-config">Whole config</a></li>
+    </ul>
+  </li>
+  <li><a href="#publish-it" id="markdown-toc-publish-it">Publish it</a>    <ul>
+      <li><a href="#when" id="markdown-toc-when">When</a></li>
+      <li><a href="#github-pages" id="markdown-toc-github-pages">GitHub Pages</a></li>
+    </ul>
+  </li>
+  <li><a href="#tldr" id="markdown-toc-tldr">TL;DR</a></li>
+</ul>
+
+<h2 id="homework">Homework</h2>
+<p>Wait what? You’ve wrote beautiful self-documenting code and someone tells you to create <strong>DOCUMENTATION</strong> for it? It’s already there! Well named methods and variables, design patterns used.
+If anyone wants to know how it works, he just needs to read through it - <em>well named method by well named method</em>…<br />
+I know IDEs are supporting that and you just need to click on method name or class to go there but be a good person, create documentation of at least public methods. Forcing people <strong>(or your future self)</strong> to go through code each time you want to understand (or remind) how it works is cruel.</p>
+
+<p><strong>Self-documenting code is micro-documentation, it won’t ever show the big picture.</strong></p>
+
+<p>So if you are working with someone more than yourself - docs can help others understand your intention during code review. If you are creating library - well I won’t be using it if it’s not documented.<br />
+I understand being rebellious about it - I was. Until I had to work with big undocumented project, that was dependent on few other projects, with many hacks done to meet those other projects requirements, without any trace of information <strong>why</strong> something was done in certain way.</p>
+
+<h2 id="where-to-start">Where to start</h2>
+<p>Start with attitude. It won’t be rocket science, you’ve already wrote a code that works <em>(and it’s unit tested obviously)</em>, now just describe it in more human manner. It might seem boring, but programmers often lack soft skills like basic ability to communicate intents - take it as an exercise to make yourself a better professional.</p>
+
+<h3 id="whats-worth-documenting">What’s worth documenting?</h3>
+<p>Not everything of course. What is the point of documenting methods like <code class="language-plaintext highlighter-rouge">fun add(a: Int, b: Int): Int</code>? And private methods, as they are not exposed to a class or library client? It actually depends on your organization standards. I’m in favor of documenting <strong>ALL</strong> public methods, interfaces, classes, variables etc. but the same time keeping as much as possible as internal or private implementations. This way you’ll need to document as little as possible and keep implementation nicely separated from exposed interfaces.</p>
+
+<p>What if there’s something <em>hacky</em> in your code that should be documented (for those who’ll wander into it), but it’s deeply in the implementation layer? Make a good old comment explaining it. Try to avoid it, give descriptive names or talk with colleagues if you have gut feeling something fishy is going on in your code, but making comment is not a sin if everything fails. Just remember: <strong>commenting code is not documenting it</strong>.</p>
+
+<h3 id="basic-dokka-syntax">Basic Dokka syntax</h3>
+<p>Finaly some code! This post is targeting Android developers, so people who use, or should (or would love to) use <code class="language-plaintext highlighter-rouge">Kotlin</code> in their projects, so there will be no <code class="language-plaintext highlighter-rouge">JavaDoc</code> here, no no. Say hi to <a href="https://github.com/Kotlin/dokka">Dokka</a> and <a href="https://kotlinlang.org/docs/reference/kotlin-doc.html">KDoc syntax</a>.<br />
+<code class="language-plaintext highlighter-rouge">Dokka</code> is documentation engine that uses <code class="language-plaintext highlighter-rouge">KDoc</code> syntaxed comments to generate documents in one of many formats, there is also <code class="language-plaintext highlighter-rouge">JavaDoc</code> but I see no reason to use it. What I like most about <code class="language-plaintext highlighter-rouge">KDoc</code> is that linking to other methods, classes or code samples is really easy and interactive. But besides that, it’s just like <code class="language-plaintext highlighter-rouge">JavaDoc</code>.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/ce06150320153ea0747c6a974dad66f2.js"> </script>
+
+<p>There are basically two things here: <em>block tags</em> like <code class="language-plaintext highlighter-rouge">@param</code> and <em>inline markup</em> like <code class="language-plaintext highlighter-rouge">[member]</code>.
+Available <em>block tags</em> are:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">@param</code> - method parameter description</li>
+  <li><code class="language-plaintext highlighter-rouge">@return</code> - documents returned value</li>
+  <li><code class="language-plaintext highlighter-rouge">@constructor</code> - documents primary constructor</li>
+  <li><code class="language-plaintext highlighter-rouge">@receiver</code> - receiver for extension functions</li>
+  <li><code class="language-plaintext highlighter-rouge">@property</code> - class property description</li>
+  <li><code class="language-plaintext highlighter-rouge">@throws</code>, <code class="language-plaintext highlighter-rouge">@exception</code> - describes exceptions thrown by method, no need to put all of them here</li>
+  <li><code class="language-plaintext highlighter-rouge">@sample</code> - link to code sample with documented element used</li>
+  <li><code class="language-plaintext highlighter-rouge">@see</code> - link to another element</li>
+  <li><code class="language-plaintext highlighter-rouge">@author</code> - when you feel especially proud of your code</li>
+  <li><code class="language-plaintext highlighter-rouge">@since</code> - version name where this element was introduced</li>
+  <li><code class="language-plaintext highlighter-rouge">@suppress</code> - excludes element from documentation</li>
+</ul>
+
+<p>And <em>inline markup</em> is used to create links to other parts of code like methods, classes etc.</p>
+
+<p>To be honest I use mostly <code class="language-plaintext highlighter-rouge">@param @return @sample @throws</code> and some basic info about class or method.</p>
+
+<h2 id="generating-documents">Generating documents</h2>
+<p>After adding few comments like above one, it would be nice to finaly see the documentation. Just few steps to do so:
+In project <code class="language-plaintext highlighter-rouge">build.gradle</code> add:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/c2df0f0dc8dd6940e58a7c38582c6e3c.js"> </script>
+
+<p>And in application <code class="language-plaintext highlighter-rouge">build.gradle</code>:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/6c2a12f66044cac9643ee67a1d703164.js"> </script>
+
+<p>This should add task <code class="language-plaintext highlighter-rouge">dokka</code> in group <code class="language-plaintext highlighter-rouge">documentation</code><br />
+<img src="assets/posts/android-build-hacks-3/dokka_task.png" alt="Dokka task" class="center-image" /></p>
+
+<p>Running this task will generate documentation in <code class="language-plaintext highlighter-rouge">docs</code> directory in project root, just as it was set in <code class="language-plaintext highlighter-rouge">outputDirectory</code>. Selected output format is <code class="language-plaintext highlighter-rouge">html</code> - minimalistic html format used by default. Other available formats are:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">javadoc</code> - Dokka mimic to javadoc</li>
+  <li><code class="language-plaintext highlighter-rouge">html-as-java</code> - as html but using java syntax</li>
+  <li><code class="language-plaintext highlighter-rouge">markdown</code> - Markdown structured as html
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">gfm</code> - GitHub flavored markdown</li>
+      <li><code class="language-plaintext highlighter-rouge">jekyll</code> - Jekyll compatible markdown</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">kotlin-website</code> - internal format used for documentation on kotlinlang.org</li>
+</ul>
+
+<p>Adding <code class="language-plaintext highlighter-rouge">extra.md</code> to config allows you to write some info about documentation that will be added on top of <code class="language-plaintext highlighter-rouge">index.html</code> file. It can be changelog or TODOs in single or separate files.</p>
+
+<h2 id="linking">Linking</h2>
+<p>Yay, documentation is generated! But it can be even better. For now, when using classes from Kotlin standard library, RxJava or even other modules in project no hyperlinks are created. And it would be pretty cool to be able to jump from your method returning <code class="language-plaintext highlighter-rouge">Observable</code> to RxJava documentation. Also documenting methods may be even better with provided sample code in generated HTML.</p>
+
+<h3 id="samples">Samples</h3>
+<p>Providing sample code usage makes documentation even clearer than describing method parameters and return value. For user it can look like that:<br />
+<img src="assets/posts/android-build-hacks-3/sample.png" alt="Code sample in generated documentation" class="center-image" /></p>
+
+<p>To add samples you need to create separate directory for code that will not be compiled with rest of the project. I suggest directory structure as listed below:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/adcdf38d83e3a5f6576070dd7f7f5725.js"> </script>
+
+<p>It’s best to keep package structure in <code class="language-plaintext highlighter-rouge">sample</code> directory identical to source code, just like with unit tests. Sample code does not has to be logical or actually do anything, it’s just to show how to use documented methods.<br />
+To inform <code class="language-plaintext highlighter-rouge">Dokka</code> where is sample code in module you need to add one line to configuration:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/474914135109bba01805be57c7d5d19c.js"> </script>
+
+<p>But for some reason your sample code is going to be documented like any other code, to avoid it add</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/11b34b01928a89cfc1201d4ba0e3cdda.js"> </script>
+
+<p>over your sample class.</p>
+
+<h3 id="modules">Modules</h3>
+<p>I’ve had few approaches to this and best solution I’ve found so far is to configure <code class="language-plaintext highlighter-rouge">Dokka</code> only in application module <code class="language-plaintext highlighter-rouge">build.gradle</code> and add dependency modules to <code class="language-plaintext highlighter-rouge">sourceDirs</code>. This way linking to modules documentation works perfectly, there are no problems with <code class="language-plaintext highlighter-rouge">&lt;ERROR CLASS&gt;</code> for 3rd party libraries classes, linking to source code works, and configuration for whole project is only in one file - easy to move to separate Gradle script.<br />
+To add modules used by <code class="language-plaintext highlighter-rouge">app</code> to <code class="language-plaintext highlighter-rouge">Dokka</code> use fallowing code:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/b499e52512e945ae7ae2e57ea0f9b561.js"> </script>
+
+<p>First part generates list of project dependencies that are local modules, and second part generates source code linking to each dependency and adds its path to <code class="language-plaintext highlighter-rouge">sourceDirs</code>.</p>
+
+<h3 id="libraries">Libraries</h3>
+<p>Linking 3rd party libraries easer than internal project modules, just by adding <code class="language-plaintext highlighter-rouge">externalDocumentationLink</code> with <code class="language-plaintext highlighter-rouge">url</code> pointing to <code class="language-plaintext highlighter-rouge">package-list</code> of library creates hyperlinks. Not every library documentation provides <code class="language-plaintext highlighter-rouge">package-list</code>, but most popular ones do. Sometimes it’s necessary to provide separate link to documentation and <code class="language-plaintext highlighter-rouge">package-list</code> itself - see <code class="language-plaintext highlighter-rouge">Android</code> documentation below.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/d0964be797db32193a2b613e5205fb98.js"> </script>
+
+<h3 id="code">Code</h3>
+<p>With linked modules, samples and 3rd party libraries your documentation should look pretty professional. But you can make it even better, by linking to code on repository. If documentation is for some reason still unclear, user reading it can with single click be redirected to code of class or method and check how it works directly. It’s kinda last resort because if your documentation is so bad that anyone who reads it has to dig into code each time - you did something very wrong.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/ccd2624ebe618c34a3b50c814a77b4bc.js"> </script>
+
+<h3 id="whole-config">Whole config</h3>
+<p>I’ve described parts of <code class="language-plaintext highlighter-rouge">Dokka</code> configuration, but I think it’s best to show the whole thing now:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/fe880bb2f1d2d41ce2a18cd1883df711.js"> </script>
+
+<p>I’ve moved it to separate Gradle script <code class="language-plaintext highlighter-rouge">DokkaConfig.gradle</code> in project root directory, so in application <code class="language-plaintext highlighter-rouge">build.gradle</code> all I nedd to do is add <code class="language-plaintext highlighter-rouge">apply from: '../DokkaConfig.gradle'</code></p>
+
+<h2 id="publish-it">Publish it</h2>
+<p>After creating awesome documentation it should be available for anyone who needs it. If its documentation of your employer product, maybe host it internally. If it’s open-source library - share it with rest of the world just like your code.<br />
+Distribution depends on your needs, and output format depends on your distribution way. <code class="language-plaintext highlighter-rouge">Html</code> may be best for internal hosting or putting it on your company website - copy generated files and provide link to main documentation <code class="language-plaintext highlighter-rouge">index.html</code>, also custom <code class="language-plaintext highlighter-rouge">css</code> can be added to style content.</p>
+
+<h3 id="when">When</h3>
+<p>It also depend on your case. You may want to generate documentation after each push to <code class="language-plaintext highlighter-rouge">develop</code> branch, or just after creating a <code class="language-plaintext highlighter-rouge">release</code>. Or both :)<br />
+I suggest generating after (or during) each release.<br />
+Another thing is how many versions of documentation you should keep. For internal use only last release may be enough, for open-source library it would be nice to keep all releases, or at least major ones. Nice example is <a href="https://www.11ty.io/docs/versions/">https://www.11ty.io/docs/versions/</a>.</p>
+
+<p>But for now lets focus on having at least most recent version of documentation, since <code class="language-plaintext highlighter-rouge">Dokka</code> doesn’t have in-build tools to support documentation versioning and this is whole new topic.</p>
+
+<h3 id="github-pages">GitHub Pages</h3>
+<p>One of output formats of <code class="language-plaintext highlighter-rouge">Dokka</code> documentation is <code class="language-plaintext highlighter-rouge">gfm</code> which stands for <code class="language-plaintext highlighter-rouge">GitHub flavored markdown</code>. It allows you to publish for free your documentation via <code class="language-plaintext highlighter-rouge">GitHub Pages</code>. What are GitHub Pages? Well this blog is one :) basically they are <code class="language-plaintext highlighter-rouge">html</code> websites generated from <code class="language-plaintext highlighter-rouge">markdown</code> by <code class="language-plaintext highlighter-rouge">Jekyll</code>. It works kinda automagically, if you generate your documentation to <code class="language-plaintext highlighter-rouge">/docs</code> directory, and in your GitHub repo settings you select GitHub Pages source as <code class="language-plaintext highlighter-rouge">master branch /docs folder</code> it will regenerate website each time you push to branch <code class="language-plaintext highlighter-rouge">master</code>.
+<img src="assets/posts/android-build-hacks-3/github_pages.png" alt="GitHub Pages settings" /></p>
+
+<p>Also you can select one of few themes for your documentation.</p>
+
+<p><img src="assets/posts/android-build-hacks-3/github_pages_themes.png" alt="GitHub Pages settings" /></p>
+
+<p>Website generation takes a minute, and after your fresh documentation will be available at <code class="language-plaintext highlighter-rouge">http://{your GitHub nickname}.github.io/{your repo name}/</code> so for my project it’s <a href="http://asvid.github.io/GdzieTaBiedra/">http://asvid.github.io/GdzieTaBiedra/</a></p>
+
+<p>Unfortunately GitHub pages does not support multiple versions of documentation, at least out of the box.</p>
+
+<p>More info about Github Pages: <a href="https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/">https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/</a></p>
+
+<h2 id="tldr">TL;DR</h2>
+<p><code class="language-plaintext highlighter-rouge">Dokka</code> is great tool for documenting <code class="language-plaintext highlighter-rouge">Kotlin</code> code. Documenting is not such pain as it may sound. Github Pages makes publishing generated documentation easy and free of charge. All code mentioned above comes from my project <a href="https://github.com/asvid/GdzieTaBiedra">GdzieTaBiedra</a> and generated documentation is available <a href="http://asvid.github.io/GdzieTaBiedra/">HERE</a></p>
+
+	  </div>
+		
+		<ul class="tag_box list-unstyled list-inline">
+		  <li><i class="fa fa-folder-open"></i></li>
+		  
+		  
+			
+				<li><a href="/categories.html#Programming-ref">
+					Programming <span>(5)</span>
+					
+				</a></li>
+			
+		  
+		</ul>
+		
+
+		
+		<ul class="list-inline">
+		  <li><i class="fa fa-tags"></i></li>
+		  
+		  
+			
+				<li>
+					<a href="/tags.html#Android-ref">
+					Android <span>(7)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#Gradle-ref">
+					Gradle <span>(4)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#build config-ref">
+					build config <span>(4)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#Dokka-ref">
+					Dokka <span>(1)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#documentation-ref">
+					documentation <span>(1)</span>
+					
+					</a>
+				</li>
+			
+		  
+		  
+		</ul>
+		
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Android build hacks #3 - documentation with Dokka"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858" class="img-rounded author-image" />
+        <h4 class="section-title author-name">Adam Świderski</h4>
+        <p class="author-bio">software engineer</p>
+      </section>
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/pl/android-build-hacks-2" title="Android Build Hacks #2 - build time optimization">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/pl/overlibrarization" title="Overlibrarization">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+
+	<div class="col-sm-2 sidebar-2">
+
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'asvid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+		<footer>
+			<hr/>
+			<p>
+				&copy; 2020 Adam Świderski with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+			</p>
+		</footer>
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

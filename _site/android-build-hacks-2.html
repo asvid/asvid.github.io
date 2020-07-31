@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Android Build Hacks #2 - build time optimization</title>
+	
+	<meta name="description" content="Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc..">
+	
+	<meta name="author" content="Adam Świderski">
+	
+	<meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo" />
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<link rel="apple-touch-icon" sizes="57x57" href="/assets/ico/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/assets/ico/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/assets/ico/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/assets/ico/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/assets/ico/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/assets/ico/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/assets/ico/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/assets/ico/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/assets/ico/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/assets/ico/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+
+	<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Android Build Hacks #2 - build time optimization</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Android Build Hacks #2 - build time optimization" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc.." />
+<meta property="og:description" content="Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc.." />
+<link rel="canonical" href="http://asvid.github.io//android-build-hacks-2" />
+<meta property="og:url" content="http://asvid.github.io//android-build-hacks-2" />
+<meta property="og:image" content="http://asvid.github.io//assets/posts/android-build-hacks-2/bg-small.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-09-16T10:36:34+02:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://asvid.github.io//android-build-hacks-2"},"image":"http://asvid.github.io//assets/posts/android-build-hacks-2/bg-small.jpg","datePublished":"2018-09-16T10:36:34+02:00","url":"http://asvid.github.io//android-build-hacks-2","headline":"Android Build Hacks #2 - build time optimization","dateModified":"2018-09-16T10:36:34+02:00","description":"Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc..","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin"></i>
+			</a>
+			
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle" />
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="about">About</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+		<a type="button" class="" href="/"><i class="fa fa-home"></i>Home</a>
+		<a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+		<a type="button" class="" href="/categories.html"><i class="fa fa-folder"></i>Categories</a>
+		<a type="button" class="" href="/tags.html"><i class="fa fa-tags"></i>Tags</a>
+	</div> -->
+
+	<div class="col-sm-3 sidebar hidden-xs"
+	style="
+	
+	background:	url(/assets/posts/android-build-hacks-2/bg-small.jpg) ;
+	background-size: auto 100%;
+	background-position: center;
+	">
+		<!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Hi I'm Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>and I'm a software engineer</span>
+</div>
+
+<div id="about_link" class="bio text-center">
+	<span>More <a href="/about/">about me</a></span>
+</div>
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/"><li><i class="fa fa-home"></i>Home</li></a>
+		<a type="button" class="" href="about/"><li><i class="fa fa-user-circle"></i>About</li></a>
+		<a type="button" class="" href="/categories.html"><li><i class="fa fa-folder"></i>Categories</li></a>
+		<a type="button" class="" href="/tags.html"><li><i class="fa fa-tags"></i>Tags</li></a>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Android Build Hacks #2 - build time optimization </h1>
+</div>
+
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   September
+	   16th,
+	   
+	   2018
+
+    <span class="read_time">(read time:
+      
+      
+        10 mins)
+      
+      </span>
+	 </span>
+
+   <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+	  <div class="article_body">
+	  <p>This is second part in series of articles about Android build configuration, all parts will be linked right below.</p>
+<blockquote>
+  <p><strong><a href="/android-build-hacks-1">#1 Build basics</a></strong><br />
+<strong><a href="/android-build-hacks-2">#2 Build time optimization</a></strong></p>
+</blockquote>
+
+<ul id="markdown-toc">
+  <li><a href="#motivation" id="markdown-toc-motivation">Motivation</a></li>
+  <li><a href="#optimization" id="markdown-toc-optimization">Optimization</a>    <ul>
+      <li><a href="#limiting-your-build" id="markdown-toc-limiting-your-build">Limiting your build</a></li>
+      <li><a href="#compiler-options" id="markdown-toc-compiler-options">Compiler options</a></li>
+      <li><a href="#use-instant-run" id="markdown-toc-use-instant-run">Use instant run</a></li>
+      <li><a href="#other-build-boosters" id="markdown-toc-other-build-boosters">Other build boosters</a>        <ul>
+          <li><a href="#disable-unneeded-tools" id="markdown-toc-disable-unneeded-tools">Disable unneeded tools</a></li>
+          <li><a href="#dont-use-dynamic-dependency-versions" id="markdown-toc-dont-use-dynamic-dependency-versions">Don’t use dynamic dependency versions</a></li>
+          <li><a href="#gradle-properties" id="markdown-toc-gradle-properties">Gradle properties</a></li>
+          <li><a href="#profile-your-build" id="markdown-toc-profile-your-build">Profile your build</a></li>
+        </ul>
+      </li>
+      <li><a href="#gradle-scripts" id="markdown-toc-gradle-scripts">Gradle scripts</a></li>
+    </ul>
+  </li>
+  <li><a href="#outro" id="markdown-toc-outro">Outro</a></li>
+</ul>
+
+<h2 id="motivation">Motivation</h2>
+<p>Main reason I’ve been interested in build config tricks was to speed up development builds. As developer I’m building apps many times each day, often just to change one small thing and check if it works. Each second took of build time means a lot if you build often. And if you work at large project with lots of images and libraries you may die of old age before build is finished.</p>
+
+<p>But there are ways to avoid sad death in front of computer displaying:
+<img src="assets/posts/android-build-hacks-2/gradle-build-running.png" alt="Gradle build running" /></p>
+
+<h2 id="optimization">Optimization</h2>
+<p>A lot of things I will mention comes from this <a href="https://www.youtube.com/watch?v=7ll-rkLCtyk">Google I/O ‘17 talk</a>, you might want to watch it.</p>
+
+<h3 id="limiting-your-build">Limiting your build</h3>
+<p>Your app may be available in 100 languages and have images in all possible densities - and it’s cool, users like that, but you don’t really need <strong>ALL</strong> of it when you are developing new features or fixing bugs. You can live with 1 language and 1 density. I’ve mentioned previously about this feature, but it’s worth repeating - limiting image density makes build faster.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/b31450b7c104197f98e9d446999f0b20.js"> </script>
+
+<p><code class="language-plaintext highlighter-rouge">resConfig()</code> is available only for <code class="language-plaintext highlighter-rouge">productFlavors</code>, so using info from previous post you can add something like <code class="language-plaintext highlighter-rouge">dev</code> and <code class="language-plaintext highlighter-rouge">prod</code> flavors and filter only reasonable use cases.<br />
+I remember having build crashes when using density <code class="language-plaintext highlighter-rouge">split</code> and <code class="language-plaintext highlighter-rouge">resConfig</code> with density, but I cannot reproduce it on current version of Gradle Plugin <em>(3.3.0-alpha10)</em> so just keep in mind that it might cause some issues.</p>
+
+<p>At Google I/O talk they mention also usage of <code class="language-plaintext highlighter-rouge">minSdkVersion 21</code> in your development flavor config - it overrides default app <code class="language-plaintext highlighter-rouge">minSdkVersion</code> to allow usage of current <code class="language-plaintext highlighter-rouge">multidex</code> version that is much faster than legacy one. But this is now <del>depricated</del> - Gradle Plugin checks target device API for debug builds and sets <code class="language-plaintext highlighter-rouge">minSdkVersion</code> for it.</p>
+
+<h3 id="compiler-options">Compiler options</h3>
+<p>Builds can also be faster after some changes in Android Studio compiler settings.
+<img src="assets/posts/android-build-hacks-2/compiler-options.png" alt="Android Studio compiler options" /></p>
+
+<p>First checkbox on top allows you to compile app modules in the same time - as long as they don’t depend on each other. Yes it is an <em>“incubating”</em> feature but it works most of the time, and yes if your app is in single module it won’t make anything faster. I strongly encourage using multiple modules anytime it makes sense - it makes app architecture clean and organized, and speeds up build process.</p>
+
+<p>The most interesting setting here is <code class="language-plaintext highlighter-rouge">Command-line Options</code> where we can add arguments to build executed when you press green play button - so I guess each time you want to run app on device during development. I’ve put there <code class="language-plaintext highlighter-rouge">-PdevBuild</code> which means my build will have a property <code class="language-plaintext highlighter-rouge">devBuild</code>. This can be validated in <code class="language-plaintext highlighter-rouge">build.gradle</code> and some build changes may be included just for debug builds from Android Studio. Of course you can build exactly the same version of app from command line on CI server, but it’s mostly useful for development builds.</p>
+
+<p>So how to use it in builds?</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/2897c9a0a04f4e5c27984f26e9bb8ef7.js"> </script>
+
+<p>If we are building from Android Studio, splits can be disabled since we are running code only on our device and size of APK doesn’t matter too much. Disabling splits makes builds faster - no need to divide resources into separate APK files. Also disabling crunching images makes build faster - again for development APK size doesn’t matter so saving few KB on images won’t compensate loosing few seconds of build if you are building app every few minutes.</p>
+
+<h3 id="use-instant-run">Use instant run</h3>
+<p>I remember how excited I was when <code class="language-plaintext highlighter-rouge">Instant Run</code> was announced, and how I was then not using it because it wasn’t working well, at least for projects I was working on. But now it’s different (for most cases) and this is what we should be using during development. How it’s working? <strong>TL;DR:</strong> <code class="language-plaintext highlighter-rouge">Instant Run</code> doesn’t always compile whole app and send it to the device - it compiles changes and swaps only them on device so app can run <em>instantly</em>. There are few types of swaps, depending on what was changed from last build:</p>
+<ul>
+  <li><strong><em>hot swap</em></strong> - <strong>fastest</strong> - implementation change of already existing method, by default it restarts Activity, but it can be turned off</li>
+  <li><strong><em>warm swap</em></strong> - <strong>fast</strong> - change or removal of existing resource file, mandatory Activity restart</li>
+  <li><strong><em>cold swap</em></strong> - <strong>not-so-fast</strong> - mandatory App restart, it’s done for:
+    <ul>
+      <li>adding, changing, or removing annotation, class field, static field, static method or method signature</li>
+      <li>inheritance changes</li>
+      <li>change of implemented interfaces</li>
+      <li>element order in layouts that use dynamic ID</li>
+    </ul>
+  </li>
+  <li><strong><em>no swap</em></strong> - <strong>sloooooooow</strong> - it compiles whole new APK and runs it on device when:
+    <ul>
+      <li>changes are made in app manifest</li>
+      <li>there are changes in resources linked in app manifest</li>
+      <li>system UI elements are changed, like widgets or notifications</li>
+    </ul>
+  </li>
+</ul>
+
+<p>If your app <code class="language-plaintext highlighter-rouge">versionCode</code> is generated dynamically, for example from date, <code class="language-plaintext highlighter-rouge">Instant Run</code> will not speed up your build, because you are changing app manifest each time. But it can be easily fixed with our friend <code class="language-plaintext highlighter-rouge">devBuild</code> parameter:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/34d4eb0a15266b75aaf550153e74b18a.js"> </script>
+
+<p>For development builds we are using the same <code class="language-plaintext highlighter-rouge">versionCode</code> - <strong>100</strong>, but for every other build <code class="language-plaintext highlighter-rouge">versionCode</code> is generated from date.</p>
+
+<h3 id="other-build-boosters">Other build boosters</h3>
+<ul>
+  <li>use <code class="language-plaintext highlighter-rouge">jcenter</code> - it’s faster, safer and bigger than <code class="language-plaintext highlighter-rouge">mavenCentral</code></li>
+  <li><code class="language-plaintext highlighter-rouge">preDexLibraries</code> - it makes clean build a bit longer but every incremental build faster</li>
+</ul>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/7704af7e1a131520091d6d2b45973104.js"> </script>
+
+<ul>
+  <li>update your Java - Android Studio uses it’s own JDK by default, but if you are building also on CI server it’s good to keep Java updated</li>
+</ul>
+
+<h4 id="disable-unneeded-tools">Disable unneeded tools</h4>
+<p><code class="language-plaintext highlighter-rouge">Proguard</code> is a great tool - it removes unused classes and methods during build process and obfuscates code so it’s harder (but not impossible) to decompile apps. But during development we don’t really need that, turn it off.</p>
+
+<p>Another great tool for your app is Fabric Crashlytics - it gathers all app crashes and it’s very useful for finding and fixing bugs. But during development you’ll rather use <code class="language-plaintext highlighter-rouge">Logcat</code>, no need for external tool. Also Crashlytics is generating build ID number for each build, it also slows build down because it’s kept in string resource file, so <code class="language-plaintext highlighter-rouge">Instant Run</code> wont be able to run <strong><em>hot swap</em></strong>.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/e8f8365d069ce3b4f9a7bb758c1d3e69.js"> </script>
+
+<p>After disabling crashlytics in <code class="language-plaintext highlighter-rouge">build.gradle</code> it is necessary to disable it in runtime:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/1a15fa17526f0380b543eb60dc1cdca3.js"> </script>
+
+<h4 id="dont-use-dynamic-dependency-versions">Don’t use dynamic dependency versions</h4>
+<p>Have you ever seen something like this in code:
+<code class="language-plaintext highlighter-rouge">implementation 'com.android.support:appcompat-v7:+'</code>
+It’s cool right? you always will have newest version of library in your project! No need to update it manually each time. Unless you actually want to know what version are you using and not waste time looking for bug that wasn’t there just yesterday and you haven’t change anything in your code yet. <strong>Using dynamic dependency version is reckless</strong>. It also slows builds down, because Gradle needs to check if new version of dependency is available, it does it once every 24h.</p>
+
+<p>Also forget about using <code class="language-plaintext highlighter-rouge">compile</code> for dependencies. Using <code class="language-plaintext highlighter-rouge">implementation</code> will make your builds faster and here is talk that explains why <a href="https://youtu.be/7ll-rkLCtyk?t=22m19s">Jerome Dochez at Google I/O ‘17</a>.</p>
+
+<h4 id="gradle-properties">Gradle properties</h4>
+<p>Following settings can seriously boost your builds:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/1771826d173c54ecba9497ba59c27374.js"> </script>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">org.gradle.jvmargs</code> value is something you should experiment with, general rule is that more is better but after certain value it doesn’t make a change so save some memory for watching cat videos on Youtube until build process is done. <a href="https://docs.gradle.org/current/userguide/build_environment.html#sec:configuring_jvm_memory">Documentation</a></li>
+  <li><code class="language-plaintext highlighter-rouge">org.gradle.parallel</code> allows Gradle to run the same tasks in different projects in parallel, so it’s kinda the same feature that <code class="language-plaintext highlighter-rouge">Compile Settings</code> gave us, just for Gradle tasks and not compilation itself <a href="https://guides.gradle.org/performance/#parallel_execution">Documentation</a></li>
+  <li><code class="language-plaintext highlighter-rouge">org.gradle.caching</code> now that’s a big one - a lot of tasks that Gradle runs during build will return the same output if input has not changed, so instead of running them Gradle can just read output from it’s cache. <a href="https://docs.gradle.org/current/userguide/build_cache.html">Documentation</a></li>
+  <li><code class="language-plaintext highlighter-rouge">org.gradle.configureondemand</code> will allow Gradle to configure only projects (modules in app) that need that, not every module each time, build configuration can also take some time. <a href="https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:configuration_on_demand">Documentation</a></li>
+</ul>
+
+<h4 id="profile-your-build">Profile your build</h4>
+<p>Gradle offers a tool that provides info about exact time needed to finish each build step. It’s called <code class="language-plaintext highlighter-rouge">profiler</code> and generates HTML summary after build is finished.
+Typing in console: <code class="language-plaintext highlighter-rouge">gradle app:assembleDebug --profile</code> will generate similar report to this:
+<img src="assets/posts/android-build-hacks-2/profiler.png" alt="Gradle Profiler output" />
+Other tools to profile your build are:</p>
+<ul>
+  <li>–dry-run - tells you how much time your project need for configuration, should be few seconds max</li>
+  <li>–info - will print in console why certain tasks are executed
+<img src="assets/posts/android-build-hacks-2/gradle-info.png" alt="Gradle --info output" class="center-image" /></li>
+  <li>–scan - will send build result to <a href="https://scans.gradle.com">Gradle Scans website</a> where you may find some additional info about your build process</li>
+</ul>
+
+<h3 id="gradle-scripts">Gradle scripts</h3>
+<p>Writing your own Gradle tasks is awesome, especially when you want to automate things with CI. But custom tasks can slow your build even when you think they are not executed. When you have simple task like:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/a736c21b97c8df9edb24256167ed5e6e.js"> </script>
+
+<p>The output will be always printed (because task gets executed) when you run <strong>ANY</strong> other task in project. This one was simple printing, but can you image generating some config files, HTTP requests, calculating <code class="language-plaintext highlighter-rouge">versionCode</code> etc? And all tasks needs to finish before your build is done.</p>
+
+<p>Solution is dead simple:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/333e15745d74b47685ba80eba18d8cda.js"> </script>
+
+<p>Just move actual task work into <code class="language-plaintext highlighter-rouge">doLast</code> and leave configuration stuff like <code class="language-plaintext highlighter-rouge">group</code> outside.</p>
+
+<h2 id="outro">Outro</h2>
+<p>Knowing above things made my builds more efficient. You may not feel it right now, but projects tend to grow over time, and keeping build times at low value makes world a happier place. Be so kind and share this post with every Android developer you know - you might save them few seconds every day :)</p>
+
+	  </div>
+		
+		<ul class="tag_box list-unstyled list-inline">
+		  <li><i class="fa fa-folder-open"></i></li>
+		  
+		  
+			
+				<li><a href="/categories.html#Programming-ref">
+					Programming <span>(5)</span>
+					
+				</a></li>
+			
+		  
+		</ul>
+		
+
+		
+		<ul class="list-inline">
+		  <li><i class="fa fa-tags"></i></li>
+		  
+		  
+			
+				<li>
+					<a href="/tags.html#Android-ref">
+					Android <span>(7)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#Gradle-ref">
+					Gradle <span>(4)</span>
+					,
+					</a>
+				</li>
+			
+				<li>
+					<a href="/tags.html#build config-ref">
+					build config <span>(4)</span>
+					
+					</a>
+				</li>
+			
+		  
+		  
+		</ul>
+		
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Android Build Hacks #2 - build time optimization"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858" class="img-rounded author-image" />
+        <h4 class="section-title author-name">Adam Świderski</h4>
+        <p class="author-bio">software engineer</p>
+      </section>
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/android-build-hacks-1" title="Android Build Hacks #1 - build basics">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/android-build-hacks-3-documentation" title="Android build hacks #3 - documentation with Dokka">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+
+	<div class="col-sm-2 sidebar-2">
+
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'asvid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+
+		<footer>
+			<hr/>
+			<p>
+				&copy; 2020 Adam Świderski with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+			</p>
+		</footer>
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
