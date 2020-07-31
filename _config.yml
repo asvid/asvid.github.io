@@ -17,16 +17,8 @@ defaults:
       description: Software engineering and architecture | Android | Programming
       page_title: DevLog
 
-rss_description: Adam Świderski developer blog
-author:
-  name: Adam Świderski
-  email: adam.swiderski89@gmail.com
-  github: asvid
-  linkedin: aswiderski
-  bio_title: Hi I'm Adam
-  bio: and I'm a software engineer
-  disqus_bio: software engineer
-  email_md5: c0092be8e7a926ead4c4a818ea622858
+rss_description: Adam Świderski developers blog
+
 
 rss_path: feed.xml
 categories_path: categories.html
@@ -39,20 +31,21 @@ BASE_PATH:
 ABOUT: about
 plugins:
   - jekyll-paginate
-  - jekyll-crosspost-to-medium
   - jekyll-feed
   - jekyll-gist
   - jekyll-sitemap
   - jekyll-seo-tag
-
-jekyll-crosspost_to_medium:
-  enabled: false
-  cache: .jekyll-crosspost_to_medium
-  status: draft
-  text: "<p><i>This article was originally posted <a href=\"http://asvid.github.io\" rel=\"canonical\">on my own site</a>.</i></p>"
-  license: all-rights-reserved
-  backdate: true
+  - jekyll-polyglot
 
 collections:
   - projects
   - technologies
+
+languages: ["en", "pl"]
+default_lang: "en"
+exclude_from_localization: ["javascript", "images", "css", "README.md"]
+parallel_localization: true
+lang_from_path: true
+
+sass:
+  sourcemap: never

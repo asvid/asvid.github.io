@@ -5,7 +5,7 @@ date: "2019-02-25 11:46:02 +0100"
 description: TODO - write abstract after post is done
 permalink: codestyle
 comments: true
-crosspost_to_medium: false
+
 tags:
 - codestyle
 - teamwork

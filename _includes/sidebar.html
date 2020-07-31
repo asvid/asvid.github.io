@@ -1,18 +1,18 @@
 <!-- sidebar.html -->
 <div class="sidebar-header" role="banner">
 	<a href="{{ site.BASE_PATH }}/">
-		<img src="http://www.gravatar.com/avatar/{{site.author.email_md5}}?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+		<img src="http://www.gravatar.com/avatar/{{site.data.author.email_md5}}?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
 	</a>
 	<div id="title_container" class="text-center">
 		<span class="title">
-			{{ site.author.bio_title }}
+			{{ site.data.author.bio_title }}
 		</span>
 	</div>
 </div>
 
-{% if site.author.bio %}
+{% if site.data.author.bio %}
 <div id="bio" class="bio text-center">
-	<span>{{ site.author.bio }}</span>
+	<span>{{ site.data.author.bio }}</span>
 </div>
 {% endif %}
 <div id="about_link" class="bio text-center">
@@ -21,37 +21,37 @@
 
 <div id="contact-list" class="text-center">
 	<ul class="list-unstyled list-inline">
-		{% if site.author.github %}
+		{% if site.data.author.github %}
 		<li>
-			<a class="btn btn-default btn-sm" href="https://github.com/{{ site.author.github }}">
+			<a class="btn btn-default btn-sm" href="https://github.com/{{ site.data.author.github }}">
 				<i class="fa fa-github-alt fa-lg"></i>
 			</a>
 		</li>
 		{% endif %}
-		{% if site.author.twitter %}
+		{% if site.data.author.twitter %}
 		<li>
-			<a class="btn btn-default btn-sm" href="https://twitter.com/{{ site.author.twitter }}">
+			<a class="btn btn-default btn-sm" href="https://twitter.com/{{ site.data.author.twitter }}">
 				<i class="fa fa-twitter fa-lg"></i>
 			</a>
 		</li>
 		{% endif %}
-		{% if site.author.email %}
+		{% if site.data.author.email %}
 		<li>
-			<a class="btn btn-default btn-sm" href="mailto:{{ site.author.email }}">
+			<a class="btn btn-default btn-sm" href="mailto:{{ site.data.author.email }}">
 				<i class="fa fa-envelope fa-lg"></i>
 			</a>
 		</li>
 		{% endif %}
-		{% if site.author.pinterest %}
+		{% if site.data.author.pinterest %}
 		<li>
-			<a class="btn btn-default btn-sm" href="https://pinterest.com/{{ site.author.pinterest }}">
+			<a class="btn btn-default btn-sm" href="https://pinterest.com/{{ site.data.author.pinterest }}">
 				<i class="fa fa-pinterest fa-lg"></i>
 			</a>
 		</li>
 		{% endif %}
-		{% if site.author.linkedin %}
+		{% if site.data.author.linkedin %}
 		<li>
-			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/{{ site.author.linkedin }}">
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/{{ site.data.author.linkedin }}">
 				<i class="fa fa-linkedin fa-lg"></i>
 			</a>
 		</li>
