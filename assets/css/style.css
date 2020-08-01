@@ -76,8 +76,7 @@ a.nav-link i{
 a.nav-link:hover { color: #777; }
 
 #bio {
-	font-family: "Courier New", Courier, monospace;
-	font-size: 14px;
+	font-family: "Ubuntu", Courier, monospace;
 	margin: 0 auto;
 	margin-bottom: 10px;
 }
@@ -390,7 +389,7 @@ p {
 }
 
 .sidebar_menu {
-    font-size: 1.3em;
+    font-size: 1.0em;
 }
 
 .sidebar_menu ul {
