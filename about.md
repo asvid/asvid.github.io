@@ -42,9 +42,7 @@ Alphabetically ordered list of tech I like to use
   </div>
 </div>
 
-
-[f]: http://www.fibaro.com
-[p]: https://payworks.com/
-[github]: https://github.com/gayanvirajith
+[p]: https://www.cybersource.com
+[github]: https://github.com/asvid
 [linkedin]: https://pl.linkedin.com/in/aswiderski
 [fb]: https://www.facebook.com/adam.swiderski.pmi

@@ -1,124 +1,99 @@
 - name: Android
-  description:
   icon: /assets/img/technology/android.png
   link: https://www.android.com/
 
 - name: Android Studio
-  description:
   icon: /assets/img/technology/android-studio.jpg
   link: https://developer.android.com/studio/index.html
 
 - name: Arduino
-  description:
   icon: /assets/img/technology/arduino.png
   link: https://www.arduino.cc/
 
 - name: Bamboo
-  description:
   icon: /assets/img/technology/bamboo.png
   link: https://atlassian.com/software/bamboo
 
 - name: BLE
-  description:
   icon: /assets/img/technology/bt.png
   link: https://en.wikipedia.org/wiki/Bluetooth_Low_Energy
 
 - name: Dagger
-  description:
   icon: /assets/img/technology/android.png
   link: https://google.github.io/dagger/
 
 - name: Espresso
-  description:
   icon: /assets/img/technology/espresso.png
   link: https://developer.android.com/training/testing/espresso/
 
 - name: ExpressJS
-  description:
   icon: /assets/img/technology/expressJS.png
   link: https://expressjs.com/
 
 - name: Firebase
-  description:
   icon: /assets/img/technology/firebase.png
   link: https://firebase.google.com/
 
 - name: Genymotion
-  description:
   icon: /assets/img/technology/genymotion.png
   link: https://www.genymotion.com/
 
 - name: git
-  description:
   icon: /assets/img/technology/git.png
   link: https://git-scm.com/
 
 - name: Gradle
-  description:
   icon: /assets/img/technology/gradle.png
   link: https://gradle.org/
 
 - name: JavaScript
-  description:
   icon: /assets/img/technology/js.png
   link: https://www.javascript.com/
 
 - name: Jira
-  description:
   icon: /assets/img/technology/jira.png
   link: https://atlassian.com/software/jira
 
 - name: JUnit
-  description:
   icon: /assets/img/technology/junit.png
   link: https://junit.org
 
 - name: Kotlin
-  description:
   icon: /assets/img/technology/kotlin_250x250.png
   link: https://kotlinlang.org/
 
 - name: Linux
-  description:
   icon: /assets/img/technology/linux.png
   link: https://www.linux.com/
 
 - name: MongoDB
-  description:
   icon: /assets/img/technology/mongo.jpg
   link: https://www.mongodb.com/
 
 - name: NodeJS
-  description:
   icon: /assets/img/technology/nodejs.png
   link: https://nodejs.org/en/
 
 - name: Photoshop
-  description:
   icon: /assets/img/technology/photoshop.svg
   link: https://www.adobe.com/pl/products/photoshop.html?mv=search&skwcid=AL!3085!3!190597917254!e!!g!!photoshop&s_kwcid=AL!3085!3!190597917254!e!!g!!photoshop&ef_id=WecAZQAAAF1Da3l0:20180128130446:s
 
 - name: Realm Database
-  description:
   icon: /assets/img/technology/realm.png
   link: https://realm.io/
 
 - name: Room Persistence Library
-  description:
   icon: /assets/img/technology/android.png
   link: https://developer.android.com/topic/libraries/architecture/room
 
 - name: RxJava
-  description:
   icon: /assets/img/technology/rxjava.png
   link: https://github.com/ReactiveX/RxJava
 
 - name: SonarQube
-  description:
   icon: /assets/img/technology/sonar.png
   link: https://www.sonarqube.org/
 
 - name: Spock
-  description:
   icon: /assets/img/technology/spock.png
   link: http://spockframework.org/

@@ -1,40 +1,62 @@
 - title: Wedding App (tytuł roboczy)
-  description: I wanted to play a bit with Flutter and my ex-work mate told me he is doing app for his wedding... so I combined both things :) It's Android/iOS app that uses Firebase for storing and sharing photos, guest book entries and venue info. There is also a Google map with quick jump to navigation to POI related to my wedding. BLoC architecture, CI/CD with Bitrise, custom fonts and colors including map. I had a lot of fun with async methods and connecting it all together with Realtime Database.
+  description: Chciałem nauczyć się Fluttera przy okazji jakiegoś projektu, a kolega z pracy powiedział że robi aplikację na swój ślub... więc połączyłem obie rzeczy :)
+    Projekt Android/iOS który wykorzystuje Firebase do przechowywania i dzielenia się zdjęciami, obsługi księgi gości i informacji o wydarzeniu.
+    Jest też mapa Google z zaznaczonymi POI i szybkim przenoszeniem się do nawigacji.
+    Architektura BLoC, CI/CD na Bitrise, customowe fonty i kolory na mapie.
 
 - title: GdzieTaBiedra
-  description: App made for recruiting purpose. Recently completely rewritten using Uber RIBs pattern, Realm DB, Retrofit, RxJava2 and Kotlin of course.
+  description: Aplikacja powstała na potrzeby rekrutacyjne :)
+    Ale potem przepisałem ją żeby korzystała ze wzorca Uber RIBs, bazy Realm, Retrofita, RxJavy i Kotlina.
   googlePlayLink: https://play.google.com/store/apps/details?id=com.hedgehog.gdzietabiedra
   github: https://github.com/asvid/GdzieTaBiedra
 
 - title: AirRide
-  description: Never finished pneumatic car suspension controller. Android app is connected via Bluetooth with Arduino module controlling the valves. App allowed controlling suspension manually with pressing buttons, using accelerometer, and creating sequences stored in Realm. Communication was wrapped in Command Pattern which made changing the approach a lot easer. It was actually tested on real car :)
+  description: Nigdy nieukończony projekt kontrolera pneumatycznego zawieszenia samochodu.
+    Aplikacja Androidowa łączy sięz kontrolerem zaworów (Arduino) przez Bluetooth.
+    Kontrola zawieszenia jest możliwa przez wciskanie przycisków, użycie akcelerometru w telefonie lub stworzenie sekwencji która jest zapisana w bazie Realm.
+    Komunikacja przez Bluetooth jest zrealizowana przez wzorzec Command co pozwoliło na łatwe zmiany i rozszerzanie możliwości.
+    Zostało to przetestowane na prawdziwym samochodzie :)
 
-- title: Fibaro App
-  description: Smartphone and tablet app to control intelligent home system. It’s an old app, refactored over time with MVP pattern and unit tests in in Spock / Groovy. We've also provided widgets and Android Watch App.
+- title: Fibaro
+  description: Aplikacje dostępne na smartfon i tablet do kontroli systemu inteligentnego domu.
+    Długożyjąca i długorozwijana aplikacja, refaktoryzowana z czasem. Zaczęliśmy używać w niej MVP i unit testów w Spocku.
+    Aplikacja dostarcza również widgetów ekranowych i ma wersję na Android Wear.
   link: https://www.fibaro.com/
   googlePlayLink: https://play.google.com/store/apps/details?id=com.fibaro
   image: /assets/img/fibaro/logo%20fibaro.jpg
 
 - title: Frigo
-  description: My graduation project. I've used Kotlin as weapon of choice for Android app. It uses Realm for storage and Retrofit for communication. App uses GCM for instant data synchronization and request caching if internet is not available. Backend of app is made in ExpressJS working on Heroku with MongoDB database. During development, I started an open source library for Android notifications called - Notti.
+  description: Moja praca magisterska.
+    Postanowiłem użyć Kotlina do aplikacji Androidowej kiedy jeszcze był przed wersją 1.0.
+    Aplikacja korzysta z bazy Realm i Retrofit do komunikacji z aplikacją serwerową.
+    GCM został użyty do natychmiastowej synchronizacji danych między użytkownikami.
+    Po stronie serwera pracuje ExpressJS postawiony na Heroku z bazą MongoDB.
+    W trakcie rozwoju aplikacji napisałem bibliotekę do notyfikacji - Notti.
   googlePlayLink: https://play.google.com/store/apps/details?id=com.aswiderski.frigo
   image: /assets/img/frigo/ic_launcher-web.png
 
+- title: Notti
+  description: Mała biblioteka usprawniająca korzystanie z notyfikacji na Androidzie.
+    Powstała po paru godzinach szukania błędu, którym okazało się niepodanie tytułu notyfikacji w builderze,
+    co nie było w żaden sposób zgłaszane jako wyjątek, ale notyfikacja się nie pojawiała :)
+  github: https://github.com/asvid/Notti
+
 - title: Dinegra
-  description: It’s a car assistant Android app. User can register fuel usage, call help, see POI on Google Map. App tracks drivers routes, that can be used in challenges or events (like Endomondo). OpenGL is used to create animated bot, that can talk with you. App also can be controlled by voice commands. App can also be a silent thief alarm - when armed, it will send you emails where the car is if it moves from parking place without disarming. We also made Websocket voice operated chat for drivers nearby, like CB radio.
+  description: Asystent podróży samochodem w formie aplikacji na Androida.
+    Pozwala rejestrować trasy, spalanie, wzywać pomoc, wyświetlać POI na mapie.
+    Rejestracja trasy jest używana do wyzwać lub eventów, jak w Endomondo.
+    OpenGL został użyty do stworzenia animowanego bota z którym można rozmawiać w trakcie jazdy.
+    Aplikacją można sterować przy pomocy komend głosowych.
+    Zapewnia także funkcjonalność cichego alarmu antywłamaniowego - kiedy jest uzbrojony, aplikacja będzie wysyłać emaile z położeniem samochodu jeśli tylko oddali się od miejsca zaparkowania bez rozbrajania.
+    Zaimplementowaliśmy też a'la CB przez Websocket do rozmów z kierowcami w okolicy.
   link: http://dinegra.com/
-  googlePlayLink: https://play.google.com/store/apps/details?id=com.lobo.dinegra
   image: /assets/img/fibaro/logo%20fibaro.jpg
 
 - title: Counter
-  description: Playground app that contains resizable widgets, charts made in MPAndroidChart, Relam database and Shared Element Transition. It has some issues and currently I'm trying to rewrite it to use Dagger2, Room and LiveData.
+  description: Aplikacja-piaskownica z widgetami ekranowymi o zmiennym rozmiarze, wykresami w MPAndroidChart, bazą danych Relam i Shared Element Transition.
   github: https://github.com/asvid/Counter
   image: /assets/img/counter/ic_launcher-web.png
 
 - title: FirebaseLogin
-  description: Library that wraps Firebase authorization methods into bit nicer API with RxJava2.
-  github: https://github.com/asvid/FirebaseLogin
-
-- title: FirebaseLogin
-  description: Library that wraps Firebase authorization methods into bit nicer API with RxJava2.
+  description: Mała biblioteka która owija metody autoryzacji Firebase w ładniejsze API z użyciem RxJava2.
   github: https://github.com/asvid/FirebaseLogin

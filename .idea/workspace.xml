@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="WIP adding PL language, fixing doubled RSS">
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="redirecting to polish site if browser language is polish">
+      <change afterPath="$PROJECT_DIR$/_includes/tech.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_data/pl/projects.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/pl/projects.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_data/projects.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/projects.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_data/technologies.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/technologies.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_includes/project.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/project.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/about.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,23 +63,26 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/_data/pl" />
-    <property name="settings.editor.selected.configurable" value="editing.templates" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/_includes" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Markdown" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Adam\repo\asvid.github.io\_data\pl" />
-      <recent name="$PROJECT_DIR$/_data/pl" />
-      <recent name="$PROJECT_DIR$/pl" />
-      <recent name="$PROJECT_DIR$/_posts" />
-      <recent name="C:\Users\Adam\repo\asvid.github.io\assets\posts\ide-settings-repo" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data" />
       <recent name="$PROJECT_DIR$/_data/en" />
       <recent name="$PROJECT_DIR$" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_posts" />
+      <recent name="$PROJECT_DIR$/_posts" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
+      <recent name="C:\Users\Adam\repo\asvid.github.io\_data\pl" />
+      <recent name="$PROJECT_DIR$/_data/pl" />
+      <recent name="$PROJECT_DIR$/pl" />
       <recent name="$PROJECT_DIR$/_posts" />
     </key>
   </component>
@@ -585,7 +600,14 @@
       <option name="project" value="LOCAL" />
       <updated>1596226770805</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="redirecting to polish site if browser language is polish">
+      <created>1596263733652</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1596263733652</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -605,7 +627,8 @@
     <MESSAGE value="wedding app privacy policy added" />
     <MESSAGE value="New post" />
     <MESSAGE value="WIP adding PL language, fixing doubled RSS" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP adding PL language, fixing doubled RSS" />
+    <MESSAGE value="redirecting to polish site if browser language is polish" />
+    <option name="LAST_COMMIT_MESSAGE" value="redirecting to polish site if browser language is polish" />
   </component>
   <component name="WindowStateProjectService">
     <state x="427" y="134" key="#Plugins" timestamp="1589627833411">
@@ -625,24 +648,25 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1588500882556" />
-    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1596226769443">
+    <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1596263732568">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="342" y="51" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1588512373359" />
-    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1596226769443" />
+    <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1596263732568" />
     <state x="523" y="356" key="Github.CreateGistDialog" timestamp="1588503343382">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="523" y="356" key="Github.CreateGistDialog/0.0.1440.900@0.0.1440.900" timestamp="1588503343382" />
-    <state x="221" y="89" key="SettingsEditor" timestamp="1588509356980">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="295" y="104" key="SettingsEditor" timestamp="1596274331418">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1588509356980" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1596226774369">
+    <state x="295" y="104" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1596274331418" />
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1596263736145">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
-    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1596226774369" />
+    <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1596263736145" />
     <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1591888586830">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -660,12 +684,12 @@
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596211074021" />
     <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596227748812" />
-    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1596217168879">
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1596276420016">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596207409209" />
-    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596217168879" />
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596276420016" />
     <state x="513" y="228" width="894" height="790" key="search.everywhere.popup/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627979800" />
   </component>
 </project>
