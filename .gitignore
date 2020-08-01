@@ -7,3 +7,4 @@ bourbon/
 Gemfile.lock
 rafts/
 /.jekyll-cache/
+/_site/
