@@ -5,21 +5,20 @@ highlighter: null
 permalink: /about/
 ---
 
-I'm Android developer at [Payworks][p], but I used to do web development.
-I'm clean code fan interested in software architecture, design patterns and devops culture, I really like automating stuff (I'm lazy in positive sense).
+I'm software engineer at [Cybersource/Visa][p], mainly occupied with our JVM  SDK development, but I also have some experience with Frontend, occasionally I do backend work.
 
-In my spare time, I try not to forget how to play guitar, read books, watch really bad movies, or make my own Android apps - usually as sandboxes to check new libraries or approaches. I also like wasting time on computer games :)
+I'm clean code fan interested in software architecture and design patterns. I am pretty lazy so I really like automating stuff (:snake: :heart:).
 
-I want to use this space to write about technical problems I've experienced and how I solved (or avoided) them, useful tools and tricks and... well anything else I want to write here.
+In my spare time, I try not to forget how to play guitar :guitar:, read books :books:, watch really bad movies :movie_camera:, or wasting time on computer games :video_game:. I like camping :tent: and hiking :sunrise_over_mountains:.
 
 ### Contact me
 
 Find me on [Linekdin][linkedin] / [Github][github] / [Facebook][fb] or just say `Hello` at
 [adam.swiderski89@gmail.com](adam.swiderski89@gmail.com).
 
-You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }}){:target="_blank"}.
+You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }})
 
-### Projects
+### Technologies
 
 Here are listed some of my projects, with links to Google Play or code on GitHub.
 

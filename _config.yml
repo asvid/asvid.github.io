@@ -3,7 +3,7 @@ paginate: 10 # pagination based on number of posts
 paginate_path: "page:num"
 exclude: ["README.md"] # files to exclude
 highlighter: rouge
-markdown: CommonMarkGhPages
+markdown: kramdown
 disqus: asvid
 google_analytics: UA-68530276-7
 url: http://asvid.github.io/
@@ -24,9 +24,9 @@ feed:
   path: feed.xml
   description: Adam Świderski developers blog
   posts_limit: 5
-  tags:
+  categories:
     except:
-      - no-rss
+      - pl
 
 categories_path: categories.html
 tags_path: tags.html
@@ -57,3 +57,7 @@ lang_from_path: true
 
 sass:
   sourcemap: never
+
+commonmark:
+  options: ["SMART", "FOOTNOTES"]
+  extensions: ["strikethrough", "autolink", "table", "tagfilter", "image size"]

@@ -17,8 +17,7 @@ categories:
 image: /assets/posts/nyan-your-terminal/nyan.jpg
 ---
 
-* TOC
-{:toc}
+
 
 *Disclaimer #1: I'm an Android developer, not sysadmin. I use terminal to help me with my workflow, not as my main tool, so please keep this in mind :)*
 

@@ -19,8 +19,7 @@ categories:
 image: /assets/posts/local-maven-repo/lib.jpg
 ---
 
-* TOC
-{:toc}
+
 
 ## Intro
 Have you ever created Android library? You know, when you are working on specific functionality in some project and get enlightenment "hey, I could use this in some other project!". No? Well... you should - at least sometimes :) I don't mean creating new ultimate architecture framework every week (we are not JavaScript developers after all), but writing simple tools that you know how to use and that will make your work easer on future projects. I recommend trying this, getting stars on GitHub and showing friends your library at [AndroidArsenal][AndroidArsenal] is cool.

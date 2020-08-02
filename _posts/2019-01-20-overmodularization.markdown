@@ -16,8 +16,7 @@ categories:
 image: /assets/posts/overmodularity/overmodularity.jpg
 ---
 
-* TOC
-{:toc}
+
 
 ## It seems great
 Write code once use it many times. Creating smaller pieces of code forces developers to write encapsulated software that follows single responsibility principle and is easy to test. Such code piece (AKA module) can be then published as a versioned artifact - a private library, that can be reused in more than one project. We are getting quality and reusability, how cool is that! Well that's the theory. I'd like to share fictional story (that could be real) when modularization went wrong and some ideas how to avoid that.

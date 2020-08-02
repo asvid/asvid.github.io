@@ -16,8 +16,7 @@ categories:
 image: /assets/posts/ide-settings-repo/cockpit.jpg
 ---
 
-* TOC
-{:toc}
+
 
 My setup looks like this: I have Windows PC with Linux installed on a separate drive, also I have 2 MacBooks for work, and rarely used Linux ThinkPad. Keeping my IntelliJ settings in sync at all of those machines wasn't really possible. If I find some setting that improves my workflow at my office machine, and after some time I want to work on a pet project on my own PC - I get this itch of not having this setting I had on MacBook... so I can export my settings and then import it. And the other way around multiplied by the number of machines.
 

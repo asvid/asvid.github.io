@@ -18,8 +18,7 @@ image: /assets/posts/hacking-android-with-frida/frida.jpg
 
 *Side image is of course [Frida Kahlo](https://en.wikipedia.org/wiki/Frida_Kahlo) auto portrait, besides her name she has no connection with topic*
 
-* TOC
-{:toc}
+
 
 ## Motivation
 Lately I attended to `Sekurak hacking party` - it's event organized by [Sekurak](https://sekurak.pl/) where they show how easy is to hack stuff like IP cameras, routers, phones. I guess Sekurak is known mainly in Poland, but they are real professionals in area of security. During this event Michał Bentkowski was showing how easy it is to spy on Android app communication and also change app behavior using tool named Frida. It was cool but scary at the same time from developers perspective.

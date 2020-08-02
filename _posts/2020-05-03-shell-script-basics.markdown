@@ -16,8 +16,7 @@ categories:
 image: /assets/posts/shell-scripts-basics/shell.jpg
 ---
 
-* TOC
-{:toc}
+
 
 ## Why
 Recently I had to do some tasks that required me to fallowing a strict checklist. It wasn't anything complex, no creativity required - just do as list tells you to do.

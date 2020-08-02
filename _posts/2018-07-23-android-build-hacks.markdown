@@ -19,8 +19,7 @@ This is first part in series of articles about Android build configuration, all 
 > **[#1 Build basics]({% post_url 2018-07-23-android-build-hacks %})**  
 > **[#2 Build time optimization]({% post_url 2018-09-16-android-build-hacks-2 %})**
 
-* TOC
-{:toc}
+
 ## Build configuration!
 This is not the most exciting part of software engineering. Each technology, language, framework has it's own rules so there are no universal patterns, [Uncle Bob](https://en.wikipedia.org/wiki/Robert_C._Martin) will not help us here. But just like this worker on left, tightening the screw of [Empire State Building](https://en.wikipedia.org/wiki/Empire_State_Building) skeleton, developers should polish their builds - build config itself is not the application (like skeleton is not the building), but application is useless if you cannot build release version. It also sucks if you have to wait minutes until build is finished, or manually change config for releases.
 

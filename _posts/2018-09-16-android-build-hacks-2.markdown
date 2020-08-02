@@ -19,8 +19,7 @@ This is second part in series of articles about Android build configuration, all
 > **[#1 Build basics]({% post_url 2018-07-23-android-build-hacks %})**  
 > **[#2 Build time optimization]({% post_url 2018-09-16-android-build-hacks-2 %})**
 
-* TOC
-{:toc}
+
 
 ## Motivation
 Main reason I've been interested in build config tricks was to speed up development builds. As developer I'm building apps many times each day, often just to change one small thing and check if it works. Each second took of build time means a lot if you build often. And if you work at large project with lots of images and libraries you may die of old age before build is finished.

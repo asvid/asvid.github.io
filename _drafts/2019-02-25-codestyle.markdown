@@ -15,7 +15,6 @@ categories:
 image: /assets/posts/overmodularity/overmodularity.jpg
 ---
 
-* TOC
-{:toc}
+
 
 #

@@ -22,8 +22,7 @@ This is third part in series of articles about Android build configuration, all 
 > **[#2 Build time optimization]({% post_url 2018-09-16-android-build-hacks-2 %})**  
 > **[#3 Documentation with Dokka]({% post_url 2018-11-05-android-build-hacks-3 %})**
 
-* TOC
-{:toc}
+
 
 ## Homework
 Wait what? You've wrote beautiful self-documenting code and someone tells you to create **DOCUMENTATION** for it? It's already there! Well named methods and variables, design patterns used.
