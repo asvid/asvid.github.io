@@ -12,7 +12,7 @@ tags:
 - Android
 - custom view
 categories:
-- Programming
+- rss
 ---
 
 In my project I wanted to have progress bar that shows how much time you have until

@@ -23,7 +23,7 @@ tagline:
     <a href="{{ site.BASE_PATH }}{{ post.url }}">{{ post.title }}</a> 
   </h2>
 
-  <p class="post_category">in <a href="/categories.html#{{ post.categories[0] | replace:' ','-' }}-ref">{{ post.categories }}</a></p>
+<!--  <p class="post_category">in <a href="/categories.html#{{ post.categories[0] | replace:' ','-' }}-ref">{{ post.categories }}</a></p>-->
 
   <div>
     {% if post.fullview %}
@@ -39,7 +39,7 @@ tagline:
     {% endif %}
   </div>
 
-  <p class="read_time">(read time:
+  <p class="read_time">({{ site.data.i18n.read_time }}:
     {% assign words = post.content | number_of_words %}
     {% if words < 360 %}
       1 min)

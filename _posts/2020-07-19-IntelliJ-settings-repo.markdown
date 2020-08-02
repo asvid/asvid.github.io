@@ -12,7 +12,7 @@ tags:
 - IntelliJ
 - settings
 categories:
-- Today I learned
+- rss
 image: /assets/posts/ide-settings-repo/cockpit.jpg
 ---
 

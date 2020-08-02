@@ -11,7 +11,7 @@ tags:
 - Gradle
 - build config
 categories:
-- Programming
+- rss
 image: /assets/posts/android-build-hacks/build-hacks.jpg
 ---
 

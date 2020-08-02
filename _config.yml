@@ -21,12 +21,10 @@ rss_path: feed.xml
 
 feed:
   excerpt_only: true
-  path: feed.xml
   description: Adam Świderski developers blog
   posts_limit: 5
   categories:
-    except:
-      - pl
+    - rss
 
 categories_path: categories.html
 tags_path: tags.html

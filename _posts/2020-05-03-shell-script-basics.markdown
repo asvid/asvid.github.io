@@ -12,7 +12,7 @@ tags:
 - automatization
 - scripts
 categories:
-- programming
+- rss
 image: /assets/posts/shell-scripts-basics/shell.jpg
 ---
 

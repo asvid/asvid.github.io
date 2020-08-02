@@ -13,7 +13,7 @@ tags:
 - Dokka
 - documentation
 categories:
-- Programming
+- rss
 image: /assets/posts/android-build-hacks-3/bg.jpg
 ---
 

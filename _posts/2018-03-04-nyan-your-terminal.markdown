@@ -13,7 +13,7 @@ tags:
 - tools
 - Nyan Cat
 categories:
-- Technology
+- rss
 image: /assets/posts/nyan-your-terminal/nyan.jpg
 ---
 

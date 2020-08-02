@@ -12,7 +12,7 @@ tags:
 - Frida
 - hacking
 categories:
-- Hacking
+- rss
 image: /assets/posts/hacking-android-with-frida/frida.jpg
 ---
 

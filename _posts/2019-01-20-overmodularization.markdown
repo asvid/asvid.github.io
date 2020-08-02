@@ -12,7 +12,7 @@ tags:
 - library
 - modularization
 categories:
-- Architecture
+- rss
 image: /assets/posts/overmodularity/overmodularity.jpg
 ---
 

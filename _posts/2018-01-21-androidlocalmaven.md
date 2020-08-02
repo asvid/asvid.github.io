@@ -15,7 +15,7 @@ tags:
 - modularization
 - build config
 categories:
-- Programming
+- rss
 image: /assets/posts/local-maven-repo/lib.jpg
 ---
 
