@@ -1,4 +1,9 @@
-<div class="page-header">
+<div class="post-header" style="
+	{% if page.image %}
+	background:	url({{page.image}});
+    background-size: cover;
+    background-position: center;
+	{% endif %}">
     <h1>{{ page.title }} {% if page.tagline %}<small>{{page.tagline}}</small>{% endif %}</h1>
 </div>
 
@@ -22,7 +27,7 @@
       {% if words < 360 %}
         1 min)
       {% else %}
-        {{ words | divided_by:180 }} mins)
+        {{ words | divided_by:180 }} min)
       {% endif %}
       </span>
 	 </span>

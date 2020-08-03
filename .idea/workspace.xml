@@ -3,26 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/i18n.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/i18n.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/pl/i18n.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/pl/i18n.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_includes/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/post.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_includes/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2016-04-16-first-post.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2016-04-16-first-post.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-01-21-androidlocalmaven.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-01-21-androidlocalmaven.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-03-04-nyan-your-terminal.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-03-04-nyan-your-terminal.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-03-31-hacking-android-app-with-frida.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-03-31-hacking-android-app-with-frida.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-09-16-android-build-hacks-2.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-09-16-android-build-hacks-2.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/feed.xml" beforeDir="false" afterPath="$PROJECT_DIR$/feed.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_layouts/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_layouts/post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -694,17 +680,17 @@
     </state>
     <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
-    <state x="480" y="248" width="667" height="580" key="find.popup" timestamp="1596394756277">
+    <state x="480" y="248" width="667" height="580" key="find.popup" timestamp="1596475001981">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
-    <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596394756277" />
+    <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596475001981" />
     <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596278702826" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1596393203522">
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1596474945839">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596393203522" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596474945839" />
     <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596277803419" />
     <state x="513" y="228" width="894" height="790" key="search.everywhere.popup/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627979800" />
   </component>

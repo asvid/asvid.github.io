@@ -29,9 +29,6 @@ feed:
 categories_path: categories.html
 tags_path: tags.html
 
-# set it as url of an image
-sidebar_background_image: /assets/sa.jpg
-
 BASE_PATH:
 ABOUT: about
 plugins:
