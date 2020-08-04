@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
+      <change afterPath="$PROJECT_DIR$/_drafts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/posts/ghpages/secret.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/posts/ghpages/token.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_layouts/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_layouts/post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +54,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/pl/_posts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/assets/posts/ghpages" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -66,11 +63,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/posts/ghpages" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data\pl" />
       <recent name="$PROJECT_DIR$/_data/pl" />
-      <recent name="$PROJECT_DIR$/pl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data" />
@@ -633,10 +630,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="polish About page" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="427" y="134" key="#Plugins" timestamp="1589627833411">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state x="320" y="115" key="#Plugins" timestamp="1596571180710">
+      <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="115" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1588572998881" />
+    <state x="320" y="115" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1596571180710" />
     <state x="427" y="134" key="#Plugins/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627833411" />
     <state x="456" y="298" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1588509242218">
       <screen x="0" y="0" width="1440" height="900" />
@@ -646,10 +643,10 @@
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627207043" />
-    <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog" timestamp="1588500882556">
+    <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog" timestamp="1596571426218">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1588500882556" />
+    <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1596571426218" />
     <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1596276579999">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
@@ -686,11 +683,11 @@
     <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1596475001981" />
     <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596278702826" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1596474945839">
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1596571516338">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596474945839" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1596571516338" />
     <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596277803419" />
     <state x="513" y="228" width="894" height="790" key="search.everywhere.popup/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627979800" />
   </component>
