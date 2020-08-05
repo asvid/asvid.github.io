@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
+      <change afterPath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pl/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
     </list>
@@ -52,7 +53,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/assets/posts/ghpages" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/_posts" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -61,11 +62,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/assets/posts/ghpages" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data\pl" />
-      <recent name="$PROJECT_DIR$/_data/pl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pl/_posts" />

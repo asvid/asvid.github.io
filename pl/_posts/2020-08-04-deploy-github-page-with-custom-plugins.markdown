@@ -52,6 +52,10 @@ Ale że jestem leniwy i nie chce za każdym razem budować ręcznie i wrzucać n
 [GitHub Actions](https://github.com/features/actions) to taki bardzo podstawowy CI dostępny za darmo na dla każdego repozytorium. 
 W ramach tego CI tworzymy sobie `Workflows` które w pliku `yaml` określają co i kiedy ma się zadziać. Dostępnych akcji jest [cały katalog](https://github.com/marketplace?type=actions),
 a jeśli czegoś brakuje zawsze można stworzyć samemu, lub połączyć w jeden workflow kilka akcji.
+Dodać workflow do repozytorium można przez repository->actions->New workflow i kliknięcie w link `set up a workflow yourself`.
+![new workflow](assets/posts/ghpages/workflow.png)
+![setup](assets/posts/ghpages/setup.png)
+Doda to plik `yaml` z konfitugracją w repozytorium w katalogu `.github/workflows`
 
 Do publikacji bloga z nieobsługiwanymi pluginami użyłem akcji [Jekyll-Actions](https://github.com/marketplace/actions/jekyll-actions) skonfigurowanej w Workflow:
 ```yaml
