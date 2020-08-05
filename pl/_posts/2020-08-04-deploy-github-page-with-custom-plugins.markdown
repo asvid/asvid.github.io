@@ -10,7 +10,7 @@ tags:
 - Jekyll
 - Github Actions
 categories:
-image: TODO - add post image from assets
+image: /assets/posts/ghpages/cover.jpg
 ---
 
 ## Pan Hyde
