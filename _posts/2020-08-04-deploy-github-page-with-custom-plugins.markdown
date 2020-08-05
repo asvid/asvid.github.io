@@ -20,13 +20,13 @@ Text you are reading is available on Jekyll blog hosted on GitHub, with the use 
 Long story short: [Jekyll](https://jekyllrb.com/) is a template engine changing `markdown` documents on static `HTML` webpages, that you can then host anywyere,
 because you don't need databases or server that has PHP or Python.
 
-## Usuall process
+## Usual process
 
 Normally process of adding new post looks like this:
 - I write `markdown` document with setting parameters like title, date and tags
 - when I'm happy with what I wrote (never), I commit changes and push it to repository on GitHub. Repository name comes from my nick and is also address for blog `asvid.github.io`
 - Github after pushing to branch `master` builds website from sources using Jekyll - probably something like running `jekyll build`
-- result of Jekyll build is not present in repository, but you see it right now after visiting [bloga page](https://asvid.github.io/pl/)
+- result of Jekyll build is not present in a repository, but you see it right now after visiting [bloga page](https://asvid.github.io/pl/)
 
 The above process works entirely automatically, no need of configuration on repo site or GitHub itself. All you need is having repo name that fallows pattern: `{user_name}.github.io`.
 Normally it works. But...
