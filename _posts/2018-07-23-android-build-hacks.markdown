@@ -5,7 +5,7 @@ date: "2018-07-23 22:24:27 +0200"
 description: Android build file tricks and hacks I've found at blogposts, YT videos etc.
 permalink: android-build-hacks-1
 comments: true
-
+toc: true
 tags:
 - Android
 - Gradle

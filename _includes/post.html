@@ -37,7 +37,10 @@
    </span>
 
         <div class="article_body">
-            {% include toc.html html=content %}
+
+            <nav aria-label="Table of Contents">
+                {{ content | toc_only }}
+            </nav>
 
             {{ content }}
         </div>

@@ -5,7 +5,7 @@ date:  "2020-07-19 12:14"
 description: "I'm using a few computers (and few OS-es) where I run IntelliJ Idea and Android Studio, and keeping their settings the same way everywhere was always a bit painful. Until today when I learned about `settings repository` thing!"
 permalink: "intellij-settings-repo"
 comments: true
-
+toc: true
 tags:
 - IDE
 - plugins

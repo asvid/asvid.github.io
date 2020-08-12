@@ -5,7 +5,7 @@ date:   2016-04-24
 description: Simple guide to color changing progress bar
 permalink: color-changing-progress-bar
 comments: true
-
+toc: true
 tags:
 - UI
 - Kotlin

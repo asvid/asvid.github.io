@@ -5,6 +5,7 @@ date:  "2020-08-04 22:00"
 description: "Deploy Jekyll blog (like this one) on GitHub is very easy. Unless, you want to use not whitelisted plugins... but it't still doable."
 permalink: "github-page-deployment"
 comments: true
+toc: true
 tags:
 - Github Pages
 - Jekyll

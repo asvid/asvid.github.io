@@ -5,7 +5,7 @@ date: "2018-03-31 17:43:37 +0200"
 description: Quick walkthrough of using Frida to hack Android app behaviour
 permalink: android-frida-hacking
 comments: true
-crosspost_to_medium: true
+toc: true
 tags:
 - Android
 - Kotlin

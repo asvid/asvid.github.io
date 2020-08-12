@@ -11,4 +11,5 @@ group :jekyll_plugins do
   gem 'jekyll-seo-tag'
   gem "jekyll-polyglot"
   gem 'jemoji'
+  gem 'jekyll-toc'
 end

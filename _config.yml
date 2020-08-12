@@ -39,6 +39,7 @@ plugins:
   - jekyll-seo-tag
   - jekyll-polyglot
   - jemoji
+  - jekyll-toc
 
 collections:
   - projects
@@ -56,3 +57,7 @@ sass:
 commonmark:
   options: ["SMART", "FOOTNOTES"]
   extensions: ["strikethrough", "autolink", "table", "tagfilter", "image size"]
+
+toc:
+  min_level: 1
+  max_level: 2

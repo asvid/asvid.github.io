@@ -5,6 +5,7 @@ date:  "2020-08-04 22:00"
 description: "Deploy strony w Jekyllu (takiej jak ta) na GitHuba jest bajecznie prosty. No chyba, że korzysta z pluginów spoza whitelisty... ale nadal da się to łatwo zrobić."
 permalink: "github-page-deployment"
 comments: true
+toc: true
 tags:
 - Github Pages
 - Jekyll

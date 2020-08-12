@@ -5,7 +5,7 @@ date: "2018-03-18 08:23:03 +0100"
 description: Some tools I use with my terminal to make my work more efficient.
 permalink: nyan-your-terminal
 comments: true
-crosspost_to_medium: true
+toc: true
 tags:
 - Linux
 - terminal

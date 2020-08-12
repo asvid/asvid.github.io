@@ -5,7 +5,7 @@ date: "2019-01-20 18:57:02 +0100"
 description: Sharing code between projects with your own libraries is generaly a good thing, but it comes with a cost. I'd like to share some of my experience about it.
 permalink: overlibrarization
 comments: true
-
+toc: true
 tags:
 - Android
 - architecture

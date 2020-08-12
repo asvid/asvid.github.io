@@ -5,7 +5,7 @@ date: "2018-11-05 20:05:58 +0100"
 description: Generating documentation with Dokka and publishing it on GitHub walkthrough
 permalink: android-build-hacks-3-documentation
 comments: true
-
+toc: true
 tags:
 - Android
 - Gradle

@@ -5,7 +5,7 @@ date: 2018-01-21
 description: Local Maven repository guide for working on private libraries along with projects that use them
 permalink: android-local-maven
 comments: true
-crosspost_to_medium: true
+toc: true
 tags:
 - Maven
 - Gradle

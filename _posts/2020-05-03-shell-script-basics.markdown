@@ -5,7 +5,7 @@ date:  "2020-05-03 12:14"
 description: "If you are lazy and you know it clap your han... write shell scripts"
 permalink: "shellscriptbasics"
 comments: true
-
+toc: true
 tags:
 - shell
 - bash
