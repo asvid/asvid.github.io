@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Code Review retrospective"
+title: "Code Review Retro"
 date:  "2020-08-06 11:43"
 description: "To nie jest lista 'złotych zasad' code review, jest sporo bardzo dobrych postów na ten temat. Tutaj po prostu zrobiłem retro na podstawie własnych doświadczeń."
 permalink: "code-review-retro"
