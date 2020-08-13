@@ -5,7 +5,7 @@ date:  "2020-08-06 11:43"
 description: "To nie jest lista 'złotych zasad' code review, jest sporo bardzo dobrych postów na ten temat. Tutaj po prostu zrobiłem retro na podstawie własnych doświadczeń."
 permalink: "code-review-retro"
 comments: true
-toc: truetoc: true
+toc: true
 tags:
 - code review
 - self-retro

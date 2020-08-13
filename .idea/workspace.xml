@@ -2,26 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2020-08-06-code-review-retro.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2019-02-25-codestyle.markdown" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/toc.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2016-04-24-color-changing-progress-bar.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-01-21-androidlocalmaven.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-01-21-androidlocalmaven.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-03-04-nyan-your-terminal.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-03-04-nyan-your-terminal.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-03-31-hacking-android-app-with-frida.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-03-31-hacking-android-app-with-frida.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-07-23-android-build-hacks.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-09-16-android-build-hacks-2.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-09-16-android-build-hacks-2.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2018-11-05-android-build-hacks-3.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2019-01-20-overmodularization.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-05-03-shell-script-basics.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-07-19-IntelliJ-settings-repo.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-07-19-IntelliJ-settings-repo.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2020-07-19-IntelliJ-settings-repo.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-08-06-code-review-retro.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2020-08-06-code-review-retro.markdown" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
