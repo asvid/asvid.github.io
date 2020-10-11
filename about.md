@@ -13,8 +13,8 @@ In my spare time, I try not to forget how to play guitar :guitar:, read books :b
 
 ### Contact me
 
-Find me on [Linekdin][linkedin] / [Github][github] / [Facebook][fb] or just say `Hello` at
-[adam.swiderski89@gmail.com](adam.swiderski89@gmail.com).
+Find me on [Linekdin][linkedin] / [Github][github] / [Facebook][fb] or just say `Hello` with an
+[email](mailto:adam.swiderski89@gmail.com).
 
 You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }})
 

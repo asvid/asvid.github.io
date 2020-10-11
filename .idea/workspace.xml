@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2020-08-06-code-review-retro.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2020-08-06-code-review-retro.markdown" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/cv.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/cv.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/about.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -333,11 +336,11 @@
       <listeners />
       <method />
     </configuration>
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
-      <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
-      <option name="PROGRAM_PARAMETERS" />
-      <predefined_log_file enabled="true" id="idea.log" />
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -452,11 +455,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="TestNG">
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <properties />
-      <listeners />
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -631,32 +634,19 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="320" y="115" key="#Plugins/0.0.1440.900@0.0.1440.900" timestamp="1596994666046" />
-    <state x="427" y="134" key="#Plugins/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627833411" />
-    <state x="456" y="298" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1588509242218">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="456" y="298" key="#com.intellij.codeInsight.template.impl.EditVariableDialog/0.0.1440.900@0.0.1440.900" timestamp="1588509242218" />
-    <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589627207043">
-      <screen x="0" y="0" width="1920" height="1050" />
-    </state>
-    <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627207043" />
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog" timestamp="1596571426218">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="343" y="144" key="#com.intellij.ide.fileTemplates.ui.ConfigureTemplatesDialog/0.0.1440.900@0.0.1440.900" timestamp="1596571426218" />
-    <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1596980474218">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="544" y="225" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1599367516135">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1596980474218" />
+    <state x="544" y="225" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1050@0.0.1920.1050" timestamp="1599367516135" />
     <state x="456" y="60" key="CommitChangelistDialog2" timestamp="1596276579999">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="342" y="51" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1588512373359" />
     <state x="456" y="60" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1596276579999" />
-    <state x="523" y="356" key="Github.CreateGistDialog" timestamp="1588503343382">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="523" y="356" key="Github.CreateGistDialog/0.0.1440.900@0.0.1440.900" timestamp="1588503343382" />
     <state x="308" y="192" key="IDE.errors.dialog" timestamp="1596994732789">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -677,14 +667,7 @@
     <state x="427" y="222" key="Vcs.Push.Dialog.v2" timestamp="1596276582075">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1588536189283" />
     <state x="427" y="222" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1596276582075" />
-    <state x="397" y="282" key="com.intellij.ide.util.TipDialog" timestamp="1591888586830">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-1920.-118.1920.1080@0.0.1440.900" timestamp="1591888586830" />
-    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900/-287.-1080.1920.1080@0.0.1440.900" timestamp="1588592705496" />
-    <state x="397" y="282" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1591782022093" />
     <state x="317" y="63" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1597257570894">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -692,20 +675,16 @@
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1595527293542">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="503" y="374" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1440.900@0.0.1440.900" timestamp="1588536178249" />
     <state x="671" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1050@0.0.1920.1050" timestamp="1595527293542" />
     <state x="480" y="248" width="667" height="580" key="find.popup" timestamp="1597262168861">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="353" y="-783" width="639" height="486" key="find.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623461694" />
     <state x="480" y="248" width="667" height="580" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1597262168861" />
     <state x="640" y="289" width="890" height="677" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596278702826" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1597174004019">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup" timestamp="1602420329339">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="226" y="-845" width="894" height="812" key="search.everywhere.popup/0.0.1440.900/-287.-1080.1920.1080@-287.-1080.1920.1080" timestamp="1589623449855" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1597174004019" />
-    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1596277803419" />
-    <state x="513" y="228" width="894" height="790" key="search.everywhere.popup/1920.-368.1080.1890/0.0.1920.1050@0.0.1920.1050" timestamp="1589627979800" />
+    <state x="513" y="229" width="894" height="789" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1602420329339" />
   </component>
 </project>

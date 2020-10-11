@@ -16,7 +16,7 @@ oglądam bardzo słabe filmy :movie_camera:, albo tracę czas na gry komputerowe
 
 ### Contact me
 
-Znajdź mnie na [Linekdin][linkedin] / [Github][github] / [Facebook][fb] albo poprostu się przywitaj na [adam.swiderski89@gmail.com](adam.swiderski89@gmail.com).
+Znajdź mnie na [Linekdin][linkedin] / [Github][github] / [Facebook][fb] albo poprostu przywitaj się [mailem](mailto:adam.swiderski89@gmail.com).
 
 Jeśli interesuje Cię moje [CV]({{ "/assets/cv.pdf" | absolute_url }})
 
