@@ -14,14 +14,14 @@ defaults:
       path: "" # empty string for all files
     values:
       title: DevLog | Adam Świderski | software engineer blog
-      description: Software engineering and architecture | Android | Programming
+      description: Software engineering and architecture | Android | Kotlin | Programming
       page_title: DevLog
 
 rss_path: feed.xml
 
 feed:
   excerpt_only: true
-  description: Adam Świderski developers blog
+  description: Adam Świderski blog
   posts_limit: 5
   categories:
     - rss

@@ -15,6 +15,7 @@ tags:
 - Builder Pattern
 - wzorce konstrukcyjne
 categories:
+  - Design Patterns
 image: /assets/posts/kotlin-builder-pattern/pkin.jpg
 
 ---
@@ -236,10 +237,9 @@ val fancyProduct3 = FancyProduct.Builder(
 [DSL (Domain Specific Language)](https://en.wikipedia.org/wiki/Domain-specific_language) czyli język programowania utworzony pod konkretną domenę.
 Kotlin pozwala na dość proste i przyjemne tworzenie funkcji, które potem umożliwiają w czysto domenowy sposób opisać nasz obiekt.
 
-Builder wygląda prawie tak samo, jak w poprzednim przykładzie, ale pole `optionalProperty` nie jest już prywatne.
-Jest to wymagane, jeśli chcemy móc je ustawiać przez DSL.
+Builder wygląda tak samo, jak w poprzednim przykładzie.
 
-Doszedł `companion object` który posiada metodę `dslProduct()` za pomocą której będziemy tworzyć nasz obiekt.
+W klasie `DslProduct` doszedł `companion object` który posiada metodę `dslProduct()` za pomocą której będziemy tworzyć nasz obiekt.
 
 ```kotlin
 class DslProduct private constructor(
@@ -255,17 +255,17 @@ class DslProduct private constructor(
 
     class Builder(
             private val requiredProperty: Any,
-            var optionalProperty: Any? = null
+            private var optionalProperty: Any? = null
     ) {
+        fun optionalProperty(value: Any?) = apply { this.optionalProperty = value }
         fun build() = DslProduct(requiredProperty, optionalProperty)
     }
 }
 ```
-
-Wywołanie wygląda trochę jak JSON albo w najlepszym przypadku JavaScript
+Wywołanie takiego prostego DSLa wygląda tak:
 ```kotlin
 val dslProduct = dslProduct("required") {
-        optionalProperty = "optional"
+        optionalProperty("optional")
     }
 ```
 Dla tak prostego obiektu nie wygląda to szczególnie zachęcająco, ale jeśli nasz Builder jest kompozycją innych 
@@ -296,9 +296,9 @@ val shop = shop("ID") {
     )
 }
 ```
-Pełny przykład z użyciem DslMaker jest -> [tutaj](https://gist.github.com/asvid/5fed8dd3c831c2a72744e8ffe8f7dc0f) <-
+Pełny przykład z użyciem DslMaker jest -> [tutaj](https://gist.github.com/asvid/5fed8dd3c831c2a72744e8ffe8f7dc0f) <- Ale to nadal dość prosty przykład i sam DSL zasługuje na osobny wpis.
 
-Podejście DSL wymaga jednak napisania pewnego boilerplate, który na pierwszy rzut oka nie wygląda zbyt przyjaźnie.
+Podejście DSL wymaga jednak napisania pewnego kodu boilerplate, który na pierwszy rzut oka nie wygląda zbyt przyjaźnie.
 
 ## Alternatywa
 Nazwane parametry w konstruktorze i domyślne wartości parametrów w tworzonym obiekcie mogą w pewnym sensie dawać podobny efekt co zastosowanie Buildera.
