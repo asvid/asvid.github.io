@@ -15,7 +15,7 @@ tags:
 - Builder Pattern
 - wzorce konstrukcyjne
   
-image: /assets/posts/codereview-retro/inspection.jpg
+image: /assets/posts/kotlin-builder-pattern/pkin.jpg
 
 ---
 
