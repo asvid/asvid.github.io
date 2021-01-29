@@ -14,7 +14,7 @@ tags:
 - wzorce projektowe
 - Builder Pattern
 - wzorce konstrukcyjne
-  
+categories:
 image: /assets/posts/kotlin-builder-pattern/pkin.jpg
 
 ---
