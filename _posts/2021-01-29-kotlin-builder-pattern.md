@@ -11,8 +11,10 @@ tags:
 - design patterns
 - Kotlin
 - Builder Pattern
+- construction design pattern
   
 categories:
+- rss
 - Design Patterns
       
 image: /assets/posts/kotlin-builder-pattern/pkin.jpg
@@ -59,7 +61,7 @@ DialogOnAnyDeniedMultiplePermissionsListener.Builder
         .withIcon(R.mipmap.my_icon)
         .build()
 ```
-In this example Builder methods are connected in chain. It's possible because each one of them returns Builder instance, so `this`. With proper method naming you can almost read it like a sentence.
+In this example Builder methods are connected in a chain. It's possible because each one of them returns Builder instance, so `this`. With proper method naming you can almost read it like a sentence. Of course modern IDEs can display parameters name in methods to help with the correct order, but during code review when all we have is text, well named methods building instance can be a huge help.
 
 #### AlertDialog
 ```kotlin
@@ -72,7 +74,7 @@ val dialog = AlertDialog.Builder(this)
 Very Kotlin style with utilizing the `apply`. Interestingly enough there is no `build()` method but `show()` that is not only returning dialog object but also displays it. Sounds like a bad idea for a method to do more than one thing, but in this case I believe it was done on purpose to avoid a common mistake of creating a dialog but forgetting to display it with a separate method.
 
 ## Elements
-Builder is basically single internal helper class.
+Builder is basically a single internal helper class. I won't be covering approach with `Director` and `ConcreteBuilder` proposed by the Gang of Four, I've never seen it in production code yet :)
 
 ### Constructor
 Surprisingly, Builders constructor is very important, even when it doesn't usually take any arguments. Constructor should require all arguments that are needed to build correct object. You can't expect Builder user will know which setters to use, or will read documentation :)
@@ -316,6 +318,6 @@ data class Contact(
 ```
 
 ## Summary
-Builder is quite useful Design Pattern and for sure you will come across it at some point. It's good to know how its build and when to use it - because this is not a silver bullet. Kotlin features allow reducing Builder boilerplate and using conveniences like DSL, named parameters and default values may allow you to get similar result without writing any additional code.
+Builder is quite useful construction Design Pattern and for sure you will come across it at some point. It can make creating complex objects easy. Well named Builder methods will make building object look like a sentence. Kotlin features allow reducing Builder boilerplate and using conveniences like DSL, named parameters and default values may allow you to get similar result without writing any additional code.
 
-In Design Patterns literature you can find more complex examples of Builder using elements like Director and ConcreteBuilder. I never encountered things like that in my career, but I believe there are usecases for it. And if at same point, you need to have generic way of providing instances of objects using many types of Builders - maybe there are nicer ways of achieving this :)
+In Design Patterns literature you can find more complex examples of Builder using elements like `Director` and `ConcreteBuilder`. I never encountered things like that in my career, but I believe there are usecases for it. If at same point, you need to have generic way of providing instances of objects using many types of Builders - maybe there are nicer ways of achieving this :)

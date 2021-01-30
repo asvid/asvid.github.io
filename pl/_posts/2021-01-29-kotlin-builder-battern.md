@@ -70,7 +70,7 @@ DialogOnAnyDeniedMultiplePermissionsListener.Builder
 		.build()
 ```
 W tym przykładzie metody Buildera są połączone w łańcuch, dlatego że każda z nich zwraca instancję Buildera, czyli 
-`this`. Przy odpowiednim nazywaniu metod czyta się takie wywołanie prawie jak zdanie.
+`this`. Przy odpowiednim nazywaniu metod czyta się takie wywołanie prawie jak zdanie. Oczywiście w trakcie pisania kodu IDE potrafi wyświetlić nazwę parametru w metodzie i pomaga to zachować właściwą kolejność, ale w trakcie code review, kiedy jesteśmy zdani na sam tekst, to ubranie tworzenia obiektu w ładnie nazwane metody zdecydowanie pomaga zorientować się co się dzieje bez konieczności zaglądania głębiej w kod.
 
 #### AlertDialog
 ```kotlin
@@ -86,7 +86,7 @@ jej odpowiedzialność została rozszerzona. Prawdopodobnie z powodu częstego b
 późniejszego braku wywołania metody wyświetlenia go.
 
 ## Elementy
-Builder to w 1 zasadzie klasa pomocnicza. 
+Builder to w najczęściej jedna wewnętrzna klasa pomocnicza. Podejściem "bandy czworga" z wykorzystaniem `Director` i `ConcreteBuilder` nie będę się tutaj zajmował, nigdy go nie widziałem w kodzie produkcyjnym :)
 
 ### Konstruktor
 Wbrew pozorom bardzo ważny jest w niej konstruktor, mimo że często nie 
@@ -189,7 +189,7 @@ Builder w konstruktorze określa wszystkie pola i ich ewentualne domyślne warto
 Mógłby to być `data class` ale w tym przypadku nie daje to żadnych korzyści. 
 Brak domyślnej wartości w konstruktorze Buildera powoduje, że argument `requiredProperty` staje się wymagany.
 
-Użycie `apply` sprawia, że z `optionalProperty()` jest zwracany obiekt Buildera. 
+Użycie `apply` sprawia, że z `optionalProperty()` jest zwracana instancja Buildera. 
 Jest tu też użyty tzw [single-expression function](https://kotlinlang.org/docs/reference/functions.html#single-expression-functions),
 czyli brak jawnej deklaracji zwracanego przez metodę typu.
 
@@ -302,7 +302,7 @@ Podejście DSL wymaga jednak napisania pewnego kodu boilerplate, który na pierw
 
 ## Alternatywa
 Nazwane parametry w konstruktorze i domyślne wartości parametrów w tworzonym obiekcie mogą w pewnym sensie dawać podobny efekt co zastosowanie Buildera.
-Sprawdzi się to raczej do mniej rozbudowanych obiektów. Warto też zadbać, żeby domyślne wartości tworzyły sensowny obiekt z punktu widzenia domeny, 
+Sprawdzi się to raczej do mniej rozbudowanych obiektów. Warto też zadbać, żeby domyślne wartości tworzyły sensowną instancję obiektu z punktu widzenia domeny, 
 a nie tylko "żeby się kompilowało".
 ```kotlin
 val person = Person(
@@ -324,7 +324,7 @@ val person = Person(
 ```
 
 Wygląda nawet podobnie do DSL, ale bez konieczności używania adnotacji, pisania dodatkowych metod etc.
-Warto zwrócić uwagę na pola takie jak `val height: Float? = null` - uznałem, że nie jest to niezbędna informacja do utworzenia sensownego obiektu `Person`,
+Warto zwrócić uwagę na pola takie jak `val height: Float? = null` - uznałem, że nie jest to niezbędna informacja do utworzenia instancji `Person`,
 dlatego domyślna wartość tego pola to `null`. Tak `null` a nie np. `0.0` czy `-1`, albo jakaś magiczna stała `DEFAULT_HEIGHT`.
 
 W blokach `init` są sprawdzane wartości podanych argumentów (patrz wyżej `Weryfikacja argumentów`). Wrzucenie złego 
@@ -370,13 +370,7 @@ data class Contact(
 ```
 
 ## Podsumowanie
-Builder jest całkiem przydatnym wzorcem i na pewno w trakcie pracy się z nim spotkasz. Dobrze wiedzieć z czego się 
-składa i w jakich przypadkach warto go użyć - bo nie będzie to zawsze. Kotlin pozwala na znaczne uproszczenie 
-boilerplate Buildera i wykorzystanie sposobów takich jak DSL i nazwane argumenty i wartości domyślne na osiągnięcie 
-podobnego rezultatu bez pisania dodatkowego kodu.
+Builder jest całkiem przydatnym wzorcem konstrukcyjnym i na pewno w trakcie pracy się z nim spotkasz. Potrafi znacząco uprościć tworzenie rozbudowanych obiektów. Dobrze nazwane metody Buildera połączone w łańcuch mogą sprawić, że tworzenie obiektu czyta się jak zdanie. Kotlin pozwala na znaczne uproszczenie boilerplate Buildera i wykorzystanie sposobów takich jak DSL i nazwane argumenty i wartości domyślne na osiągnięcie podobnego rezultatu bez pisania dodatkowego kodu.
 
-W literaturze nt. wzorców projektowych można spotkać implementację Buildera z wykorzystaniem elementów takich jak: 
-Director i ConcreteBuilder. Dopóki nie trzeba przekazywać jako argumenty do jakiegoś Buildera instancji innych 
-Builderów aby w generyczny sposób tworzyć rozbudowane obiekty - powyższe przykłady i opis będą w zupełności 
-wystarczające. A jeśli najdzie Cię potrzeba Builder-cepcji - może warto skorzystać z innego wzorca zamiast komplikować 
+W literaturze nt. wzorców projektowych można spotkać implementację Buildera z wykorzystaniem elementów takich jak: Director i ConcreteBuilder. Dopóki nie trzeba przekazywać jako argumenty do jakiegoś Buildera instancji innych Builderów aby w generyczny sposób tworzyć rozbudowane obiekty - powyższe przykłady i opis będą w zupełności wystarczające. A jeśli najdzie Cię potrzeba Builder-cepcji - może warto skorzystać z innego wzorca zamiast komplikować 
 sobie życie :)
