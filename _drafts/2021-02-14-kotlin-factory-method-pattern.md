@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Kotlin Factory Method"
-date:  "2021-01-20 11:43"
+date:  "2021-02-22 11:43"
 description: "
 TBD
 "
@@ -27,10 +27,10 @@ image: /assets/posts/kotlin-builder-pattern/pkin.jpg
 
 Podobnie jak Builder wzorzec Factory Method służy do oddzielenia procesu tworzenia obiektów od ich reprezentacji. Zamiast wprost wywoływać konstruktor, możemy wywołać metodę obiektu-wytwórni, który generuje implementację interfejsu. W odróżnieniu od Buildera, zazwyczaj nie będzie nas interesowało podanie wszystkich wymaganych przez obiekt argumentów i zależności — to będzie należeć do zadań Factory. Fabryka może dostarczać obiekty różnych typów implementujących ten sam interfejs, wyłącznie na podstawie dostarczonych argumentów. Dzięki całkowitemu odizolowaniu implementacji od interfejsu Fabryka pozwala nam to podmieniać implementację w runtime, a nie tylko w czasie kompilacji.
 
-Korzystając z Fabryki, mówimy sobie mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt danego typu". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej  "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
+Korzystając z Fabryki, mówimy sobie mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt danego typu". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej: "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
 
 Jest kilka wariantów tego wzorca:
-- Static Factory Method (już opisany [tutaj]({% post_url 2021-02-14-kotlin-static-factory-method-pattern %}))
+- Static Factory Method (już opisany [tutaj](#)
 - "Typowe" Factory Method
 - Abstract Factory
 
@@ -153,16 +153,8 @@ internal class CircleManipulator<T>(private val shape: T) : ShapeManipulator<Cir
     override fun drag() = println("CircleManipulator is manipulating circle $shape")
     override fun resize(scale: Float) = println("CircleManipulator is resizing circle $shape")
 }
-
-internal class SquareManipulator<T>(private val shape: T) : ShapeManipulator<Square> {
-    override fun drag() = println("SquareManipulator is manipulating square $shape")
-    override fun resize(scale: Float) = println("SquareManipulator is resizing square $shape")
-}
-
-internal class LineManipulator<T>(private val shape: T) : ShapeManipulator<Line> {
-    override fun drag() = println("LineManipulator is manipulating line $shape")
-    override fun resize(scale: Float) = println("LineManipulator is resizing line $shape")
-}
+internal class SquareManipulator<T>(private val shape: T) : ShapeManipulator<Square> {...}
+internal class LineManipulator<T>(private val shape: T) : ShapeManipulator<Line> {...}
 ```
 
 ```kotlin
@@ -275,16 +267,8 @@ internal class MySql(val config: MySqlConfig) : Database {
     override fun save(item: Any) = println("saving $item in MySQL")
     override fun getItem(id: Int) = println("getting item at $id from MySQL")
 }
-
-internal class Realm(val config: RealmConfig) : Database {
-    override fun save(item: Any) = println("saving $item in Realm")
-    override fun getItem(id: Int) = println("getting item at $id from Realm")
-}
-
-internal class MongoDB(val config: MongoDbConfig) : Database {
-    override fun save(item: Any) = println("saving $item in MongoDB")
-    override fun getItem(id: Int) = println("getting item at $id from MongoDB")
-}
+internal class Realm(val config: RealmConfig) : Database {...}
+internal class MongoDB(val config: MongoDbConfig) : Database {...}
 ```
 
 ```kotlin
@@ -319,7 +303,7 @@ data class BadConfig(val badData: String): MongoDbConfig("", "")
 
 ## Rejestrowane fabryki
 
-W książce "Thinking in Java" jest ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj]()) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje - bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line`, a w tym przypadku rola fabryki ogranicza się do uruchomienia `Static Factory Method` zarejestrowanego obiektu.
+W książce "Thinking in Java" jest ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj]()) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje - bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego obiektu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
 
 ```kotlin
 // AirFilter ma companion object z metodą `create()` czyli Static Factory Method
@@ -331,8 +315,10 @@ val fuelFilter: Part = FuelFilter() // błąd, prywatny konstruktor na to nie po
 RandomPartCreator.registerFactory(AirFilter)
 RandomPartCreator.registerFactory(FuelFilter)
 RandomPartCreator.registerFactory(OilFilter)
+// zarejestrować można też fabrykę nie będącą companion object
+RandomPartCreator.registerFactory(EngineFactory())
 
-// tworzymy instancje 10x
+// tworzymy 10 instancji
 repeat(10) {
     // losowe tworzenie instancji, nie znamy tutaj konkretnego typu
     val randomPart = RandomPartCreator.createRandomPart()
@@ -363,21 +349,20 @@ internal class FuelFilter private constructor() : Part {
     }
     override fun description() = "I'm a Fuel Filter"
 }
+internal class AirFilter private constructor() : Part {...}
+internal class OilFilter private constructor() : Part {...}
 
-internal class AirFilter private constructor() : Part {
-    companion object Factory : PartFactory<AirFilter> {
-        override fun create(): AirFilter = AirFilter()
-    }
-    override fun description() = "I'm a Air Filter"
+// klasa bez companion object nadal może być użyta
+class Engine: Part {
+    override fun description() = "I'm an Engine!"
 }
-
-internal class OilFilter private constructor() : Part {
-    companion object Factory : PartFactory<OilFilter> {
-        override fun create(): OilFilter = OilFilter()
+// fabryka poza obiektem
+class EngineFactory : PartFactory<Engine>{
+    override fun create(): Engine {
+        // klasa Engine nie może mieć jednak prywatnego konstruktora
+        return Engine()
     }
-    override fun description() = "I'm a Oil Filter"
 }
-
 object RandomPartCreator {
     // rejestr wewnętrznych fabryk, czyli Static Factory Method
     // Set zapewnia brak duplikatów
@@ -397,3 +382,11 @@ object RandomPartCreator {
     }
 }
 ```
+
+# Podsumowanie
+
+
+## Zalety
+
+
+## Wady
