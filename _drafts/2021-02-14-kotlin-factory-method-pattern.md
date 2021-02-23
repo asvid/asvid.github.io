@@ -54,16 +54,24 @@ concreteProduct.doStuff()
 val concreteProduct2 = ConcreteProduct()
 ```
 
-[comment]: <> (tutaj dać UMLa)
-
 {% plantuml %}
 @startuml
-class Car
+interface Product
+interface Creator{
++factoryMethod():Product
+}
 
-Driver - Car : drives >
-Car *- Wheel : have 4 >
-Car -- Person : < owns
+class ConcreteCreator extends Creator{
++factoryMethod():Product
+}
 
+class ConcreteProduct extends Product
+
+note right of ConcreteCreator::factoryMethod
+return ConcreteProduct()
+end note
+
+ConcreteCreator .left. ConcreteProduct : > creates
 @enduml
 {% endplantuml %}
 
@@ -94,13 +102,15 @@ interface Creator {
 
 // "konkretna" implementacja fabryki, wytwarzająca `ConcreteProduct`
 class ConcreteCreator: Creator {
-    // zwracany typ musi być ogólny, zwracanie `ConcreteProduct` który jest internal powoduje błąd kompilacji
+    // zwracany typ musi być ogólny, 
+    // zwracanie `ConcreteProduct` który jest internal powoduje błąd kompilacji
     override fun factoryMethod() : Product {
         println("ConcreteCreator is using factory method")
         return ConcreteProduct()
     }
 }
 ```
+W Javie brak odpowiednika `internal class`, ale wydaje się dobrze pasować do powyższego zastosowania. Użycie`internal` nie pozwala wyciekać wewnętrznym typom, co jest przydatne, jeśli tworzymy bibliotekę i nie chcemy zdradzać konkretów implementacji.
 
 ## Ciekawszy przykład od bandy czworga
 
@@ -118,20 +128,56 @@ val circle: Shape = shapeFactory.createShape(ShapeFactory.Type.Circle)// analogi
 circle.createManipulator().drag()
 ```
 
-[comment]: <> (UML)
+{% plantuml %}
+@startuml
+interface Shape{
++createManipulator(): ShapeManipulator
+}
+interface ShapeManipulator {
++drag()
++resize(scale: Float)
+}
+
+class Client
+
+Client -left-> Shape
+Client -right-> ShapeManipulator
+
+class Circle extends Shape {
++createManipulator(): ShapeManipulator
+}
+class Square extends Shape {
++createManipulator(): ShapeManipulator
+}
+
+class CircleManipulator extends ShapeManipulator {
+-shape:Circle
++drag()
++resize(scale: Float)
+}
+
+class SquareManipulator extends ShapeManipulator {
+-shape:Square
++drag()
++resize(scale: Float)
+}
+
+Circle::createManipulator .right.> CircleManipulator
+Square::createManipulator .right.> SquareManipulator
+@enduml
+{% endplantuml %}
 
 ### Elementy
 
 - **Shape** - interface figury implementowany przez klasy `Circle`, `Square` i `Line`
-- **Manipulator** - interface obiektu umożliwiającego modyfikację figury
-- **ShapeFactory** - interface fabryki tworzącej figury na podstawie enuma `Type`
-- **ByTypeFactory** - implementacja `ShapeFactory`
+- **ShapeManipulator** - interface obiektu umożliwiającego modyfikację figury
+- **CircleManipulator** - implementacja `ShapeManipulator` dla konkretnej figury, np `Circle`
 
 ### Implementacja
 
 ```kotlin
 interface Shape {
-    // Shape potrafi stworzyć dla siebie Manipulator, ale dla klienta jest on generyczny a nie konkretny
+    // Shape potrafi stworzyć dla siebie ShapeManipulator, ale dla klienta jest on generyczny a nie konkretny
     fun createManipulator(): ShapeManipulator<out Shape> // metoda wytwórcza
 }
 
@@ -152,14 +198,14 @@ internal class Line : Shape {
 ```
 Interface `Manipulatora` pozwala na przeciąganie i zmianę rozmiaru. Konkretna implementacja tego interfejsu jest ściśle związana z typem figury.
 ```kotlin
-// wykorzystanie generyków zapewnia że konkretny Manipulator będzie umiał obsłużyć tylko konkretny typ figury
+// wykorzystanie generyków zapewnia że konkretny ShapeManipulator będzie umiał obsłużyć tylko konkretny typ figury
 // np. CircleManipulator nie przyjmie argumentu typu Square
 interface ShapeManipulator<T : Shape> {
     fun drag()
     fun resize(scale: Float)
 }
 
-// typ argumentu w konstruktorze musi zgadzać się z zadeklarowanym przez Manipulator
+// typ argumentu w konstruktorze musi zgadzać się z zadeklarowanym przez ShapeManipulator
 internal class CircleManipulator<T>(private val shape: T) : ShapeManipulator<Circle> {
     override fun drag() = println("CircleManipulator is manipulating circle $shape")
     override fun resize(scale: Float) = println("CircleManipulator is resizing circle $shape")
@@ -169,7 +215,8 @@ internal class LineManipulator<T>(private val shape: T) : ShapeManipulator<Line>
 ```
 ShapeFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Umieszczenie jej wewnątrz ShapeFactory ma kilka zalet:
 - aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `ShapeFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `ShapeType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
-- Shape nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać
+- Shape nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać.
+
 ```kotlin
 interface ShapeFactory {
     // umieszczenie enuma wewnątrz klasy Factory zamiast Shape - to fabryka zna typy produkowanych przez siebie obiektów, 
@@ -191,14 +238,16 @@ class ByTypeFactory : ShapeFactory {
         }
 }
 ```
+
 Obiekty anonimowe (bez dokładnej klasy, ale implementujące interface) również mogą być dostarczane przez Fabrykę:
+
 ```kotlin
 // fabryka może dostarczać obiekty anonimowe, dla klienta to bez znaczenia
 class UndefinedShapeFactory : ShapeFactory {
     // niezależnie od parametru `type` zwrócony będzie taki sam obiekt
-    override fun createShape(type: ShapeFactory.Type) = object : Shape {
+    override fun createShape(type: ShapeFactory.Type) = object: Shape {
         // z takim samym manipulatorem
-        override fun createManipulator() = object : ShapeManipulator<Shape> {
+        override fun createManipulator() = object: ShapeManipulator<Shape> {
             override fun drag() = println("UndefinedShape dragging")
             override fun resize(scale: Float) = println("UndefinedShape resizing")
         }
