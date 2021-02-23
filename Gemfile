@@ -12,4 +12,5 @@ group :jekyll_plugins do
   gem "jekyll-polyglot"
   gem 'jemoji'
   gem 'jekyll-toc'
+  gem 'jekyll-diagrams'
 end

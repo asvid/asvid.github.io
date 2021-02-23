@@ -41,6 +41,7 @@ plugins:
   - jekyll-polyglot
   - jemoji
   - jekyll-toc
+  - jekyll-diagrams
 
 collections:
   - projects

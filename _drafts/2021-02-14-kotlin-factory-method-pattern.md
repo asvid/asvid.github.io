@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Kotlin Factory Method"
-date:  "2021-02-22 11:43"
+date:  "2021-02-21 11:43"
 description: "
 TBD
 "
@@ -23,14 +23,14 @@ image: /assets/posts/kotlin-builder-pattern/pkin.jpg
 
 # Przeznaczenie
 
-[comment]: <> (sprawdzić definicje z Design Patterns bandy 4 i Thinking in Java)
+Podobnie jak Builder wzorzec Factory Method służy do oddzielenia procesu tworzenia obiektów od ich reprezentacji. Zamiast wprost wywoływać konstruktor, możemy wywołać metodę obiektu-wytwórni, który generuje implementację interfejsu. W odróżnieniu od Buildera, zazwyczaj nie będzie nas interesowało podanie wszystkich wymaganych przez obiekt argumentów i zależności — to będzie należeć do zadań Factory. 
 
-Podobnie jak Builder wzorzec Factory Method służy do oddzielenia procesu tworzenia obiektów od ich reprezentacji. Zamiast wprost wywoływać konstruktor, możemy wywołać metodę obiektu-wytwórni, który generuje implementację interfejsu. W odróżnieniu od Buildera, zazwyczaj nie będzie nas interesowało podanie wszystkich wymaganych przez obiekt argumentów i zależności — to będzie należeć do zadań Factory. Fabryka może dostarczać obiekty różnych typów implementujących ten sam interfejs, wyłącznie na podstawie dostarczonych argumentów. Dzięki całkowitemu odizolowaniu implementacji od interfejsu Fabryka pozwala nam to podmieniać implementację w runtime, a nie tylko w czasie kompilacji.
+Fabryka może dostarczać obiekty różnych typów implementujących ten sam interfejs, wyłącznie na podstawie dostarczonych argumentów. Całkowitemu odizolowanie implementacji od interfejsu pozwala na podmianę implementację w runtime, a nie tylko w czasie kompilacji.
 
-Korzystając z Fabryki, mówimy sobie mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt danego typu". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej: "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
+Korzystając z Fabryki, mówimy mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt implementujący dany interface". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej: "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
 
 Jest kilka wariantów tego wzorca:
-- Static Factory Method (już opisany [tutaj](#)
+- Static Factory Method (już opisany [tutaj](#) )
 - "Typowe" Factory Method
 - Abstract Factory
 
@@ -42,7 +42,7 @@ Factory Method może występować pod kilkoma postaciami. Najważniejszą cechą
 
 ## Przykład bandy czworga (prosty)
 
-Jest to przykład bardzo podstawowy, pochodzący z książki "Wzorce Projektowe" tzw. bandy czworga (Gamma, Helm, Johnson, Vlissides)
+Jest to przykład bardzo podstawowy, pochodzący z książki "Wzorce Projektowe"[^design_patterns] tzw. bandy czworga (Gamma, Helm, Johnson, Vlissides)
 
 ```kotlin
 // Podstawowe użycie Factory Method
@@ -55,6 +55,17 @@ val concreteProduct2 = ConcreteProduct()
 ```
 
 [comment]: <> (tutaj dać UMLa)
+
+{% plantuml %}
+@startuml
+class Car
+
+Driver - Car : drives >
+Car *- Wheel : have 4 >
+Car -- Person : < owns
+
+@enduml
+{% endplantuml %}
 
 ### Elementy
 
@@ -139,7 +150,7 @@ internal class Line : Shape {
     override fun createManipulator() = LineManipulator(this)
 }
 ```
-
+Interface `Manipulatora` pozwala na przeciąganie i zmianę rozmiaru. Konkretna implementacja tego interfejsu jest ściśle związana z typem figury.
 ```kotlin
 // wykorzystanie generyków zapewnia że konkretny Manipulator będzie umiał obsłużyć tylko konkretny typ figury
 // np. CircleManipulator nie przyjmie argumentu typu Square
@@ -156,7 +167,9 @@ internal class CircleManipulator<T>(private val shape: T) : ShapeManipulator<Cir
 internal class SquareManipulator<T>(private val shape: T) : ShapeManipulator<Square> {...}
 internal class LineManipulator<T>(private val shape: T) : ShapeManipulator<Line> {...}
 ```
-
+ShapeFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Umieszczenie jej wewnątrz ShapeFactory ma kilka zalet:
+- aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `ShapeFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `ShapeType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
+- Shape nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać
 ```kotlin
 interface ShapeFactory {
     // umieszczenie enuma wewnątrz klasy Factory zamiast Shape - to fabryka zna typy produkowanych przez siebie obiektów, 
@@ -166,7 +179,7 @@ interface ShapeFactory {
     fun createShape(type: Type): Shape
 }
 
-// Częste wykorzystanie factory do zwracania obiektu danego typu
+// Częste wykorzystanie factory do zwracania obiektu danego typu z wykorzystaniem enuma
 class ByTypeFactory : ShapeFactory {
     override fun createShape(type: ShapeFactory.Type): Shape =
         when (type) { // zastosowanie `when` spowoduje błąd kompilacji jeśli nie obsłużymy wszystkich typów
@@ -178,10 +191,9 @@ class ByTypeFactory : ShapeFactory {
         }
 }
 ```
-
-Interface fabryki mogą implementować inne obiekty, np:
+Obiekty anonimowe (bez dokładnej klasy, ale implementujące interface) również mogą być dostarczane przez Fabrykę:
 ```kotlin
-// fabryka może też dostarczać obiekty anonimowe, dla klienta to bez znaczenia
+// fabryka może dostarczać obiekty anonimowe, dla klienta to bez znaczenia
 class UndefinedShapeFactory : ShapeFactory {
     // niezależnie od parametru `type` zwrócony będzie taki sam obiekt
     override fun createShape(type: ShapeFactory.Type) = object : Shape {
@@ -195,11 +207,11 @@ class UndefinedShapeFactory : ShapeFactory {
 
 // użycie
 UndefinedShapeFactory()
-        .createShape(ShapeFactory.Type.Circle)
-        .createManipulator()
+        .createShape(ShapeFactory.Type.Circle) // w tym przypadku typ nie ma znaczenia
+        .createManipulator() // ale API obiektu jest takie samo
         .drag()
 ```
-lub:
+Często podczas testowania nie potrzebujemy konkretnego obiektu, a jedynie zaślepkę lub Mock, który pozwoli nam zweryfikować poprawność działania programu. Można to łatwo osiągnąć, jeśli mamy interfejs Fabryki i możemy zaimplementować jej wersję pod testy, a następnie wstrzyknąć tam, gdzie jest używana:
 ```kotlin
 // w testach czasami przydaje się zastąpienie prawdziwego factory jakąś zaślepką
 class FakeFactory : ShapeFactory {
@@ -223,7 +235,6 @@ class FakeShapeManipulator : ShapeManipulator<FakeShape> {
 val shape = FakeFactory().createShape(ShapeFactory.Type.Circle) // to raczej nie będzie kółko...
 shape.createManipulator().drag() // ale działa jak kółko :)
 ```
-
 Można się nawet pokusić o losowe wybieranie implementacji fabryki. Nie ma to za bardzo sensu w przypadku figur geometrycznych, ale proceduralne generowane elementów mapy czy przeciwników w grze wydaje się już całkiem dobrym przykładem.
 ```kotlin
 // losowo zwraca ByTypeFactory lub FakeFactory, dla klienta to bez różnicy bo i tak zna tylko interface ShapeFactory
@@ -239,7 +250,7 @@ RandomShapeFactory.getShapeFactory() // losowo wybrane ShapeFactory, albo Fake a
 
 ## Sealed class
 
-Załóżmy, że mamy w aplikacji 3 bazy danych: MySQL, Realm i MongoDB. Mimo że są zupełnie różne (SQL, obiektowa, No-SQL), to udostępniamy je klientom schowane za wspólnym interfejsem `Database`. Żeby ułatwić sobie dostanie się do konkretnej bazy mamy fabrykę która da nam instancję na podstawie konfiguracji.
+Załóżmy, że mamy w aplikacji 3 bazy danych: MySQL, Realm i MongoDB. Mimo że są zupełnie różne (SQL, obiektowa, No-SQL), to udostępniamy je klientom schowane za wspólnym interfejsem `Database`. Aby ułatwić sobie korzystanie z konkretnej bazy, użyjemy fabryki, która dostarczy nam instancję bazy na podstawie konfiguracji.
 
 ```kotlin
 // różne konfiguracje baz danych
@@ -253,7 +264,7 @@ val db: Database = DatabaseFactory.getDatabaseForConfig(mySqlConfig)
 db.save("Save me!")
 ```
 
-Nie ma tutaj podawania typu z `enum` jak poprzednio, tylko cały obiekt konfiguracji z indywidualnymi polami itd.
+Nie ma tutaj podawania typu bazy z `enum` jak poprzednio, tylko cały obiekt konfiguracji z właściwymi tylko dla siebie polami.
 
 ```kotlin
 // wspólny interface bazy udostępniany klientowi
@@ -270,15 +281,15 @@ internal class MySql(val config: MySqlConfig) : Database {
 internal class Realm(val config: RealmConfig) : Database {...}
 internal class MongoDB(val config: MongoDbConfig) : Database {...}
 ```
-
+Udało się to osiągnąć dzięki Kotlinowym klasom `sealed`. Mogą po niej dziedziczyć wyłącznie klasy zadeklarowane w tym samym pliku, mamy więc ścisłą kontrolę nad typami pochodnymi. Niektórzy nazywają to nawet "enumem na sterydach", chociaż sam `enum` jest pełnoprawną klasą i również może mieć pola i metody, a nie tylko nazwę.
 ```kotlin
 // klasa konfiguracji bazy jest `sealed` co oznacza ścisłą kontrolę nad tym jakie klasy mogą z niej dziedziczyć 
 sealed class DatabaseConfig
 
-// od Kotlin 1.1 można używać data class i tworzyć je poza sealed klasą, ale w tym samym pliku
+// od Kotlin 1.1 można używać `data class` i tworzyć je poza `sealed` klasą, ale w tym samym pliku
 data class MySqlConfig(val address: String, val port: String) : DatabaseConfig()
-object RealmConfig : DatabaseConfig() // singletony mogą dziedziczyć z klas sealed
-open class MongoDbConfig(val fileUri: String, val tableName: String) : DatabaseConfig() // po tej klasie można dziedziczyć
+object RealmConfig : DatabaseConfig() // często korzysta się z Singletonów rozszerzających klasę `sealed`
+open class MongoDbConfig(val fileUri: String, val tableName: String) : DatabaseConfig() // po tej klasie można dziedziczyć również poza plikiem z klasą `sealed`
 
 // Fabryka dostarczająca implementację Database pod konkretną konfigurację
 object DatabaseFactory {
@@ -289,6 +300,7 @@ object DatabaseFactory {
             is MongoDbConfig -> MongoDB(config)
             is MySqlConfig -> MySql(config)
             is RealmConfig -> Realm(config)
+            is BadConfig -> MongoDB(config) // brak tego przypadku nie spowoduje błędu kompilacji bo `BadConfig` nie dziedziczy bezpośrednio z klasy `sealed`
         }
     }
 }
@@ -300,10 +312,11 @@ data class BadConfig(val badData: String): DatabaseConfig()
 // klasa MongoDbConfig jest open, więc można z niej dziedziczyć
 data class BadConfig(val badData: String): MongoDbConfig("", "")
 ```
+Jednak samo używanie klas `open` powinno być dobrze przemyślane, a w przypadku klas już rozszerzających klasę `sealed` wygląda na antywzorzec, podający w wątpliwość samo użycie `sealed`.
 
 ## Rejestrowane fabryki
 
-W książce "Thinking in Java" jest ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj]()) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje - bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego obiektu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
+W książce "Thinking in Java"[^thinking_in_java] Bruce Eckel opisał ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj]()) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje — bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego typu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
 
 ```kotlin
 // AirFilter ma companion object z metodą `create()` czyli Static Factory Method
@@ -327,7 +340,6 @@ repeat(10) {
     println("is it AirFilter? ${randomPart is AirFilter}")
 }
 ```
-
 Od środka wygląda to następująco:
 ```kotlin
 // interface implementowany przez każdą część dostarczaną przez nadrzędną Fabrykę
@@ -382,11 +394,19 @@ object RandomPartCreator {
     }
 }
 ```
+Nic nie stoi na przeszkodzie, żeby rejestr w Fabryce był bardziej rozbudowany, np. do postaci mapy gdzie kluczem będzie typ wyliczeniowy a zawartością Statyczna Metoda Fabryczna.
 
 # Podsumowanie
-
+Fabryka jest często używanym wzorcem, zwłaszcza w formie ze zwracaniem obiektów na podstawie `enuma`. 
 
 ## Zalety
-
+- **całkowite oddzielenie implementacji od interfejsu** - z poziomu klienta fabryki interesuje nas wyłącznie interfejs obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.
+- **ograniczenie widoczności typów** - jest to przydatne, jeśli tworzymy bibliotekę i chcemy schować wewnętrzną implementację przed użytkownikiem.
+- **łatwość testowania** - już sam fakt polegania na interfejsach, zamiast konkretnej implementacji, pozwala łatwo stworzyć Mocka lub Stuba. W połączeniu z możliwością wstrzykiwania całej, skonfigurowanej na potrzeby testu fabryki, ułatwia to wyizolowanie testowanej logiki i skupienie się na tym, co faktycznie chcemy przetestować.
 
 ## Wady
+- **konieczność tworzenia dodatkowych klas** - interfejsów, fabryk, typów wyliczeniowych itd. Niekoniecznie jest to wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie ma potrzeby tworzyć ten cały boilerplate.
+
+---
+[^thinking_in_java]: [Thinking in Java](https://helion.pl/ksiazki/thinking-in-java-edycja-polska-wydanie-iv-bruce-eckel,thi4vv.htm#format/d)
+[^design_patterns]: [Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku](https://ksiegarnia.pwn.pl/Wzorce-projektowe,68608777,p.html)
