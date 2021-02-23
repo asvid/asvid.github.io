@@ -18,11 +18,11 @@ jobs:
           ${{ runner.os }}-gems-
 
     # Standard usage
-    - uses:  asvid/jekyll-action@0.0.1-2
+    - uses:  asvid/jekyll-action@0.0.1-3
       env:
         JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
     
     # Specify the Jekyll source location as a parameter
-    - uses: asvid/jekyll-action@0.0.1-2
+    - uses: asvid/jekyll-action@0.0.1-3
       env:
         JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
