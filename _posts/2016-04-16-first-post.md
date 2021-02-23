@@ -18,3 +18,14 @@ Project name is **Frigo** and logo looks like that:
 Hopefully it will help you manage your food better.
 
 [put]: http://www.put.poznan.pl/
+
+{% plantuml %}
+@startuml
+class Car
+
+Driver - Car : drives >
+Car *- Wheel : have 4 >
+Car -- Person : < owns
+
+@enduml
+{% endplantuml %}
