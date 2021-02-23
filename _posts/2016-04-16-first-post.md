@@ -29,3 +29,18 @@ Car -- Person : < owns
 
 @enduml
 {% endplantuml %}
+
+{% graphviz %}
+digraph {
+node [shape=circle, style=filled];
+S [fillcolor=green];
+A [fillcolor=yellow];
+B [fillcolor=yellow];
+C [fillcolor=yellow];
+D [shape=doublecircle, fillcolor=green];
+S -> A [label=a];
+S -> B [label=b];
+A -> D [label=c];
+B -> D [label=d];
+}
+{% endgraphviz %}
