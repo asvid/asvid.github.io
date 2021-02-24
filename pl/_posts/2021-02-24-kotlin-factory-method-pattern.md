@@ -30,7 +30,7 @@ Fabryka może dostarczać obiekty różnych typów implementujących ten sam int
 Korzystając z Fabryki, mówimy mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt implementujący dany interface". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej: "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
 
 Jest kilka wariantów tego wzorca:
-- Static Factory Method (już opisany [tutaj](https://asvid.github.io/kotlin-static-factory-methods) )
+- Static Factory Method (już opisany [tutaj](https://asvid.github.io/pl/kotlin-static-factory-methods) )
 - "Typowe" Factory Method
 - Abstract Factory
 
@@ -437,7 +437,7 @@ Jednak samo używanie klas `open` powinno być dobrze przemyślane, a w przypadk
 
 ## Rejestrowane fabryki
 
-W książce "Thinking in Java"[^thinking_in_java] Bruce Eckel opisał ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj](https://asvid.github.io/kotlin-static-factory-methods)) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje — bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego typu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
+W książce "Thinking in Java"[^thinking_in_java] Bruce Eckel opisał ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj](https://asvid.github.io/pl/kotlin-static-factory-methods)) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje — bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego typu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
 
 ```kotlin
 // AirFilter ma companion object z metodą `create()` czyli Static Factory Method
