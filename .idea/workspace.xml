@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/publication.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/publication.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2021-02-14-kotlin-factory-method-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/_drafts/2021-02-14-kotlin-factory-method-pattern.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_drafts/2021-02-14-kotlin-factory-method-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2021-02-24-kotlin-factory-method-pattern.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_includes/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +68,7 @@
     <property name="SearchEverywhereHistoryKey" value="feed&#9;FILE&#9;file:///home/adam/repo/asvid.github.io/feed.xml" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="PUML" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/_drafts" />
     <property name="project.structure.last.edited" value="Project" />
@@ -84,8 +86,8 @@
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
+      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/pl" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data" />
       <recent name="$PROJECT_DIR$/_data/en" />

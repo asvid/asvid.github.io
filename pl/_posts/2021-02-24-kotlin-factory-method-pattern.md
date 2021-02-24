@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Kotlin Factory Method"
-date:  "2021-02-21 11:43"
+date:  "2021-02-24 11:43"
 description: "
-TBD
+Po `Static Factory Method` nadeszła pora na klasyczne `Factory`. Fabryka jest bardzo użytecznym i często stosowanym wzorcem konstrukcyjnym. Kotlin daje nam ciekawe możliwości dzięki klasom `sealed` oraz `internal`, których odpowiedników brakuje w Javie.
 "
 permalink: "kotlin-factory-method"
 comments: true
@@ -17,7 +17,7 @@ tags:
 categories:
 - Design Patterns
       
-image: /assets/posts/kotlin-builder-pattern/pkin.jpg
+image: /assets/posts/plyta.jpg
 
 ---
 
@@ -30,7 +30,7 @@ Fabryka może dostarczać obiekty różnych typów implementujących ten sam int
 Korzystając z Fabryki, mówimy mniej więcej: "wiem tylko `to` i `tamto`, daj mi poprawny obiekt implementujący dany interface". Przykład: `Locale.forLanguageTag("pl-PL")` - dostarczy nam obiekt `Locale`, z którego wyciągniemy sobie pełną nazwę kraju lub języka. W przypadku buildera, byłoby to raczej: "daj mi obiekt, który będzie miał ustawione `to` i `tamto` a resztę zostaw domyślne". Fabryki często mają wstrzykiwane zależności, które pozwalają im na tworzenie rozbudowanych obiektów z minimalną ilością informacji dostarczonych przez klienta.
 
 Jest kilka wariantów tego wzorca:
-- Static Factory Method (już opisany [tutaj](#) )
+- Static Factory Method (już opisany [tutaj](https://asvid.github.io/kotlin-static-factory-methods) )
 - "Typowe" Factory Method
 - Abstract Factory
 
@@ -122,42 +122,43 @@ val square = Square()
 // użycie manipulatora dla kwadratu, ale przez generyczny interface
 square.createManipulator().drag()
 
-val shapeFactory: ShapeFactory = ByTypeFactory()
-// stworzenie koła przez fabrykę przyjmującą `enum` z oczekiwanym typem figury
-val circle: Shape = shapeFactory.createShape(ShapeFactory.Type.Circle)// analogiczna modufikacja figury
+val figureFactory: FigureFactory = ByTypeFactory()
+// stworzenie koła przez fabrykę przyjmującą `enum` z oczekiwanym rodzajem figury
+val circle: Figure = figureFactory.createFigure(FigureFactory.Type.Circle)
+// analogiczna modyfikacja figury
 circle.createManipulator().drag()
 ```
 
 {% plantuml %}
 @startuml
-interface Shape{
-+createManipulator(): ShapeManipulator
+interface Figure{
++createManipulator(): FigureManipulator
 }
-interface ShapeManipulator {
+interface FigureManipulator {
 +drag()
 +resize(scale: Float)
 }
 
 class Client
 
-Client -left-> Shape
-Client -right-> ShapeManipulator
+Client -left-> Figure
+Client -right-> FigureManipulator
 
-class Circle extends Shape {
-+createManipulator(): ShapeManipulator
+class Circle extends Figure {
++createManipulator(): FigureManipulator
 }
-class Square extends Shape {
-+createManipulator(): ShapeManipulator
+class Square extends Figure {
++createManipulator(): FigureManipulator
 }
 
-class CircleManipulator extends ShapeManipulator {
--shape:Circle
+class CircleManipulator extends FigureManipulator {
+-figure:Circle
 +drag()
 +resize(scale: Float)
 }
 
-class SquareManipulator extends ShapeManipulator {
--shape:Square
+class SquareManipulator extends FigureManipulator {
+-figure:Square
 +drag()
 +resize(scale: Float)
 }
@@ -169,137 +170,146 @@ Square::createManipulator .right.> SquareManipulator
 
 ### Elementy
 
-- **Shape** - interface figury implementowany przez klasy `Circle`, `Square` i `Line`
-- **ShapeManipulator** - interface obiektu umożliwiającego modyfikację figury
-- **CircleManipulator** - implementacja `ShapeManipulator` dla konkretnej figury, np `Circle`
+- **Figure** - interface figury implementowany przez klasy `Circle`, `Square` i `Line`
+- **FigureManipulator** - interface obiektu umożliwiającego modyfikację figury
+- **CircleManipulator** - implementacja `FigureManipulator` dla konkretnej figury, np `Circle`
 
 ### Implementacja
 
+#### Figure
 ```kotlin
-interface Shape {
-    // Shape potrafi stworzyć dla siebie ShapeManipulator, ale dla klienta jest on generyczny a nie konkretny
-    fun createManipulator(): ShapeManipulator<out Shape> // metoda wytwórcza
+interface Figure {
+    // Figure potrafi stworzyć dla siebie FigureManipulator, 
+    // ale dla klienta jest on generyczny a nie konkretny.
+    fun createManipulator(): FigureManipulator<out Figure> // metoda wytwórcza
 }
 
-// `internal` oznacza że klasa nie jest dostępna poza modułem - jest dostępna tylko dla klas z którymi jest kompilowana
-// jest to przydatne podczas tworzenia bibliotek kiedy nie chcemy wyciekać konkretnych typów
-internal class Circle: Shape {
+// `internal` oznacza że klasa nie jest dostępna poza modułem, 
+// jest dostępna tylko dla klas z którymi jest kompilowana.
+// Jest to przydatne podczas tworzenia bibliotek kiedy nie chcemy wyciekać konkretnych typów
+internal class Circle: Figure {
     // w razie czego manipulator może zostać zastąpiony innym, bez konieczności aktualizacji klienta
     override fun createManipulator() = CircleManipulator(this)
 }
 
-internal class Square : Shape {
+internal class Square : Figure {
     override fun createManipulator() = SquareManipulator(this)
 }
 
-internal class Line : Shape {
+internal class Line : Figure {
     override fun createManipulator() = LineManipulator(this)
 }
 ```
+#### Manipulator
 Interface `Manipulatora` pozwala na przeciąganie i zmianę rozmiaru. Konkretna implementacja tego interfejsu jest ściśle związana z typem figury.
 ```kotlin
-// wykorzystanie generyków zapewnia że konkretny ShapeManipulator będzie umiał obsłużyć tylko konkretny typ figury
-// np. CircleManipulator nie przyjmie argumentu typu Square
-interface ShapeManipulator<T : Shape> {
+// wykorzystanie generyków zapewnia, że konkretny FigureManipulator będzie umiał obsłużyć 
+// tylko konkretny typ figury np. CircleManipulator nie przyjmie argumentu typu Square
+interface FigureManipulator<T : Figure> {
     fun drag()
     fun resize(scale: Float)
 }
 
-// typ argumentu w konstruktorze musi zgadzać się z zadeklarowanym przez ShapeManipulator
-internal class CircleManipulator<T>(private val shape: T) : ShapeManipulator<Circle> {
-    override fun drag() = println("CircleManipulator is manipulating circle $shape")
-    override fun resize(scale: Float) = println("CircleManipulator is resizing circle $shape")
+// typ argumentu w konstruktorze musi zgadzać się z zadeklarowanym przez FigureManipulator
+internal class CircleManipulator<T>(private val figure: T) : FigureManipulator<Circle> {
+    override fun drag() = println("CircleManipulator is manipulating circle $figure")
+    override fun resize(scale: Float) = println("CircleManipulator is resizing circle $figure")
 }
-internal class SquareManipulator<T>(private val shape: T) : ShapeManipulator<Square> {...}
-internal class LineManipulator<T>(private val shape: T) : ShapeManipulator<Line> {...}
+internal class SquareManipulator<T>(private val figure: T) : FigureManipulator<Square> {...}
+internal class LineManipulator<T>(private val figure: T) : FigureManipulator<Line> {...}
 ```
-ShapeFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Umieszczenie jej wewnątrz ShapeFactory ma kilka zalet:
-- aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `ShapeFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `ShapeType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
-- Shape nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać.
-
+#### Factory
 ```kotlin
-interface ShapeFactory {
-    // umieszczenie enuma wewnątrz klasy Factory zamiast Shape - to fabryka zna typy produkowanych przez siebie obiektów, 
+interface FigureFactory {
+    // umieszczenie enuma wewnątrz klasy Factory zamiast Figure,
+    // to fabryka zna typy produkowanych przez siebie obiektów, 
     // a nie sam obiekt wie w jakich formach występuje
     enum class Type { Circle, Square, Line, Undefined }
 
-    fun createShape(type: Type): Shape
+    fun createFigure(type: Type): Figure
 }
 
 // Częste wykorzystanie factory do zwracania obiektu danego typu z wykorzystaniem enuma
-class ByTypeFactory : ShapeFactory {
-    override fun createShape(type: ShapeFactory.Type): Shape =
-        when (type) { // zastosowanie `when` spowoduje błąd kompilacji jeśli nie obsłużymy wszystkich typów
-            ShapeFactory.Type.Circle -> Circle()
-            ShapeFactory.Type.Square -> Square()
-            ShapeFactory.Type.Line -> Line()
+class ByTypeFactory : FigureFactory {
+    override fun createFigure(type: FigureFactory.Type): Figure =
+        when (type) { // wystąpi błąd kompilacji jeśli nie obsłużymy wszystkich typów
+            FigureFactory.Type.Circle -> Circle()
+            FigureFactory.Type.Square -> Square()
+            FigureFactory.Type.Line -> Line()
             // typ Undefined nie jest obsłużony, ale wpadnie w `else`
-            else -> throw Exception("unknown shape, don't know how to create it")
+            else -> throw Exception("unknown figure, don't know how to create it")
         }
 }
 ```
+FigureFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Umieszczenie jej wewnątrz FigureFactory ma kilka zalet:
+- aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `FigureFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `FigureType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
+- Figure nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać.
+- Poza tym, enum `FigureType` ma sens tylko użyty z `FigureFactory`. Umieszczenie go poza tą klasą, może sugerować, że warto go również użyć w zupełnie innym kontekście... co może prowadzić do problemów z utrzymaniem kodu w przyszłości.
 
+#### Inne implementacje Factory
 Obiekty anonimowe (bez dokładnej klasy, ale implementujące interface) również mogą być dostarczane przez Fabrykę:
-
 ```kotlin
 // fabryka może dostarczać obiekty anonimowe, dla klienta to bez znaczenia
-class UndefinedShapeFactory : ShapeFactory {
+class UndefinedFigureFactory : FigureFactory {
     // niezależnie od parametru `type` zwrócony będzie taki sam obiekt
-    override fun createShape(type: ShapeFactory.Type) = object: Shape {
+    override fun createFigure(type: FigureFactory.Type) = object: Figure {
         // z takim samym manipulatorem
-        override fun createManipulator() = object: ShapeManipulator<Shape> {
-            override fun drag() = println("UndefinedShape dragging")
-            override fun resize(scale: Float) = println("UndefinedShape resizing")
+        override fun createManipulator() = object: FigureManipulator<Figure> {
+            override fun drag() = println("UndefinedFigure dragging")
+            override fun resize(scale: Float) = println("UndefinedFigure resizing")
         }
     }
 }
 
 // użycie
-UndefinedShapeFactory()
-        .createShape(ShapeFactory.Type.Circle) // w tym przypadku typ nie ma znaczenia
+UndefinedFigureFactory()
+        .createFigure(FigureFactory.Type.Circle) // w tym przypadku typ nie ma znaczenia
         .createManipulator() // ale API obiektu jest takie samo
         .drag()
 ```
 Często podczas testowania nie potrzebujemy konkretnego obiektu, a jedynie zaślepkę lub Mock, który pozwoli nam zweryfikować poprawność działania programu. Można to łatwo osiągnąć, jeśli mamy interfejs Fabryki i możemy zaimplementować jej wersję pod testy, a następnie wstrzyknąć tam, gdzie jest używana:
 ```kotlin
 // w testach czasami przydaje się zastąpienie prawdziwego factory jakąś zaślepką
-class FakeFactory : ShapeFactory {
-    override fun createShape(type: ShapeFactory.Type): Shape {
-        return FakeShape()
+class FakeFactory : FigureFactory {
+    override fun createFigure(type: FigureFactory.Type): Figure {
+        return FakeFigure()
     }
 }
-// dla klienta to nadal bez znaczenia jaki dostaje obiekt, tak długo jak implementuje `Shape`
-class FakeShape : Shape {
-    override fun createManipulator(): ShapeManipulator<out Shape> {
-        return FakeShapeManipulator()
+// dla klienta to nadal bez znaczenia jaki dostaje obiekt, tak długo jak implementuje `Figure`
+class FakeFigure : Figure {
+    override fun createManipulator(): FigureManipulator<out Figure> {
+        return FakeFigureManipulator()
     }
 }
 
-class FakeShapeManipulator : ShapeManipulator<FakeShape> {
-    override fun drag() = println("FakeShape dragging")
-    override fun resize(scale: Float) = println("FakeShape resizing")
+class FakeFigureManipulator : FigureManipulator<FakeFigure> {
+    override fun drag() = println("FakeFigure dragging")
+    override fun resize(scale: Float) = println("FakeFigure resizing")
 }
 
 // użycie
-val shape = FakeFactory().createShape(ShapeFactory.Type.Circle) // to raczej nie będzie kółko...
-shape.createManipulator().drag() // ale działa jak kółko :)
+val figure = FakeFactory()
+                .createFigure(FigureFactory.Type.Circle) // to raczej nie będzie kółko...
+figure.createManipulator().drag() // ale działa jak kółko :)
 ```
 Można się nawet pokusić o losowe wybieranie implementacji fabryki. Nie ma to za bardzo sensu w przypadku figur geometrycznych, ale proceduralne generowane elementów mapy czy przeciwników w grze wydaje się już całkiem dobrym przykładem.
 ```kotlin
-// losowo zwraca ByTypeFactory lub FakeFactory, dla klienta to bez różnicy bo i tak zna tylko interface ShapeFactory
-object RandomShapeFactory {
-    fun getShapeFactory(): ShapeFactory = if (Random.nextBoolean()) ByTypeFactory() else FakeFactory()
+// losowo zwraca ByTypeFactory lub FakeFactory, 
+// dla klienta to bez różnicy bo i tak zna tylko interface FigureFactory
+object RandomFigureFactory {
+    fun getFigureFactory(): FigureFactory = if (Random.nextBoolean()) ByTypeFactory() else FakeFactory()
 }
 
 // użycie
-RandomShapeFactory.getShapeFactory() // losowo wybrane ShapeFactory, albo Fake albo ByType
-        .createShape(ShapeFactory.Type.Circle) // nigdy nie mamy pewności jaki obiekt dostaniemy, ale zawsze będzie to Shape
+RandomFigureFactory.getFigureFactory() // losowo wybrane FigureFactory, albo Fake albo ByType
+        .createFigure(FigureFactory.Type.Circle)
+        // nie mamy pewności jaki obiekt dostaniemy, ale zawsze będzie to Figure
         .createManipulator().drag() // więc można ten obiekt zmieniać zgodnie z jego API
 ```
 
 ## Sealed class
 
-Załóżmy, że mamy w aplikacji 3 bazy danych: MySQL, Realm i MongoDB. Mimo że są zupełnie różne (SQL, obiektowa, No-SQL), to udostępniamy je klientom schowane za wspólnym interfejsem `Database`. Aby ułatwić sobie korzystanie z konkretnej bazy, użyjemy fabryki, która dostarczy nam instancję bazy na podstawie konfiguracji.
+Załóżmy, że mamy w aplikacji 3 bazy danych: `MySQL`, `Realm` i `MongoDB`. Mimo tego, że są zupełnie różne (SQL, obiektowa, No-SQL), to udostępniamy je klientom schowane za wspólnym interfejsem `Database`. Aby ułatwić sobie korzystanie z konkretnej bazy, użyjemy fabryki, która dostarczy nam instancję bazy tylko na podstawie konfiguracji.
 
 ```kotlin
 // różne konfiguracje baz danych
@@ -331,25 +341,87 @@ internal class Realm(val config: RealmConfig) : Database {...}
 internal class MongoDB(val config: MongoDbConfig) : Database {...}
 ```
 Udało się to osiągnąć dzięki Kotlinowym klasom `sealed`. Mogą po niej dziedziczyć wyłącznie klasy zadeklarowane w tym samym pliku, mamy więc ścisłą kontrolę nad typami pochodnymi. Niektórzy nazywają to nawet "enumem na sterydach", chociaż sam `enum` jest pełnoprawną klasą i również może mieć pola i metody, a nie tylko nazwę.
+
+{% plantuml %}
+@startuml
+scale 900 width
+
+interface Database {
++save(item: Any)
++getItem(id: Int)
+}
+
+class DatabaseConfig << (S,orchid) Sealed Class >>{
+
+}
+
+class MySqlConfig extends DatabaseConfig{
+-address
+-port
+}
+class RealmConfig extends DatabaseConfig{
+-dbName
+}
+class MongoDBConfig extends DatabaseConfig{
+-fileUri
+-tableName
+}
+
+class MySql implements Database{
+-config:MySqlConfig
++save(item: Any)
++getItem(id: Int)
+}
+class Realm implements Database{
+-config:RealmConfig
++save(item: Any)
++getItem(id: Int)
+}
+class MongoDB implements Database{
+-config:MongoDBConfig
++save(item: Any)
++getItem(id: Int)
+}
+
+class Factory{
++getDatabaseForConfig(config: DatabaseConfig): Database
+}
+
+class BadConfig extends MongoDBConfig
+
+Factory::getDatabaseForConfig-[bold]->Database
+Factory::getDatabaseForConfig<-[bold]-DatabaseConfig
+DatabaseConfig-[hidden]->Database
+
+@enduml
+{% endplantuml %}
+
 ```kotlin
-// klasa konfiguracji bazy jest `sealed` co oznacza ścisłą kontrolę nad tym jakie klasy mogą z niej dziedziczyć 
+// klasa konfiguracji bazy jest `sealed` co oznacza ścisłą kontrolę nad tym,
+// które klasy mogą z niej dziedziczyć 
 sealed class DatabaseConfig
 
-// od Kotlin 1.1 można używać `data class` i tworzyć je poza `sealed` klasą, ale w tym samym pliku
+// od Kotlin 1.1 można używać `data class` i tworzyć je poza `sealed` klasą, 
+// ale tylko w tym samym pliku
 data class MySqlConfig(val address: String, val port: String) : DatabaseConfig()
-object RealmConfig : DatabaseConfig() // często korzysta się z Singletonów rozszerzających klasę `sealed`
-open class MongoDbConfig(val fileUri: String, val tableName: String) : DatabaseConfig() // po tej klasie można dziedziczyć również poza plikiem z klasą `sealed`
+object RealmConfig : DatabaseConfig() // z klasy `sealed` często dziedziczą Singletony
+
+// po tej klasie `open` można dziedziczyć również poza plikiem z klasą `sealed`
+open class MongoDbConfig(val fileUri: String, val tableName: String) : DatabaseConfig()
 
 // Fabryka dostarczająca implementację Database pod konkretną konfigurację
 object DatabaseFactory {
     // metoda przyjmuje generyczny interface i zwraca generyczną instancję Database
     fun getDatabaseForConfig(config: DatabaseConfig): Database {
-        // when w połączeniu z sealed class daje pewność obsłużenia wszystkich przypadków, lub błąd kompilacji
+        // when w połączeniu z sealed class daje pewność obsłużenia wszystkich przypadków,
+        // lub błąd kompilacji
         return when (config) {
             is MongoDbConfig -> MongoDB(config)
             is MySqlConfig -> MySql(config)
             is RealmConfig -> Realm(config)
-            is BadConfig -> MongoDB(config) // brak tego przypadku nie spowoduje błędu kompilacji bo `BadConfig` nie dziedziczy bezpośrednio z klasy `sealed`
+            // brak tego przypadku nie spowoduje błędu kompilacji, 
+            // bo `BadConfig` nie dziedziczy bezpośrednio z klasy `sealed`
+            is BadConfig -> MongoDB(config) 
         }
     }
 }
@@ -361,11 +433,11 @@ data class BadConfig(val badData: String): DatabaseConfig()
 // klasa MongoDbConfig jest open, więc można z niej dziedziczyć
 data class BadConfig(val badData: String): MongoDbConfig("", "")
 ```
-Jednak samo używanie klas `open` powinno być dobrze przemyślane, a w przypadku klas już rozszerzających klasę `sealed` wygląda na antywzorzec, podający w wątpliwość samo użycie `sealed`.
+Jednak samo używanie klas `open` powinno być dobrze przemyślane, a w przypadku klas już rozszerzających klasę `sealed` wygląda na antywzorzec, podający w wątpliwość sens użycia `sealed`.
 
 ## Rejestrowane fabryki
 
-W książce "Thinking in Java"[^thinking_in_java] Bruce Eckel opisał ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj]()) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje — bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego typu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
+W książce "Thinking in Java"[^thinking_in_java] Bruce Eckel opisał ciekawy przykład zastosowania `Static Factory Method` (opisany [tutaj](https://asvid.github.io/kotlin-static-factory-methods)) w połączeniu z fabryką z rejestrem. Ogólnie chodzi o to umożliwienie dodawania obiektów z własnymi fabrykami, implementującymi jakiś wspólny interfejs, do rejestru nadrzędnej fabryki dostarczającej ich instancje — bez znajomości konkretnych typów obiektów. Poprzednio Fabryka sama definiowała te typy jak `Square, Circle, Line` lub mieliśmy skończoną liczbę klas dziedziczących z `sealed class`, a w tym przypadku rola fabryki ogranicza się w zasadzie do uruchomienia `Static Factory Method` zarejestrowanego typu. Sam obiekt i jego wewnętrzna fabryka może pochodzić z dowolnego miejsca i nie być znany nadrzędnej fabryce w momencie kompilacji — tak długo, jak implementowane są odpowiednie interfejsy.
 
 ```kotlin
 // AirFilter ma companion object z metodą `create()` czyli Static Factory Method
@@ -390,6 +462,50 @@ repeat(10) {
 }
 ```
 Od środka wygląda to następująco:
+
+{% plantuml %}
+@startuml
+scale 900 width
+
+interface Part
+
+interface PartFactory<T: Part>{
++create():T
+}
+
+class AirFilter implements Part{
+-constructor()
++companion object
+}
+
+class AirFilterFactory<AirFilter><< (O,#FF7700) CompanionObject >> implements PartFactory{
++create():AirFilter
+}
+
+class FuelFilter implements Part{
++companion object
+}
+class FuelFilterFactory<FuelFilter><< (O,#FF7700) CompanionObject >> implements PartFactory{
++create():FuelFilter
+}
+
+class Engine implements Part
+
+class EngineFactory<Engine> implements PartFactory
+
+class RandomPartCreator{
+-partFactories: Set<PartFactory>
++registerFactory(factory: PartFactory)
++createRandomPart(): Part
+}
+
+RandomPartCreator::createRandomPart-[bold]->Part
+RandomPartCreator::registerFactory<-[bold]-PartFactory
+Part-[hidden]->PartFactory
+
+@enduml
+{% endplantuml %}
+
 ```kotlin
 // interface implementowany przez każdą część dostarczaną przez nadrzędną Fabrykę
 interface Part {
@@ -438,15 +554,18 @@ object RandomPartCreator {
     fun createRandomPart(): Part { // tzw. generator - tworzy instancję bez podawania parametrów
         // losowa liczba z zakresu ograniczonego rozmiarem rejestru
         val randomFactory = Random.nextInt(partFactories.size)
+        // wywołanie metody `create()` na wylosowanej fabryce
         // niestety nie da się wyciągnąć n-tego elementu z Set-u bez zmiany typu na listę
-        return partFactories.toList()[randomFactory].create() // wywołanie metody `create()` na wylosowanej fabryce
+        return partFactories.toList()[randomFactory].create()
     }
 }
 ```
 Nic nie stoi na przeszkodzie, żeby rejestr w Fabryce był bardziej rozbudowany, np. do postaci mapy gdzie kluczem będzie typ wyliczeniowy a zawartością Statyczna Metoda Fabryczna.
 
 # Podsumowanie
-Fabryka jest często używanym wzorcem, zwłaszcza w formie ze zwracaniem obiektów na podstawie `enuma`. 
+Fabryka jest często używanym wzorcem, zwłaszcza w formie ze zwracaniem obiektów na podstawie `enuma`. Mimo, że występuje w wielu formach, zasada jest zawsze ta sama: odizolowanie tworzenia obiektu od jego implementacji schowanej za interfejsem. W przypadku posiadania rodziny obiektów znacząco to uelastycznia program, pozwalając sprawnie podmieniać obiekty i wygodnie tworzyć mocki w testach.
+
+Kotlin bardzo pomaga w chowaniu implementacji przez `internal` klasy, oraz obsłudze wszystkich podklas dzięki klasom `sealed`.
 
 ## Zalety
 - **całkowite oddzielenie implementacji od interfejsu** - z poziomu klienta fabryki interesuje nas wyłącznie interfejs obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.

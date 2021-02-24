@@ -39,14 +39,14 @@ tagline:
     {% endif %}
   </div>
 
-  <p class="read_time">({{ site.data.i18n.read_time }}:
-    {% assign words = post.content | number_of_words %}
-    {% if words < 360 %}
-      1 min)
-    {% else %}
-      {{ words | divided_by:180 }} mins)
-    {% endif %}
-    </p>
+<!--  <p class="read_time">({{ site.data.i18n.read_time }}:-->
+<!--    {% assign words = post.content | number_of_words %}-->
+<!--    {% if words < 360 %}-->
+<!--      1 min)-->
+<!--    {% else %}-->
+<!--      {{ words | divided_by:180 }} mins)-->
+<!--    {% endif %}-->
+<!--    </p>-->
 
   <p>
     {% for item in post.tags %}
