@@ -23,7 +23,7 @@ image: /assets/posts/plyta.jpg
 
 # Przeznaczenie
 
-Podobnie jak Builder wzorzec Factory Method służy do oddzielenia procesu tworzenia obiektów od ich reprezentacji. Zamiast wprost wywoływać konstruktor, możemy wywołać metodę obiektu-wytwórni, który generuje implementację interfejsu. W odróżnieniu od Buildera, zazwyczaj nie będzie nas interesowało podanie wszystkich wymaganych przez obiekt argumentów i zależności — to będzie należeć do zadań Factory. 
+Podobnie jak Builder, Factory Method jest wzorcem konstrukcyjnym. Określa interfejs do tworzenia obiektów. Zamiast wprost wywoływać konstruktor, możemy wywołać metodę obiektu-wytwórni, która generuje implementację interfejsu. W odróżnieniu od Buildera, zazwyczaj nie będzie nas interesowało podanie wszystkich wymaganych przez obiekt argumentów i zależności — to będzie należeć do zadań Factory. 
 
 Fabryka może dostarczać obiekty różnych typów implementujących ten sam interfejs, wyłącznie na podstawie dostarczonych argumentów. Całkowitemu odizolowanie implementacji od interfejsu pozwala na podmianę implementację w runtime, a nie tylko w czasie kompilacji.
 
@@ -241,10 +241,11 @@ class ByTypeFactory : FigureFactory {
         }
 }
 ```
-FigureFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Umieszczenie jej wewnątrz FigureFactory ma kilka zalet:
-- aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `FigureFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `FigureType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
-- Figure nie wie pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać.
-- Poza tym, enum `FigureType` ma sens tylko użyty z `FigureFactory`. Umieszczenie go poza tą klasą, może sugerować, że warto go również użyć w zupełnie innym kontekście... co może prowadzić do problemów z utrzymaniem kodu w przyszłości.
+FigureFactory zawiera w sobie `enum` odpowiadający typom figur, jakie dostarcza. Nie są to bezpośrednio typy samych obiektów, a jedynie pomocniczy typ wyliczeniowy. Takie podejście ma kilka zalet:
+- Nie wyciekamy wewnętrznych typów konkretnych implementacji. Fabryka udostępnia jedynie `enum` a klient widzi jedynie bazowy interfejs obiektow a nie konkretne typy.
+- Aby użyć typu wyliczeniowego, trzeba się do niego odwołać przez interface np. `FigureFactory.Type.Circle`. Zmniejsza ryzyko użycia złego typu, jeśli korzystamy z wielu fabryk w jednym miejscu i każda ma swój enum `Type` zadeklarowany w pliku, a nie w interfejsie. Takiego problemu można również uniknąć nazywając `enum` mniej ogólnie, np. `FigureType`, ale nadal inna fabryka może chcieć korzystać z takiej nazwy.
+- Figure nie wie tego, pod jakimi postaciami może występować, ale Fabryka wie jakie instancje może dostarczać.
+- Poza tym enum `FigureType` ma sens wyłącznie użyty z `FigureFactory`. Umieszczenie go poza tą klasą, może sugerować, że warto go również użyć w zupełnie innym kontekście... co może prowadzić do problemów z utrzymaniem kodu w przyszłości.
 
 #### Inne implementacje Factory
 Obiekty anonimowe (bez dokładnej klasy, ale implementujące interface) również mogą być dostarczane przez Fabrykę:
@@ -323,25 +324,6 @@ val db: Database = DatabaseFactory.getDatabaseForConfig(mySqlConfig)
 db.save("Save me!")
 ```
 
-Nie ma tutaj podawania typu bazy z `enum` jak poprzednio, tylko cały obiekt konfiguracji z właściwymi tylko dla siebie polami.
-
-```kotlin
-// wspólny interface bazy udostępniany klientowi
-interface Database {
-    fun save(item: Any)
-    fun getItem(id: Int)
-}
-
-// konkretna implementacja bazy przyjmująca konfigurację w konstruktorze
-internal class MySql(val config: MySqlConfig) : Database {
-    override fun save(item: Any) = println("saving $item in MySQL")
-    override fun getItem(id: Int) = println("getting item at $id from MySQL")
-}
-internal class Realm(val config: RealmConfig) : Database {...}
-internal class MongoDB(val config: MongoDbConfig) : Database {...}
-```
-Udało się to osiągnąć dzięki Kotlinowym klasom `sealed`. Mogą po niej dziedziczyć wyłącznie klasy zadeklarowane w tym samym pliku, mamy więc ścisłą kontrolę nad typami pochodnymi. Niektórzy nazywają to nawet "enumem na sterydach", chociaż sam `enum` jest pełnoprawną klasą i również może mieć pola i metody, a nie tylko nazwę.
-
 {% plantuml %}
 @startuml
 scale 900 width
@@ -397,8 +379,25 @@ DatabaseConfig-[hidden]->Database
 {% endplantuml %}
 
 ```kotlin
-// klasa konfiguracji bazy jest `sealed` co oznacza ścisłą kontrolę nad tym,
-// które klasy mogą z niej dziedziczyć 
+// wspólny interface bazy udostępniany klientowi
+interface Database {
+    fun save(item: Any)
+    fun getItem(id: Int)
+}
+
+// konkretna implementacja bazy przyjmująca konfigurację w konstruktorze
+internal class MySql(val config: MySqlConfig) : Database {
+    override fun save(item: Any) = println("saving $item in MySQL")
+    override fun getItem(id: Int) = println("getting item at $id from MySQL")
+}
+internal class Realm(val config: RealmConfig) : Database {...}
+internal class MongoDB(val config: MongoDbConfig) : Database {...}
+```
+Nie ma tutaj podawania typu bazy z `enum` jak poprzednio, tylko cały obiekt konfiguracji z właściwymi tylko dla siebie polami.
+
+Udało się to osiągnąć dzięki Kotlinowym klasom `sealed`. Mogą po niej dziedziczyć wyłącznie klasy zadeklarowane w tym samym pliku, mamy więc ścisłą kontrolę nad typami pochodnymi. Niektórzy nazywają to nawet "enumem na sterydach", chociaż sam `enum` jest pełnoprawną klasą i również może mieć pola i metody, a nie tylko nazwę.
+
+```kotlin
 sealed class DatabaseConfig
 
 // od Kotlin 1.1 można używać `data class` i tworzyć je poza `sealed` klasą, 
@@ -419,8 +418,9 @@ object DatabaseFactory {
             is MongoDbConfig -> MongoDB(config)
             is MySqlConfig -> MySql(config)
             is RealmConfig -> Realm(config)
-            // brak tego przypadku nie spowoduje błędu kompilacji, 
-            // bo `BadConfig` nie dziedziczy bezpośrednio z klasy `sealed`
+            
+            // `BadConfig` rozszerza `MongoDbConfig` ale brak tego przypadku nie spowoduje błędu, 
+            // bo `BadConfig` jest `MongoDbConfig`, więc ten przypadek zostanie obsłużony
             is BadConfig -> MongoDB(config) 
         }
     }
@@ -458,7 +458,7 @@ repeat(10) {
     val randomPart = RandomPartCreator.createRandomPart()
     println(randomPart.description())
     // no chyba że sprawdzimy
-    println("is it AirFilter? ${randomPart is AirFilter}")
+    println("is it an AirFilter? ${randomPart is AirFilter}")
 }
 ```
 Od środka wygląda to następująco:
@@ -571,10 +571,11 @@ Kotlin bardzo pomaga w chowaniu implementacji przez `internal` klasy, oraz obsł
 - **całkowite oddzielenie implementacji od interfejsu** - z poziomu klienta fabryki interesuje nas wyłącznie interfejs obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.
 - **ograniczenie widoczności typów** - jest to przydatne, jeśli tworzymy bibliotekę i chcemy schować wewnętrzną implementację przed użytkownikiem.
 - **łatwość testowania** - już sam fakt polegania na interfejsach, zamiast konkretnej implementacji, pozwala łatwo stworzyć Mocka lub Stuba. W połączeniu z możliwością wstrzykiwania całej, skonfigurowanej na potrzeby testu fabryki, ułatwia to wyizolowanie testowanej logiki i skupienie się na tym, co faktycznie chcemy przetestować.
+- **reużywanie obiektów** - podobnie jak w przypadku Buildera, zwrócony obiekt niekoniecznie musi być nową instancją. Konstruktor zawsze zwraca nowy obiekt, ale Fabryka może mieć jakiś wewnętrzny cache i jeśli ma to sens zwrócić utworzony wcześniej obiekt. Chociaż może się to trochę kłócić z intuicyjnym rozumieniem "fabryki", która wytwarza nowe elementy, np. fabryka samochodów produkuje nowe auta, zamiast je tylko wypożyczać z parkingu.
 
 ## Wady
 - **konieczność tworzenia dodatkowych klas** - interfejsów, fabryk, typów wyliczeniowych itd. Niekoniecznie jest to wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie ma potrzeby tworzyć ten cały boilerplate.
 
 ---
-[^thinking_in_java]: [Thinking in Java](https://helion.pl/ksiazki/thinking-in-java-edycja-polska-wydanie-iv-bruce-eckel,thi4vv.htm#format/d)
-[^design_patterns]: [Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku](https://ksiegarnia.pwn.pl/Wzorce-projektowe,68608777,p.html)
+[^thinking_in_java]: [Thinking in Java](https://books.google.pl/books?id=bQVvAQAAQBAJ&dq=isbn:9780131872486&hl=pl&sa=X&ved=2ahUKEwjO6uawvojvAhVRtIsKHchPBwUQ6AEwAHoECAAQAg)
+[^design_patterns]: [Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku](https://books.google.pl/books?id=Mkn6uAEACAAJ&dq=isbn:0201633612&hl=pl&sa=X&ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg)
