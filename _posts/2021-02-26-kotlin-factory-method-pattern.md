@@ -253,7 +253,6 @@ Anonymous objects (no concrete class but implementing an interface) can also be 
 ```kotlin
 // factory can create anonymous objects, for client it doesn't matter
 class UndefinedFigureFactory : FigureFactory {
-    // niezależnie od parametru `type` zwrócony będzie taki sam obiekt
     // whatever the `type` parameter is, the same object will be returned
     override fun createFigure(type: FigureFactory.Type) = object: Figure {
         // with the same manipulator
@@ -312,9 +311,6 @@ RandomFigureFactory.getFigureFactory() // randomly picked `FigureFactory`, `Fake
 ```
 
 ## Sealed class
-
-Załóżmy, że mamy w aplikacji 3 bazy danych: `MySQL`, `Realm` i `MongoDB`. Mimo tego, że są zupełnie różne (SQL, obiektowa, No-SQL), to udostępniamy je klientom schowane za wspólnym interfejsem `Database`. Aby ułatwić sobie korzystanie z konkretnej bazy, użyjemy fabryki, która dostarczy nam instancję bazy tylko na podstawie konfiguracji.
-
 Suppose we have 3 databases in the app: `MySQL`, `Realm` and `MongoDB`. Although they are completely different (SQL, object-oriented, No-SQL), we make them available for clients hidden behind a common interface `Database`. To facilitate the use of a specific database, we will use a factory that will provide us with an instance of the database only based on the configuration.
 
 ```kotlin
