@@ -2,9 +2,7 @@
 layout: post
 title: "Kotlin Abstract Factory"
 date:  "2021-03-07 11:43"
-description: "
-Fabryka fabryk, czyli `Abstract Factory` usprawnia tworzenie obiektów będących częścią jakiejś "rodziny". Jest to w zasadzie warstwa opakowująca konkretne fabryki i dostarczająca klientom instancję fabryki tworzącą obiekty z danego wariantu.
-"
+description: "Fabryka fabryk, czyli 'Abstract Factory' usprawnia tworzenie obiektów będących częścią jakiejś 'rodziny'. Jest to w zasadzie warstwa opakowująca konkretne fabryki i dostarczająca klientom instancję fabryki tworzącą obiekty z danego wariantu."
 permalink: "kotlin-abstract-factory"
 comments: true
 toc: true
@@ -598,12 +596,7 @@ Wzorzec `Abstract Factory` przydaje się do tworzenia obiektów, które można p
   obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.
 
 ## Wady
-
-- **konieczność tworzenia dodatkowych klas** - interfejsów, fabryk, typów wyliczeniowych itd. Niekoniecznie jest to
-  wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj
-  rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie
-  ma potrzeby tworzyć ten cały boilerplate.
-  
+- **konieczność tworzenia dodatkowych klas** - interfejsów, fabryk, typów wyliczeniowych itd. Niekoniecznie jest to  wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj  rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie  ma potrzeby tworzyć ten cały boilerplate.  
 - **metody `inline`** - należy z nimi uważać, ponieważ potrafią generować sporo kodu który jest wielokrotnie kopiowany w projekcie
 - **dodatkowa praca podczas dodawania nowego typu** - dodanie nowego typu tworzonego przez fabryki powoduje konieczność implementacji w każdej konkretnej fabryce. Dodanie nowej konkretnej fabryki również wymaga utworzenia lub nadpisania wszystkich metod. Niekoniecznie jest to wada, bo wzorzec wymusza dostarczenie klientowi w pełni sprawnej fabryki, ale jest to dodatkowa praca poza dodaniem samych klas obiektów z nowej rodziny.
 
