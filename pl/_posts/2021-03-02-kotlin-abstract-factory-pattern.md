@@ -3,9 +3,7 @@ layout: post
 title: "Kotlin Abstract Factory"
 date:  "2021-03-07"
 description: "
-Po `Static Factory Method` nadeszła pora na klasyczne `Factory`. Fabryka jest bardzo użytecznym i często stosowanym
-wzorcem konstrukcyjnym. Kotlin daje nam ciekawe możliwości dzięki klasom `sealed` oraz `internal`, których odpowiedników
-brakuje w Javie.
+Fabryka fabryk, czyli `Abstract Factory` usprawnia tworzenie obiektów będących częścią jakiejś "rodziny". Jest to w zasadzie warstwa opakowująca konkretne fabryki i dostarczająca klientom instancję fabryki tworzącą obiekty z danego wariantu.
 "
 permalink: "kotlin-abstract-factory"
 comments: true 
