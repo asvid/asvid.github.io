@@ -1,5 +1,6 @@
 ---
-layout: post title: "Kotlin Abstract Factory"
+layout: post  
+title: "Kotlin Abstract Factory"
 date:  "2021-03-02"
 description: "
 Po `Static Factory Method` nadeszła pora na klasyczne `Factory`. Fabryka jest bardzo użytecznym i często stosowanym
@@ -7,19 +8,18 @@ wzorcem konstrukcyjnym. Kotlin daje nam ciekawe możliwości dzięki klasom `sea
 brakuje w Javie.
 "
 permalink: "kotlin-abstract-factory"
-comments: true toc: true tags:
-
+comments: true 
+toc: true 
+tags:
 - design patterns
 - Kotlin
 - Abstract Factory
 - construction design pattern
 
 categories:
-
 - Design Patterns
 
 image: /assets/posts/plyta.jpg
-
 ---
 
 # Przeznaczenie
@@ -159,29 +159,37 @@ Factory.getFactory(1).createProductA()
 
 Na diagramie prezentuje się to następująco:
 
-{% plantuml %} @startuml interface Factory{
+{% plantuml %} 
+@startuml 
 
+interface Factory{
 + createProductA() : ProductA
-+ createProductB() : ProductB }
++ createProductB() : ProductB 
+  }
 
-interface ProductA interface ProductB
+interface ProductA 
+interface ProductB
 
-class Product1A<< (C,#FF7700) Variant1 >> implements ProductA class Product1B<< (C,#FF7700) Variant1 >> implements
-ProductB
+class Product1A<< (C,#FF7700) Variant1 >> implements ProductA 
+class Product1B<< (C,#FF7700) Variant1 >> implements ProductB
 
-class Product2A<< (C,#FF0077) Variant2 >> implements ProductA class Product2B<< (C,#FF0077) Variant2 >> implements
-ProductB
+class Product2A<< (C,#FF0077) Variant2 >> implements ProductA 
+class Product2B<< (C,#FF0077) Variant2 >> implements ProductB
 
-class ConcreteFactory1<< (O,#FF0077) Variant1 >> implements Factory class ConcreteFactory2<< (O,#FF7700) Variant2 >>
-implements Factory
+class ConcreteFactory1<< (O,#FF0077) Variant1 >> implements Factory
+class ConcreteFactory2<< (O,#FF7700) Variant2 >> implements Factory
 
-Factory::createProductA-right[bold]-|>ProductA Factory::createProductB-right[bold]-|>ProductB
+Factory::createProductA-right[bold]-|>ProductA 
+Factory::createProductB-right[bold]-|>ProductB
 
-class AbstractFactory{ +getFactory(variant) : Factory }
+class AbstractFactory{ 
++getFactory(variant) : Factory 
+}
 
 AbstractFactory::getFactory-->Factory
 
-@enduml {% endplantuml %}
+@enduml 
+{% endplantuml %}
 
 ## Rodzina elementów GUI
 
@@ -275,9 +283,15 @@ class ViewCreator(os: ViewFactory.OS) : ViewFactory {
 // użycie
 val linuxButton = ViewCreator(ViewFactory.OS.Linux).createButton()
 ```
-Klienty nadal nie znają konkretnej fabryki kontrolek, ale teraz również interfejs `ViewFactory` nie musi ich znać. Nie ma też potrzeby rozszerzania `companion object`. Po prostu tworzymy instancję fabryki pod konkretny OS, która pod spodem używa konkretnych fabryk zgodnych z przekazanym OS-em.
 
-Łatwo zauważyć, że wraz ze wzrostem liczby kontrolek sporo kodu będzie wyglądać niemal identycznie, w zasadzie proxując wywołania metod do konkretnych fabryk. Ciekawym i mało ortodoksyjnym pomysłem jest użycie jednej metody `make<Typ>()` zamiast osobnych metod dla każdego typu kontrolki. Wtedy `ViewCreator` mógłby wyglądać tak:
+Klienty nadal nie znają konkretnej fabryki kontrolek, ale teraz również interfejs `ViewFactory` nie musi ich znać. Nie
+ma też potrzeby rozszerzania `companion object`. Po prostu tworzymy instancję fabryki pod konkretny OS, która pod spodem
+używa konkretnych fabryk zgodnych z przekazanym OS-em.
+
+Łatwo zauważyć, że wraz ze wzrostem liczby kontrolek sporo kodu będzie wyglądać niemal identycznie, w zasadzie proxując
+wywołania metod do konkretnych fabryk. Ciekawym i mało ortodoksyjnym pomysłem jest użycie jednej metody `make<Typ>()`
+zamiast osobnych metod dla każdego typu kontrolki. Wtedy `ViewCreator` mógłby wyglądać tak:
+
 ```kotlin
 // nie implementuje już interfejsu `ViewFactory`
 class ViewCreator(os: ViewFactory.OS) {
@@ -298,86 +312,289 @@ class ViewCreator(os: ViewFactory.OS) {
 // użycie
 val windowsButton = ViewCreator(ViewFactory.OS.Windows).make<GridView>()
 ```
-Słówka kluczowe `inline` i `reified` to spokojnie temat na osobny post. Użycie ich tutaj pozwala na przekazanie typu rozszerzającego `View` i sprawia, że metoda `make()` zwróci właśnie taki typ. Dzięki temu nie trzeba dla każdej nowej kontrolki dodawać nowej metody typu `createButton()`. Wystarczy, że nowa kontrolka rozszerza `View` i nowy przypadek w `when` zostanie obsłużony.
-Co dokładnie daje `inline`? Kopiuje kod w miejsce wywołania, dosłownie :) i właśnie dlatego wszystkie wykorzystywane przez metody `inline` pola muszą być publicznie dostępne. Przy takiej implementacji metody `make()` potrzebujemy użyć `reified`, żeby móc wykorzystać **klasę przekazanego typu <T>** do znalezienia właściwej metody w konkretnych `ViewFactory`. A `reified` można użyć tylko w metodach `inline`, bo "wklejenie" kodu metody w miejsce wywołania pozwala w trakcie kompilacji poznać dokładny typ. Po wywołaniu odpowiedniej metody, np. `createButton()` należy wynik jeszcze zrzutować na `<T>`, ponieważ to `T` jest spodziewanym typem zwracanego obiektu a nie `Button`, nawet jeśli `T::class == Button::class`.
+
+Słówka kluczowe `inline` i `reified` to spokojnie temat na osobny post. Użycie ich tutaj pozwala na przekazanie typu
+rozszerzającego `View` i sprawia, że metoda `make()` zwróci właśnie taki typ. Dzięki temu nie trzeba dla każdej nowej
+kontrolki dodawać nowej metody typu `createButton()`. Wystarczy, że nowa kontrolka rozszerza `View` i nowy przypadek
+w `when` zostanie obsłużony. Co dokładnie daje `inline`? Kopiuje kod w miejsce wywołania, dosłownie :) i właśnie dlatego
+wszystkie wykorzystywane przez metody `inline` pola muszą być publicznie dostępne. Przy takiej implementacji
+metody `make()` potrzebujemy użyć `reified`, żeby móc wykorzystać **klasę przekazanego typu <T>** do znalezienia
+właściwej metody w konkretnych `ViewFactory`. A `reified` można użyć tylko w metodach `inline`, bo "wklejenie" kodu
+metody w miejsce wywołania pozwala w trakcie kompilacji poznać dokładny typ. Po wywołaniu odpowiedniej metody,
+np. `createButton()` należy wynik jeszcze zrzutować na `<T>`, ponieważ to `T` jest spodziewanym typem zwracanego obiektu
+a nie `Button`, nawet jeśli `T::class == Button::class`.
 
 Kopiowanie kodu powoduje puchnięcie plików, np. wywołanie metody `make()` 2x:
+
 ```kotlin
 val windowsButton = ViewCreator(ViewFactory.OS.Windows).make<Button>()
 // w ramach jednego moduły można niestety przekazać też typ klasy `internal`
 // więc typem zwracanym nie będzie generyczny Button a konkretny WindowsButton
 val windowsButton2 = ViewCreator(ViewFactory.OS.Windows).make<WindowsViewViewFactory.WindowsButton>()
 ```
+
 Spowoduje wygenerowanie bytecode odpowiadającemu Javie:
+
 ```java
 // początek dla pierwszego Buttona
-ViewCreator this_$iv = new ViewCreator(OS.Windows);
-int $i$f$make = false;
-KClass var4 = Reflection.getOrCreateKotlinClass(Button.class);
+ViewCreator this_$iv=new ViewCreator(OS.Windows);
+int $i$f$make=false;
+KClass var4=Reflection.getOrCreateKotlinClass(Button.class);
 Button var10000;
 View var9;
 Image var10;
-if (Intrinsics.areEqual(var4, Reflection.getOrCreateKotlinClass(Button.class))) {
-var10000 = this_$iv.getFactory().createButton();
-if (var10000 == null) {
+if(Intrinsics.areEqual(var4,Reflection.getOrCreateKotlinClass(Button.class))){
+var10000=this_$iv.getFactory().createButton();
+if(var10000==null){
 throw new NullPointerException("null cannot be cast to non-null type abstract_factory.family.Button");
 }
 
-var9 = (View)var10000;
-} else {
-if (!Intrinsics.areEqual(var4, Reflection.getOrCreateKotlinClass(Image.class))) {
-throw (Throwable)(new IllegalArgumentException());
+var9=(View)var10000;
+}else{
+if(!Intrinsics.areEqual(var4,Reflection.getOrCreateKotlinClass(Image.class))){
+throw(Throwable)(new IllegalArgumentException());
 }
 
-var10 = this_$iv.getFactory().createImage();
-if (var10 == null) {
+var10=this_$iv.getFactory().createImage();
+if(var10==null){
 throw new NullPointerException("null cannot be cast to non-null type abstract_factory.family.Button");
 }
 
-var9 = (View)((Button)var10);
+var9=(View)((Button)var10);
 }
 // koniec dla pierwszego Buttona
-Button windowsButton = (Button)var9;
+Button windowsButton=(Button)var9;
 // ------------------------------------------------------------------------------------------
 
 // początek dla drugiego Buttona     
-ViewCreator this_$iv = new ViewCreator(OS.Windows);
-int $i$f$make = false;
-KClass var5 = Reflection.getOrCreateKotlinClass(WindowsButton.class);
-if (Intrinsics.areEqual(var5, Reflection.getOrCreateKotlinClass(Button.class))) {
-var10000 = this_$iv.getFactory().createButton();
-if (var10000 == null) {
+ViewCreator this_$iv=new ViewCreator(OS.Windows);
+int $i$f$make=false;
+KClass var5=Reflection.getOrCreateKotlinClass(WindowsButton.class);
+if(Intrinsics.areEqual(var5,Reflection.getOrCreateKotlinClass(Button.class))){
+var10000=this_$iv.getFactory().createButton();
+if(var10000==null){
 throw new NullPointerException("null cannot be cast to non-null type abstract_factory.family.WindowsViewViewFactory.WindowsButton");
 }
 
-var9 = (View)((WindowsButton)var10000);
-} else {
-if (!Intrinsics.areEqual(var5, Reflection.getOrCreateKotlinClass(Image.class))) {
-throw (Throwable)(new IllegalArgumentException());
+var9=(View)((WindowsButton)var10000);
+}else{
+if(!Intrinsics.areEqual(var5,Reflection.getOrCreateKotlinClass(Image.class))){
+throw(Throwable)(new IllegalArgumentException());
 }
 
-var10 = this_$iv.getFactory().createImage();
-if (var10 == null) {
+var10=this_$iv.getFactory().createImage();
+if(var10==null){
 throw new NullPointerException("null cannot be cast to non-null type abstract_factory.family.WindowsViewViewFactory.WindowsButton");
 }
 
-var9 = (View)((WindowsButton)var10);
+var9=(View)((WindowsButton)var10);
 }
 // koniec dla drugiego Buttona
-WindowsButton windowsButton2 = (WindowsButton)var9;
+WindowsButton windowsButton2=(WindowsButton)var9;
 ```
-I tak w każdym miejscu gdzie użyta jest metoda `inline`. Więc może nie jest to najlepsze rozwiązanie dla często używanych metod, a tworzenie kontrolek GUI w aplikacji, która potrzebuje do tego aż `Abstract Factory` raczej do takich przypadków się zalicza.
 
-To podejście również pochodzi z książki "Wzorce projektowe"[^design_patterns] i raczej zostało pomyślane dla języków Objective C czy Smalltalk, ale jeszcze do niego wrócę.
+I tak w każdym miejscu, gdzie użyta jest metoda `inline`. Więc może nie jest to najlepsze rozwiązanie dla często
+używanych metod, a tworzenie kontrolek GUI w aplikacji, która potrzebuje do tego aż `Abstract Factory` raczej do takich
+przypadków się zalicza.
+
+To podejście również pochodzi z książki "Wzorce projektowe"[^design_patterns] i raczej zostało pomyślane dla języków
+Objective C czy Smalltalk, ale jeszcze do niego wrócę.
 
 ## Fabryka z rejestrem
+W poprzednim wpisie o [Factory Method](http://127.0.0.1:4000/pl/kotlin-factory-method#factories-with-registry) opisałem fabrykę z rejestrem, pozwalającą na elastyczne dodawanie nowych fabryk. Podobną rzecz można zrobić z `Abstract Factory`. Posłużę się takim samym przykładem jak poprzednio, czyli factory budujące kontrolki GUI pod konkretny system operacyjny.
+
+```kotlin
+// interfejs Factory które będzie rejestrowane
+interface ViewFactory {
+    fun createButton(): Button
+    fun createImage(): Image
+}
+// typy dostarczane przez Factory
+interface View
+abstract class Button : View
+abstract class Image : View
+```
+Konkretne Factory są takie same jak w poprzednim przykładzie.
+```kotlin
+object LinuxViewViewFactory : ViewFactory {
+    internal class LinuxButton : Button()
+    internal class LinuxImage : Image()
+
+    override fun createButton(): Button = LinuxButton()
+    override fun createImage(): Image = LinuxImage()
+}
+
+object WindowsViewViewFactory : ViewFactory {
+    internal class WindowsButton : Button()
+    internal class WindowsImage : Image()
+
+    override fun createButton(): Button = WindowsButton()
+    override fun createImage(): Image = WindowsImage()
+}
+```
+I samo rejestrowane Factory.
+```kotlin
+object ViewFactoryMaker {
+    // rejestr konkretnych factory, klucz jest zwykłym Stringiem
+    private val registry = mutableMapOf<String, ViewFactory>()
+
+    fun register(name: String, factory: ViewFactory) {
+        registry[name] = factory
+    }
+
+    // zwracanie konkretnego factory na podstawie klucza
+    // w przypadku braku klucza zwrócony zostanie `null`
+    fun getFactory(name: String): ViewFactory? {
+        return registry[name]
+    }
+}
+```
+Użycie wygląda następująco:
+```kotlin
+// w tym wypadku xpButton1 będzie `null` bo nie ma fabryki pod kluczem "XP"
+val xpButton1 = ViewFactoryMaker.getFactory("XP")?.createButton()
+
+// ale można ją stworzyć np. jako obiekt anonimowy i zarejestrować
+ViewFactoryMaker.register("XP", object: ViewFactory {
+  override fun createButton(): Button {
+    // znów anonimowy obiekt rozszerzający klasę Button
+    return object: Button() {}
+  }
+
+  override fun createImage(): Image {
+    return object: Image() {}
+  }
+})
+
+// xpButton teraz już nie będzie null-em
+val xpButton = ViewFactoryMaker.getFactory("XP")?.createButton()
+```
+Rejestr umożliwia łatwe dodanie nowych fabryk, jeśli zajedzie taka potrzeba. Fabryka Abstrakcyjna dostarcza w zasadzie tylko interfejs konkretnych fabryk i obiektów przez nie tworzonych.
 
 ## Metoda Make raz jeszcze
+Używając podejścia z metodą `make()` i rejestru fabryk, można osiągnąć ciekawy efekt.
+```kotlin
+val linuxButton = ViewFactory.getFactory(ViewFactory.OS.Linux).make<Button>()
+```
+Pozwala to na łatwe rozszerzanie możliwości fabryk, bez konieczności pisania proxy-metod. Aby to osiągnąć, należy rozbudować `ViewFactory` o companion object i metodę `inline`. Każda konkretna fabryka będzie rozszerzać abstrakcyjne `ViewFactory` i nadpisywać metody tworzące kontrolki GUI.
+```kotlin
+abstract class ViewFactory {
+    // typy znane Factory
+    enum class OS {
+        Linux, Windows
+    }
+
+    // metody do nadpisania przez konkretne factory
+    protected abstract fun createButton(): Button
+    protected abstract fun createImage(): Image
+
+    // rejestr teraz trzyma referencje do metod, a nie konkretnych factory
+    // kluczem jest generyczny typ zwracany przez metodę
+    protected val registry = mutableMapOf<KClass<out View>, () -> View>(
+        Button::class to ::createButton,
+        Image::class to ::createImage
+    )
+
+    // tej metody nie da się przesłonić
+    inline fun <reified T : View> make(): T? {
+        // pole `registry` jest protected, 
+        // więc metoda `inline` nie ma do niego bezpośredniego dostępu
+        return `access$registry`[T::class]?.invoke() as T?
+    }
+
+    companion object {
+        fun getFactory(os: OS): ViewFactory {
+            return when (os) {
+                OS.Linux -> LinuxViewFactory // Singleton
+                OS.Windows -> WindowsViewFactory() // normalny obiekt
+            }
+        }
+    }
+
+    // sposób na udostępnienie rejestru metodzie `make()`
+    // metoda jest internal więc po skompilowaniu nie będzie dostępna
+    @PublishedApi
+    internal val `access$registry`: MutableMap<KClass<out View>, () -> View>
+        get() = registry
+}
+```
+Czyli teraz mając już konkretne factory, dostarczone przez metodę `getFactory()` z companion object, zamiast wywoływać na nim konkretną metodę, np. `createButton()` używamy `make<Button>()` a rejestr znajdzie odpowiednią metodę na podstaie zwracanego typu i ją wywoła przez użycie `invoke()`.
+
+Konkretne factory może wyglądać tak:
+```kotlin
+// normalna klasa zamiast Singletona pozwala na wewnętrzne klasy
+class WindowsViewViewFactory : ViewFactory() {
+
+    // private inner zapewnia że klasa jest niewidoczna poza Factory
+    private inner class WindowsButton : Button()
+    private inner class WindowsImage : Image()
+
+    // nadpisanie metod tworzących kontrolki
+    // referencje do nich trafiają do rejestru
+    override fun createButton(): Button = WindowsButton()
+    override fun createImage(): Image = WindowsImage()
+}
+```
+Lub tak, z dodaną nową kontrolką `GridView` którą tylko `LinuxViewFactory` potrafi stworzyć
+```kotlin
+object LinuxViewViewFactory : ViewFactory() {
+    internal class LinuxButton : Button()
+    internal class LinuxImage : Image()
+
+    // implementację GridView istnieje tylko dla Linuxa
+    internal class LinuxGridView : GridView()
+
+    // a factory ma w interfejsie tylko takie metody
+    override fun createButton(): Button = LinuxButton()
+    override fun createImage(): Image = LinuxImage()
+
+    // dodanie nowej kontrolki specyficznej dla tylko dla tej fabryki
+    init {
+        // wywołanie metody z parametrem LinuxGridView zwróci NULL-a
+        registry[GridView::class] = {
+            LinuxGridView()
+        }
+    }
+}
+```
+Kilka przykładów użycia:
+```kotlin
+val linuxFactory = ViewFactory.getFactory(ViewFactory.OS.Linux)
+val windowsFactory = ViewFactory.getFactory(ViewFactory.OS.Windows)
+
+val linuxButton = linuxFactory.make<Button>()
+val winButton = windowsFactory.make<Button>()
+
+val gridView = linuxFactory.make<GridView>() // OK
+val winGridView = windowsFactory.make<GridView>() // null
+
+// niestety `access$registry` jest publicznie dostępne w ramach modułu
+val registry = linuxFactory.`access$registry`
+// i nic nas nie powstrzymuje przed dodaniem obsługi nowej kontrolki
+// tak długo jak rozszerza `View` z fabryki abstrakcyjnej
+class NewView: View
+registry[NewView::class] = { NewView() }
+
+// legalne użycie metody `make()` ale zwróci null
+// `View` nie ma w rejestrze metody tworzącej
+val view = linuxFactory.make<View>()
+```
+Dodanie nowej kontrolki dla wszystkich konkretnych factory oznacza jedynie dodanie abstrakcyjnej metody do `ViewFactory` i rejestracja jej. Wszystkie klasy pochodne będą musiały ją zaimplementować. Dodanie kontrolki wyłącznie dla konkretnej fabryki również jest stosunkowo proste i implementacja zamyka się w kodzie konkretnej fabryki. W tym wypadku metoda `inline` nie spowoduje wygenerowania ogromnej ilości kodu w każdym miejscu, gdzie zostanie użyta, ponieważ jedyne co robi, to wywołuje metodę z rejestru. 
+
+Kod wygenerowany dla użycia metody `make<Button>()`.
+```kotlin
+// `var10000` to referencja do metody zwracającej `Button`
+Function0 var10000 = (Function0)linuxFactory.getAccess$registry().get(Reflection.getOrCreateKotlinClass(Button.class));
+Button linuxButton = (Button)((View)((Button)(var10000 != null ? (View)var10000.invoke() : null)));
+```
+
+Jest więc to ciekawa i całkiem użyteczna hybryda fabryki z rejestrem oraz z pojedynczą metodą tworzącą obiekty. Niewątpliwą zaletą jest elastyczność tej implementacji, ale publiczny dostęp do rejestru metod, oraz brak pewności czy wybrana fabryka potrafi stworzyć żądany obiekt, mogą budzić wątpliwości.
 
 # Podsumowanie
+Wzorzec `Abstract Factory` przydaje się do tworzenia obiektów, które można połączyć w sensowne rodziny. Stanowi warstwę ponad standardowym `Factory Method`, serwując konkretne factory w zależności od potrzeb klientów. Może występować w kilku wariantach, np. w wersji z metodą `make()` lub rejestrem konkretnych fabryk, ale w każdym przypadku określa interfejs implementowany przez dostarczane fabryki. Dla klienta nie ma różnicy, z której konkretnej implementacji korzysta. Wady i zalety są bardzo zbliżone do tych z `Factory Method`
 
 ## Zalety
-
+- **łatwe zarządzanie "rodzinami" obiektów** - polegając wyłącznie na interfejsie fabryki, klient ma pewność, że dostarczone obiekty pochodzą z tej samej "rodziny" i będą poprawnie ze sobą współpracować
 - **całkowite oddzielenie implementacji od interfejsu** - z poziomu klienta fabryki interesuje nas wyłącznie interfejs
   obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.
 
@@ -387,6 +604,9 @@ To podejście również pochodzi z książki "Wzorce projektowe"[^design_pattern
   wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj
   rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie
   ma potrzeby tworzyć ten cały boilerplate.
+  
+- **metody `inline`** - należy z nimi uważać, ponieważ potrafią generować sporo kodu który jest wielokrotnie kopiowany w projekcie
+- **dodatkowa praca podczas dodawania nowego typu** - dodanie nowego typu tworzonego przez fabryki powoduje konieczność implementacji w każdej konkretnej fabryce. Dodanie nowej konkretnej fabryki również wymaga utworzenia lub nadpisania wszystkich metod. Niekoniecznie jest to wada, bo wzorzec wymusza dostarczenie klientowi w pełni sprawnej fabryki, ale jest to dodatkowa praca poza dodaniem samych klas obiektów z nowej rodziny.
 
 ---
 [^thinking_in_java]: [Thinking in Java](https://books.google.pl/books?id=bQVvAQAAQBAJ&dq=isbn:9780131872486&hl=pl&sa=X&ved=2ahUKEwjO6uawvojvAhVRtIsKHchPBwUQ6AEwAHoECAAQAg)
