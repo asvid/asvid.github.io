@@ -1,13 +1,13 @@
 ---
-layout: post  
+layout: post
 title: "Kotlin Abstract Factory"
-date:  "2021-03-07"
+date:  "2021-03-07 11:43"
 description: "
 Fabryka fabryk, czyli `Abstract Factory` usprawnia tworzenie obiektów będących częścią jakiejś "rodziny". Jest to w zasadzie warstwa opakowująca konkretne fabryki i dostarczająca klientom instancję fabryki tworzącą obiekty z danego wariantu.
 "
 permalink: "kotlin-abstract-factory"
-comments: true 
-toc: true 
+comments: true
+toc: true
 tags:
 - design patterns
 - Kotlin
@@ -18,6 +18,7 @@ categories:
 - Design Patterns
 
 image: /assets/posts/abstract_factory.jpg
+
 ---
 
 # Przeznaczenie
