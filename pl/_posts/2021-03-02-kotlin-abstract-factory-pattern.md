@@ -1,7 +1,7 @@
 ---
 layout: post  
 title: "Kotlin Abstract Factory"
-date:  "2021-03-02"
+date:  "2021-03-07"
 description: "
 Po `Static Factory Method` nadeszła pora na klasyczne `Factory`. Fabryka jest bardzo użytecznym i często stosowanym
 wzorcem konstrukcyjnym. Kotlin daje nam ciekawe możliwości dzięki klasom `sealed` oraz `internal`, których odpowiedników
@@ -19,7 +19,7 @@ tags:
 categories:
 - Design Patterns
 
-image: /assets/posts/plyta.jpg
+image: /assets/posts/abstract_factory.jpg
 ---
 
 # Przeznaczenie
@@ -103,7 +103,7 @@ wiedzą tylko, że dostaną `Factory` i że będzie ono potrafiło zbudować `Pr
 jest tutaj tzw. `top-level function` bo znajduje się poza jakąkolwiek klasą, ale może Być częścią np. `companion object`
 interfejsu Factory. Jednak sam interfejs Factory niekoniecznie powinien znać swoje implementacje, na szczęście może mieć
 pusty `companion object`, który dostanie w odpowiednim miejscu `extension function`. Szerzej pisałem o
-tym [tutaj](wpis o builderze)
+tym [tutaj](https://asvid.github.io/pl/kotlin-builder-pattern)
 
 ```kotlin
 // naiwan ale działająca implementacja ze zwykłym Int-em
@@ -401,7 +401,7 @@ To podejście również pochodzi z książki "Wzorce projektowe"[^design_pattern
 Objective C czy Smalltalk, ale jeszcze do niego wrócę.
 
 ## Fabryka z rejestrem
-W poprzednim wpisie o [Factory Method](http://127.0.0.1:4000/pl/kotlin-factory-method#factories-with-registry) opisałem fabrykę z rejestrem, pozwalającą na elastyczne dodawanie nowych fabryk. Podobną rzecz można zrobić z `Abstract Factory`. Posłużę się takim samym przykładem jak poprzednio, czyli factory budujące kontrolki GUI pod konkretny system operacyjny.
+W poprzednim wpisie o [Factory Method](https://asvid.github.io/pl/kotlin-factory-method#factories-with-registry) wspomniałem o fabryce z rejestrem, pozwalającą na elastyczne dodawanie nowych fabryk. Podobną rzecz można zrobić z `Abstract Factory`. Posłużę się takim samym przykładem jak poprzednio, czyli factory budujące kontrolki GUI pod konkretny system operacyjny.
 
 ```kotlin
 // interfejs Factory które będzie rejestrowane
@@ -609,5 +609,4 @@ Wzorzec `Abstract Factory` przydaje się do tworzenia obiektów, które można p
 - **dodatkowa praca podczas dodawania nowego typu** - dodanie nowego typu tworzonego przez fabryki powoduje konieczność implementacji w każdej konkretnej fabryce. Dodanie nowej konkretnej fabryki również wymaga utworzenia lub nadpisania wszystkich metod. Niekoniecznie jest to wada, bo wzorzec wymusza dostarczenie klientowi w pełni sprawnej fabryki, ale jest to dodatkowa praca poza dodaniem samych klas obiektów z nowej rodziny.
 
 ---
-[^thinking_in_java]: [Thinking in Java](https://books.google.pl/books?id=bQVvAQAAQBAJ&dq=isbn:9780131872486&hl=pl&sa=X&ved=2ahUKEwjO6uawvojvAhVRtIsKHchPBwUQ6AEwAHoECAAQAg)
 [^design_patterns]: [Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku](https://books.google.pl/books?id=Mkn6uAEACAAJ&dq=isbn:0201633612&hl=pl&sa=X&ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg)
