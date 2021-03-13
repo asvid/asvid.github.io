@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
-      <change afterPath="$PROJECT_DIR$/_drafts/2021-03-02-kotlin-abstract-factory-pattern.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_drafts/2021-03-02-kotlin-abstract-factory-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/_drafts/2021-03-02-kotlin-abstract-factory-pattern.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2021-03-02-kotlin-abstract-factory-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2021-03-02-kotlin-abstract-factory-pattern.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +73,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Markdown" />
+    <property name="settings.editor.selected.configurable" value="Settings.Markdown" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">

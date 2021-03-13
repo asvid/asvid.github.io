@@ -103,7 +103,7 @@ pusty `companion object`, który dostanie w odpowiednim miejscu `extension funct
 tym [tutaj](https://asvid.github.io/pl/kotlin-builder-pattern)
 
 ```kotlin
-// naiwan ale działająca implementacja ze zwykłym Int-em
+// naiwna ale działająca implementacja ze zwykłym Int-em
 fun getFactory(whichOne: Int): Factory {
     return when (whichOne) {
         1 -> ConcreteFactory1
@@ -211,7 +211,7 @@ interface ViewFactory {
         Linux, Windows
     }
 
-    // metody dostarczające kontroli, niezależne od OS
+    // metody dostarczające generyczne kontrolki, niezależne od OS
     fun createButton(): Button
     fun createImage(): Image
 
@@ -310,16 +310,10 @@ class ViewCreator(os: ViewFactory.OS) {
 val windowsButton = ViewCreator(ViewFactory.OS.Windows).make<GridView>()
 ```
 
-Słówka kluczowe `inline` i `reified` to spokojnie temat na osobny post. Użycie ich tutaj pozwala na przekazanie typu
-rozszerzającego `View` i sprawia, że metoda `make()` zwróci właśnie taki typ. Dzięki temu nie trzeba dla każdej nowej
-kontrolki dodawać nowej metody typu `createButton()`. Wystarczy, że nowa kontrolka rozszerza `View` i nowy przypadek
-w `when` zostanie obsłużony. Co dokładnie daje `inline`? Kopiuje kod w miejsce wywołania, dosłownie :) i właśnie dlatego
-wszystkie wykorzystywane przez metody `inline` pola muszą być publicznie dostępne. Przy takiej implementacji
-metody `make()` potrzebujemy użyć `reified`, żeby móc wykorzystać **klasę przekazanego typu <T>** do znalezienia
-właściwej metody w konkretnych `ViewFactory`. A `reified` można użyć tylko w metodach `inline`, bo "wklejenie" kodu
-metody w miejsce wywołania pozwala w trakcie kompilacji poznać dokładny typ. Po wywołaniu odpowiedniej metody,
-np. `createButton()` należy wynik jeszcze zrzutować na `<T>`, ponieważ to `T` jest spodziewanym typem zwracanego obiektu
-a nie `Button`, nawet jeśli `T::class == Button::class`.
+Słówka kluczowe `inline` i `reified` to spokojnie temat na osobny post. Użycie ich tutaj pozwala na przekazanie typu rozszerzającego `View` i sprawia, że metoda `make()` zwróci właśnie taki typ. Dzięki temu nie trzeba dla każdej nowej kontrolki dodawać nowej metody typu `createButton()`. Wystarczy, że nowa kontrolka rozszerza `View` i nowy przypadek w `when` zostanie obsłużony. 
+
+Co dokładnie daje `inline`? Kopiuje kod w miejsce wywołania, **dosłownie** :) i właśnie dlatego
+wszystkie wykorzystywane przez metody `inline` pola muszą być publicznie dostępne. Przy takiej implementacji metody `make()` potrzebujemy użyć `reified`, żeby móc wykorzystać **klasę przekazanego typu <T>** do znalezienia właściwej metody w konkretnych `ViewFactory`. A `reified` można użyć tylko w metodach `inline`, bo "wklejenie" kodu metody w miejsce wywołania pozwala w trakcie kompilacji poznać dokładny typ. Po wywołaniu odpowiedniej metody, np. `createButton()` należy wynik jeszcze zrzutować na `T`, ponieważ to `T` jest spodziewanym typem zwracanego obiektu, a nie `Button`, nawet jeśli `T::class == Button::class`.
 
 Kopiowanie kodu powoduje puchnięcie plików, np. wywołanie metody `make()` 2x:
 
@@ -448,7 +442,7 @@ object ViewFactoryMaker {
 ```
 Użycie wygląda następująco:
 ```kotlin
-// w tym wypadku xpButton1 będzie `null` bo nie ma fabryki pod kluczem "XP"
+// w tym wypadku `xpButton1` będzie `null` bo nie ma fabryki pod kluczem "XP"
 val xpButton1 = ViewFactoryMaker.getFactory("XP")?.createButton()
 
 // ale można ją stworzyć np. jako obiekt anonimowy i zarejestrować
@@ -463,8 +457,8 @@ ViewFactoryMaker.register("XP", object: ViewFactory {
   }
 })
 
-// xpButton teraz już nie będzie null-em
-val xpButton = ViewFactoryMaker.getFactory("XP")?.createButton()
+// `xpButton2` teraz już nie będzie null-em
+val xpButton2 = ViewFactoryMaker.getFactory("XP")?.createButton()
 ```
 Rejestr umożliwia łatwe dodanie nowych fabryk, jeśli zajedzie taka potrzeba. Fabryka Abstrakcyjna dostarcza w zasadzie tylko interfejs konkretnych fabryk i obiektów przez nie tworzonych.
 
