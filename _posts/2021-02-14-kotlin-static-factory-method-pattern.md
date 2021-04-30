@@ -63,9 +63,9 @@ The main rule here will be to use well-named methods instead of constructor, tha
     ```
 - `get<<Type>>` - similar to `getInstance` but returns the same instance of the object when the factory method is in a separate class. `<<Type>>` is the type of returned object
     ```kotlin
-    val path = Path.of("path", "to/file/store")             // znana już metoda 'of()'
+    val path = Path.of("path", "to/file/store")             // already familiar method 'of()'
     val fileStore: FileStore = Files.getFileStore(path)     // <<Type>> to FileStore
-    // w tym przypadku dla tego samego obiektu Path każdorazowo będzie tworzona nowa instancja FileStore
+    // in this case for the same `Path` instance, new `FileStore` instance will be created each time
     ```
 - `new<<Type>>` - analogically to the previous example but for getting a new instance each time
     ```kotlin
