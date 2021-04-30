@@ -573,4 +573,4 @@ The `Abstract Factory` pattern is useful for creating objects that can be combin
 - **extra work when adding a new type** - adding a new type that is created by factories requires implementation in each specific factory. Adding a new specific factory also requires all methods to be created or overwritten. This is not necessarily a disadvantage, because the design pattern requires a fully operational factory to be delivered to the client, but it is additional work beyond adding only the classes of objects from the new family.
 
 ---
-[^design_patterns]: [Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku](https://books.google.pl/books?id=Mkn6uAEACAAJ&dq=isbn:0201633612&hl=pl&sa=X&ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg)
+[^design_patterns]: [Design Patterns: Elements of Reusable Object-Oriented Software](https://books.google.pl/books?id=Mkn6uAEACAAJ&dq=isbn:0201633612&hl=pl&sa=X&ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg)
