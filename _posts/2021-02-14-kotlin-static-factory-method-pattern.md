@@ -86,7 +86,7 @@ So in Java, such methods had to be static members of a class, but in Kotlin we h
 - It's not accessible from the instance, just like the inner `object`.
 - It can have a name, but it's optional - by default it can be reached with the `Companion` name.
 - There can single `companion object` inside a class, but any number of normal `objects`.
-- Unlike `inner` classes it doesn't have access to fields and methods of the parent object, just like inside `object.
+- Unlike `inner` classes it doesn't have access to fields and methods of the parent object, just like inside `object`.
 - Parent class name already points to `companion object`, there is no need to call it like `<<Class>>.Companion.<<method()>>`.
 
 ```kotlin
