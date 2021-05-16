@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
+      <change afterPath="$PROJECT_DIR$/_drafts/2021-05-13-kotlin-template-method.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,11 +84,11 @@
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/_drafts" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="$PROJECT_DIR$/pl" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_data" />
-      <recent name="$PROJECT_DIR$/_data/en" />
     </key>
   </component>
   <component name="RunManager">
