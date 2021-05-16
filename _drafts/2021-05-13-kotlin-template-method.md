@@ -20,11 +20,13 @@ image: /assets/posts/abstract_factory.jpg
 ---
 
 # Przeznaczenie
-Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to co stałe od tego co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje.
+Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to, co stałe od tego, co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje.
 
-Pomyśl o tym jak o pizzy - kroki zą z grubsza takie same, najpierw ciasto, potem sos, dodatki i do pieca. Różne rodzaje pizzy mogą mieć różne ciasto, sos, dodatki lub czas wypiekania (chyba nie wiem :) ), ale kolejność kroków i same kroki są dla każdego rodzaju takie same. Możemy więc uznać że istnieje abstrakcyjna `Pizza` z metodą `zrób()`, ale dziedzicząca z niej klasa `Hawajska` czy `Pepperoni` nadpisze metodę dodającą dodatki bez zmiany samego algorytmu robienia pizzy.
+Pomyśl o tym jak o pizzy — kroki zą z grubsza takie same, najpierw ciasto, potem sos, dodatki i do pieca. Różne rodzaje pizzy mogą mieć różne ciasto, sos, dodatki lub czas wypiekania (chyba nie wiem :) ), ale kolejność kroków i same kroki są dla każdego rodzaju takie same. Możemy więc uznać, że istnieje abstrakcyjna `Pizza` z metodą `zrób()`, ale dziedzicząca z niej klasa `Hawajska` czy `Pepperoni` nadpisze metodę dodającą dodatki bez zmiany samego algorytmu robienia pizzy.
 
 Mamy tutaj do czynienia z odwróceniem sterowania, bo to klasa nadrzędna `Pizza` wywołuje metody klasy podrzędnej, a nie odwrotnie jak to zwykle bywa.
+
+Ze wzorcem tym można się spotkać w bibliotekach, gdzie twórcy pozwalają nam rozszerzać klasy biblioteki i nadpisywać niektóre metody, jednak mają kontrolę nad kolejnością ich wykonywania.  
 
 # Przykłady implementacji
 ## Podstawowy wzorzec
@@ -284,22 +286,116 @@ class BigPepperoni : Pizza(
 )
 ```
 
+Pozwala to też na łatwe stworzenie zupeniłe customowej Pizzy, bez potrzeby tworzenia nowej klasy:
+```kotlin
+val customPizza = object : Pizza(
+	applySauce = object : SauceApplier {
+		override fun invoke() {
+			println("adding super sauce")
+		}
+	},
+	makeDough = object : DoughMaker {
+		override fun invoke() {
+			println("making super dough 48cm")
+		}
+	},
+	applyAddons = object : AddonsApplier {
+		override fun invoke() {
+			println("no addons, its super by itself")
+		}
+	},
+	bake = object : Baker {
+		override fun invoke() {
+			println("I like it raw")
+		}
+	}
+) {}
+customPizza.make()
+```
+
 Ale czy to jeszcze `Metoda Szablonowa` czy już `Strategia`?
 
-[comment]: <> (sprawdzić różnice między template method a strategią)
-
 ## Active Record
+Przykład zaczerpnięty ze świata Ruby (którego w ogóle nie znam), gdzie wziął się od wzorca zaproponowanego przez Martina Fowlera w książce [^fowler]. Ogólnie chodzi o to, że mamy klasę - model w rozumieniu MVC, która oprócz pól posiada metody pozwalające ten model zapisać czy usunąć, np. w bazie danych. Więcej o [^active_record].
+
+W `Ruby on Rails` taki model ma dodatkowo sporo callbacków [^ruby_active_record], tzw hooków, które są wywoływane np. przed zapisem lub w przypadku błędu. I własnie do takiego zastosowania wzorzec `Metoda Szablonowa` nadaje się idealnie. W Kotlinie możnaby to zaimplementować tak:
+```kotlin
+abstract class ActiveRecord { // bazowa klasa ActiveRecord
+	
+	// metoda szablonowa, wywołująca hooki w odpowiedniej kolejności
+    fun save() { // generyczna metoda zapisu obiektu w bazie danych
+        println("saving record $this")
+        this.beforeSave() // wywołanie hooka
+        val isSuccess = DB.save(this) // sam zapis do bazy może się udać lub nie
+        if (isSuccess) {
+            this.afterSave() // kolejny hook na sukces zapisu
+        } else {
+            this.failedSave() // i hook w razie błędu
+        }
+    }
+
+    open fun beforeSave() { // generyczny hook z domyślną implementacją, otwarty do nadpisania
+        // NOOP
+        println("NOOP beforeSave()")
+    }
+
+    open fun afterSave() {
+        // NOOP
+        println("NOOP afterSave()")
+    }
+
+    open fun failedSave() {
+        // NOOP
+        println("NOOP failedSave()")
+    }
+}
+
+object DB { // jakiś mock bazy danych
+    fun save(record: ActiveRecord): Boolean {
+        println("DB is saving record: $record")
+        // tutaj byłby zapis i zwrócenie true jeśli się powiodło, false jeśli nie
+        return true
+    }
+}
+
+class User(private var username: String) : ActiveRecord() { // konkretny model dziedziczący po ActiveRecord
+	
+    override fun beforeSave() { // nadpisanie hooka
+        println("$this beforeSave()")
+        sanitizeRecord() // wywołanie ewentualnego poprawienia danych przed zapisem
+    }
+
+    private fun sanitizeRecord() { // poprawienie danych w modelu przed zapisem
+        println("$this sanitizeRecord()")
+        username.trim()
+        username = username.filter { it.isLetter() }
+    }
+}
+
+class Post(val text: String) : ActiveRecord() // inny model ActiveRecord, ale bez nadpisania hooków
+```
+Mając tak skonstruowany `ActiveRecord` z hookami można łatwo wpiąć np. logowanie modyfikacji modelu, albo obsługę błędów zapisu czy właśnie poprawiania danych w modelu przed samym zapisaniem. Na podobnej zasadzie działa `JUnit`, gdzie oznaczamy metody-hooki adnotacjami `@BeforeEach` czy `@AfterAll`, żeby wywołać je przed każdym lub po wszystkich testach w klasie.
+
+Sam `ActiveRecord` jest jednak czasami określany jako [^active_record_antipatern] i są ku temu całkiem dobre powody: naruszenie SRP (jedna klasa do operacji na bazie danych, walidacji modelu, przechowywania danych etc), bezpośrednie mapowanie struktury bazy na obiekt, problemy z testowaniem. Ale jak już wspominałem - Ruby to nie mój świat, a ten post nie jest o `ActiveRecord`, po prostu wzorzec `Metody Szablonowej` dobrze pasuje do takiego zastosowania. 
 
 # Podsumowanie
-
+Wzorzec `Metody Szablonowej` jest dosyć prosty w swojej konstrukcji i chyba sam go stosowałem nawet nie zdając sobie sprawy, że tak się właśnie nazywa. Pozwala, zgodnie z nazwą, stworzyć szablon działania metody, jednocześnie wymuszając (lub tylko zezwalając na) nadpisanie poszczególnych kroków algorytmu w konkretnej implementacji (patrz Pizza).
+Mimo swojej prostoty i archaicznej konstrukcji nadal znajduje zastosowanie we współczesnych projektach, szczególnie bibliotekach. Ma jednak trochę ograniczeń, których rozwiązanie przez wstrzykiwanie lambd czy całych obiektów zaczyna zacierać różnicę między `Metodą Szablonową` a `Strategią`. Niekoniecznie jest to złe, ale należy sobie zdawać sprawę, że może nie jest to najlepszy wzorzec w każdym przypadku gdzie mamy rodzinę klas z pewnymi podobnymi zachowaniami. 
 
 ## Zalety
-
+- stosunkowo prosta implementacja rodziny klas różniących się tylko częścią zachowań
+- ciekawe wykorzystanie w `ActiveRecord`
+- może być użyteczny do implementacji hooków
+- w przypadku tworzenia biblioteki gdzie klienty rozszerzają jej elementy, zapewnia kontrolę nad kolejnością wywyoływania metod nadpisanych przez klienta
 
 ## Wady
 - potencjalna eksplozja klas
-- klasa pochodna musi trochę wiedzieć o rodzicu, znać algorytm i wiedzieć które metody nadpisać i gdzie użyć `super()` a gdzie nie
-
+- klasa pochodna musi trochę wiedzieć o rodzicu, znać algorytm i wiedzieć które metody nadpisać, gdzie użyć `super()` a gdzie nie
+- dziedziczenie zamiast kompozycji, gdzie zmiana na wstrzykiwanie lambd w konstruktorze w zasadzie zmienia wzorzec w `Strategię`
 
 ---
 [^effective_java]:["Java - efektywne programowanie"](https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&redir_esc=y) 
+[^fowler]:[Architektura systemów zarządzania przedsiębiorstwem. Wzorce projektowe](https://books.google.pl/books?id=FyWZt5DdvFkC&q=active+record&pg=PT187&redir_esc=y)
+[^active_record]:[Active Record](https://en.wikipedia.org/wiki/Active_record_pattern)
+[^ruby_active_record]:[Active Record w Ruby](https://guides.rubyonrails.org/active_record_callbacks.html)
+[^active_record_antipatern]:[antywzorzec](https://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record)
