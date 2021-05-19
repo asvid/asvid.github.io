@@ -2,7 +2,7 @@
 layout: post
 title: "Metoda szablonowa w Kotlinie"
 date:  "2021-05-13 11:43"
-description: ""
+description: "Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to, co stałe od tego, co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje."
 permalink: "kotlin-template-method"
 comments: true
 toc: true
@@ -15,22 +15,22 @@ tags:
 categories:
 - Design Patterns
 
-image: /assets/posts/abstract_factory.jpg
+image: /assets/posts/pizza.jpg
 
 ---
 
 # Przeznaczenie
 Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to, co stałe od tego, co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje.
 
-Pomyśl o tym jak o pizzy — kroki zą z grubsza takie same, najpierw ciasto, potem sos, dodatki i do pieca. Różne rodzaje pizzy mogą mieć różne ciasto, sos, dodatki lub czas wypiekania (chyba nie wiem :) ), ale kolejność kroków i same kroki są dla każdego rodzaju takie same. Możemy więc uznać, że istnieje abstrakcyjna `Pizza` z metodą `zrób()`, ale dziedzicząca z niej klasa `Hawajska` czy `Pepperoni` nadpisze metodę dodającą dodatki bez zmiany samego algorytmu robienia pizzy.
+Pomyśl o tym, jak o pizzy — kroki do jej wykonania są z grubsza takie same, niezależnie od rodzaju. Najpierw ciasto, potem sos, dodatki i do pieca. Różne rodzaje pizzy mogą mieć różne ciasto, sos, dodatki lub czas wypiekania (chyba, nie wiem, nie znam się :) ), ale kolejność kroków i same kroki są dla każdego rodzaju takie same. Możemy więc uznać, że istnieje abstrakcyjna `Pizza` z metodą `zrób()`, ale dziedzicząca z niej klasa `Hawajska` czy `Pepperoni` nadpisze metodę dodającą dodatki bez zmiany samego algorytmu robienia pizzy.
 
 Mamy tutaj do czynienia z odwróceniem sterowania, bo to klasa nadrzędna `Pizza` wywołuje metody klasy podrzędnej, a nie odwrotnie jak to zwykle bywa.
 
-Ze wzorcem tym można się spotkać w bibliotekach, gdzie twórcy pozwalają nam rozszerzać klasy biblioteki i nadpisywać niektóre metody, jednak mają kontrolę nad kolejnością ich wykonywania.  
+Ze wzorcem tym można się spotkać w bibliotekach, gdzie twórcy pozwalają nam rozszerzać klasy biblioteki i nadpisywać niektóre metody, zostawiając sobie kontrolę nad kolejnością ich wykonywania.  
 
 # Przykłady implementacji
 ## Podstawowy wzorzec
-Zacznę od generycznego przykłądu, pokazującego na czym polega wzorzec Metody Szablonowej:
+Zacznę od ogólnego przykładu, pokazującego, na czym polega wzorzec Metody Szablonowej:
 ```kotlin
 abstract class AbstractClass { // klasa nadrzędna
 
@@ -72,27 +72,29 @@ class AnotherConcreteClass : AbstractClass() { // kolejna konkretna klasa
 }
 
 ```
-Mamy tutaj `templateMethod()` w klasie abstrakcyjnej, czyli nasz algorytm albo inaczej listę kroków, czyli wywołań metod zawierających poszczególne operacje prymitywne. Te operacje mogą posiadać domyślną implementację już w klasie abstrakcyjnej lub wymuszać dodanie implementacji w klasach dziedziczących.
-Metoda Szablonowa nie może być nadpisana przez klasy dziedziczące. Byłoby to możliwe, gdyby ta metoda była oznaczona jako `open` ale domyślnie Kotlin stawia na enkapsulację, więc metody i klasy są `final`. Nadpisanie `templateMethod()` oznaczałoby zmianę algorytmu, a jest on powodem zastosowania tego wzorca. Jeśli istnieje potrzeba zmiany algorytmu, może lepiej zastosować wzorzec `Strategia`.
+W klasie abstrakcyjnej mamy `templateMethod()` - nasz algorytm albo raczej listę kroków, czyli wywołań metod reprezentujących operacje prymitywne. Te operacje mogą posiadać domyślną implementację już w klasie abstrakcyjnej lub wymuszać dodanie implementacji w klasach dziedziczących. Określenie "prymitywne" w stosunku do kroków algorytmu ma jedynie sugerować, że same w sobie nie stanowią algorytmu i są podmienialne w konkretnych klasach.
+
+Metoda Szablonowa nie może być nadpisana przez klasy dziedziczące. Byłoby to możliwe, gdyby ta metoda była oznaczona jako `open`, ale Kotlin stawia na enkapsulację, więc metody i klasy są domyślnie `final`. Nadpisanie `templateMethod()` oznaczałoby zmianę algorytmu, a jego stała forma jest powodem zastosowania tego wzorca. Jeśli istnieje potrzeba zmiany algorytmu, może lepiej zastosować wzorzec `Strategia`.
 
 ## Pizza
-Przejdźmy do bardziej obrazowego przykładu ze wstępu: Pizzy
+Przejdźmy do bardziej obrazowego przykładu ze wstępu: **Pizzy**
 ```kotlin
 abstract class Pizza { // klasa bazowa dla wszystkich rodzajów Pizzy
 
     fun make() { // kroki dla każdej pizzy są takie same
         makeDough()
         applySauce()
-        applyAddons()
+        addIngredients()
         bake()
     }
 
     open fun bake() { 
-		// domyślne implementacje kroków, pozwalają nadpisywać tylko te wyróżniające się
+		// domyślne implementacje kroków
+		// klasy dziedziczące muszą nadpisać tylko te wyróżniające się
         println("baking for 20 minutes")
     }
 
-    open fun applyAddons() {
+    open fun addIngredients() {
         println("adding cheese")
     }
 
@@ -106,18 +108,18 @@ abstract class Pizza { // klasa bazowa dla wszystkich rodzajów Pizzy
 }
 
 class Pepperoni : Pizza() { // konkretny rodzaj pizzy
-    override fun applyAddons() { // nadpisuje nakładanie dodatków zgodnie z przepisem
+    override fun addIngredients() { // nadpisuje nakładanie dodatków zgodnie z przepisem
         println("adding salami")
         println("adding onion")
         println("adding cheese")
     }
 	// ale nie kontroluje procesu przygotowywania samej pizzy
 	
-	// pozostałe metody mają zostawioną domyslną implementację
+	// pozostałe metody mają zostawioną domyślną implementację
 }
 class BigPepperoni : Pizza() { 
 
-    override fun applyAddons() { // taka sama implementacja jak dla poprzedniej klasy
+    override fun addIngredients() { // niestety, powielona implementacja jak dla poprzedniej klasy
         println("adding salami")
         println("adding onion")
         println("adding cheese")
@@ -129,10 +131,10 @@ class BigPepperoni : Pizza() {
 }
 
 ```
-Mamy więc klasę `Pizza` która zawiera wspólne dla wszystkich rodzajów pizzy kroki przygotowania. Poszczególne rodzaje pizzy nadpisują wyłącznie te kroki, które różnią się od domyślnych, np. inny rozmiar lub dodatki czy sos. Powstaje tutaj jednak problem ze współdzieleniem implementacji między klasami `Pepperoni` i `BigPepperoni` - mają takie same składniki, ale `BigPepperoni` zmienia także rozmiar ciasta. Wydaje się, że `BigPepperoni` powinna po prostu dziedziczyć po `Pepperoni` i nadpisywać tylko metodę `makeDough()`, ale wtedy klasa `Pepperoni` musiałaby być `open` i wprowadzałoby to kolejny poziom dziedziczenia. Łatwo sobie wyobrazić postępującą eksplozję klas, jeśli każdy rodzaj pizzy występowałby w 3 rozmiarach i z 2 sosami do wyboru. Zaczyna to przypominać powód istnienia wzorca `Factory`.
+Mamy więc klasę `Pizza`, która zawiera wspólne dla wszystkich rodzajów pizzy kroki przygotowania. Poszczególne rodzaje pizzy nadpisują wyłącznie te kroki, które różnią się od domyślnych, np. inny rozmiar lub dodatki czy sos. Powstaje tutaj jednak problem ze współdzieleniem implementacji między klasami `Pepperoni` i `BigPepperoni` - mają takie same składniki, ale `BigPepperoni` zmienia także rozmiar ciasta. Wydaje się, że `BigPepperoni` powinna po prostu dziedziczyć po `Pepperoni` i nadpisywać tylko metodę `makeDough()`, ale wtedy klasa `Pepperoni` musiałaby być `open` i wprowadzałoby to kolejny poziom dziedziczenia. Łatwo sobie wyobrazić postępującą eksplozję klas, jeśli każdy rodzaj pizzy występowałby w 3 rozmiarach i z 2 sosami do wyboru. Zaczyna to przypominać powód istnienia wzorca `Factory`.
 
 ### Pizza Lambdy
-Zamiast nadpisywać metody interfejsu klasy bazowej `Pizza` możemy spróbować wykorzystać lambdy przekazywane w konstruktorze:
+Zamiast nadpisywać metody interfejsu klasy bazowej `Pizza`, możemy spróbować wykorzystać lambdy przekazywane w konstruktorze:
 ```kotlin
 abstract class Pizza( // konstruktor klasy bazowej przyjmuje lambdy, ale domyślnie mają już implementację
     private val makeDough: () -> Unit = {
@@ -141,7 +143,7 @@ abstract class Pizza( // konstruktor klasy bazowej przyjmuje lambdy, ale domyśl
     private val applySauce: () -> Unit = {
         println("applying tomato sauce")
     },
-    private val applyAddons: () -> Unit = {
+    private val addIngredients: () -> Unit = {
         println("adding cheese")
     },
     private val bake: () -> Unit = {
@@ -152,13 +154,13 @@ abstract class Pizza( // konstruktor klasy bazowej przyjmuje lambdy, ale domyśl
     fun make() { // metoda szablonowa bez zmian
         makeDough() // wywołanie lambdy z konstruktora zamiast nadpisywalnej metody
         applySauce()
-        applyAddons()
+        addIngredients()
         bake()
     }
 }
 
 class Pepperoni : Pizza( // konkretna klasa
-    applyAddons = { // przekazuje lambdę w konstruktorze zmieniając domyślną implementację
+    addIngredients = { // przekazuje lambdę w konstruktorze zmieniając domyślną implementację
         println("adding salami")
         println("adding onion")
         println("adding cheese")
@@ -166,7 +168,7 @@ class Pepperoni : Pizza( // konkretna klasa
 )
 
 class BigPepperoni : Pizza(
-    applyAddons = { // znów powtórzona implementacja
+    addIngredients = { // znów powtórzona implementacja
         println("adding salami")
         println("adding onion")
         println("adding cheese")
@@ -176,7 +178,7 @@ class BigPepperoni : Pizza(
     }
 )
 ```
-Wygląda już badziej kotlinowo :) W książce [^effective_java] Joshua Bloch wspomina, że po wprowadzeniu lambd do Javy wzorzec `Metody Szablonowej` stracił na znaczeniu, bo wygodniej jest wstrzykiwać zachowanie jako lambdy w konstruktorze niż tworzyć konkretne klasy nadpisujące wybrane metody.
+Wygląda już bardziej Kotlinowo :) W książce [^effective_java] Joshua Bloch wspomina, że po wprowadzeniu lambd do Javy wzorzec `Metody Szablonowej` stracił na znaczeniu, bo wygodniej jest wstrzykiwać zachowanie jako lambdy w konstruktorze niż tworzyć konkretne klasy nadpisujące wybrane metody.
 
 Nadal występuje jednak problem z powielaniem implementacji. Można taką implementację zamknąć do jakiejś zmiennej i przekazywać klasom w konstruktorze.
 ```kotlin
@@ -187,17 +189,17 @@ val pepperoniAddons: () -> Unit = {
 }
 
 class Pepperoni : Pizza(
-    applyAddons = pepperoniAddons
+    addIngredients = pepperoniAddons
 )
 
 class BigPepperoni : Pizza(
-    applyAddons = pepperoniAddons,
+    addIngredients = pepperoniAddons,
     makeDough = {
         println("making 50cm dough")
     }
 )
 ```
-Działa. Jednak przekazywanie wszędzie `() -> Unit` jest średnio bezpieczne i ułatwia powstawanie błędów, chociażby przez pomylenie kolejności argumentów.
+Działa. Jednak przekazywanie wszędzie `() -> Unit` jest średnio bezpieczne i ułatwia powstawanie błędów, chociażby przez pomylenie kolejności argumentów. Można to częściowo rozwiązać przez używanie nazwanych parametrów w metodzie.
 
 ### Pizza interfejsy
 Zakładając, że nasze metody nie mają nic zwracać, a tylko wykonywać operacje na obiekcie, bezpieczniej będzie stworzyć konkretne interfejsy odpowiadające krokom algorytmu.
@@ -228,8 +230,9 @@ interface Baker {
 ```
 Mając takie interfejsy, abstrakcyjna klasa `Pizza` będzie wyglądać następująco:
 ```kotlin
-abstract class Pizza(
-    private val makeDough: DoughMaker = object : DoughMaker { // dzięki różnym typom nie da się pomylić kolejności argumentów
+abstract class Pizza( 
+	// dzięki różnym typom nie da się pomylić kolejności argumentów
+    private val makeDough: DoughMaker = object : DoughMaker { 
         override fun invoke() {
             println("making 30cm dough") // nadpisana domyślna implementacja z interfejsu
         }
@@ -239,7 +242,7 @@ abstract class Pizza(
             println("applying tomato sauce")
         }
     },
-    private val applyAddons: AddonsApplier = object : AddonsApplier {
+    private val addIngredients: AddonsApplier = object : AddonsApplier {
         override fun invoke() {
             println("adding cheese")
         }
@@ -254,7 +257,7 @@ abstract class Pizza(
     fun make() { // metoda szablonowa wygląda identycznie jak poprzednio
         makeDough() // jednak nie wywołujemy tutaj lambdy, a metodę `invoke()` konkretnego obiektu
         applySauce()
-        applyAddons()
+        addIngredients()
         bake()
     }
 }
@@ -262,7 +265,7 @@ abstract class Pizza(
 ```
 Konkretne klasy mogą mieć wstrzykiwane te same obiekty implementujące interfejs, więc znika problem powielania kodu w wielu miejscach:
 ```kotlin
-object PepperoniAddonsAplier : Pizza.AddonsApplier { // wspólny dla wszystkich rozmiarów Pepperoni
+object PepperoniAddonsApplier : Pizza.AddonsApplier { // wspólny dla wszystkich rozmiarów Pepperoni
     override fun invoke() {
         println("adding salami")
         println("adding onion")
@@ -277,16 +280,16 @@ object BigPizzaDoughMaker : Pizza.DoughMaker { // może być użyty z innymi rod
 }
 
 class Pepperoni : Pizza(
-    applyAddons = PepperoniAddonsAplier
+    addIngredients = PepperoniAddonsApplier
 )
 
 class BigPepperoni : Pizza(
-    applyAddons = PepperoniAddonsAplier,
+    addIngredients = PepperoniAddonsApplier,
     makeDough = BigPizzaDoughMaker
 )
 ```
 
-Pozwala to też na łatwe stworzenie zupeniłe customowej Pizzy, bez potrzeby tworzenia nowej klasy:
+Pozwala to też na łatwe stworzenie zupełnie customowej Pizzy, bez potrzeby tworzenia nowej klasy:
 ```kotlin
 val customPizza = object : Pizza(
 	applySauce = object : SauceApplier {
@@ -299,7 +302,7 @@ val customPizza = object : Pizza(
 			println("making super dough 48cm")
 		}
 	},
-	applyAddons = object : AddonsApplier {
+	addIngredients = object : AddonsApplier {
 		override fun invoke() {
 			println("no addons, its super by itself")
 		}
@@ -313,12 +316,12 @@ val customPizza = object : Pizza(
 customPizza.make()
 ```
 
-Ale czy to jeszcze `Metoda Szablonowa` czy już `Strategia`?
+> Czy to jeszcze `Metoda Szablonowa` czy już `Strategia`?
 
 ## Active Record
-Przykład zaczerpnięty ze świata Ruby (którego w ogóle nie znam), gdzie wziął się od wzorca zaproponowanego przez Martina Fowlera w książce [^fowler]. Ogólnie chodzi o to, że mamy klasę - model w rozumieniu MVC, która oprócz pól posiada metody pozwalające ten model zapisać czy usunąć, np. w bazie danych. Więcej o [^active_record].
+Przykład zaczerpnięty ze świata Ruby (którego zupełnie nie znam), gdzie wziął się od wzorca zaproponowanego przez Martina Fowlera w książce [^fowler]. Ogólnie chodzi o to, że mamy klasę — model w rozumieniu MVC, która oprócz pól posiada metody pozwalające ten model zapisać czy usunąć, np. w bazie danych. Więcej o [^active_record].
 
-W `Ruby on Rails` taki model ma dodatkowo sporo callbacków [^ruby_active_record], tzw hooków, które są wywoływane np. przed zapisem lub w przypadku błędu. I własnie do takiego zastosowania wzorzec `Metoda Szablonowa` nadaje się idealnie. W Kotlinie możnaby to zaimplementować tak:
+W `Ruby on Rails` taki model ma dodatkowo sporo callbacków [^ruby_active_record], tzw. hooków, które są wywoływane np. przed zapisem do bazy lub w przypadku błędu. I właśnie do takiego zastosowania wzorzec `Metoda Szablonowa` nadaje się idealnie. W Kotlinie można to zaimplementować tak:
 ```kotlin
 abstract class ActiveRecord { // bazowa klasa ActiveRecord
 	
@@ -376,11 +379,11 @@ class Post(val text: String) : ActiveRecord() // inny model ActiveRecord, ale be
 ```
 Mając tak skonstruowany `ActiveRecord` z hookami można łatwo wpiąć np. logowanie modyfikacji modelu, albo obsługę błędów zapisu czy właśnie poprawiania danych w modelu przed samym zapisaniem. Na podobnej zasadzie działa `JUnit`, gdzie oznaczamy metody-hooki adnotacjami `@BeforeEach` czy `@AfterAll`, żeby wywołać je przed każdym lub po wszystkich testach w klasie.
 
-Sam `ActiveRecord` jest jednak czasami określany jako [^active_record_antipatern] i są ku temu całkiem dobre powody: naruszenie SRP (jedna klasa do operacji na bazie danych, walidacji modelu, przechowywania danych etc), bezpośrednie mapowanie struktury bazy na obiekt, problemy z testowaniem. Ale jak już wspominałem - Ruby to nie mój świat, a ten post nie jest o `ActiveRecord`, po prostu wzorzec `Metody Szablonowej` dobrze pasuje do takiego zastosowania. 
+Sam `ActiveRecord` jest jednak czasami określany jako [^active_record_antipatern] i są ku temu całkiem dobre powody: naruszenie SRP (jedna klasa do operacji na bazie danych, walidacji modelu, przechowywania danych itd.), bezpośrednie mapowanie struktury bazy na obiekt, problemy z testowaniem. Jednak jak już wspominałem — Ruby to nie mój świat, a ten post nie jest o `ActiveRecord`, po prostu wzorzec `Metody Szablonowej` dobrze pasuje do takiego zastosowania. 
 
 # Podsumowanie
-Wzorzec `Metody Szablonowej` jest dosyć prosty w swojej konstrukcji i chyba sam go stosowałem nawet nie zdając sobie sprawy, że tak się właśnie nazywa. Pozwala, zgodnie z nazwą, stworzyć szablon działania metody, jednocześnie wymuszając (lub tylko zezwalając na) nadpisanie poszczególnych kroków algorytmu w konkretnej implementacji (patrz Pizza).
-Mimo swojej prostoty i archaicznej konstrukcji nadal znajduje zastosowanie we współczesnych projektach, szczególnie bibliotekach. Ma jednak trochę ograniczeń, których rozwiązanie przez wstrzykiwanie lambd czy całych obiektów zaczyna zacierać różnicę między `Metodą Szablonową` a `Strategią`. Niekoniecznie jest to złe, ale należy sobie zdawać sprawę, że może nie jest to najlepszy wzorzec w każdym przypadku gdzie mamy rodzinę klas z pewnymi podobnymi zachowaniami. 
+Wzorzec `Metody Szablonowej` jest dosyć prosty w swojej konstrukcji i chyba sam go stosowałem, nawet nie zdając sobie sprawy, że tak się właśnie nazywa. Pozwala on, zgodnie z nazwą, stworzyć szablon działania metody, jednocześnie wymuszając (lub tylko zezwalając na) nadpisanie poszczególnych kroków algorytmu w konkretnej implementacji, patrz Pizza.
+Mimo swojej prostoty i archaicznej konstrukcji nadal znajduje zastosowanie we współczesnych projektach, szczególnie w bibliotekach. Ma jednak kilka ograniczeń, których rozwiązanie przez wstrzykiwanie lambd czy całych obiektów zaczyna zacierać różnicę między `Metodą Szablonową` a `Strategią`. Niekoniecznie jest to złe, ale należy sobie zdawać sprawę, że może nie jest to najlepszy wzorzec w każdym przypadku gdzie mamy rodzinę klas z pewnymi wspólnymi zachowaniami. Jednak do implementacji mechaniki hooków wydaje się idealny.
 
 ## Zalety
 - stosunkowo prosta implementacja rodziny klas różniących się tylko częścią zachowań
@@ -390,7 +393,7 @@ Mimo swojej prostoty i archaicznej konstrukcji nadal znajduje zastosowanie we ws
 
 ## Wady
 - potencjalna eksplozja klas
-- klasa pochodna musi trochę wiedzieć o rodzicu, znać algorytm i wiedzieć które metody nadpisać, gdzie użyć `super()` a gdzie nie
+- klasa pochodna musi trochę wiedzieć o rodzicu, znać algorytm i wiedzieć które metody nadpisać, gdzie należy użyć `super()`, a gdzie nie
 - dziedziczenie zamiast kompozycji, gdzie zmiana na wstrzykiwanie lambd w konstruktorze w zasadzie zmienia wzorzec w `Strategię`
 
 ---
