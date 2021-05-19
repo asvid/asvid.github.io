@@ -29,8 +29,8 @@ We are having here the inversion of control, because parent class `Pizza` is cal
 
 Template methods may be seen in libraries when the creator allows extending library classes and overriding some methods, but maintain control over calling those methods.
 
-# Przykłady implementacji
-## Podstawowy wzorzec
+# Implementation examples
+## Basic
 Let's start with a generic example, picturing what this pattern is about:
 
 ```kotlin
