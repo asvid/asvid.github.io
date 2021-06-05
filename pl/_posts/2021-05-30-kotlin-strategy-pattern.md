@@ -339,10 +339,4 @@ Wzorzec ten powinien być stosowany dość często, nawet jeśli początkowo ca�
 
 ## Wady
 - **zwiększenie liczby obiektów** - użycie `object` czyli Singletona pozwala ominąć ten problem
-- **może być użyta nadmiarowo** - trochę na siłę, ale jeśli **absolutnie** nie ma szans na to, że dany algorytm będzie użyty gdziekolwiek, albo pojawi się potrzeba alternatywnej wersji, to dodawanie strategii może być niepotrzebne... ale i tak ułatwi testowanie.
----
-[^effective_java]:["Java - efektywne programowanie"](https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&redir_esc=y) 
-[^fowler]:[Architektura systemów zarządzania przedsiębiorstwem. Wzorce projektowe](https://books.google.pl/books?id=FyWZt5DdvFkC&q=active+record&pg=PT187&redir_esc=y)
-[^active_record]:[Active Record](https://en.wikipedia.org/wiki/Active_record_pattern)
-[^ruby_active_record]:[Active Record w Ruby](https://guides.rubyonrails.org/active_record_callbacks.html)
-[^active_record_antipatern]:[antywzorzec](https://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record)
+- **może być użyta niepotrzebnie** - trochę na siłę, ale jeśli **absolutnie** nie ma szans na to, że dany algorytm będzie użyty gdziekolwiek, albo pojawi się potrzeba alternatywnej wersji, to dodawanie strategii może być niepotrzebne... ale i tak ułatwi testowanie.

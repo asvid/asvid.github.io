@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="polish About page">
-      <change afterPath="$PROJECT_DIR$/assets/posts/strategy.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pl/_posts/2021-05-30-kotlin-strategy-pattern.md" afterDir="false" />
+    <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post in PL - Strategy Pattern in Kotlin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2021-05-30-kotlin-strategy-pattern.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2021-05-30-kotlin-strategy-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2021-05-30-kotlin-strategy-pattern.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -593,7 +591,14 @@
       <option name="project" value="LOCAL" />
       <updated>1596276581012</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="New post in PL - Strategy Pattern in Kotlin">
+      <created>1622923174109</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1622923174109</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -627,7 +632,8 @@
     <MESSAGE value="WIP adding PL language, fixing doubled RSS" />
     <MESSAGE value="redirecting to polish site if browser language is polish" />
     <MESSAGE value="polish About page" />
-    <option name="LAST_COMMIT_MESSAGE" value="polish About page" />
+    <MESSAGE value="New post in PL - Strategy Pattern in Kotlin" />
+    <option name="LAST_COMMIT_MESSAGE" value="New post in PL - Strategy Pattern in Kotlin" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
