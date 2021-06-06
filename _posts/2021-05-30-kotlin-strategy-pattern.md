@@ -3,7 +3,7 @@ layout: post
 title: "Strategy Pattern in Kotlin"
 date:  "2021-06-05 11:43"
 description: "
-Strategia tworzy rodzinę algorytmów, zamykając różniącą się logikę w osobnych klasach, jednocześnie ukrywając ją przed klientami za wspólnym interfejsem. Umożliwia wymienne stosowanie implementacji. Użycie strategii znacząco upraszcza kod klientów, pozwala uniknąć duplikacji kodu i instrukcji warunkowych. Znacząco ułatwia testowanie — oddzielając testowanie klienta od algorytmów strategii.
+The `Strategy` pattern creates a family of algorithms, enclosing the differing logic in separate classes while hiding it from clients behind the interface. It enables the interchangeable use of implementations. The use of the strategy simplifies the customer code, avoids code duplication and conditional statements. Significantly simplifies testing - by separating client testing from strategy algorithms.
 "
 permalink: "kotlin-strategy-pattern"
 comments: true
@@ -16,6 +16,7 @@ tags:
 
 categories:
 - Design Patterns
+- rss
 
 image: /assets/posts/strategy.jpg
 
