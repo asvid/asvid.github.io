@@ -225,8 +225,12 @@ val returningClientWithSpecialPromotionBill = Bill(
 ```
 Równie dobrze można pokusić się o wykorzystanie [Static Factory](https://asvid.github.io/pl/kotlin-static-factory-methods)
 ```kotlin
-object Bill {
-    ...
+class Bill private constructor (
+        private val tax: Tax,
+        private val promotion: Promotion,
+        private val clientPolicy: ReturningClientPolicy
+) {
+	...
     companion object Factory{
         val defaultTax = DefaultTax
         val defaultPromotion = NoPromotion
@@ -289,7 +293,7 @@ fun calculateFinalPrice(): Double {
 ```
 
 ### Invoke
-Z racji, że Strategie mają raczej jedną publiczną metodę można użyć operatora `invoke()`. Do tego obiekty anonimowe zamiast domyślnych implementacji Strategii, żeby mnie mnożyć `NullObject`:
+Z racji, że Strategie mają raczej jedną publiczną metodę można użyć operatora `invoke()`. Do tego klasy anonimowe zamiast domyślnych implementacji Strategii, żeby mnie mnożyć `NullObject`:
 ```kotlin
 interface Tax {
     // użycie tej metody pozwala użyć obiektu jak funkcji
@@ -307,21 +311,45 @@ class Bill(
     ...
     fun calculateFinalPrice(): Double {
         val initialSum = items.sumOf { it.price }
-        return initialSum
-                .applyPromotion(promotion)
-                .applyPolicy(clientPolicy)
-                .applyTaxes(tax)
+        return initialSum.run{
+            promotion(this) // wywołanie `invoke()`
+        }.run {
+            clientPolicy(this)
+        }.run {
+            tax(this)
+        }
     }
 }
 
-// użycie obiektów anonimowych pozwala tworzyć w locie nowe strategie
-// jednak brak przypisania ich do konkretnego obiektu zabija sporą część korzyści wzorca Strategia
+// użycie klas anonimowych pozwala tworzyć w locie nowe strategie
+// jednak brak implementacji do konkretnej klasy zabija część korzyści wzorca
 val customBill = Bill(promotion = object : Promotion {
     override fun applyPromotion(sum: Double): Double {
         return sum * 0.123512
     }
 })
 ```
+## Nazewnictwo
+Konwencje nazewnicze będą się zmieniać z zespołu na zespół i z projektu na projekt. Osobiście wolę znaczące nazwy domenowe niż dodawanie modyfikatorów oznaczających część stosowanego wzorca projektowego.
+```kotlin
+// Wolę to
+class SpecialPromotion: Promotion{
+    fun calculate(initialPrice: Double): Double{
+        ...
+    }
+}
+// niż to
+class SpecialPromotionStrategy: PromotionStrategy{
+    fun use(initialPrice: Double): Double{
+        ...
+    }
+}
+```
+Używając pierwszego stylu, nie muiszę się zastanawiać czy używam `Strategii`. Po prostu mam obiekt domenowy `Promotion` który wie jak obliczyć końcową kwotę zgodnie z wewnętrznymi regułami. Jaką dokładnie informację daje mi dodanie `Strategy` do nazwy klasy? Czy każdy Kotlinowy `object` powinienem też zmodyfikować o dodanie `Singleton` w nazwie?
+
+Ta preferencja dotyczy każdego wzorca projektowego. Niestety często w projektach (zwłaszcza starszych) praktyką jest sztywne trzymanie się jakichś zwykle niepisanych zasad. Żeby od razu było wiadomo, że ta klasa jest częścią wzorca, bo ktoś (np. junior z 20-letnim doświadczeniem) się na pamięć nauczył książki i umie tylko wg. takiego szablonu zaimplementować rozwiązanie.
+
+Jeśli cię to interesuje to mogę polecić fajną prezentację [Kevlin Henney - Seven Ineffective Codding Habbits of Many Programmers](https://youtu.be/ZsHMHukIlJY?t=1517), gdzie Kevlin mówi m.in. o nazewnictwie.
 
 # Podsumowanie
 `Strategia` tworzy rodzinę algorytmów, zamykając różniącą się logikę w osobnych klasach, jednocześnie ukrywając ją przed klientami za interfejsem. Umożliwia wymienne stosowanie implementacji. Użycie strategii upraszcza kod klientów, pozwala uniknąć duplikacji kodu i instrukcji warunkowych. Znacząco ułatwia testowanie — oddzielając testowanie klienta od algorytmów strategii.
@@ -338,5 +366,5 @@ Wzorzec ten powinien być stosowany dość często, nawet jeśli początkowo ca�
 - **łatwość testowania** - niezależne testowanie klienta i strategii. Zmiany strategii nie wymuszają poprawiania testów klienta.
 
 ## Wady
-- **zwiększenie liczby obiektów** - użycie `object` czyli Singletona pozwala ominąć ten problem
+- **zwiększenie liczby instancji obiektów** - użycie `object` czyli Singletona pozwala ominąć ten problem
 - **może być użyta niepotrzebnie** - trochę na siłę, ale jeśli **absolutnie** nie ma szans na to, że dany algorytm będzie użyty gdziekolwiek, albo pojawi się potrzeba alternatywnej wersji, to dodawanie strategii może być niepotrzebne... ale i tak ułatwi testowanie.
