@@ -340,7 +340,7 @@ val customBill = Bill(promotion = object : Promotion {
 })
 ```
 
-## Naming
+# Naming
 Naming conventions may vary from team to team or project to project. I personally prefer the meaningful domain name rather than using pattern-function-part modifiers.
 ```kotlin
 // I like this more
@@ -383,4 +383,4 @@ However, don't overdo it. There will be places where creating the Strategy is po
 
 ---
 
-[^na_bialo]: I'm sorry for this very Polish inside joke, but it just fits too good :)
+[^na_bialo]: I'm sorry for this very Polish inside joke, but it just fits too good :) origin: https://www.youtube.com/watch?v=FeZYsTVrpMY

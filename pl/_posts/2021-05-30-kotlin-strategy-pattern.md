@@ -329,7 +329,7 @@ val customBill = Bill(promotion = object : Promotion {
     }
 })
 ```
-## Nazewnictwo
+# Nazewnictwo
 Konwencje nazewnicze będą się zmieniać z zespołu na zespół i z projektu na projekt. Osobiście wolę znaczące nazwy domenowe niż dodawanie modyfikatorów oznaczających część stosowanego wzorca projektowego.
 ```kotlin
 // Wolę to
