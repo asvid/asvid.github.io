@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Facade Pattern in Kotlin"
+title: "Fasada w Kotlinie"
 date:  "2021-06-05 11:43"
 description: "
 Fasada pozwala a ukrycie szczegółów obiektów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy.
