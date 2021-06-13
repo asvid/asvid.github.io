@@ -108,7 +108,7 @@ class E {
 }
 ```
 
-The result of the method from class `E` is available only after building the entire dependency tree of class` A`, calling the appropriate method, the result of which is passed to `D.doAnotherPart ()`, the result of which is needed in the method `E.finishTheWork ( ) ``. To use this code, you need to know quite a bit of module detail, which probably necessitates the creation and maintenance (!!!) of documentation.
+The result of the method from class `E` is available only after building the entire dependency tree of class `A`, calling the appropriate method, the result of which is passed to `D.doAnotherPart()`, the result of which is needed in the method `E.finishTheWork()`. To use this code, you need to know quite a bit of module detail, which probably necessitates the creation and maintenance (!!!) of documentation.
 
 So how can Facade help here?
 ```kotlin
@@ -222,7 +222,7 @@ val user = userRepo.getUser(UUID.randomUUID())
 The repository takes care of storing objects in the cache or filling in the gaps in the local database with information from a remote server. The customer gets only the data in the fastest way possible. This approach makes testing incredibly easy, especially when you use interfaces and dependency injection. It also allows for the parallelization of the work of several people, where one deals with, for example, the UI layer displaying data, and the other creates its storage and access via HTTP or cache policy. It is especially interesting in interdisciplinary teams, where a mobile programmer can deal with the UI, and the backend one can deal with the data access layer in the application, without any knowledge of e.g. Android.
 
 # Naming
-As in [the previous post](https://asvid.github.io/kotlin-strategy-pattern#naming), I rather favor not adding "Facade" to the class name, which is a facade. This is seen in the example of the 'Repository', there is no need to inform customers that they are only dealing with the facade. Clients want it to perform an action, provided by the class, they do not need to know whether it is a facade. This is different for example for the [Builder Pattern](https://asvid.github.io/kotlin-builder-pattern), which by definition should have the `build ()` method. The facade does not have API enforced by the pattern itself.
+As in [the previous post](https://asvid.github.io/kotlin-strategy-pattern#naming), I rather favor not adding "Facade" to the class name, which is a facade. This is seen in the example of the 'Repository', there is no need to inform customers that they are only dealing with the facade. Clients want it to perform an action, provided by the class, they do not need to know whether it is a facade. This is different for example for the [Builder Pattern](https://asvid.github.io/kotlin-builder-pattern), which by definition should have the `build()` method. The facade does not have API enforced by the pattern itself.
 
 # Summary
 The facade allows you to hide the details of the module from clients. It ensures compliance with `Law Demeter`. Using the generic interface and various implementations greatly simplifies testing. It blends well with other patterns like `Strategy`,` Template Method`, or construction patterns, allowing configuration of the object available for the clients. The facade is a good entry point for libraries, giving customers access to high-level functionality and hiding all internal logic and classes.
