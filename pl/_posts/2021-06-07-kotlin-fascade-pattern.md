@@ -3,7 +3,7 @@ layout: post
 title: "Fasada w Kotlinie"
 date:  "2021-06-05 11:43"
 description: "
-Fasada pozwala a ukrycie szczegółów obiektów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy.
+Fasada pozwala a ukrycie szczegółów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy.
 "
 permalink: "kotlin-facade-pattern"
 comments: true
@@ -85,8 +85,7 @@ val result = E().finishTheWork( // klient potrzebuje wynik tej metody
                 B( // która zależy od instancji B
                     C() // która potrzebuje instancji C
                 )
-            )
-                .doPartOfWork() // żeby zwrócić obiekt potrzebny w D.doAnotherPart()
+            ).doPartOfWork() // żeby zwrócić obiekt potrzebny w D.doAnotherPart()
         )
     )
 
@@ -102,7 +101,7 @@ class D {
 }
 
 class E {
-	// dla uproszczenia w przykładzie użyłem `Any` i zwracam String
+	// dla uproszczenia w przykładzie użyłem `Any` i zwracam `String`
 	// ale co do zasady może to być dowolny obiekt, np. domenowy
     fun finishTheWork(input: Any) = "finish"
 }
@@ -151,7 +150,7 @@ val result = a.b.c.d.theMethod()
 // prawdopodobnie oznacza że `A` ma zbyt wiele odpowiedzialności
 // i sprawi że klasy będą ze sobą ściślej związane
 ```
-Patrząc na poprzedni przykład, bez Fasady klient musiał sporo "wiedzieć" o zależnościach. które musiał spełnić, żeby otrzymać oczekiwany wynik. Wszystkie te szczegóły zostały następnie schowane za Fasadą. W pewnym sensie klient może teraz powiedzieć "potrzebuje wyniku, nie obchodzi mnie, jak go uzyskasz".
+Patrząc na poprzedni przykład, bez Fasady klient musiał sporo "wiedzieć" o zależnościach, które musiał spełnić, żeby otrzymać oczekiwany wynik. Wszystkie te szczegóły zostały następnie schowane za Fasadą. W pewnym sensie klient może teraz powiedzieć "potrzebuje wyniku, nie obchodzi mnie, jak go uzyskasz".
 
 Wadą ścisłego stosowania tej zasady może być tworzenie wielu metod, które tylko delegują wywołania do innych klas. Jednak jeśli faktycznie klasa posiada wiele delegujących metod, to może robi za dużo i należałoby ją podzielić na mniejsze, bardziej szczegółowe klasy?
 
@@ -225,14 +224,15 @@ Repozytorium bierze na siebie dbanie o przechowywanie obiektów w cache czy uzup
 
 # Nazewnictwo
 Podobnie jak w [poprzednim wpisie](https://asvid.github.io/pl/kotlin-strategy-pattern#nazewnictwo) przychylam się raczej do niedodawania `Facade` do nazwy klasy, która jest fasadą. Doskonale widać to na przykładzie `Repozytorium`, nie ma potrzeby informować klientów, że mają do czynienia jedynie z fasadą. Klienty chcą on wykonać jakąś czynność, na którą pozwala im obiekt, nie muszą wiedzieć, czy jest to Fasada. Inaczej będzie w przypadku Budowniczego, który z definicji powinien mieć metodę `build()`, ale Fasada nie ma wymuszonego przez schemat wzorca API.
+
 # Podsumowanie
-Fasada pozwala a ukrycie szczegółów obiektów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy.
+Fasada pozwala a ukrycie szczegółów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy.
 
 ## Zalety
 - **prosty interfejs dla klientów** - udostępnia minimalny interfejs, zamiast wymagać od klientów znajomości szczegółów implementacyjnych, które trzeba dokumentować i utrzymywać.
 - **zgodność z Prawem Demeter** - klienty "rozmawiają" jedynie z Fasadą, a nie z klasami z wnętrza modułu, nie muszą ich nawet znać a tym bardziej ich szczegółów.
 - **ułatwia testowanie** - wymieniając Fasadę z wersji produkcyjnej na testową, można symulować działanie całego modułu i testować klienty w izolowany sposób.
-- **refaktoryzacja** - klienty są luźno związane z modułem, bo znają jedynie Fasadę, więc wszelkie zmiany refaktoryzacyjne nie mają na nie wpływu.
+- **refaktoryzacja** - klienty są luźno związane z modułem, bo znają jedynie Fasadę, więc wszelkie zmiany refaktoryzacyjne nie mają na nie wpływu. Porównałbym to do zmiany wystroju wnętrza budynku, zostawiając elewację bez zmian.
 - **kontrola nad tym, co wiedzą klienty** - przydatne w przypadku bibliotek, gdzie nie chcemy udostępniać klientom wszystkich klas, a jedynie świadomie wybraną część.
 ## Wady
 - **ograniczenie możliwości klienta** - jeśli klient potrzebuje dostępu do obiektów z wnętrza modułu, Fasada może tego nie umożliwiać. Zmiany wymagań klienta mogą prowadzić do dodawania kolejnych metod w Fasadzie, do momentu aż przestanie być jedynie "prostym interfejsem". Nie jest to duży problem, jeśli mamy kontrolę nad Fasadą i modułem, który przesłania. Jeśli jest to część zewnętrznej biblioteki, ograniczenie może odebrać sens korzystania z biblioteki, lub wymusić kombinowane wyciąganie obiektów z wnętrza modułu.
