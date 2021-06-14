@@ -137,7 +137,7 @@ class Facade() {
 }
 ```
 
-### Low of Demeter
+### Law of Demeter
 In other words, "the principle of minimum knowledge" or the "rule of limiting interactions". **The idea is for classes to use only their methods or fields, and objects created by themselves or passed directly in method parameters**. The facade perfectly helps to keep this good practice.
 ```kotlin
 val a = A(B(C(D())))
