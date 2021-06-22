@@ -21,12 +21,12 @@ image: /assets/posts/latex.jpg
 
 ---
 
-> TL;DR: IntelliJ Idea świetnie nadaje się do pracy z LaTeX. Podstawową funkcjonalność zapewniają pluginy, a sporo dodatkowych automatyzacji można sobie ustawić za pomocą File Watcher-ów. Brakuje mi tylko wyświetlania rozdziałów i sekcji jak np. w TexStudio.
+> TL;DR: IntelliJ Idea świetnie nadaje się do pracy z LaTeX. Podstawową funkcjonalność zapewniają plugin-y, a sporo dodatkowych automatyzacji można sobie ustawić za pomocą File Watcher-ów. Brakuje mi tylko wyświetlania rozdziałów i sekcji jak np. w TexStudio.
 
 # LaTeX w IntelliJ IDEA
 Nie pracuję z LaTeX-em zbyt często, ale ten format ma sporo zalet, zwłaszcza przy pracy nad dłuższymi formami pisanymi, zawierającymi sporo grafik, diagramów, formuł matematycznych itp. Zwykle korzystałem z TexStudio, ale postanowiłem sprawdzić, czy i jak poradzi sobie IntelliJ IDEA, którego używam na co dzień.
 
-I radzi sobie świetnie. Do TexStudio raczej już nie wrócę :) Bo i tak korzystałbym z IntelliJ do pisania np. fragmentów kodu, które potem wklejałbym do dedykowanego edytora LaTeX, a tak mam (prawie) wszystko w 1 IDE.
+I radzi sobie świetnie. Do TexStudio raczej już nie wrócę :) Bo i tak korzystałbym z IntelliJ do pisania np. fragmentów kodu, które potem wklejałbym do dedykowanego edytora LaTeX. A lubię mieć wszystko w jednym IDE.
 
 # Moje założenia 
 Założyłem sobie, że chcę mieć framework do pisania dłuższych tekstów, docelowo do publikacji jako ebook lub do druku. Najchętniej mając wszystko w kodzie (diagramy, wykresy), używając kontroli wersji, czyli tak jak zwykle pracuję. Dlatego z miejsca odrzuciłem Google Docs czy MS Office. LaTeX wydaje się całkiem dobrym rozwiązaniem:
@@ -64,7 +64,7 @@ Chyba domyślnie instalowany plugin do "wyklikania" automatyzacji wewnątrz IDE.
 
 Zwykle będzie to np. polecenie z linii komend z określonymi parametrami.
 
-[Strona pluginu](https://plugins.jetbrains.com/plugin/7017-plantuml-integration)
+[Strona pluginu](https://plugins.jetbrains.com/plugin/7177-file-watchers)
 
 Do tego oczywiście w systemie trzeba mieć zainstalowany LaTeX, np. `MiKTeX`, którego IDE użyje do kompilacji plików do PDF-a.
 
@@ -127,6 +127,8 @@ I taki przygotowany automagicznie PDF z diagramem mogę podlinkować i umiejscow
 ```
 Zwróć uwagę, że podaję nazwę pliku `.svg` a nie `.pdf` - pakiet `svg` dla LaTeX sam poszuka PDFa pasującego nazwą do podanego pliku.
 
+Projekt `LaTeX` którym się bawiłem znajduje się [tutaj](https://github.com/asvid/LatexTest).
+
 # Braki
 Najbardziej brakuje mi chyba ładnego podziału na rozdziały i sekcje, który miałem w TexStudio. Na razie IntelliJ nie potrafi tego wyświetlić, albo ja nie wiem jak to osiągnąć. Organizując strukturę folderów w projekcie, pewnie da się uzyskać podobną czytelność, ale nie sprawdziłem tego jeszcze w praktyce.
 
@@ -134,3 +136,16 @@ Najbardziej brakuje mi chyba ładnego podziału na rozdziały i sekcje, który m
 IntelliJ IDEA z zestawem pluginów i `File Watcher`-ów skutecznie zastąpił mi dedykowane edytory LaTeX. Wydaje mi się, że zapewnia nawet większe możliwości, dzięki łatwej automatyzacji i wykorzystywaniu zewnętrznych narzędzi. Brakuje trochę ładnego podziału plików `.tex` na sekcje i rozdziały — choćby takiego jak wyświetlanie pól i metod w plikach z kodem. Niewątpliwą zaletą korzystania z jednego IDE, jest dobre wsparcie dla wielu technologii. Edytowanie fragmentów kodu w edytorach LaTeX albo przeklejanie z innego IDE nie jest zbyt wygodne, może powodować błędy lub nieczytelne formatowanie.
 
 Gdyby nie praca z kodem i diagramami (które lubię również mieć w kodzie), pewnie wystarczyłoby mi GoogleDocs. Jednak praca w LaTeX i trzymanie wszystkiego w kodzie oraz w osobnych plikach pozwala na przyjemne wersjonowanie zmian w Gicie. Mam więc bardzo znajomy dla siebie tryb pracy, mimo że wynikiem jest PDF, a nie oprogramowanie :)
+
+# Użyte narzędzia
+- [MiKTeX](https://miktex.org/)
+- [PlantUML](https://plantuml.com/)
+- [Inkscape](https://inkscape.org/release/inkscape-1.1/)
+- [Kotlin color scheme for Latex listing](https://github.com/cansik/kotlin-latex-listing)
+- [IntelliJ IDEA Community](https://www.jetbrains.com/idea/)
+	- [Texify](https://plugins.jetbrains.com/plugin/9473-texify-idea)
+	- [PlantUML integration](https://plugins.jetbrains.com/plugin/7017-plantuml-integration)
+	- [File Watchers](https://plugins.jetbrains.com/plugin/7177-file-watchers)
+	- [PDF Viewer](ttps://plugins.jetbrains.com/plugin/14494-pdf-viewer)
+- MacOS, ale powinno banglać podobnie na Linuxach
+- [Moje repo do zabaw z LaTeX](https://github.com/asvid/LatexTest)
