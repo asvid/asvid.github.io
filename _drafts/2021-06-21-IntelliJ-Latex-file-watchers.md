@@ -28,18 +28,17 @@ Nie pracuję z Latex-em zbyt często, ale ten format ma sporo zalet, zwłaszcza 
 
 I radzi sobie świetnie. Do TexStudio raczej już nie wrócę :) Bo i tak korzystałbym z IntelliJ do pisania np. kawałków kodu, które potem wklejałbym do dedykowanego edytora Latex, a tak mam (prawie) wszystko w 1 IDE.
 
-# Moje założenia
-Założyłem sobie, że chcę mieć framework do pisania dłuższych tekstów, docelowo do publikacji jako ebook lub do druku. Latex wydaje się całkiem dobrym rozwiązaniem:
+[comment]: <zredagować inaczej> (TODO)
+# Moje założenia 
+Założyłem sobie, że chcę mieć framework do pisania dłuższych tekstów, docelowo do publikacji jako ebook lub do druku. Najchętniej mając wszystko w kodzie (diagramy, wykresy), wersjonowane w GIT, czyli tak jak zwykle pracuję. Dlatego z miejsca odrzuciłem Google Docs czy MS Office. Latex wydaje się całkiem dobrym rozwiązaniem:
 - wszystko jest w kodzie, tekst, style formatowania, fragmenty kodu w dedykowanych plikach, diagramy
 - organizacja projektu w wielu folderach i plikach, np osobne pliki na rozdziały i jeden główny plik zbierający całość dokumentu
 - świetne wsparcie dla bibliografii, przypisów i spisu treści
 - łatwe generowanie PDF-ów
 - ...i pewnie sporo innych zalet, których jeszcze nie poznałem
 
-Odrzuciłem Google Docs czy MS Office, bo wolę mieć całość projektu w kodzie i wersjonować go sobie w GIT-cie. Czyli tak jak pracuję na co dzień. 
-
 Jednak są pewne problemy:
-- podgląd dokumentu - domyślnie nie jest dostępny od razu, dopiero po kompilacji. To może być nawet zaleta, bo nie skupiam się na wyglądzie, tylko na treści. A sam wygląd powinien podlegać z góry ustalonym regułom dla całego dokumentu. Ale da się ustawić automatyczną kompilację i podgląd wewnątrz IDE.
+- podgląd dokumentu - nie jest dostępny od razu, dopiero po kompilacji. To może być nawet zaleta, bo nie skupiam się na wyglądzie, tylko na treści. A sam wygląd powinien podlegać z góry ustalonym regułom dla całego dokumentu. Można ustawić automatyczną kompilację i podgląd wewnątrz IDE.
 - kolorowanie składni kodu - póki co brak wsparcia dla `Kotlina`, ale znalazłem szablon na [GitHubie](https://github.com/cansik/kotlin-latex-listing)
 - wsparcie dla diagramów - chyba są jakieś pakiety dla Latex-a ale nie chce mi się ich uczyć. Lubię PlantUML i najchętniej bym wykorzystał go bezpośrednio.
 
