@@ -114,8 +114,8 @@ I've set 2 `File Watchers`:
 1. After each `.puml` file change (that I have support for in `PlantUML Integration` plugin) it runs command `plantuml $FileName$ -tsvg` - generating a `.svg` file from diagram code.
 2. After each change of `.svg` file (like generating it in previous step) run command `inkscape --file=$FileName$  --export-pdf=$FileName$.pdf` - generating a `.pdf` file with a diagram using `Inkscape` app, without actually opening it.
 
-![Texify settings](assets/posts/intellij_latex/plantuml_fw.png){: .center-image }
-![Texify settings](assets/posts/intellij_latex/svg_fw.png){: .center-image }
+![PlantUML file watcher settings](assets/posts/intellij_latex/plantuml_fw.png){: .center-image }
+![SVG file watcher settings](assets/posts/intellij_latex/svg_fw.png){: .center-image }
 
 And this automagically generated file I can use in LaTeX document:
 ```latex

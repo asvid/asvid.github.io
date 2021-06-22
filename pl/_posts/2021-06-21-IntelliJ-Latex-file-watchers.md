@@ -113,8 +113,8 @@ Ustawiłem sobie 2 `File Watchery`:
 1. Po każdej zmianie pliku `.puml` (którego wsparcie mam z pluginu `PlantUML Integration`) uruchamia polecenie `plantuml $FileName$ -tsvg` - czyli generuje plik `.svg` z diagramu.
 2. Po każdej zmianie pliku `.svg` (czyli np. wygenerowaniu z poprzedniego kroku) wykonaj polecenie `inkscape --file=$FileName$  --export-pdf=$FileName$.pdf` - generuje plik `.pdf` z diagramem za pomocą aplikacji `Inkscape`
 
-![Texify settings](assets/posts/intellij_latex/plantuml_fw.png){: .center-image }
-![Texify settings](assets/posts/intellij_latex/svg_fw.png){: .center-image }
+![PlantUML file watcher settings](assets/posts/intellij_latex/plantuml_fw.png){: .center-image }
+![SVG file watcher settings](assets/posts/intellij_latex/svg_fw.png){: .center-image }
 
 I taki przygotowany automagicznie PDF z diagramem mogę podlinkować i umiejscowić w LaTeX:
 ```latex
