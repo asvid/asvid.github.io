@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Adapter w Kotlinie"
-date:  "2021-06-15 11:43"
+date:  "2021-06-26 11:43"
 description: "
-Adapter lub Wrapper pozwala "przetłumaczyć" jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany obiekt pochodzi z niezależnej biblioteki i nie chcemy uzależniać naszego systemu od jego interfejsu, tworząc tzw. `anticorruption layer`. Zmiany interfejsu obiektu wpłyną tylko na `Adapter` a nie na resztę kodu.
+Adapter lub Wrapper pozwala `przetłumaczyć` jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany obiekt pochodzi z niezależnej biblioteki i nie chcemy uzależniać naszego systemu od jego interfejsu, tworząc tzw. `anticorruption layer`. Zmiany interfejsu obiektu wpłyną tylko na `Adapter` a nie na resztę kodu.
 "
 permalink: "kotlin-adapter-pattern"
 comments: true
@@ -17,7 +17,7 @@ tags:
 categories:
 - Design Patterns
 
-image: /assets/posts/facade.jpg
+image: /assets/posts/adapter.jpg
 
 ---
 
