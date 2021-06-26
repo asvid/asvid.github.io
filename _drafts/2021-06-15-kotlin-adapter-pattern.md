@@ -3,6 +3,7 @@ layout: post
 title: "Adapter w Kotlinie"
 date:  "2021-06-15 11:43"
 description: "
+Adapter lub Wrapper pozwala "przetłumaczyć" jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany obiekt pochodzi z niezależnej biblioteki i nie chcemy uzależniać naszego systemu od jego interfejsu, tworząc tzw. `anticorruption layer`. Zmiany interfejsu obiektu wpłyną tylko na `Adapter` a nie na resztę kodu.
 "
 permalink: "kotlin-adapter-pattern"
 comments: true
@@ -46,7 +47,7 @@ interface Adaptee{
  + otherMethod() 
 }
 
-Adapter::adaptee-->Adaptee
+Adapter::adaptee -right-* Adaptee
 Client-right->Target
 Adapter::method..>Adaptee::otherMethod
 
@@ -55,8 +56,8 @@ Adapter::method..>Adaptee::otherMethod
 
 - **Client** - klasa korzystająca z obiektu `Target`
 - **Target** - interfejs wymagany przez klasę `Client`
-- **Adapter** - klasa z interfejsem `Target` adaptująca obiekt `Adaptee`
-- **Adaptee** - klasa, którą chcemy użyć razem z `Client` ale z niepasującym interfejsem
+- **Adapter** - klasa z interfejsem `Target` adaptująca obiekt `Adaptee`, najczęściej obiekt adaptowany będzie przypisany do pola w tej klasie
+- **Adaptee** - klasa adaptowana z niepasującym interfejsem, którą chcemy użyć razem z `Client`
 
 ## Abstrakcyjna
 W kodzie powyższy diagram może wyglądać następująco:
@@ -321,7 +322,12 @@ Tutaj mam mieszane uczucia, czy dodawanie w nazwie `Adapter` jest konieczne. Z j
 Dlatego skłaniam się raczej do nazywania adapterów od obiektu, który adaptują i implementowanego interfejsu.
 
 # Podsumowanie
+Adapter lub Wrapper pozwala "przetłumaczyć" jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany obiekt pochodzi z niezależnej biblioteki i nie chcemy uzależniać naszego systemu od jego interfejsu, tworząc tzw. `anticorruption layer`. Zmiany interfejsu obiektu wpłyną tylko na `Adapter` a nie na resztę kodu.
 
-## Zalety
+Kotlin pozwala w pewnym sensie, przez `extension functions`, zapewnić podobną do `Adaptera` funkcjonalność bez konieczności tworzenia całej klasy. Będzie to sensownie działać w przypadku, kiedy nie interesuje nas typ obiektu, a jego możliwości co jest często określane jako `Duck Typing`. Jednak `extension functions` mogą zaciemniać faktyczny interfejs klasy, przesłaniać się nawzajem i ogólnie wprowadzać chaos. Ograniczając ich zasięg, można sobie z tym poradzić, ale jeśli zaczyna ich przybywać dla konkretnej klasy, może warto wydzielić osobną klasę.
 
-## Wady
+## Konsekwencje
+- **pojedyncza odpowiedzialność klas** - nie trzeba zmieniać klasy adaptowanej pod konkretnego klienta, a jedynie dodać `Adapter` pod wymagany interfejs. Klasa adaptowana może się zmieniać niezależnie od klientów, a zadaniem `Adaptera` jest pogodzić te zmiany z interfejsem klienta.
+- **anticorruption layer** - oddziela interfejs, nad którym nie mamy kontroli i "tłumaczy" go na nasz własny. Zmiany w interfejsie obiektu pochodzącego np. z biblioteki nie mają wpływu na działanie systemu, a jedynie na `Adapter`.
+- **dostępność dla podklas** - jak w przykładzie abstrakcyjnym, stworzenie adaptera dla ogólnego interfejsu umożliwia stosowanie każdej klasy implementującej ten interfejs.
+- **ostrożnie z extension functions** - czasami może się wydawać, że `extension function` zapewni wystarczającą funkcjonalność, ale w dużych projektach z wieloma zespołami pracującymi na tym samym kodzie może to powodować nieprzewidziane konsekwencje. Ograniczając zasięg `extension functions` można ten problem częściowo rozwiązać.
