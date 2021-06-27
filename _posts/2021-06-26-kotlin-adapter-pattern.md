@@ -241,7 +241,7 @@ We have a few problems here:
 - spreading `extension functions` all over the system
 - code review limited to members of 1 team (this is a topic for a separate post)
 
-Zamknięcie całej "rozszerzonej" funkcjonalności w np. `ItemPrinter` pozwoliłoby uniknąć nieporozumień i ułatwić code review. W Git można łatwo sprawdzić, kto jest autorem lub modyfikował ostatnio tę klasę i również dodać do pull requesta. W przypadku `extension functions` taka opcja też istnieje, ale metody mogą być rozsiane po systemie, co utrudnia znalezienie autorów, a jeśli coś jest trudniejsze niż bezproblemowe, to nikt tego nie będzie robił. 
+Closing all "extended" functionality in an Adapter, for example, `ItemPrinter` would avoid misunderstandings and aid code review. In Git, you can easily see who authored or recently modified this class and add them to a pull request as well. For `extension functions`, this option also exists, but methods can be scattered throughout the system, making it harder to find authors, and if something is more difficult than hassle-free, no one will do it.
 
 ## Shapes
 In post about [Factory Method](https://asvid.github.io/kotlin-factory-method) I used geometrical shapes example, that fits nicely here:
@@ -332,7 +332,7 @@ The Adapter or Wrapper Pattern allows you to "translate" one interface into anot
 Kotlin allows, through the `extension functions`, to provide` Adapter`-like functionality without having to create an entirely new class. This will make sense when you are not interested in the type of object but its capabilities, which is often referred to as `Duck Typing`. However, `extension functions` can obscure the actual class interface, override one another, and cause chaos in general. By limiting their scope, you can deal with it, but if their number starts growing for a specific class, it may be worth setting up a separate wrapper class to organize them.
 
 ## Consequences
-- **single responsibility principle** - you do not need to change the class adapted for a specific client, only add an `Adapter` with the required interface. The adapted class can change independently from the clients, and it is the job of the `Adapter` to reconcile these changes with the client interface.
+- **single responsibility principle** - you do not need to change the class adapted for a specific client, only add an `Adapter` with the required interface. The adapted class can change independently of the clients, and it is the job of the `Adapter` to reconcile these changes with the client interface.
 - **anticorruption layer** - separates the interface you have no control over and "translates" it into your own. Changes to the interface coming from a library, won't affect the system
 - **available for subclasses** - as in the abstract example, creating an adapter for a generic interface allows the use of any class that implements that interface.
 - **be careful with extension functions** - at times it may seem that the `extension function` will provide sufficient functionality, but in large projects with multiple teams working on the same code base, this may have unforeseen consequences. This problem can be partially solved by limiting the scope of `extension functions`.
