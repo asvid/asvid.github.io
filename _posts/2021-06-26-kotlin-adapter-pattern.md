@@ -3,7 +3,7 @@ layout: post
 title: "Adapter Pattern in Kotlin"
 date:  "2021-06-26 11:43"
 description: "
-The Adapter or Wrapper Pattern allows you to "translate" one interface into another, expected by the client class. It is especially useful when the adapted object comes from 3rd party library, and you do not want to make your system depending on that interface, creating the so-called `anticorruption layer`. Adaptee interface changes will only affect the `Adapter` and not the rest of the code.
+The Adapter or Wrapper Pattern allows you to `translate` one interface into another, expected by the client class. It is especially useful when the adapted object comes from 3rd party library, and you do not want to make your system depending on that interface, creating the so-called `anticorruption layer`. Adaptee interface changes will only affect the `Adapter` and not the rest of the code.
 "
 permalink: "kotlin-adapter-pattern"
 comments: true
