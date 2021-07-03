@@ -3,7 +3,7 @@ layout: post
 title: "Dekorator w Kotlinie"
 date:  "2021-07-03 10:25"
 description: "
-
+`Dekorator` stosuje się tam, gdzie tworzenie osobnych klas będących kombinacją wszystkich możliwości skończyłoby się eksplozją. Wzorzec ten skupia się na stworzeniu warstw obiektów w celu transparentnego i dynamicznego uzupełniania obiektów o kolejne zadania. Dekorator dostarcza obiekt, o takim samym interfejsie co obiekt dekorowany.
 "
 permalink: "kotlin-decorator-pattern"
 comments: true
@@ -21,7 +21,7 @@ image: /assets/posts/adapter.jpg
 # Przeznaczenie
 Dekorator pozwala na dynamiczne dodanie lub zmianę zachowania konkretnego obiektu danej klasy, bez wpływu na inne obiekty tej samej klasy. W pewnych przypadkach pozwala to znacząco ograniczyć liczbę klas, przez wyciągnięcie współdzielonego zachowania do klasy dekorującej, zamiast rozbudowy struktury dziedziczenia. 
 
-Zadaniem dekoratora jest "owinąć" (stąd inna nazwa: `Wrapper`) oryginalny obiekt i zmodyfikować lub nadpisać zupełnie jego zachowanie. Klasa dekoratora ma ten sam interfejs co obiekt dekorowany, dlatego dla klienta nie ma znaczenia czy obiekt został udekorowany czy nie. Co do zasady, Dekorator nie dodaje publicznych metod, bo klient korzystający z interfejsu oryginalnego obiektu i tak nie miałby do nich dostępu.
+Zadaniem dekoratora jest "owinąć" (stąd inna nazwa: `Wrapper`) oryginalny obiekt i zmodyfikować lub nadpisać zupełnie jego zachowanie. Klasa dekoratora ma ten sam interfejs co obiekt dekorowany, dlatego dla klienta nie ma znaczenia czy obiekt został udekorowany czy nie. Co do zasady, Dekorator raczej nie dodaje nowych publicznych metod, bo klient korzystający z interfejsu oryginalnego obiektu i tak nie miałby do nich dostępu.
 
 Dekorowanie odbywa się dynamicznie, w trakcie działania programu, a nie w czasie kompilacji. Obiekt dekorowany jest zwykle przekazywany w konstruktorze Dekoratora, ponieważ obiekt dekoratora nie ma sensu sam z siebie, bez obiektu, który owija.
 
@@ -104,6 +104,19 @@ fun main(){
 ```
 
 Widać tutaj jak łatwo można zagnieżdżać Dekoratory. W tej implementacji `ConcreteDecorator1` to w zasadzie `Proxy` bo wywołuje bez zmian metody z przekazanego obiektu `Component`. Zwróć uwagę na `ConcreteDecorator2` - `methodA()` rzuca wyjątek. Dekorator może też zwracać stałą i w ogóle nie wykorzystywać przekazanego obiektu `Component`. `Dekorator` sam decyduje, jak się zachować.
+
+{% plantuml %}
+@startuml
+node Decorator1{
+node Decorator2{
+node Component{
+
+		}
+	}
+}
+@enduml
+{% endplantuml %}
+
 
 ## Delegaty 
 
@@ -318,5 +331,18 @@ Kod przy wykorzystaniu `extension methods` jest znacznie prostszy niż z użycie
 # Nazewnictwo
 Zwykle nie lubie w nazwach klas sufixów z wzorców projektowych, ale w przypadku `Dekoratora` dobrze mieć jasną informację o celu klasy. Mimo że interfejs klasy jest taki sam jak dekorowanego obiektu, to jednak sama instancja `Dekoratora` nie ma sensu, w przeciwieństwie do obiektu dekorowanego.
 
+# Podsumowanie
+`Dekorator` stusuje się tam, gdzie tworzenie osobnych klas będących kombinacją wszystkich możliwości skończyłoby się eksplozją. Wzorzec ten skupia się na stworzeniu warstw obiektów w celu transparentnego i dynamicznego uzupełniania obiektów o kolejne zadania. Dekorator dostarcza obiekt, o takim samym interfejsie co obiekt dekorowany. 
+
+Dodawanie nowych metod publicznych w dekoratorze jest możliwe, ale może zachęcać do rzutowania w górę lub używania interfejsu konkretnego dekoratora zamiast ogólnego komponentu.
+
+W przykładzie z interfejsami komunikacyjnymi, gdyby nie użycie dekoratora, pewnie trzebaby rozszerzyć klienty o nowe funkcjonalności, lub wprowadzić wszystkie wariacje przetwarzania wiadomości i sposobu przesłania jej w osobnych klasach.
+
+Kotlin pozwala na eleganckie tworzenie dekoratorów za pomocą delegatów. `Extension methods` w pewnym sensie również dekodują oryginalny obiekt, jednak nie są zamiennikiem czy alternatywą dla tego wzorca.
+
 # Konsekwencje
 
+- **zmiana zachowania obiektu bez dziedziczenia** - dziedziczenie jest właściwe tylko w przypadkach, gdzie klasa pochodna jest podtypem klasy bazowej (relacja na zasadzie generalizacja->specjalizacja). Pewnie dałoby się znaleźć takie połączenie pomiędzy `String` a pakietem `TCP`, ale byłoby to troche naciągane i mało elastyczne. Zwłaszcza dodając po drodze formatowanie do JSONa i kodowanie Base64. Trudno byłoby też użyć ten kod ponownie w przypadku wiadomości przesyłanej przez Bluetooth. Dekorator przez kompozycję warstw pozwala elastycznie zmieniać zachowanie obiektu, bez zmiany tego czym obiekt jest.
+- **dynamiczne zmiany zachowania obiektu** - obiekt można udekorować w trakcie działania programu, ponieważ nowe zachowania nie zmieniają interfejsu, a jedynie wpisują się w niego. Ten sam obiekt może w jednym miejscu być dekorowany jedną klasą, a w kolejnym drugą.
+- **SRP** - duża monolityczna klasa z wieloma odpowiedzialnościami, może zostać przekształcona w zbiór dekoratorów używanych tylko tam, gdzie są potrzebne. Może to niestety prowadzić również do rzutowania w górę do interfejsu dekoratora, lub odwoływaniu się do wewnętrznego dekorowanego obiektu z poziomu klienta (naruszenie prawa Demeter).
+- **kolejność stosowania dekoratorów jest ważna** - przykład z wysłaniem wiadomości. Kolejność jest ważna, a jednocześnie same dekoratory nie wiedzą nic o sobie. Odpowiedzialność tworzenia poprawnego zestawu dekoratorów powinna spoczywać na jakiejś np. Fabryce lub Builderze — o ile mamy do czynienia z rozbudowaną hierarchią.
