@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post in PL - Strategy Pattern in Kotlin">
-      <change afterPath="$PROJECT_DIR$/assets/posts/decorator.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_drafts/2021-07-03-10:25-kotlin-decorator-pattern.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2021-07-03-10:25-kotlin-decorator-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2021-07-03-10:25-kotlin-decorator-pattern.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2021-03-02-kotlin-abstract-factory-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2021-03-02-kotlin-abstract-factory-pattern.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pl/_posts/2021-07-03-10:25-kotlin-decorator-pattern.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2021-07-03-10:25-kotlin-decorator-pattern.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +69,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="PUML" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/pl/_posts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/_drafts" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -79,8 +78,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="$PROJECT_DIR$/_drafts" />
+      <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/assets/posts/ghpages" />
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />

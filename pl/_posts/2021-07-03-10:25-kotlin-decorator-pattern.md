@@ -12,7 +12,7 @@ tags:
 - kotlin
 - Decorator Pattern
 - design patterns
-- extension function
+- extension methods
 - Wrapper
 
 categories:
@@ -154,12 +154,12 @@ fun main() {
     val first: Component = ConcreteComponent1()
     val decOne: Component = Decorator1(first)
     val decTwo: Component = Decorator2(decOne)
-    println(first.sayHello())
-    println(decOne.sayHello())
-    println(decTwo.sayHello())
+    println(first.sayHello())  // hello from ConcreteComponent1
+    println(decOne.sayHello()) // hello from ConcreteComponent1 and from Decorator1
+    println(decTwo.sayHello()) // hello from ConcreteComponent1 and from Decorator1 and from Decorator2
 }
 ```
-Alternatywnie, `component` może nie być nawet polem w abstrakcyjnym Dekoratorze. Wtedy dziedziczące konkretne dekoratory mogą użyć `super`, które oddeleguje wywołanie metody do obiektu `comm` z konstruktora.
+Alternatywnie, `component` może nie być nawet polem w abstrakcyjnym Dekoratorze. Wtedy dziedziczące konkretne dekoratory mogą użyć `super`, które oddeleguje wywołanie metody do obiektu `component` z konstruktora.
 ```kotlin
 abstract class AltDecorator(component: Component): Component by component
 
@@ -206,6 +206,19 @@ class BtComm(val bt: BtModule) : Comm {
 class TcpComm(val tcpModule: TcpModule) : Comm {
     override fun sendMessage(text: String): Result {
         return tcpModule.send(text)
+    }
+}
+
+class TcpModule {
+    fun send(text: String): Result {
+        println("sending message via TCP: $text")
+        return Result.Success() // klasa sealed
+    }
+}
+class BtModule {
+    fun send(text: String): Result {
+        println("sending message via BT: $text")
+        return Result.Success()
     }
 }
 ```
@@ -315,7 +328,10 @@ JsonDecorator -> Client : Success/Fail
 @enduml
 {% endplantuml %}
 
-Jak już pisałem wcześniej, któryś z dekoratorów mógłby też rzucić wyjątkiem albo w ogóle nie użyć metody z dekorowanego obiektu i zwrócić np. stałą. Bywa to pomocne np. kiedy jakieś dane chcemy zaciemnić w zależności od tego, gdzie je wysyłamy. Przykładowo logi z aplikacji z użyciem klasy `data class LogEntry(val timestamp: Timestamp, val tag: String, val message: String)`:
+Jak już pisałem wcześniej, któryś z dekoratorów mógłby też rzucić wyjątkiem albo w ogóle nie użyć metody z dekorowanego obiektu i zwrócić np. stałą. Bywa to pomocne np. kiedy jakieś dane chcemy zaciemnić w zależności od tego, gdzie je wysyłamy. Przykładowo logi z aplikacji z użyciem klasy
+```kotlin
+data class LogEntry (val timestamp: Timestamp, val tag: String, val message: String)
+```
 - jeśli są przechowywane lokalnie niech mają wszystkie informacje
 - jeśli są wysyłane do naszego serwisu przez HTTPS niech tylko wrażliwe dane będą zaciemnione
 - jeśli na jakiś zewnętrzny monitoring to wysyłamy minimum informacji, może nawet samego TAG-a i timestamp. 
@@ -338,20 +354,20 @@ Kod przy wykorzystaniu `extension methods` jest znacznie prostszy niż z użycie
 Zwykle nie lubie w nazwach klas sufixów pochodzących ze wzorców projektowych, ale w przypadku `Dekoratora` dobrze mieć jasną informację o celu klasy. Mimo że interfejs klasy jest taki sam jak dekorowanego obiektu, to jednak sama instancja `Dekoratora` nie ma sensu, w przeciwieństwie do obiektu dekorowanego.
 
 # Podsumowanie
-Wzorzec `Dekorator` stosuje się tam, gdzie tworzenie osobnych klas będących kombinacją wszystkich możliwości skończyłoby się ich eksplozją. Wzorzec ten skupia się na stworzeniu warstw obiektów w celu transparentnego i dynamicznego uzupełniania obiektów o kolejne zadania. Dekorator dostarcza obiekt, o takim samym interfejsie co obiekt dekorowany. 
+The `Decorator` pattern is used where creating separate classes which are a combination of all possibilities would result in their explosion. This pattern focuses on creating object layers to transparently and dynamically complement objects with new tasks. The decorator provides an object with the same interface as the decorated object.
 
-Dodawanie nowych metod publicznych w dekoratorze jest możliwe, jednak może zachęcać do rzutowania w górę lub używania interfejsu konkretnego dekoratora zamiast ogólnego komponentu. Główną zaletą Dekoratora jest jego przeźroczystość dla klienta, którą osiąga się przez korzystanie z generycznego interfejsu owijanego komponentu. 
+While it is possible to add new public methods in the decorator, it may encourage clients to cast up or use the interface of a concrete decorator instead of a general component. The main advantage of the Decorator is its transparency to the customer, which is achieved by using the generic interface of the wrapped component.
 
-W przykładzie z interfejsami komunikacyjnymi, gdyby nie użycie dekoratora, pewnie trzebaby rozszerzyć klienty o nowe funkcjonalności, lub wprowadzić wszystkie wariacje przetwarzania wiadomości i sposobu przesłania jej w osobnych klasach.
+In the example with communication interfaces, if not for the decorator, you would probably need to extend clients with new functionalities or introduce all variations of message processing and the way of sending it in separate classes.
 
-Kotlin pozwala na eleganckie tworzenie dekoratorów za pomocą delegatów. `Extension methods` w pewnym sensie również dekodują oryginalny obiekt, jednak nie są zamiennikiem czy alternatywą dla tego wzorca. Są za to alternatywą do stosowania prostych `Wrapperów` znanych z Javy, które dodają nowe publiczne metody do obiektów, których nie chcemy bądź nie możemy rozszerzać.
+Kotlin allows you to elegantly create decorators with delegates. Extension methods also kind of dekorują the original class, but are not a replacement or alternative to this pattern. Instead, they are an alternative to using the simple Java `Wrappers`, which add new public methods to objects that we don't want or can't extend.
 
 # Konsekwencje
 
 - **zmiana zachowania obiektu bez dziedziczenia** - dziedziczenie jest właściwe tylko w przypadkach, gdzie klasa pochodna jest podtypem klasy bazowej (relacja na zasadzie generalizacja->specjalizacja) - [^effective_java]. Pewnie dałoby się znaleźć takie połączenie pomiędzy `String` a pakietem `TCP`, jednak byłoby to trochę naciągane i mało elastyczne. Szczególnie dodając po drodze formatowanie do JSONa i kodowanie Base64. Trudno byłoby też użyć kod ponownie w przypadku wiadomości przesyłanej przez Bluetooth. Dekorator przez kompozycję warstw pozwala elastycznie zmieniać zachowanie obiektu, bez zmiany tego, czym obiekt jest.
 - **dynamiczne zmiany zachowania obiektu** - obiekt można udekorować w trakcie działania programu, ponieważ nowe zachowania nie zmieniają interfejsu, a jedynie wpisują się w niego. Ten sam obiekt może w jednym miejscu być dekorowany jedną klasą, a w kolejnym drugą.
 - **SRP** - duża monolityczna klasa z wieloma odpowiedzialnościami, może zostać przekształcona w zbiór dekoratorów używanych tylko tam, gdzie są potrzebne. Może to niestety prowadzić również do rzutowania w górę do interfejsu dekoratora lub odwoływaniu się do wewnętrznego dekorowanego obiektu z poziomu klienta (naruszenie prawa Demeter).
-- **kolejność stosowania dekoratorów jest ważna** - przykład z wysłaniem wiadomości. Kolejność jest ważna, a jednocześnie same dekoratory nie wiedzą nic o sobie. Odpowiedzialność tworzenia poprawnego zestawu dekoratorów powinna spoczywać na jakiejś np. `Fabryce` lub `Builderze` — o ile mamy do czynienia z rozbudowaną hierarchią.
+- **kolejność stosowania dekoratorów jest ważna** - przykład z wysłaniem wiadomości. Kolejność jest ważna, a jednocześnie same dekoratory nie wiedzą nic o sobie nawzajem. Odpowiedzialność tworzenia poprawnego zestawu dekoratorów powinna spoczywać na jakiejś np. `Fabryce` lub `Builderze` — o ile mamy do czynienia z rozbudowaną hierarchią.
 
 ---
 [^effective_java]:["Effective Java"](https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&redir_esc=y) 
