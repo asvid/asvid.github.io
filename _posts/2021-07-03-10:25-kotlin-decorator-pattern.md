@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Decorator in Kotlin"
+title: "Decorator Pattern in Kotlin"
 date:  "2021-07-03 10:25"
 description: "
 The `Decorator` pattern is used where creating separate classes which are a combination of all possibilities would result in their explosion. This pattern focuses on creating object layers to transparently and dynamically complement objects with new tasks. The decorator provides an object with the same interface as the decorated object.
@@ -365,11 +365,7 @@ Kotlin allows you to elegantly create decorators with delegates. Extension metho
 
 # Consequences
 
-- **changing object behavior without inheritance** - inheritance is appropriate only in cases where the derived class is a subtype of the base class (relation on the principle of generalization-> specialization) - [^effective_java]. You could probably find such a connection between the `String` and the `TCP` packet, but it would be a bit of a stretch and inflexible. Especially adding JSON formatting and Base64 encoding along the way. It would also be difficult to re-use the code for a message over Bluetooth. By arranging layers, the decorator allows you to flexibly change the behavior of an object, without changing what the object is.
+- **changing object behavior without inheritance** - inheritance is appropriate only in cases where the derived class is a subtype of the base class (relation on the principle of generalization-> specialization) - ["Effective Java"](https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&redir_esc=y). You could probably find such a connection between the `String` and the `TCP` packet, but it would be a bit of a stretch and inflexible. Especially adding JSON formatting and Base64 encoding along the way. It would also be difficult to re-use the code for a message over Bluetooth. By arranging layers, the decorator allows you to flexibly change the behavior of an object, without changing what the object is.
 - **dynamic changes in the behavior of the object** - the object can be decorated while the program is running because the new behaviors do not change the interface, but only fit into it. The same object can be decorated with one class in one place and with another in different one.
 - **SRP** - a large monolithic class with multiple responsibilities, can be transformed into a set of decorators used only where they are needed. Unfortunately, this can also lead to upcasting to the decorator interface or calling an internal decorated object from the client (Demeter law violation).
 - **the order in which the decorators are applied is important** - example with sending a message. The order is important, and at the same time the decorators themselves don't know anything about other decorators. The responsibility for creating the correct set of decorators should rest with some, for example, `Factory` or `Builder` - as long as there is an extensive hierarchy.
-
-
----
-[^effective_java]:["Effective Java"](https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&redir_esc=y) 
