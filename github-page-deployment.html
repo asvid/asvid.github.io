@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ultimate Github Page Deployment</title>
+    
+    <meta name="description" content="Deploy Jekyll blog (like this one) on GitHub is very easy. Unless, you want to use not whitelisted plugins... but it't still doable.">
+    
+    <meta name="author" content="Adam Świderski">
+
+    <meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo"/>
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/ico/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/ico/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/ico/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/ico/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/ico/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/ico/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/ico/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/ico/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/ico/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/ico/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68530276-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-68530276-7');
+    </script>
+
+    <link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+    <meta http-equiv="Content-Language" content="en">
+<link rel="alternate" hreflang="en" href="http://asvid.github.io//github-page-deployment"/>
+<link rel="alternate" hreflang="pl" href="http://asvid.github.io//pl/github-page-deployment"/>
+
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Ultimate Github Page Deployment</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Ultimate Github Page Deployment" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Deploy Jekyll blog (like this one) on GitHub is very easy. Unless, you want to use not whitelisted plugins… but it’t still doable." />
+<meta property="og:description" content="Deploy Jekyll blog (like this one) on GitHub is very easy. Unless, you want to use not whitelisted plugins… but it’t still doable." />
+<link rel="canonical" href="http://asvid.github.io//github-page-deployment" />
+<meta property="og:url" content="http://asvid.github.io//github-page-deployment" />
+<meta property="og:image" content="http://asvid.github.io//assets/posts/ghpages/cover.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-04T22:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://asvid.github.io//assets/posts/ghpages/cover.jpg" />
+<meta property="twitter:title" content="Ultimate Github Page Deployment" />
+<script type="application/ld+json">
+{"description":"Deploy Jekyll blog (like this one) on GitHub is very easy. Unless, you want to use not whitelisted plugins… but it’t still doable.","url":"http://asvid.github.io//github-page-deployment","@type":"BlogPosting","image":"http://asvid.github.io//assets/posts/ghpages/cover.jpg","headline":"Ultimate Github Page Deployment","dateModified":"2020-08-04T22:00:00+00:00","datePublished":"2020-08-04T22:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://asvid.github.io//github-page-deployment"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+<nav class="navbar navbar-default visible-xs" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        
+        <a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+            <i class="fa fa-github"></i>
+        </a>
+        
+        
+        <a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+            <i class="fa fa-linkedin"></i>
+        </a>
+        
+        
+        
+        <a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+            <i class="fa fa-envelope"></i>
+        </a>
+        
+
+        <a type="button" class="navbar-toggle nav-link" href="/feed.xml">
+            <i class="fa fa-rss fa-lg"></i>
+        </a>
+        <a class="navbar-brand" href="/">
+            <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle">
+        </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Blog</a></li>
+            <li><a href="about">About</a></li>
+<!--            <li><a href="/categories.html">Categories</a></li>-->
+            <li><a href="/tags.html">Tags</a></li>
+        </ul>
+    </div>
+<!-- /.navbar-collapse -->
+</nav>
+
+<!-- nav-menu-dropdown -->
+<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+    <a type="button" class="" href="/"><i class="fa fa-home"></i>Home</a>
+    <a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+    <a type="button" class="" href="/categories.html"><i class="fa fa-folder"></i>Categories</a>
+    <a type="button" class="" href="/tags.html"><i class="fa fa-tags"></i>Tags</a>
+</div> -->
+
+<div class="col-sm-3 sidebar hidden-xs" style="
+	">
+    <!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski">
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Hi I'm Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>and I'm a software engineer</span>
+</div>
+
+
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/"><li>
+<i class="fa fa-home"></i>Blog</li></a>
+		<a type="button" class="" href="about/"><li>
+<i class="fa fa-user-circle"></i>About</li></a>
+<!--		<a type="button" class="" href="/categories.html"><li><i class="fa fa-folder"></i>Categories</li></a>-->
+		<a type="button" class="" href="/tags.html"><li>
+<i class="fa fa-tags"></i>Tags</li></a>
+	</ul>
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+</div>
+
+<div class="col-sm-9 col-sm-offset-3">
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/ghpages/cover.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Ultimate Github Page Deployment </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   August
+	   4th,
+	   
+	   2020
+
+<!--    <span class="read_time">(read time:-->
+<!--      -->
+<!--      -->
+<!--        5 min)-->
+<!--      -->
+<!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#mr-hyde">Mr Hyde</a></li>
+<li class="toc-entry toc-h2"><a href="#usual-process">Usual process</a></li>
+<li class="toc-entry toc-h2"><a href="#i-want-plugins">I want plugins</a></li>
+<li class="toc-entry toc-h2"><a href="#but-i-really-need-this-plugin">But I really need this plugin</a></li>
+</ul>
+            </nav>
+
+            <h2 id="mr-hyde">Mr Hyde</h2>
+
+<p>Text you are reading is available on Jekyll blog hosted on GitHub, with the use of free <a href="https://pages.github.com/">Github Pages</a>.
+Long story short: <a href="https://jekyllrb.com/">Jekyll</a> is a template engine changing <code class="language-plaintext highlighter-rouge">markdown</code> documents on static <code class="language-plaintext highlighter-rouge">HTML</code> webpages, that you can then host anywyere,
+because you don’t need databases or server that has PHP or Python.</p>
+
+<h2 id="usual-process">Usual process</h2>
+
+<p>Normally process of adding new post looks like this:</p>
+<ul>
+  <li>I write <code class="language-plaintext highlighter-rouge">markdown</code> document with setting parameters like title, date and tags</li>
+  <li>when I’m happy with what I wrote (never), I commit changes and push it to repository on GitHub. Repository name comes from my nick and is also address for blog <code class="language-plaintext highlighter-rouge">asvid.github.io</code>
+</li>
+  <li>Github after pushing to branch <code class="language-plaintext highlighter-rouge">master</code> builds website from sources using Jekyll - probably something like running <code class="language-plaintext highlighter-rouge">jekyll build</code>
+</li>
+  <li>result of Jekyll build is not present in a repository, but you see it right now after visiting <a href="https://asvid.github.io/pl/">blog page</a>
+</li>
+</ul>
+
+<p>The above process works entirely automatically, no need of configuration on repo site or GitHub itself. All you need is having repo name that fallows pattern: <code class="language-plaintext highlighter-rouge">{user_name}.github.io</code>.
+Normally it works. But…</p>
+
+<h2 id="i-want-plugins">I want plugins</h2>
+
+<p>Sometimes you want to add something cool to your page. I wanted to have it in few languages, like polish and english. Jekyll is not supporting this natively… but also is not making it impossible <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">
+So I’ve found plugin <a href="https://polyglot.untra.io/">Polyglot</a>, that allows adding many languages on same page without need of complete rebuild or restructure.
+I used it, after a while it was kinda working. After longer while it was working as I wanted. <strong>Locally</strong>.</p>
+
+<p>After pushing changes to GitHub page wasn’t working properly. I learned that GitHub is not simply building everything you throw at it, but it has a 
+<a href="https://github.com/github/pages-gem/blob/master/lib/github-pages/plugins.rb#L20">whitelist</a> (I wonder when they change this name…) of supported plugins.
+Polyglot is sadly not on this list, despite its creator tries. Whitelist itself is understandable for security reasons, we don’t want to GitHub go down because of some evil plugin or hidden bitcoin miner running on GitHub servers.</p>
+
+<h2 id="but-i-really-need-this-plugin">But I really need this plugin</h2>
+
+<p>Like every problem this one also has a solution. Even few of them. You can build the page locally and push it to the <code class="language-plaintext highlighter-rouge">master</code> branch, and keep source on other branch like <code class="language-plaintext highlighter-rouge">develop</code>.
+There is also <a href="https://www.npmjs.com/package/gh-pages">NodeJS package</a>, that publishes NodeJS apps as GitHub Pages.</p>
+
+<p>But I’m lazy and I don’t want to build manually and push sources and build result separately, also I don’t have NodeJS app, so I use solution number 3.</p>
+
+<h3 id="github-actions">GitHub Actions</h3>
+
+<p><a href="https://github.com/features/actions">GitHub Actions</a> is a basic CI available for free for every repository.
+To use this CI you need to create <code class="language-plaintext highlighter-rouge">Workflow</code> with <code class="language-plaintext highlighter-rouge">yaml</code> configuration telling it what and when should happen. There are <a href="https://github.com/marketplace?type=actions">many available actions</a>,
+and if something is missing, you can do one yourself or combine few into one workflow.
+To add workflow go to your repository-&gt;actions-&gt;New workflow and then click link to <code class="language-plaintext highlighter-rouge">set up a workflow yourself</code>.
+<img src="assets/posts/ghpages/workflow.png" alt="new workflow">
+<img src="assets/posts/ghpages/setup.png" alt="setup">
+This will add <code class="language-plaintext highlighter-rouge">yaml</code> file with config inside repository in directory <code class="language-plaintext highlighter-rouge">.github/workflows</code></p>
+
+<p>To publish Jekyll blog with not whitelisted plugins I used <a href="https://github.com/marketplace/actions/jekyll-actions">Jekyll-Actions</a> configured inside workflow like this:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">GitHub Pages publication</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="s">push</span>
+    
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">jekyll</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-16.04</span>
+    <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+    <span class="c1"># Use GitHub Actions' cache to shorten build times and decrease load on servers</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v1</span>
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">vendor/bundle</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s">$-gems-$</span>
+        <span class="na">restore-keys</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">$-gems-</span>
+    <span class="c1"># Standard usage</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span>  <span class="s">helaili/jekyll-action@2.0.3</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="na">JEKYLL_PAT</span><span class="pi">:</span> <span class="s">$</span>
+    
+    <span class="c1"># Specify the Jekyll source location as a parameter</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">helaili/jekyll-action@2.0.3</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="na">JEKYLL_PAT</span><span class="pi">:</span> <span class="s">$</span>
+</code></pre></div></div>
+<p>This action runs inside <code class="language-plaintext highlighter-rouge">ubuntu-16.04</code> container, and then:</p>
+<ul>
+  <li>downloads repository after each push (on every branch which is causing some issue)</li>
+  <li>is using cache to not download same <code class="language-plaintext highlighter-rouge">Gems</code> each run</li>
+  <li>runs action to build page and publish ot on branch <code class="language-plaintext highlighter-rouge">master</code>, with a push that is possible thanks to <code class="language-plaintext highlighter-rouge">secrets.JEKYLL_PAT</code>
+</li>
+</ul>
+
+<p>And this publishing on branch <code class="language-plaintext highlighter-rouge">master</code> means that you shouldn’t push source changes to this branch.
+If you want to use this action, you need to push changes to <code class="language-plaintext highlighter-rouge">develop</code> and leave <code class="language-plaintext highlighter-rouge">master</code> only for files build and pushed by the script.</p>
+
+<h3 id="how-to-create-secretjekyll_pat">How to create secret.JEKYLL_PAT</h3>
+
+<p>Action itself works in isolated container and has no write access to your repository. It can read it because its public.
+To allow this, you need to create access token with <code class="language-plaintext highlighter-rouge">public_repo</code> scope, and then add it in repository as a secret with name expected by configuration <code class="language-plaintext highlighter-rouge">secret.JEKYLL_PAT</code>.</p>
+
+<p>You generate token from GitHub account settings: Settings-&gt;Developer Settings-&gt;Personal Access Tokens. 
+After clicking on <code class="language-plaintext highlighter-rouge">Generate new token</code> fill the name and select checkbox <code class="language-plaintext highlighter-rouge">public_repo</code>.</p>
+
+<p><img src="assets/posts/ghpages/token.png" alt="nowy token"></p>
+
+<p>After clicking button on the bottm <code class="language-plaintext highlighter-rouge">Generate token</code> you will have the only chance to copy it, I suggest taking it <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20"></p>
+
+<p>Copied token needs to be pasted to repository secrets: Settings-&gt;Secrets-&gt;New secret. Name like in config <code class="language-plaintext highlighter-rouge">secrets.JEKYLL_PAT</code> and value is copied token.</p>
+
+<p><img src="assets/posts/ghpages/secret.png" alt="nowy secret"></p>
+
+<p>And it should work. At least works for me, because you are reading this <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20"></p>
+
+        </div>
+<!--        -->
+<!--        <ul class="tag_box list-unstyled list-inline">-->
+<!--            <li><i class="fa fa-folder-open"></i></li>-->
+<!--            -->
+<!--            -->
+<!--            -->
+<!--            <li><a href="/categories.html#rss-ref">-->
+<!--                rss <span>(22)</span>-->
+<!--                -->
+<!--            </a></li>-->
+<!--            -->
+<!--            -->
+<!--        </ul>-->
+<!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#Github%20Pages-ref">
+                    Github Pages <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Jekyll-ref">
+                    Jekyll <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Github%20Actions-ref">
+                    Github Actions <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Ultimate%20Github%20Page%20Deployment" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus" onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858" class="img-rounded author-image">
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/intellij-settings-repo" title="IntelliJ settings repo">← Previous</a></li>
+            
+            
+            <li class="next"><a href="/code-review-retro" title="Code Review Retro">Next
+                →</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'asvid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+
+
+
+
+    <footer>
+        <hr>
+        <p>
+            © 2021 Adam Świderski with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+        </p>
+    </footer>
+</div>
+
+<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DevLog | Adam Świderski | software engineer blog</title>
+    
+    <meta name="description" content="Software engineering and architecture | Android | Kotlin | Programming">
+    
+    <meta name="author" content="Adam Świderski">
+
+    <meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo"/>
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/pl/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/pl/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/pl/assets/resources/syntax/syntax.css" rel="stylesheet">
+    <link href="/pl/assets/css/style.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/pl/assets/ico/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/pl/assets/ico/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/pl/assets/ico/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/pl/assets/ico/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/pl/assets/ico/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/pl/assets/ico/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/pl/assets/ico/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/pl/assets/ico/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/pl/assets/ico/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/pl/assets/ico/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/pl/assets/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/pl/assets/ico/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/pl/assets/ico/favicon-16x16.png">
+    <link rel="manifest" href="/pl/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/assets/ico/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68530276-7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-68530276-7');
+    </script>
+
+    <link rel="alternate" type="application/rss+xml" title="" href="/pl/feed.xml">
+    <meta http-equiv="Content-Language" content="pl">
+<link rel="alternate" hreflang="en" href="http://asvid.github.io//"/>
+<link rel="alternate" hreflang="pl" href="http://asvid.github.io//pl/"/>
+
+    <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>DevLog Adam Świderski software engineer blog</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="DevLog Adam Świderski software engineer blog" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Software engineering and architecture Android Kotlin Programming" />
+<meta property="og:description" content="Software engineering and architecture Android Kotlin Programming" />
+<link rel="canonical" href="http://asvid.github.io//pl/" />
+<meta property="og:url" content="http://asvid.github.io//" />
+<link rel="next" href="http://asvid.github.io//pl/page2" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="DevLog Adam Świderski software engineer blog" />
+<script type="application/ld+json">
+{"description":"Software engineering and architecture Android Kotlin Programming","url":"http://asvid.github.io//","@type":"WebSite","headline":"DevLog Adam Świderski software engineer blog","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+<nav class="navbar navbar-default visible-xs" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        
+        <a type="button" class="navbar-toggle nav-link" href="http://github.com/asvid">
+            <i class="fa fa-github"></i>
+        </a>
+        
+        
+        <a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/aswiderski">
+            <i class="fa fa-linkedin"></i>
+        </a>
+        
+        
+        
+        <a type="button" class="navbar-toggle nav-link" href="mailto:adam.swiderski89@gmail.com">
+            <i class="fa fa-envelope"></i>
+        </a>
+        
+
+        <a type="button" class="navbar-toggle nav-link" href="/pl/feed.xml">
+            <i class="fa fa-rss fa-lg"></i>
+        </a>
+        <a class="navbar-brand" href="/pl/">
+            <img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=35" class="img-circle"/>
+        </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/pl/">Blog</a></li>
+            <li><a href="about">O mnie</a></li>
+<!--            <li><a href="/pl/categories.html">Kategorie</a></li>-->
+            <li><a href="/pl/tags.html">Tagi</a></li>
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
+
+<!-- nav-menu-dropdown -->
+<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+    <a type="button" class="" href="/pl/"><i class="fa fa-home"></i>Home</a>
+    <a type="button" class="" href="about/"><i class="fa fa-user-circle"></i>About</a>
+    <a type="button" class="" href="/pl/categories.html"><i class="fa fa-folder"></i>Categories</a>
+    <a type="button" class="" href="/pl/tags.html"><i class="fa fa-tags"></i>Tags</a>
+</div> -->
+
+<div class="col-sm-3 sidebar hidden-xs"
+     style="
+	">
+    <!-- sidebar.html -->
+<div class="sidebar-header" role="banner">
+	<a href="/pl/">
+		<img src="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210" class="img-circle" alt="Adam Świderski photo" title="Adam Świderski"/>
+	</a>
+	<div id="title_container" class="text-center">
+		<span class="title">
+			Siema jestem Adam
+		</span>
+	</div>
+</div>
+
+
+<div id="bio" class="bio text-center">
+	<span>I jestem programistą</span>
+</div>
+
+
+<!-- nav-menu -->
+<div class="sidebar_menu">
+	<ul>
+		<a type="button" class="" href="/pl/"><li><i class="fa fa-home"></i>Blog</li></a>
+		<a type="button" class="" href="about/"><li><i class="fa fa-user-circle"></i>O mnie</li></a>
+<!--		<a type="button" class="" href="/pl/categories.html"><li><i class="fa fa-folder"></i>Kategorie</li></a>-->
+		<a type="button" class="" href="/pl/tags.html"><li><i class="fa fa-tags"></i>Tagi</li></a>
+	</ul>
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/asvid">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:adam.swiderski89@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/aswiderski">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/pl/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- sidebar.html end -->
+
+</div>
+
+<div class="col-sm-9 col-sm-offset-3">
+    <div class="page-header">
+  <h1>DevLog </h1>
+</div>
+
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    July
+    3rd,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-decorator-pattern">Dekorator w Kotlinie</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     `Dekorator` stosuje się tam, gdzie tworzenie osobnych klas będących kombinacją wszystkich możliwości skończyłoby się ich eksplozją. Wzorzec ten skupia się na stworzeniu warstw obiektów w celu transparentnego i dynamicznego uzupełniania obiektów o kolejne zadania. Dekorator dostarcza obiekt, o takim samym interfejsie co obiekt dekorowany. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      25 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#kotlin-ref">kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Decorator-Pattern-ref">Decorator Pattern</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#extension-methods-ref">extension methods</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Wrapper-ref">Wrapper</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    June
+    26th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-adapter-pattern">Adapter w Kotlinie</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     Adapter lub Wrapper pozwala `przetłumaczyć` jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany obiekt pochodzi z niezależnej biblioteki i nie chcemy uzależniać naszego systemu od jego interfejsu, tworząc tzw. `anticorruption layer`. Zmiany interfejsu obiektu wpłyną tylko na `Adapter` a nie na resztę kodu. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      19 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Adapter-Pattern-ref">Adapter Pattern</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#structural-design-pattern-ref">structural design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    June
+    21st,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/intellij-latex-editor">IntelliJ IDEA jako edytor LaTeX</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plToday I learned</a></p>-->
+
+  <div>
+    
+    
+     IntelliJ IDEA całkiem sprawnie radzi sobie z obsługą LaTeX. Śmiem twierdzić, że jest to nawet lepsze doświadczenie niż TexStudio czy Texmaker, które są dedykowane do tego typu projektów. Jednak siła IntelliJ nie polega na możliwościach `out of the box` ale na plugin-ach i ręcznej konfiguracji procesu budowania. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      8 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#IDE-ref">IDE</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#plugins-ref">plugins</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#IntelliJ-ref">IntelliJ</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#LaTeX-ref">LaTeX</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    June
+    5th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-facade-pattern">Fasada w Kotlinie</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     Fasada pozwala a ukrycie szczegółów modułu przed klientami. Zapewnia przestrzeganie `Prawa Demeter`, a użycie ogólnego interfejsu i różnych implementacji znacząco ułatwia testowanie. Dobrze łączy się z innymi wzorcami takimi jak `Strategia`, `Metoda Szablonowa` czy konstrukcyjnymi pozwalającymi na konfigurację obiektu udostępnianego klientom. Fasada dobrze nadaje się na punkt wejścia dla bibliotek, dając klientom dostęp do wysokopoziomowych funkcjonalności i chowając całą wewnętrzną logikę i klasy. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      17 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Facade-Pattern-ref">Facade Pattern</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#structural-design-pattern-ref">structural design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    June
+    5th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-strategy-pattern">Wzorzec Strategia w Kotlinie</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     Strategia tworzy rodzinę algorytmów, zamykając różniącą się logikę w osobnych klasach, jednocześnie ukrywając ją przed klientami za wspólnym interfejsem. Umożliwia wymienne stosowanie implementacji. Użycie strategii znacząco upraszcza kod klientów, pozwala uniknąć duplikacji kodu i instrukcji warunkowych. Znacząco ułatwia testowanie — oddzielając testowanie klienta od algorytmów strategii. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      19 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Strategy-Pattern-ref">Strategy Pattern</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#behavioral-design-pattern-ref">behavioral design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    May
+    13th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-template-method">Metoda szablonowa w Kotlinie</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+    Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to, co stałe od tego, co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje.
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      17 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Template-Method-ref">Template Method</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#behavioral-design-pattern-ref">behavioral design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    March
+    7th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-abstract-factory">Kotlin Abstract Factory</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+    Fabryka fabryk, czyli 'Abstract Factory' usprawnia tworzenie obiektów będących częścią jakiejś 'rodziny'. Jest to w zasadzie warstwa opakowująca konkretne fabryki i dostarczająca klientom instancję fabryki tworzącą obiekty z danego wariantu.
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      32 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Abstract-Factory-ref">Abstract Factory</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#construction-design-pattern-ref">construction design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    February
+    24th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-factory-method">Kotlin Factory Method</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     Po `Static Factory Method` nadeszła pora na klasyczne `Factory`. Fabryka jest bardzo użytecznym i często stosowanym wzorcem konstrukcyjnym. Kotlin daje nam ciekawe możliwości dzięki klasom `sealed` oraz `internal`, których odpowiedników brakuje w Javie. 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      48 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Factory-Method-ref">Factory Method</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#construction-design-pattern-ref">construction design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    January
+    20th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-static-factory-methods">Kotlin Static Factory Methods</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+     Znane z Javy `Statyczne Metody Wytwórcze` w Kotlinie jak najbardziej mają swoje zastosowanie, pomimo trochę innego zachowania i braku słówka `static`. Postaram się przybliżyć czym jest `companion object` i jak go można używać. PS: Ten post miał byc o wzorcu Factory Method z tylko krótką wzmianą o statycznych metodach fabrycznych, ale ten temat okazał się ciekawszy, niż sądziłem :) 
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      15 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Static-Factory-Methods-ref">Static Factory Methods</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#construction-design-pattern-ref">construction design pattern</a>
+      </span>
+    
+  </p>
+
+</article>
+
+
+<article class="home">
+
+  <span class="post-date">
+    
+    January
+    20th,
+    
+    2021
+  </span>
+
+  <h2>
+    <a href="/pl/kotlin-builder-pattern">Kotlin Builder Pattern</a> 
+  </h2>
+
+<!--  <p class="post_category">in <a href="/categories.html#pl-ref">plDesign Patterns</a></p>-->
+
+  <div>
+    
+    
+    Wzorzec projektowy Builder (budowniczy) jest jednym z popularniejszych i bardziej przydatnych wzorców konstrukcyjnych. W tym wpisie postaram się go przybliżyć i pokazać jak ciekawie można go użyć w Kotlinie. Niestety często widzę implementacje, które wyglądają jak żywcem przetłumaczone z Javy bez wykorzystania dobrodziejstw języka.
+    
+    
+  </div>
+
+<!--  <p class="read_time">(czas czytania:-->
+<!--    -->
+<!--    -->
+<!--      16 mins)-->
+<!--    -->
+<!--    </p>-->
+
+  <p>
+    
+      <span class="post_tags">
+        <a href="/tags.html#design-patterns-ref">design patterns</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Kotlin-ref">Kotlin</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#wzorce-projektowe-ref">wzorce projektowe</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#Builder-Pattern-ref">Builder Pattern</a>
+      </span>
+    
+      <span class="post_tags">
+        <a href="/tags.html#wzorce-konstrukcyjne-ref">wzorce konstrukcyjne</a>
+      </span>
+    
+  </p>
+
+</article>
+
+<hr/>
+
+<ul class="pager">
+
+  
+  <li class="previous disabled">
+    <a>&larr; Newer</a>
+  </li>
+  
+
+  <li>
+    <span class="page_number">Page: 1 of 3</span>
+  </li>
+
+  
+  <li class="next">
+    <a href="/pl/page2">Older &rarr;</a>
+  </li>
+  
+
+</ul>
+
+<script>
+
+  var language = navigator.language || navigator.browserLanguage; //for IE
+  if (language.indexOf('pl') > -1 && document.location.href.indexOf('pl') == -1) {
+    document.location.href = '/pl';
+  }
+
+</script>
+
+
+
+    <footer>
+        <hr/>
+        <p>
+            &copy; 2021 Adam Świderski with Jekyll. Theme: <a
+                href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+        </p>
+    </footer>
+</div>
+
+<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-68530276-7']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>DevLog | Adam Świderski | software engineer blog</title>
+		<description>Software engineering and architecture | Android | Kotlin | Programming</description>
+		<link>http://asvid.github.io//</link>
+		<enclosure
+			url="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210"
+			type="image/jpeg"
+			length="17239"
+			/>
+		<atom:link href="http://asvid.github.io//pl/" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Shell script basics</title>
+				<description>If you are lazy and you know it clap your han... write shell scripts</description>
+				<pubDate>Sun, 03 May 2020 12:14:00 +0000</pubDate>
+				<link>http://asvid.github.io//shellscriptbasics</link>
+				<guid isPermaLink="true">http://asvid.github.io//shellscriptbasics</guid>
+			</item>
+		
+			<item>
+				<title>Overlibrarization</title>
+				<description>Sharing code between projects with your own libraries is generaly a good thing, but it comes with a cost. I'd like to share some of my experience about it.</description>
+				<pubDate>Sun, 20 Jan 2019 17:57:02 +0000</pubDate>
+				<link>http://asvid.github.io//overlibrarization</link>
+				<guid isPermaLink="true">http://asvid.github.io//overlibrarization</guid>
+			</item>
+		
+			<item>
+				<title>Android build hacks #3 - documentation with Dokka</title>
+				<description>Generating documentation with Dokka and publishing it on GitHub walkthrough</description>
+				<pubDate>Mon, 05 Nov 2018 19:05:58 +0000</pubDate>
+				<link>http://asvid.github.io//android-build-hacks-3-documentation</link>
+				<guid isPermaLink="true">http://asvid.github.io//android-build-hacks-3-documentation</guid>
+			</item>
+		
+			<item>
+				<title>Android Build Hacks #2 - build time optimization</title>
+				<description>Android tricks to speed up builds, fix Gradle tasks, use Gradle profiling tools etc..</description>
+				<pubDate>Sun, 16 Sep 2018 08:36:34 +0000</pubDate>
+				<link>http://asvid.github.io//android-build-hacks-2</link>
+				<guid isPermaLink="true">http://asvid.github.io//android-build-hacks-2</guid>
+			</item>
+		
+			<item>
+				<title>Android Build Hacks #1 - build basics</title>
+				<description>Android build file tricks and hacks I've found at blogposts, YT videos etc.</description>
+				<pubDate>Mon, 23 Jul 2018 20:24:27 +0000</pubDate>
+				<link>http://asvid.github.io//android-build-hacks-1</link>
+				<guid isPermaLink="true">http://asvid.github.io//android-build-hacks-1</guid>
+			</item>
+		
+			<item>
+				<title>Hacking Android app with Frida</title>
+				<description>Quick walkthrough of using Frida to hack Android app behaviour</description>
+				<pubDate>Sat, 31 Mar 2018 15:43:37 +0000</pubDate>
+				<link>http://asvid.github.io//android-frida-hacking</link>
+				<guid isPermaLink="true">http://asvid.github.io//android-frida-hacking</guid>
+			</item>
+		
+			<item>
+				<title>Nyan your terminal</title>
+				<description>Some tools I use with my terminal to make my work more efficient.</description>
+				<pubDate>Sun, 18 Mar 2018 07:23:03 +0000</pubDate>
+				<link>http://asvid.github.io//nyan-your-terminal</link>
+				<guid isPermaLink="true">http://asvid.github.io//nyan-your-terminal</guid>
+			</item>
+		
+			<item>
+				<title>Android local libraries with Maven</title>
+				<description>Local Maven repository guide for working on private libraries along with projects that use them</description>
+				<pubDate>Sun, 21 Jan 2018 00:00:00 +0000</pubDate>
+				<link>http://asvid.github.io//android-local-maven</link>
+				<guid isPermaLink="true">http://asvid.github.io//android-local-maven</guid>
+			</item>
+		
+			<item>
+				<title>Color changing progress bar</title>
+				<description>Simple guide to color changing progress bar</description>
+				<pubDate>Sun, 24 Apr 2016 00:00:00 +0000</pubDate>
+				<link>http://asvid.github.io//color-changing-progress-bar</link>
+				<guid isPermaLink="true">http://asvid.github.io//color-changing-progress-bar</guid>
+			</item>
+		
+	</channel>
+</rss>
