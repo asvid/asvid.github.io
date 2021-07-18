@@ -104,15 +104,15 @@ class ComponentC(private val mediator: Mediator) {
 // Mediator encapsulates relationships between components
 // it has references to all components it manages
 // and sometimes it can even manage component lifecycle
-class Concretemediator : Mediator {
-	// components may be injected or passed in constructor
-	// but Mediator reference must be passed to each component
+class Concretemediator : Mediator { 
+    // components may be injected or passed in constructor
+    // but Mediator reference must be passed to each component
     val componentA = ComponentA(this)
     val componentB = ComponentB(this)
     val componentC = ComponentC(this)
 
     override fun method(sender: Any, args: Any?) {
-		// checking which object is sender
+        // checking which object is sender
         when (sender) {
             // Mediator knows how to handle the incoming message
             is ComponentA -> println("arg from A: $args")
@@ -134,8 +134,8 @@ Therefore, it is a good idea to have a central communication hub that will colle
 ```kotlin
 // view manager, controlling UI elements inside it
 interface UiDirector {
-	// `event` is naive String for simplifying the example
-	// `sender` has to be UI element extending `UiElement` class
+    // `event` is naive String for simplifying the example
+    // `sender` has to be UI element extending `UiElement` class
     fun notify(sender: UiElement, event: String)
 }
 
@@ -145,18 +145,18 @@ abstract class UiElement(val uiDirector: UiDirector)
 // button is UI element
 class Button(uiDirector: UiDirector) : UiElement(uiDirector) {
     fun click() {
-		// that informs `uiDirector` about being clicked
-		// but has no other logic regarding this
+        // that informs `uiDirector` about being clicked
+        // but has no other logic regarding this
         uiDirector.notify(this, "click")
     }
 }
 
 class TextBox(uiDirector: UiDirector) : UiElement(uiDirector) {
-	// TextBox is also an UI element
-	// lets assume it has inner logic refreshing value of the `text` field
-	// that takes care of pasting the text or manual typing it
-	// using `observable` makes sure that after each change the `uiDirector` gets notified
-	// there is no need to remember about calling `notify()` in every place that changes `text`
+    // TextBox is also an UI element
+    // lets assume it has inner logic refreshing value of the `text` field
+    // that takes care of pasting the text or manual typing it
+    // using `observable` makes sure that after each change the `uiDirector` gets notified
+    // there is no need to remember about calling `notify()` in every place that changes `text`
     val text: String by Delegates.observable("") { property, oldValue, newValue ->
         uiDirector.notify(this, "text_changed")
     }
@@ -166,7 +166,7 @@ class TextBox(uiDirector: UiDirector) : UiElement(uiDirector) {
 class FancyDialog : UiDirector {
 
     private val title = "fancy dialog"
-	// dialog creates instances of its `components`
+    // dialog creates instances of its `components`
     private val okButton = Button(this)
     private val cancelButton = Button(this)
     private val input = TextBox(this)
@@ -175,9 +175,9 @@ class FancyDialog : UiDirector {
 
     override fun notify(sender: UiElement, event: String) {
         when (sender) {
-			// after each UI component change it gets update
+            // after each UI component change it gets update
             input -> if (event == "text_change") inputText = input.text
-			// and has logic called after buttons are clicked
+            // and has logic called after buttons are clicked
             okButton -> if (event == "click") submit()
             cancelButton -> if (event == "click") dismiss()
         }
@@ -207,27 +207,27 @@ interface Chatroom {
 class Participant(val name: String, private val chatroom: Chatroom) {
 
     init {
-		// the participant is registering itself in the chatroom
+        // the participant is registering itself in the chatroom
         chatroom.registerParticipant(this)
     }
 
-	// is able to send the message
+    // is able to send the message
     fun send(message: String, to: ParticipantName? = null) {
         chatroom.send(message, this.name, to)
     }
 
-	// and receive it
+    // and receive it
     fun receive(message: String) {
         println("[$name] gets: $message")
     }
 }
 // `object` is here just to make it easier to use in `main()`
 object SuperChat : Chatroom {
-	// chatroom modes
+    // chatroom modes
     enum class Mode { 
-		PUBLIC, // every message is delivered to every participant
-		PRIVATE, // only messages with recipient will be delivered
-		MIXED // both direct messages and public ones will be delivered
+        PUBLIC, // every message is delivered to every participant
+        PRIVATE, // only messages with recipient will be delivered
+        MIXED // both direct messages and public ones will be delivered
     }
 
     var mode: Mode = Mode.PRIVATE
@@ -238,7 +238,7 @@ object SuperChat : Chatroom {
         participants.add(participant)
     }
 
-	// handling messages
+    // handling messages
     override fun send(message: String, from: ParticipantName, to: ParticipantName?) {
         when (mode) {
             // depending on the mode they will be handled differently
