@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mediator in Kotlinie"
+title: "Mediator in Kotlin"
 date:  "2021-07-17 16:23"
 description: "
 The Mediator's job is to organize communication between close classes. The `Mediator` pattern cuts out dependencies between components. It takes over the interaction between them, becoming the main communication hub for a group of classes. There is a reverse of the controls because components are now just telling 'what happened' instead of telling others to 'do something'. It can be found e.g. in the form of `ViewModel` in Android, where it separates UI interactions from data model changes.
