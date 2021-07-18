@@ -136,7 +136,7 @@ Dlatego dobrym pomysłem jest posiadanie centralnego huba komunikacyjnego, któr
 // zarządca widoku, kontrolujący elementy UI do niego przypisane
 interface UiDirector {
     // `event` jest naiwnie Stringiem dla uproszczenia
-    // `sender` musi być elementem UI dziedziczącym po `Component`
+    // `sender` musi być elementem UI dziedziczącym po klasie `UiElement`
     fun notify(sender: UiElement, event: String)
 }
 
