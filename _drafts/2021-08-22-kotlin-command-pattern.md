@@ -515,5 +515,12 @@ Dodawanie `Command` do nazw konkretnych poleceń wydaje się mieć sens, bo jedn
 Obiekty poleceń mogą zawierać metodę do cofania wprowadzanych przez nie zmian. Dzieje się to przez przechowanie stanu `Receivera` sprzed wykonania polecenia, lub wykonanie polecenia z przeciwnymi parametrami. Cofnięte polecenia moga być odkładane na osobny bufor co pozwala na ich ponowne wykonanie w razie potrzeby.
 
 ## Zalety
+- **enkapsulacja** - zawarcie całej logiki potrzebnej do wykonania zadania w obiekcie z ogólnym interfejsem ma wiele zalet. Pozwala odkładać w czasie wykonanie zadania, ułatwia ponowne użycie kodu, testowanie i refaktoryzację.
+- **dynamiczna zmiana zachowania** - przekazywanie obiektów polecenia pozwala w czasie wykonywania programu zmieniać zachowanie `Invokerów`, np. po zmianie konfiguracji przesłanej zdalnie
+- **zamiana wielu wywołań na jedno polecenie** - zamiast wywoływać w odpowiedniej kolejności kilka metod `Receivera` można stworzyć polecenie, które to zrobi.
+- **undo/redo** - w naturalny sposób pozwala cofnać i wykonać ponownie zestaw instrukcji
+- **łatwe rozszerzanie możliwości** - dodanie nowego polecenia nie wpływa na poprzednie, ani na wywołanie w `Invokerze`
 
 ## Wady
+- **wiele podobnych klas** - w zależności od sytuacji, użycie wzorca `Command` może spowodować powstanie wielu klas różniących się 1 linią kodu.
+- **przedwczesna komplikacja** - zastosowanie tego wzorca zbyt wcześnie, może skończyć się pojedynczą klasą polecenia użytą w jednym miejscu, ale obwarowaną dodatkowymi interfejsami, `CommandProcessorem` itd.
