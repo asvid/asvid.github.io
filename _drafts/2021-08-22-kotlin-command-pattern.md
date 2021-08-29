@@ -16,7 +16,7 @@ tags:
 categories:
 - Design Patterns
 
-image: /assets/posts/adapter.jpg
+image: /assets/posts/command.jpg
 
 ---
 # Przeznaczenie
@@ -34,7 +34,7 @@ Jak już wspomniałem, standardowo obiekt `Command` ma metodę `execute()` (lub 
 - **Invoker** - klasa, która żąda obsłużenia polecenia
 - **Client** - tworzy obiekt polecenia `ConcreteCommand` i wiąże go z odbiorcą `Receiver` oraz `Invokerem`
 - **ConcreteCommand** - konkretne polecenie. Posiada wszystkie inne obiekty potrzebne do wykonania żądania.
-- 
+
 {% plantuml %}
 @startuml
 hide Client members
@@ -64,21 +64,21 @@ class Invoker{
 Invoker *-->Command
 Client --> Receiver
 ConcreteCommand::execute --> Receiver::action
-note "creates command instance\npassing receiver\nand params" as N1
+note "tworzy instancję polecenia\nprzekazuje Receiver\ni parametry polecenia" as N1
 Client .. N1
 N1 ..> ConcreteCommand
 
-note "sets command instance" as N2
+note "ustawia instancję polecenia" as N2
 Client .. N2
 N2 ..> Invoker
 
 note right of Invoker::executeCommand
-	executes command 
-	when needed
+	wykonuje polecenie
+	kiedy jest to wymagane
 end note
 
 note right of ConcreteCommand::execute
-	calls Receiver
+	wywołuje metodę Receivera
 end note
 @enduml
 {% endplantuml %}
@@ -88,7 +88,7 @@ Kolejność interakcji przedstawia się następująco:
 @startuml
 
 participant aReceiver
-aClient --> aReceiver : has a
+aClient --> aReceiver : posiada
 aClient --> aCommand: Command(aReceiver)
 activate aClient
 aClient -> aInvoker : setCommand(aCommand)
@@ -99,7 +99,7 @@ aCommand -> aReceiver : action()
 @enduml
 {% endplantuml %}
 
-1. `Client` towrzy obiekt konkretnego polecenia `Command`, przekazując odbiorcę `Receiver`.
+1. `Client` tworzy obiekt konkretnego polecenia `Command`, przekazując odbiorcę `Receiver`.
 2. `Invoker` dostaje konkretną instancję polecenia.
 3. `Invoker` wykorzystuje metodę `execute()` przekazanego polecenia do wykonania własnych zadań. Może to być np. wykonanie akcji po kliknięciu, jeśli `Invoker` jest przyciskiem UI.
 4. `Command` wywołuje odpowiednie metody swojej instancji obiektu `Receiver`.
@@ -127,8 +127,8 @@ class Receiver {
         println("performing action in Receiver")
     }
 }
-// obiekt wykonujący polecenie, które jest wstrzykiwane
-// może to być np. przycisk wywołujący polecenie po kliknięciu
+// obiekt wykonujący polecenie, które jest ustawiane setterem
+// np. przycisk wywołujący polecenie po kliknięciu
 class Invoker {
     private lateinit var aCommand: Command
 
@@ -295,7 +295,7 @@ fun main() {
     }
 }
 ```
-`CommandProcessor` to dostępny globalnie obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne `CQRS` przystało. Zarządzanie kolejką i wątkami znajduje się po stronie `Processora`, `Invoker` nie musi się tym zajmować, ani nawet wiedzieć czy są tam `coroutines`, Javowe wątki czy jakiś `RX`. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z `delay()` na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.
+`CommandProcessor` to dostępny globalnie obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne `CQRS` przystało. Zarządzanie kolejką i wątkami znajduje się po stronie `Processora`, `Invoker` nie musi się tym zajmować, ani nawet wiedzieć, czy są tam `coroutines`, Javowe wątki czy jakiś `RX`. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z `delay()` na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.
 
 Wykonywanie poleceń z kolejki może zostać zrównoleglone w łatwy sposób, przy użyciu `launchProcessor` przyjmującego `Channel`:
 ```kotlin
@@ -439,13 +439,13 @@ fun main() {
 }
 ```
 W zasadzie mówimy do `CommandProcessor`: wykonaj ten blok korzystając ze swojej instancji `Receivera`. Jednak tracimy możliwość zwinnego parametryzowania obiektów poleceń. Lambda może przyjmować parametry, ale będą użyte w momencie wykonania, czyli w `CommandProcessor`. Można je oczywiście przekazać w metodzie `process()`, ale trudno wtedy mówić o enkapsulacji poleceń, jeśli blok kodu mamy w jednym miejscu a w innym trzeba przekazać parametry. 
-Gdyby metoda `action()` była `suspend` to należałoby to obsłużyć w Lambdzie, owijając wywołanie w jakiś `CoroutineScope`. Mógłby on pochodzić z `CommandProcessor` podobnie jak `Receiver` ale jest to kolejna komplikacja która dochodzi w momencie tworzenia Lambdy.
+Gdyby metoda `action()` była `suspend` to należałoby to obsłużyć w Lambdzie, owijając wywołanie w jakiś `CoroutineScope`. Mógłby on pochodzić z `CommandProcessor` podobnie jak `Receiver` ale jest to kolejna komplikacja, która dochodzi w momencie tworzenia Lambdy.
 Podsumowując: jeśli chcesz mieć parametryzowaną Lambdę, przekazywaną do procesora i wykorzystywać ją w wielu miejscach systemu - **stwórz klasę**.
 
 ## Przykład z Home Automation
 Może to moje skrzywienie zawodowe, ale sterowanie zdalnymi urządzeniami idealnie nadaje się na życiowy przykład użycia wzorca `Command`.
 
-Mamy urządzenia które można włączyć lub wyłączyć oraz pilota do sterowania tymi urządzeniami. Pilot nie jest na sztywno związany z żadnym konkretnym urządzeniem, może sterować każdym. Nie ma też świadomości, którym urządzeniem steruje, po prostu obsługuje wciśnięcia swoich przycisków.
+Mamy urządzenia, które można włączyć lub wyłączyć oraz pilota do sterowania tymi urządzeniami. Pilot nie jest na sztywno związany z żadnym konkretnym urządzeniem, może sterować każdym. Nie ma też świadomości, którym urządzeniem steruje, po prostu obsługuje wciśnięcia swoich przycisków.
 
 ```kotlin
 // Invoker, przujmuje polecenia w konstruktorze, ale mógłby też mieć settery
@@ -518,7 +518,7 @@ Obiekty poleceń mogą zawierać metodę do cofania wprowadzanych przez nie zmia
 - **enkapsulacja** - zawarcie całej logiki potrzebnej do wykonania zadania w obiekcie z ogólnym interfejsem ma wiele zalet. Pozwala odkładać w czasie wykonanie zadania, ułatwia ponowne użycie kodu, testowanie i refaktoryzację.
 - **dynamiczna zmiana zachowania** - przekazywanie obiektów polecenia pozwala w czasie wykonywania programu zmieniać zachowanie `Invokerów`, np. po zmianie konfiguracji przesłanej zdalnie
 - **zamiana wielu wywołań na jedno polecenie** - zamiast wywoływać w odpowiedniej kolejności kilka metod `Receivera` można stworzyć polecenie, które to zrobi.
-- **undo/redo** - w naturalny sposób pozwala cofnać i wykonać ponownie zestaw instrukcji
+- **undo/redo** - w naturalny sposób pozwala cofnąć i wykonać ponownie zestaw instrukcji
 - **łatwe rozszerzanie możliwości** - dodanie nowego polecenia nie wpływa na poprzednie, ani na wywołanie w `Invokerze`
 
 ## Wady
