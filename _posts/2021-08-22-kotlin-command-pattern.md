@@ -15,6 +15,7 @@ tags:
 
 categories:
 - Design Patterns
+- rss
 
 image: /assets/posts/command.jpg
 
@@ -508,20 +509,20 @@ fun main() {
 ```
 
 # Naming
-Dodawanie `Command` do nazw konkretnych poleceń wydaje się mieć sens, bo jednoznacznie określa, do czego służy dana klasa. W przypadku `Receivera` czy `Invokera`, które z natury mają już swoje określone zadania i znalazły się w tym wzorcu trochę "przy okazji" tylko wprowadzałoby zamieszanie. Dobrze widać to w ostatnim przykładzie *Home Automation*. 
+Adding the `Command` suffix to the names of specific commands seems to make sense. It clearly defines what the class is used for. In the case of the `Receiver` or `Invoker`, which by nature already have their specific tasks and just found themselves in this pattern kinda "by the way" would only be confusing. You can see that in the last example of *Home Automation*.
 
-# Podsumowanie
-`Command` jest jednym z moich ulubionych wzorców, najczęściej stosowałem go z użyciem jakiejś formy `CommandProcessora`. Świetnie enkapsuluje żądanie i pozwala na jego przekazywanie i wielokrotne używanie. Ułatwia refaktoryzację, bo łatwo zamienić jedno polecenie na inne, lub zmienić implementację wewnętrzną bez wpływu na klienty klasy.
+# Summary
+The `Command` is one of my favorite patterns, most of the time I have used it with some form of `CommandProcessor`. It perfectly encapsulates the request and allows it to be moved and reused. It facilitates refactoring because it is easy to replace one command with another, or to change the internal implementation without affecting the clients of it.
 
-Obiekty poleceń mogą zawierać metodę do cofania wprowadzanych przez nie zmian. Dzieje się to przez przechowanie stanu `Receivera` sprzed wykonania polecenia, lub wykonanie polecenia z przeciwnymi parametrami. Cofnięte polecenia moga być odkładane na osobny bufor co pozwala na ich ponowne wykonanie w razie potrzeby.
+Command objects can contain a method to undo the changes they made. This is done by keeping the state of the `Receiver` before executing the command, or by executing the command with opposite parameters. Undoed commands can be put on a separate buffer, which allows them to be redone if necessary.
 
-## Zalety
-- **enkapsulacja** - zawarcie całej logiki potrzebnej do wykonania zadania w obiekcie z ogólnym interfejsem ma wiele zalet. Pozwala odkładać w czasie wykonanie zadania, ułatwia ponowne użycie kodu, testowanie i refaktoryzację.
-- **dynamiczna zmiana zachowania** - przekazywanie obiektów polecenia pozwala w czasie wykonywania programu zmieniać zachowanie `Invokerów`, np. po zmianie konfiguracji przesłanej zdalnie
-- **zamiana wielu wywołań na jedno polecenie** - zamiast wywoływać w odpowiedniej kolejności kilka metod `Receivera` można stworzyć polecenie, które to zrobi.
-- **undo/redo** - w naturalny sposób pozwala cofnąć i wykonać ponownie zestaw instrukcji
-- **łatwe rozszerzanie możliwości** - dodanie nowego polecenia nie wpływa na poprzednie, ani na wywołanie w `Invokerze`
+## Pros
+- **encapsulation** - whole logic and method calls required to perform the task are inside a single object with generic and simple interface. It allows to queue execution, reuse code, simple testing and refactorization.
+- **dynamic behavior change** - passing command objects enables changing behavior of the `Invoker` in runtime, i.e. when application config is updated remotely
+- **multiple calls in one** - instead of calling multiple methods of a few `Receivers`, a single `Command` can be created that will do all that
+- **undo/redo** - this pattern naturally allows to undo and redo set of instructions
+- **simple extending** - adding new `Command` doesn't influence previous ones, or the calling `Invoker`
 
-## Wady
-- **wiele podobnych klas** - w zależności od sytuacji, użycie wzorca `Command` może spowodować powstanie wielu klas różniących się 1 linią kodu.
-- **przedwczesna komplikacja** - zastosowanie tego wzorca zbyt wcześnie, może skończyć się pojedynczą klasą polecenia użytą w jednym miejscu, ale obwarowaną dodatkowymi interfejsami, `CommandProcessorem` itd.
+## Cons
+- **many similar classes** - depending on situation, using the `Command` pattern may cause having multiple classes with single line difference
+- **premature complication** - using this pattern too early may end up with single `Command` class used in one oplace, but surrounded with additional interfaces, `CommandProcessor`, etc.
