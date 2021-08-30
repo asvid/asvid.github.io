@@ -1,9 +1,9 @@
 ---
 layout: post 
-title: "Wzorzec Command (Polecenie) w Kotlinie"
+title: "Command Pattern in Kotlin"
 date:  "2021-08-22 10:53"
 description: "
-Wzorzec Command polega na opakowaniu żądania w konkretny obiekt, posiadający wszystkie informacje niezbędne do wykonania swojego zadania. Można o tym pomyśleć jak o kolejnym etapie refaktoryzacji, gdzie najpierw wydzielamy kod do osobnej metody, a następnie do osobnego obiektu, przyjmującego w konstruktorze argumenty potrzebne do wykonania żądania.
+The Command pattern wraps the request into a specific object that has all the information necessary to perform its task. You can think of it as the next stage of refactoring, where at first we extract the code to a separate method, and then to a separate object, taking the arguments needed to execute the request in the constructor.
 "
 permalink: "kotlin-command-pattern"
 comments: true 
@@ -19,21 +19,21 @@ categories:
 image: /assets/posts/command.jpg
 
 ---
-# Przeznaczenie
-Wzorzec `Command` polega na opakowaniu żądania w konkretny obiekt, posiadający wszystkie informacje niezbędne do wykonania swojego zadania. Można o tym pomyśleć jak o kolejnym etapie refaktoryzacji, gdzie najpierw wydzielamy kod do osobnej metody, a następnie do osobnego obiektu, przyjmującego w konstruktorze argumenty potrzebne do wykonania żądania.
+# Purpose
+The Command pattern wraps the request into a specific object that has all the information necessary to perform its task. You can think of it as the next stage of refactoring, where at first we extract the code to a separate method, and then to a separate object, taking the arguments needed to execute the request in the constructor.
 
-Dzięki temu, że żądanie jest obiektem, może zostać przekazane do wykonania do osobnego obiektu (`CommandProcessor`), co pozwala na ich kolejkowanie i ułatwia logowanie zdarzeń. To samo polecenie może być wykorzystywane w różnych miejscach systemu, enkapsulując całą logikę wykonania żądania, co zapobiega duplikacji kodu. Nie musi to być ta sama instancja obiektu, ale klasa polecenia.
+Since the request is an object, it can be sent to a separate object (`CommandProcessor`) for execution, which allows for their queuing and facilitates logging events. The same command can be used in different places in the system, encapsulating the entire logic of the request execution, which prevents code duplication. It does not have to be the same instance, but the class.
 
-Obiekt żądania, oprócz standardowej metody `execute()` może zawierać metodę w stylu `undo()` czyli cofnięcie wprowadzanych przez żądanie zmian. Praktycznie wszystkie programy graficzne czy edytory tekstu mają taką opcję. Przechowują każdą zmianę w formie `Polecenia` w jakimś buforze o ograniczonej pojemności (stąd możliwość np. tylko 3 cofnięć), i jeśli użytkownik chce cofnąć ostatnią wprowadzoną zmianę, `Polecenie` jest ściągane z bufora i wprowadzane przez nie zmiany są cofane.
+The request object, in addition to the standard `execute()` method, may contain a method like `undo()`, i.e. undoing the changes made by the request. Virtually all graphics programs or word processors have this option. They could be storing each change in the form of `Command` in some buffer with limited capacity (hence the possibility of e.g. only 3 undos), and if the user wants to undo the last change made, the`Command` is pulled from the buffer and the changes made by it are undone.
 
-# Implementacja
+# Implementation
 
-## Abstrakcyjna
-Jak już wspomniałem, standardowo obiekt `Command` ma metodę `execute()` (lub analogiczną). Oprócz samego obiektu żądania występuje w tym wzorcu kilka innych klas:
-- **Receiver** - to na nim `Command` wykonuje żądania. Jeśli `Polecenie` polega na ściągnięciu pogody z internetu, `Receiver` będzie np. klientem HTTP. Może to być dowolna klasa.
-- **Invoker** - klasa, która żąda obsłużenia polecenia
-- **Client** - tworzy obiekt polecenia `ConcreteCommand` i wiąże go z odbiorcą `Receiver` oraz `Invokerem`
-- **ConcreteCommand** - konkretne polecenie. Posiada wszystkie inne obiekty potrzebne do wykonania żądania.
+## Abstract
+As already mentioned, by default the `Command` object has an `execute()` (or equivalent) method. There are several other classes in this pattern:
+- **Receiver** - object used by the `Command` to complete its task. If the `Command` is to download the weather from the internet,` Receiver` will be an HTTP client, for example. It can be any class in your system.
+- **Invoker** - the class using the `Command`
+- **Client** - creates the `ConcreteCommand` instance and binds it with the `Receiver` and sets it in the`Invoker`
+- **ConcreteCommand** - specific command. It has all the other objects needed to complete the task.
 
 {% plantuml %}
 @startuml
@@ -64,26 +64,27 @@ class Invoker{
 Invoker *-->Command
 Client --> Receiver
 ConcreteCommand::execute --> Receiver::action
-note "tworzy instancję polecenia\nprzekazuje Receiver\ni parametry polecenia" as N1
+note "creates command instance\npassing the Receiver\nand command parameters" as N1
 Client .. N1
 N1 ..> ConcreteCommand
 
-note "ustawia instancję polecenia" as N2
+note "sets command instance" as N2
 Client .. N2
 N2 ..> Invoker
 
 note right of Invoker::executeCommand
-	wykonuje polecenie
-	kiedy jest to wymagane
+	calls command
+	when its needed
 end note
 
 note right of ConcreteCommand::execute
-	wywołuje metodę Receivera
+	calls Receiver action
 end note
 @enduml
 {% endplantuml %}
 
-Kolejność interakcji przedstawia się następująco:
+The order of interactions looks like this:
+
 {% plantuml %}
 @startuml
 
@@ -99,36 +100,38 @@ aCommand -> aReceiver : action()
 @enduml
 {% endplantuml %}
 
-1. `Client` tworzy obiekt konkretnego polecenia `Command`, przekazując odbiorcę `Receiver`.
-2. `Invoker` dostaje konkretną instancję polecenia.
-3. `Invoker` wykorzystuje metodę `execute()` przekazanego polecenia do wykonania własnych zadań. Może to być np. wykonanie akcji po kliknięciu, jeśli `Invoker` jest przyciskiem UI.
-4. `Command` wywołuje odpowiednie metody swojej instancji obiektu `Receiver`.
+1. The `Client` creates the instance of the specific `Command`, passing the receiver `Receiver`.
+2. `Invoker` gets a specific instance of the command.
+3. The `Invoker` uses the `execute()` method of the command instance to do its own thing. For example, this could be to perform an action "on click" if `Invoker` is a UI button.
+4. The `Command` calls the appropriate methods of its `Receiver`.
 
-W takiej najbardziej ogólnej formie można to zaimplementować następująco:
+In such generic form it can be implemented like this:
+
 ```kotlin
-// ogólny interfejs polecenia
-// związanie już w tym momencie z klasą Receiver pozwala w pewnym sensie grupować polecenia
-// związane np. z edytorem tekstu, grafiki czy zapytaniami HTTP
-// ale nie jest to wymagane przez sam wzorzec
+// generic Command interface
+// binding the Receiver class in the generic interface allows grouping commands in a way
+// e.g. related to text editing, graphic editor or HTTP requests
+// it's not required by the pattern itself
 abstract class Command(val receiver: Receiver) {
     abstract fun execute()
 }
-// konketne polecenie przyjmujące Receiver w konstruktorze
+// concrete Command taking Refceiver in the constructor
 class ConcreteCommand(receiver: Receiver) : Command(receiver) {
     override fun execute() {
         println("executing ConcreteCommand")
-        // wywołanie odpowiedniej akcji na odbiorcy
+        // calling action on Recveiver to perform a task
         receiver.action()
     }
 }
-// rzeczywisty "wykonawca" akcji, znający szczegóły implementacji
+// the "true" action performer, knowing implementation details
+// e.g. text editor or HTTP client
 class Receiver {
     fun action() {
         println("performing action in Receiver")
     }
 }
-// obiekt wykonujący polecenie, które jest ustawiane setterem
-// np. przycisk wywołujący polecenie po kliknięciu
+// class using the passed Command
+// e.g. UI button calling Command when clicked
 class Invoker {
     private lateinit var aCommand: Command
 
@@ -140,12 +143,12 @@ class Invoker {
         aCommand.execute()
     }
 }
-// klasa łącząca odbiorcę, polecenie i obiekt wywołujący polecenie
+// class connecting Receiver, Command and Invoker
 class Client(invoker: Invoker) {
     private val receiver = Receiver()
 
     init {
-		// ustawienie polecenia dla Invokera
+		// setting the Invoker command
         val concreteCommand = ConcreteCommand(receiver)
         invoker.setCommand(concreteCommand)
     }
@@ -159,29 +162,30 @@ fun main() {
 }
 ```
 
-### Result
-Polecenie może zwracać jakąś wartość. Nie zawsze będzie to jednak dobra praktyka. O ile zwracanie `Success/Failure` zwykle będzie OK, żeby poinformować klasę wywołującą o statusie wykonania polecenia, o tyle zwracanie jakichś konkretnych danych będzie kłócić się z podejściem `CQRS` - command query responsibility segregation. Ogólnie chodzi o to, że polecenie albo coś zmienia, albo coś zwraca. 
+### Return Result
+The command may return some value. However, this will not always be a good practice. While returning `Success/Failure` will usually be OK to inform the calling class about the command execution status, returning some specific data will conflict with the `CQRS` - command query responsibility segregation approach. The point is that the command either changes something or returns data.
 
-Weźmy taką sytuację: wyświetlamy listę imion, każdy obiekt listy można edytować i zmienić imię. Zmiana imienia jest poleceniem, które wykonuje operację na jakimś repozytorium danych. Czy takie polecenie powinno cokolwiek zwracać, a jeśli tak, to co dokładnie? Całą listę imion ze zmienionym przez polecenie, czy samo zmienione imię, które potem `Invoker` musi wrzucić do wyświetlanej listy, ale wtedy mamy 2 reprezentacje listy imion: w repozytorium i w widoku. Najbezpieczniej będzie, jeśli polecenie zwróci `Success` co spowoduje, że widok pobierze sobie aktualną listę imion z repozytorium. Lub jeszcze lepiej, widok zawsze ma aktualną listę z repozytorium przy pomocy jakiegoś `data-bindingu` czy `Obserwatora`. Po wykonaniu polecenia lista sama się zaktualizuje i nie ma nawet potrzeby zwracania `success/failure` z polecenia, o ile nie ma potrzeby obsłużenia błędu.
+Let's take this situation: you display a list of names, each list item can be edited and the name is changed. A name change is encapsulated in a command that operates on some data repository. Should such a command return anything, and if so, what exactly? The whole list of names with the updated name? What if list is paged, do you return just the page with the updated item, or whole list of items up to this item? Or should the command return the changed name itself, which then `Invoker` has to put into the displayed list, but then you have 2 representations of the names list: one in the repository and second one in the view, even if values are the same (but there is nothing to guarantee this). It's better if the command returns simple `Success`, which will cause the view to download the current list of names from the repository or show errors message. Or better yet, if the view always keeps its list up-to-date with repository by some sort of `data-binding` or `Observer`. After executing the command, the list will update itself, and you don't even need to return any `Success/Failure` from the command, unless you need to handle the error.
+
+Another way may be to pass some callback in the `execute()`, but maybe let's not go that way :) 
 
 ```kotlin
-// wynik polecenia
-// `sealed` pasuje tutaj idealnie
+// command result nicely fits with `sealed class`
 sealed class CommandResult {
-	// zwracane wartości mogą być `object` jeśli nie mają własnych parametrów jak np. powód błędu 
+	// returned values could be `object` if they don't contain any data
     class Success : CommandResult()
     class Fail : CommandResult()
 }
-// tym razem `interface` a nie `abstract class` bo nie mamy tutaj wymuszonego argumentu konstruktora
+// `interface` instead of `abstract class` this time, no forced `Receiver` type in the constructor
 interface Command {
     fun execute(): CommandResult
 }
-// `receiver` pojawia się dopiero tutaj
+// `Receiver` appears just here
 class ConcreteCommand(private val receiver: Receiver) : Command {
-	// wykonanie polecenia zwraca rezultat
+	// executing the command returns a result
     override fun execute(): CommandResult {
         println("executing ConcreteCommand")
-		// w zależności od wyniku z `receivera`
+		// that depends on Receiver response
         return if (receiver.action()) {
             CommandResult.Success()
         } else {
@@ -189,7 +193,7 @@ class ConcreteCommand(private val receiver: Receiver) : Command {
         }
     }
 }
-// `receiver` zwraca losowo True lub False
+// `Receiver` that returns random Boolean
 class Receiver {
     fun action(): Boolean {
         println("performing action in Receiver")
@@ -199,24 +203,24 @@ class Receiver {
 
 fun main() {
     val receiver = Receiver()
-    // pominąłem `Invoker` w tym przykładzie, wywołanie polecenia mamy po prostu w main()
-    val result = ConcreteCommand(receiver).execute()
+    // no `Invoker` in this example, invoking is simply in `main()`
+	val result = ConcreteCommand(receiver).execute()
     println("Command result is: $result")
 }
 ```
 
 ### CommandProcessor
-Zamknięcie całości polecenia w obiekcie umożliwia przesłanie go do `Processora` zamiast natychmiastowego wykonania. Procesor może zgodnie ze swoją wewnętrzną logiką kolejkować i wykonywać polecenia, ale z punktu widzenia `Invokera` nie ma to znaczenia. `Receiver` może zostać przeniesiony z polecenia do `Processora`, dzięki temu polecenia będą zawierać wyłącznie parametry, a resztę dostarczy `Processor` podczas wywoływania `execute()`. Należy jednak uważać, żeby metoda `execute()` miała zawsze taką samą sygnaturę i nie trzeba było w `Processorze` robić osobnego wywoływania ze względu na klasę polecenia. O ile `Command` i `Processor` znajdują się w tej samej domenie (np. zapytania HTTP do konkretnego API, wysłanie wiadomości przez Bluetooth), nie powinno być z tym problemów. Jeśli dany `Processor` musi przekazywać różne obiekty `Receiver` w trakcie wykonywania poleceń, może to oznaczać, że powinny one trafić do różnych `Processorów`.
+Closing the entire command in an object allows it to be passed to the external `Processor` instead of being executed immediately. The `Processor` can queue and execute commands according to its internal logic, but from the `Invoker` point of view, it doesn't matter. The `Receiver` can be moved from a command to the `Processor`, thus the commands will only contain parameters, and the rest will be handled by `Processor` when callin the`execute()`. However, make sure that the `execute()` method always has the same signature, and you do not have to implement special handling inside the `Processor` due to the type of the command. As long as `Command` and `Processor` are in the same domain (e.g. HTTP requests to a specific API, sending messages via Bluetooth), there should be no problems with that. If a given `Processor` needs to pass different `Receiver` type when executing commands, it may suggest that they should go to different `Processors`.
 
 ```kotlin
-// pomocna funkcja do losowego opóźnienia
+// util to generate random delays in suspended methods
 fun randomDelay() = Random.nextLong(1000, 3000)
 
 interface Command {
-	// Receiver jest przekazywany dopiero w momencie wykonania polecenia
+	// Receiver is passed at the execute() call, not sooner
     suspend fun execute(receiver: Receiver)
 }
-// polecenia przyjmują tylko własne parametry, bez Receivera
+// commands take only parameters, without Receiver
 class FirstCommand(private val param: Int) : Command {
     override suspend fun execute(receiver: Receiver) {
         println("executing FirstCommand $param")
@@ -232,34 +236,32 @@ class SecondCommand(private val param: String) : Command {
 }
 
 class Receiver {
-	// wykonanie akcji Receivera może chwilę zająć, stąd `suspend` i `delay()`
+	// running Receivers action may take a while, thus `suspend` and `delay()` to mimic that
     suspend fun action() {
         println("performing action in Receiver")
         delay(randomDelay())
         println("action finished!")
     }
 }
-// najważniejsza klasa w tym przykładzie
-// zawiera obiekt Receivera używany przy wykonaniu poleceń
-// same polecenia są odkładane na kolejkę FIFO w postaci `Channel`
+// the most important class in this example
+// it has the Receiver instance used by the commands
+// commands are stored in FIFO queue in the form of `Channel`
 object CommandProcessor {
     private val commands = Channel<Command>()
-	// użycie osobnych Scope na dodawanie i wykonywanie poleceń powoduje brak blokowania
+	// using separate Scopes for adding and executing commands solves blocking one by another
     private val processScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val executeScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val receiver = Receiver()
 
     fun process(command: Command) {
         processScope.launch {
-			// dodanie opóźnienia nie powoduje blokowania dodawania kolejnych poleceń
-            delay(randomDelay())
             println("adding $command to the queue")
             commands.send(command)
         }
     }
 
     init {
-		// nasłuchiwanie na nowe polecenia w kolejce i wykonywanie ich jak tylko się pojawią
+		// waiting for new commands in the queue and executing them as soon as they come
         executeScope.launch {
             for (command in commands) {
                 command.execute(receiver)
@@ -267,7 +269,7 @@ object CommandProcessor {
         }
     }
 }
-// Invoker bez zmian
+// Invoker without changes
 class Invoker {
     private lateinit var aCommand: Command
 
@@ -284,23 +286,23 @@ fun main() {
     val firstInvoker = Invoker()
     val secondInvoker = Invoker()
 
-	// polecenia przyjmują tylko własne parametry, bez Receivera
+	// no Receiver here, just command parameters
     firstInvoker.setCommand(FirstCommand(1))
     secondInvoker.setCommand(SecondCommand("2"))
 
-	// wykonanie poleceń po 10x
+	// invoking actions 10x
     repeat(10) {
         firstInvoker.performAction()
         secondInvoker.performAction()
     }
 }
 ```
-`CommandProcessor` to dostępny globalnie obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne `CQRS` przystało. Zarządzanie kolejką i wątkami znajduje się po stronie `Processora`, `Invoker` nie musi się tym zajmować, ani nawet wiedzieć, czy są tam `coroutines`, Javowe wątki czy jakiś `RX`. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z `delay()` na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.
+The `CommandProcessor` is a globally available object that processes commands sent to it. Adding new commands does not block their execution because it runs in separate Scope. In this case, commands that return nothing will work best. You just throw them on the queue, and the command effect (if needed) should come through a different channel, as in a proper `CQRS`. Queue and thread management is on the `Processor` side, the `Invoker` doesn't have to deal with it, or even know if there are `coroutines`, Java threads or some `RX`. Commands are executed sequentially, one after the other. Combined with `delay()` for the Receiver action, this has the effect of immediately adding commands to the queue, and laboriously executing them.
 
-Wykonywanie poleceń z kolejki może zostać zrównoleglone w łatwy sposób, przy użyciu `launchProcessor` przyjmującego `Channel`:
+Queue commands execution can be done in parallel with multiple `launchProcessors` taking `Channel` as parameter: 
 ```kotlin
 object CommandProcessor {
-	// tutaj wszystko bez zmian
+	// no changes here
     private val commands = Channel<Command>()
     private val processScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val executeScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
@@ -316,16 +318,16 @@ object CommandProcessor {
 
     init {
         executeScope.launch {
-			// uruchamiamy 5 wewnętrznych procesorów operujących na tej samej kolejce
-            // jednocześnie może być wykonywanych 5 poleceń, tyle ile wewnętrznych processorów
+			// starting 5 internal command processors, working on the same queue
+			// so there can be 5 commands executed at the same time
             repeat(5) {
                 launchProcessor(commands)
             }
         }
     }
-	// prywatna `extension function` pozwalająca wielu konsumentom ściągać polecenia z kolejki
-	// polecenia są wykonywane tylko raz
-	// po zakończeniu wykonania polecenia, wew. procesor ściąga z kolejki następne
+	// private `extension function` that alows multiple consumers take commands from the same queue
+	// each command is executed only once
+	// after execution is done, the processor is taking next item from the queue
     private fun CoroutineScope.launchProcessor(channel: ReceiveChannel<Command>) = launch {
         for (command in channel) {
             command.execute(receiver)
@@ -335,33 +337,32 @@ object CommandProcessor {
 ```
 
 ### Undo
-Polecenia mogą posiadać metodę umożliwiającą cofnięcie wprowadzonych przez siebie zmian, czyli `undo()` znane z edytorów graficznych lub tekstowych. Sposób jej implementacji będzie mocno zależał od sytuacji, ale można przyjąć, że polecenie zapamiętuje stan sprzed zmiany i w razie potrzeby go przywraca. Trzymanie wielu stanów w historii pochłania pamięć i z tego powodu bufor historii jest często ograniczony do ostatnich 3 poleceń.
-Cofnięcie wykonania polecenia może również być osiągnięte przez wykonanie polecenia z przeciwnymi parametrami, nie trzeba wtedy trzymać stanu, a samo wykonanie `undo()` może być zapisane w historii. Cofnięte polecenia mogą trafiać na osobny bufor, co umożliwi ich ponowne wykonanie `redo()`.
+Commands may have a method that allows you to undo the changes they have made, i.e. `undo()` known from graphic or text editors. The implementation will strongly depend on the case, but it can be assumed that the command remembers the state before the change and restores it, if necessary. Holding multiple states in history eats memory and therefore the history buffer is often limited to the last 3 commands (or similar). Undo execution of a command can also be achieved by executing a command with the opposite parameters, then there is no need to hold the state, and the execution of `undo()` itself can be saved in the history. Undoed commands may end up in a separate buffer, allowing them to be executed again with `redo()`.
 
-Poniżej mocno uproszczony przykład `undo()` z zachowaniem stanu sprzed wykonania polecenia:
+Strongly simplified example of `undo()` with keeping the before-execution state:
 ```kotlin
-// generyczne polecenie rysowania "czegoś" na obiekcie `Canvas`
+// generic command of drawing "something" on the `Canvas`
 abstract class DrawCommand(private val canvas: Canvas) {
-	// stan sprzed wykonania polecenia - lista już narysowanych elementów
+	// state before executing command - the list of already drawn elements
     private var preCommandState = listOf<Shape>()
 
     abstract fun execute()
-    // zachowanie stanu
+    // saving the state
     fun saveState() {
         preCommandState = canvas.shapes.toList()
     }
 
-	// cofnięcie polecenia, czyli przywrócenie stanu sprzed jego wykonania
+	// undoing the command, so setting Canvas state from before exectuion
     fun undo() {
         println("undo ${this}")
         canvas.shapes = preCommandState.toMutableList()
     }
 }
-// interfejs i klasy kształtów
+// drawable shapes interfaces
 interface Shape
 data class Line(val length: Int) : Shape
 data class Circle(val diameter: Int) : Shape
-// polecenia rysujące kształty
+// commands for drawing shapes, taking params and Receiver (Canvas)
 class DrawLine(private val length: Int, private val canvas: Canvas) : DrawCommand(canvas) {
     override fun execute() {
         saveState()
@@ -377,9 +378,9 @@ class DrawCircle(private val diameter: Int, private val canvas: Canvas) : DrawCo
 
 // Receiver
 class Canvas {
-	// stan rysunku
+	// current canvas state
     var shapes: MutableList<Shape> = mutableListOf()
-	// rysowanie elementu polega na dodaniu go do listy narysowanych
+	// drawing a shape on Canvas means adding it to the list of shapes
     fun draw(shape: Shape) {
         println("drawing a $shape")
         shapes.add(shape)
@@ -390,7 +391,7 @@ fun main() {
     val canvas = Canvas()
     val commandsHistory = mutableListOf<DrawCommand>()
 
-	// po wykonaniu polecenia jest ono dodawane do historii
+	// after executing the command its being preserved in history
     val drawLine = DrawLine(2, canvas)
     drawLine.execute()
     commandsHistory.add(drawLine)
@@ -409,20 +410,20 @@ fun main() {
 
     println("current shapes: ${canvas.shapes}")
     println("--- undo last 2 ---")
-	// cofnięcie 2 ostatnich poleceń
+	// reverting last 2 commands
     commandsHistory.removeLast().undo()
     commandsHistory.removeLast().undo()
     println("current shapes: ${canvas.shapes}")
 }
 ```
 
-### A może lambdy wystarczą?
-Może się wydawać, że tworzenie całej klasy i potem obiektu do wykonania jakiejś akcji to zbytek oraz że taką samą funkcjonalność i czytelność uda się uzyskać korzystając z lambd.
+### Why not just use lambdas?
+It may seem that creating a whole class and then an object to perform some action is a redundancy, and that the same functionality and readability can be achieved using lambdas.
 
-Przykład z wykorzystaniem podobnego processora z poprzedniego przykładu:
+Example using a similar processor from the previous case:
 ```kotlin
 fun main() {
-	// polecenie przyjmuje Receiver w momencie wykonania
+	// command uses Receiver when its executed
     val command = { receiver: Receiver ->
         println("this is a command to do stuff")
         receiver.action()
@@ -430,7 +431,7 @@ fun main() {
     repeat(10) {
         CommandProcessor.process(command)
 		
-		// polecenia nie muszą być przypisane do konkretnych zmiennych
+		// lambda-commands don't need to be assigned to variables
         CommandProcessor.process { receiver: Receiver ->
             println("this is a another command")
             receiver.action()
@@ -438,17 +439,17 @@ fun main() {
     }
 }
 ```
-W zasadzie mówimy do `CommandProcessor`: wykonaj ten blok korzystając ze swojej instancji `Receivera`. Jednak tracimy możliwość zwinnego parametryzowania obiektów poleceń. Lambda może przyjmować parametry, ale będą użyte w momencie wykonania, czyli w `CommandProcessor`. Można je oczywiście przekazać w metodzie `process()`, ale trudno wtedy mówić o enkapsulacji poleceń, jeśli blok kodu mamy w jednym miejscu a w innym trzeba przekazać parametry. 
-Gdyby metoda `action()` była `suspend` to należałoby to obsłużyć w Lambdzie, owijając wywołanie w jakiś `CoroutineScope`. Mógłby on pochodzić z `CommandProcessor` podobnie jak `Receiver` ale jest to kolejna komplikacja, która dochodzi w momencie tworzenia Lambdy.
-Podsumowując: jeśli chcesz mieć parametryzowaną Lambdę, przekazywaną do procesora i wykorzystywać ją w wielu miejscach systemu - **stwórz klasę**.
+We say to the `CommandProcessor`: execute this block using your `Receiver` instance. However, we lose the ability to parameterize command objects. Lambda can take parameters, but they will be used at runtime, which is in the `CommandProcessor`. Of course, they can be passed in the `process ()` method, but then it is difficult to talk about command encapsulation if you have a block of code in one place and parameters need to be passed in another.
+If the `action()` method were `suspend`, it would need to be handled in the lambda block, wrapping the call in some `CoroutineScope`. It could come from `CommandProcessor` just like the `Receiver` but this is another complication that occurs when Lambda is created.
+To sum up: if you want to have a parameterized Lambda, passed to the processor and use it in multiple places of the system - **create a class**.
 
-## Przykład z Home Automation
-Może to moje skrzywienie zawodowe, ale sterowanie zdalnymi urządzeniami idealnie nadaje się na życiowy przykład użycia wzorca `Command`.
+## Home Automation example
+It may be my professional bias, but controlling remote devices is perfect for a real-life example of using the `Command` pattern.
 
-Mamy urządzenia, które można włączyć lub wyłączyć oraz pilota do sterowania tymi urządzeniami. Pilot nie jest na sztywno związany z żadnym konkretnym urządzeniem, może sterować każdym. Nie ma też świadomości, którym urządzeniem steruje, po prostu obsługuje wciśnięcia swoich przycisków.
+Lets have devices that can be turned ON or OFF and a remote control to control these devices. The remote control is not directly connected to any specific device, it can control any of them, or multiple at the same time. The remote is also not aware of the device it's controlling, it just handles pressing its buttons.
 
 ```kotlin
-// Invoker, przujmuje polecenia w konstruktorze, ale mógłby też mieć settery
+// Invoker, takes commands in the constructor, but it could also use setters
 class RemoteController(
     private val firstButtonAction: Command,
     private val secondButtonAction: Command,
@@ -473,10 +474,10 @@ class Device(private val name: String) {
         println("turning device $name ${if (on) "ON" else "OFF"}")
     }
 }
-// polecenie przyjmuje Receiver w konstruktorze
+// concrete command thaking Receiver in the constructor
 class TurnOnCommand(private val device: Device) : Command {
     override fun execute() {
-		// i wywołuje na nim akcję zgodną ze swoim przeznaczeniem
+		// and calling a method accorting to its task
         device.switch(true)
     }
 }
@@ -489,24 +490,24 @@ class TurnOffCommand(private val device: Device) : Command {
 
 fun main() {
 
-    // instancja Receivera
+    // Receiver instance
     val lightBulb = Device("living room light")
 
-    // przekazana do poleceń
+    // passed to the commands
     val turnOn: Command = TurnOnCommand(lightBulb)
     val turnOff: Command = TurnOffCommand(lightBulb)
 
-    // invoker (pilot) otrzymuje polecenia pod konkretne przyciski
+    // Invoker (the remote) gets commands for its buttons
     val remote = RemoteController(turnOn, turnOff)
 
-    // ale sam invoker tylko wywołuje polecenia, nie wie co dokładnie się dzieje i z jakim urządzeniem
+	// but Invoker itself is just executing the commands, has no idea which device its controlling and how
     remote.firstButton()
 
     remote.secondButton()
 }
 ```
 
-# Nazewnictwo
+# Naming
 Dodawanie `Command` do nazw konkretnych poleceń wydaje się mieć sens, bo jednoznacznie określa, do czego służy dana klasa. W przypadku `Receivera` czy `Invokera`, które z natury mają już swoje określone zadania i znalazły się w tym wzorcu trochę "przy okazji" tylko wprowadzałoby zamieszanie. Dobrze widać to w ostatnim przykładzie *Home Automation*. 
 
 # Podsumowanie
