@@ -90,7 +90,7 @@ The order of interactions looks like this:
 @startuml
 
 participant aReceiver
-aClient --> aReceiver : posiada
+aClient --> aReceiver : has a
 aClient --> aCommand: Command(aReceiver)
 activate aClient
 aClient -> aInvoker : setCommand(aCommand)
