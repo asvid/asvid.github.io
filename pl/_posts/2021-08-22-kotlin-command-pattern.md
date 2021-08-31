@@ -298,10 +298,11 @@ fun main() {
     }
 }
 ```
-`CommandProcessor` to dostępny globalnie obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne `CQRS` przystało. Zarządzanie kolejką i wątkami znajduje się po stronie `Processora`, `Invoker` nie musi się tym zajmować, ani nawet wiedzieć, czy są tam `coroutines`, Javowe wątki czy jakiś `RX`. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z `delay()` na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.
+`CommandProcessor` to obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne `CQRS` przystało. Zarządzanie kolejką i wątkami znajduje się po stronie `Processora`, `Invoker` nie musi się tym zajmować, ani nawet wiedzieć, czy są tam `coroutines`, Javowe wątki czy jakiś `RX`. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z `delay()` na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.
 
 Wykonywanie poleceń z kolejki może zostać zrównoleglone w łatwy sposób, przy użyciu `launchProcessor` przyjmującego `Channel`:
 ```kotlin
+// najprawdopodobniej byłby dostarczany przez DI, ale na potrzeby przykładu `object` wystarczy
 object CommandProcessor {
 	// tutaj wszystko bez zmian
     private val commands = Channel<Command>()
@@ -336,6 +337,7 @@ object CommandProcessor {
     }
 }
 ```
+Ale będzie to również oznaczać, że np. jeśli wykonanie „Polecenia 1” trwa dłużej niż „Polecenie 2”, to drugie zostanie ukończone wcześniej, co nie zawsze będzie poprawne. To zależy w dużej mierze od konkretnego przypadku.
 
 ### Undo
 Polecenia mogą posiadać metodę umożliwiającą cofnięcie wprowadzonych przez siebie zmian, czyli `undo()` znane z edytorów graficznych lub tekstowych. Sposób jej implementacji będzie mocno zależał od sytuacji, ale można przyjąć, że polecenie zapamiętuje stan sprzed zmiany i w razie potrzeby go przywraca. Trzymanie wielu stanów w historii pochłania pamięć i z tego powodu bufor historii jest często ograniczony do ostatnich 3 poleceń.

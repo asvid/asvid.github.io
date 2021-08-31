@@ -42,17 +42,17 @@ hide Client members
   skinparam linetype ortho
 
 interface Command{
-	+ execute()
+    + execute()
 }
 
 class ConcreteCommand implements Command{
-	- receiver: Receiver
-	- params
+    - receiver: Receiver
+    - params
 + execute()
 }
 
 class Receiver{
-	+ action()
+    + action()
 }
 
 class Client
@@ -74,12 +74,12 @@ Client .. N2
 N2 ..> Invoker
 
 note right of Invoker::executeCommand
-	calls command
-	when its needed
+    calls command
+    when its needed
 end note
 
 note right of ConcreteCommand::execute
-	calls Receiver action
+    calls Receiver action
 end note
 @enduml
 {% endplantuml %}
@@ -149,7 +149,7 @@ class Client(invoker: Invoker) {
     private val receiver = Receiver()
 
     init {
-		// setting the Invoker command
+        // setting the Invoker command
         val concreteCommand = ConcreteCommand(receiver)
         invoker.setCommand(concreteCommand)
     }
@@ -157,7 +157,7 @@ class Client(invoker: Invoker) {
 
 fun main() {
     val invoker = Invoker()
-	
+    
     Client(invoker)
     invoker.performAction()
 }
@@ -166,14 +166,15 @@ fun main() {
 ### Return Result
 The command may return some value. However, this will not always be a good practice. While returning `Success/Failure` will usually be OK to inform the calling class about the command execution status, returning some specific data will conflict with the `CQRS` - command query responsibility segregation approach. The point is that the command either changes something or returns data.
 
-Let's take this situation: you display a list of names, each list item can be edited and the name is changed. A name change is encapsulated in a command that operates on some data repository. Should such a command return anything, and if so, what exactly? The whole list of names with the updated name? What if list is paged, do you return just the page with the updated item, or whole list of items up to this item? Or should the command return the changed name itself, which then `Invoker` has to put into the displayed list, but then you have 2 representations of the names list: one in the repository and second one in the view, even if values are the same (but there is nothing to guarantee this). It's better if the command returns simple `Success`, which will cause the view to download the current list of names from the repository or show errors message. Or better yet, if the view always keeps its list up-to-date with repository by some sort of `data-binding` or `Observer`. After executing the command, the list will update itself, and you don't even need to return any `Success/Failure` from the command, unless you need to handle the error.
+Let's take this situation: you display a list of names, each list item can be edited and the name is changed. A name change is encapsulated in a command that operates on some data repository. Should such command return anything, and if so, what exactly? The whole list of names with the updated name? What if list is paged, do you return just the page with the updated item, or whole list of items up to this item? Or should the command return the changed name itself, so then `Invoker` has to update the displayed list. But then you have 2 representations of the names list: one in the repository and second one in the view, even if values are the same (but there is nothing to guarantee this). 
+It's better if the command returns simple `Success`, which will cause the view to download the current list of names from the repository or show errors message. Or better yet, if the view always keeps its list up-to-date with repository by some sort of `data-binding` or `Observer`. After executing the command, the list will update itself, and you don't even need to return any `Success/Failure` from the command, unless you need to handle the error.
 
 Another way may be to pass some callback in the `execute()`, but maybe let's not go that way :) 
 
 ```kotlin
 // command result nicely fits with `sealed class`
-sealed class CommandResult {
-	// returned values could be `object` if they don't contain any data
+sealed class CommandResult { 
+    // returned values could be `object` if they don't contain any data 
     class Success : CommandResult()
     class Fail : CommandResult()
 }
@@ -183,10 +184,10 @@ interface Command {
 }
 // `Receiver` appears just here
 class ConcreteCommand(private val receiver: Receiver) : Command {
-	// executing the command returns a result
+    // executing the command returns a result
     override fun execute(): CommandResult {
         println("executing ConcreteCommand")
-		// that depends on Receiver response
+        // that depends on Receiver response
         return if (receiver.action()) {
             CommandResult.Success()
         } else {
@@ -205,20 +206,22 @@ class Receiver {
 fun main() {
     val receiver = Receiver()
     // no `Invoker` in this example, invoking is simply in `main()`
-	val result = ConcreteCommand(receiver).execute()
+    val result = ConcreteCommand(receiver).execute()
     println("Command result is: $result")
 }
 ```
 
 ### CommandProcessor
-Closing the entire command in an object allows it to be passed to the external `Processor` instead of being executed immediately. The `Processor` can queue and execute commands according to its internal logic, but from the `Invoker` point of view, it doesn't matter. The `Receiver` can be moved from a command to the `Processor`, thus the commands will only contain parameters, and the rest will be handled by `Processor` when callin the`execute()`. However, make sure that the `execute()` method always has the same signature, and you do not have to implement special handling inside the `Processor` due to the type of the command. As long as `Command` and `Processor` are in the same domain (e.g. HTTP requests to a specific API, sending messages via Bluetooth), there should be no problems with that. If a given `Processor` needs to pass different `Receiver` type when executing commands, it may suggest that they should go to different `Processors`.
+Closing the entire command in an object allows it to be passed to the external `Processor` instead of being executed immediately. The `Processor` can queue and execute commands according to its internal logic, but from the `Invoker` point of view, it doesn't really matter. The `Receiver` can be moved from a command to the `Processor`, thus the commands will only take its parameters, and the rest will be handled by `Processor` when calling the `execute()`. 
+
+However, make sure that the `execute()` method always has the same signature, and you do not have to implement special handling inside the `Processor` due to the type of the command. As long as `Command` and `Processor` are in the same domain (e.g. HTTP requests to a specific API, sending messages via Bluetooth), there should be no problems with that. If a given `Processor` needs to pass different `Receiver` type when executing commands, it may suggest that they should go to a different `Processor`.
 
 ```kotlin
 // util to generate random delays in suspended methods
 fun randomDelay() = Random.nextLong(1000, 3000)
 
 interface Command {
-	// Receiver is passed at the execute() call, not sooner
+    // Receiver is passed at the execute() call, not sooner
     suspend fun execute(receiver: Receiver)
 }
 // commands take only parameters, without Receiver
@@ -237,7 +240,7 @@ class SecondCommand(private val param: String) : Command {
 }
 
 class Receiver {
-	// running Receivers action may take a while, thus `suspend` and `delay()` to mimic that
+    // running Receivers action may take a while, thus `suspend` and `delay()` to mimic that
     suspend fun action() {
         println("performing action in Receiver")
         delay(randomDelay())
@@ -249,7 +252,7 @@ class Receiver {
 // commands are stored in FIFO queue in the form of `Channel`
 object CommandProcessor {
     private val commands = Channel<Command>()
-	// using separate Scopes for adding and executing commands solves blocking one by another
+    // using separate Scopes for adding and executing commands solves blocking one by another
     private val processScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val executeScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val receiver = Receiver()
@@ -262,7 +265,7 @@ object CommandProcessor {
     }
 
     init {
-		// waiting for new commands in the queue and executing them as soon as they come
+        // waiting for new commands in the queue and executing them as soon as they come
         executeScope.launch {
             for (command in commands) {
                 command.execute(receiver)
@@ -287,23 +290,24 @@ fun main() {
     val firstInvoker = Invoker()
     val secondInvoker = Invoker()
 
-	// no Receiver here, just command parameters
+    // no Receiver here, just command parameters
     firstInvoker.setCommand(FirstCommand(1))
     secondInvoker.setCommand(SecondCommand("2"))
 
-	// invoking actions 10x
+    // invoking actions 10x
     repeat(10) {
         firstInvoker.performAction()
         secondInvoker.performAction()
     }
 }
 ```
-The `CommandProcessor` is a globally available object that processes commands sent to it. Adding new commands does not block their execution because it runs in separate Scope. In this case, commands that return nothing will work best. You just throw them on the queue, and the command effect (if needed) should come through a different channel, as in a proper `CQRS`. Queue and thread management is on the `Processor` side, the `Invoker` doesn't have to deal with it, or even know if there are `coroutines`, Java threads or some `RX`. Commands are executed sequentially, one after the other. Combined with `delay()` for the Receiver action, this has the effect of immediately adding commands to the queue, and laboriously executing them.
+The `CommandProcessor` is an object that processes commands sent to it. Adding new commands does not block their execution because it runs in separate scope. In this case, commands that return nothing will work best. You just throw them on the queue, and the command effect (if needed) should come through a different channel, as in a proper `CQRS`. Queue and thread management is on the `Processor` side, the `Invoker` doesn't have to deal with it, or even know if there are `coroutines`, Java threads or some `RX`. Commands are executed sequentially, one after the other. Combined with `delay()` for the Receiver action, this has the effect of immediately adding commands to the queue, and laboriously executing them.
 
-Queue commands execution can be done in parallel with multiple `launchProcessors` taking `Channel` as parameter: 
+Queue commands execution can also be done in parallel with multiple `launchProcessors` taking `Channel` as parameter: 
 ```kotlin
+// IRL this would be provided by DI, but for the sake of example `object` will do
 object CommandProcessor {
-	// no changes here
+    // no changes here
     private val commands = Channel<Command>()
     private val processScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
     private val executeScope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
@@ -319,16 +323,16 @@ object CommandProcessor {
 
     init {
         executeScope.launch {
-			// starting 5 internal command processors, working on the same queue
-			// so there can be 5 commands executed at the same time
+            // starting 5 internal command processors, working on the same queue
+            // so there can be 5 commands executed at the same time
             repeat(5) {
                 launchProcessor(commands)
             }
         }
     }
-	// private `extension function` that alows multiple consumers take commands from the same queue
-	// each command is executed only once
-	// after execution is done, the processor is taking next item from the queue
+    // private `extension function` that alows multiple consumers take commands from the same queue
+    // each command is executed only once
+    // after execution is done, the processor is taking next item from the queue
     private fun CoroutineScope.launchProcessor(channel: ReceiveChannel<Command>) = launch {
         for (command in channel) {
             command.execute(receiver)
@@ -336,15 +340,16 @@ object CommandProcessor {
     }
 }
 ```
+But this will also mean that i.e. if `Command 1` takes longer to execute than `Command 2`, the latter will be finished sooner which may not always be a good thing. It depends heavily on the case.
 
 ### Undo
-Commands may have a method that allows you to undo the changes they have made, i.e. `undo()` known from graphic or text editors. The implementation will strongly depend on the case, but it can be assumed that the command remembers the state before the change and restores it, if necessary. Holding multiple states in history eats memory and therefore the history buffer is often limited to the last 3 commands (or similar). Undo execution of a command can also be achieved by executing a command with the opposite parameters, then there is no need to hold the state, and the execution of `undo()` itself can be saved in the history. Undoed commands may end up in a separate buffer, allowing them to be executed again with `redo()`.
+Commands may have a method that allows undoing the changes they have made, i.e. `undo()` known from graphic or text editors. The implementation will strongly depend on the case, but it can be assumed that the command remembers the state before the change and restores it, if necessary. Holding multiple states in history eats memory and therefore the history buffer is often limited to the last 3 commands (or similar). Undo execution of a command can also be achieved by executing a command with the opposite parameters, then there is no need to hold the state, and the execution of `undo()` itself can be saved in the history. Undoed commands may end up in a separate buffer, allowing them to be executed again with `redo()`.
 
 Strongly simplified example of `undo()` with keeping the before-execution state:
 ```kotlin
 // generic command of drawing "something" on the `Canvas`
 abstract class DrawCommand(private val canvas: Canvas) {
-	// state before executing command - the list of already drawn elements
+    // state before executing command - the list of already drawn elements
     private var preCommandState = listOf<Shape>()
 
     abstract fun execute()
@@ -353,7 +358,7 @@ abstract class DrawCommand(private val canvas: Canvas) {
         preCommandState = canvas.shapes.toList()
     }
 
-	// undoing the command, so setting Canvas state from before exectuion
+    // undoing the command, so setting Canvas state from before exectuion
     fun undo() {
         println("undo ${this}")
         canvas.shapes = preCommandState.toMutableList()
@@ -379,9 +384,9 @@ class DrawCircle(private val diameter: Int, private val canvas: Canvas) : DrawCo
 
 // Receiver
 class Canvas {
-	// current canvas state
+    // current canvas state
     var shapes: MutableList<Shape> = mutableListOf()
-	// drawing a shape on Canvas means adding it to the list of shapes
+    // drawing a shape on Canvas means adding it to the list of shapes
     fun draw(shape: Shape) {
         println("drawing a $shape")
         shapes.add(shape)
@@ -392,7 +397,7 @@ fun main() {
     val canvas = Canvas()
     val commandsHistory = mutableListOf<DrawCommand>()
 
-	// after executing the command its being preserved in history
+    // after executing the command its being preserved in history
     val drawLine = DrawLine(2, canvas)
     drawLine.execute()
     commandsHistory.add(drawLine)
@@ -411,7 +416,7 @@ fun main() {
 
     println("current shapes: ${canvas.shapes}")
     println("--- undo last 2 ---")
-	// reverting last 2 commands
+    // reverting last 2 commands
     commandsHistory.removeLast().undo()
     commandsHistory.removeLast().undo()
     println("current shapes: ${canvas.shapes}")
@@ -424,15 +429,15 @@ It may seem that creating a whole class and then an object to perform some actio
 Example using a similar processor from the previous case:
 ```kotlin
 fun main() {
-	// command uses Receiver when its executed
+    // command uses Receiver when its executed
     val command = { receiver: Receiver ->
         println("this is a command to do stuff")
         receiver.action()
     }
     repeat(10) {
         CommandProcessor.process(command)
-		
-		// lambda-commands don't need to be assigned to variables
+        
+        // lambda-commands don't need to be assigned to variables
         CommandProcessor.process { receiver: Receiver ->
             println("this is a another command")
             receiver.action()
@@ -440,14 +445,15 @@ fun main() {
     }
 }
 ```
-We say to the `CommandProcessor`: execute this block using your `Receiver` instance. However, we lose the ability to parameterize command objects. Lambda can take parameters, but they will be used at runtime, which is in the `CommandProcessor`. Of course, they can be passed in the `process ()` method, but then it is difficult to talk about command encapsulation if you have a block of code in one place and parameters need to be passed in another.
+We tell the `CommandProcessor`: execute this block using your `Receiver` instance. However, we lose the ability to parameterize command objects. Lambda can take parameters, but they will be used at runtime, which is in the `CommandProcessor`. Of course, they can be passed in the `process ()` method, but then it is difficult to talk about command encapsulation if you have a block of code in one place and parameters need to be passed in another.
 If the `action()` method were `suspend`, it would need to be handled in the lambda block, wrapping the call in some `CoroutineScope`. It could come from `CommandProcessor` just like the `Receiver` but this is another complication that occurs when Lambda is created.
+
 To sum up: if you want to have a parameterized Lambda, passed to the processor and use it in multiple places of the system - **create a class**.
 
 ## Home Automation example
 It may be my professional bias, but controlling remote devices is perfect for a real-life example of using the `Command` pattern.
 
-Lets have devices that can be turned ON or OFF and a remote control to control these devices. The remote control is not directly connected to any specific device, it can control any of them, or multiple at the same time. The remote is also not aware of the device it's controlling, it just handles pressing its buttons.
+Lets have some devices that can be turned ON or OFF and a remote control to set these devices. The remote control is not directly connected to any specific device, it can control any of them, or multiple at the same time. The remote is also not aware of the device it's controlling, it just handles pressing its buttons.
 
 ```kotlin
 // Invoker, takes commands in the constructor, but it could also use setters
@@ -455,11 +461,11 @@ class RemoteController(
     private val firstButtonAction: Command,
     private val secondButtonAction: Command,
 ) {
-    fun firstButton() {
+    fun firstButtonClicked() {
         firstButtonAction.execute()
     }
 
-    fun secondButton() {
+    fun secondButtonClicked() {
         secondButtonAction.execute()
     }
 }
@@ -478,7 +484,7 @@ class Device(private val name: String) {
 // concrete command thaking Receiver in the constructor
 class TurnOnCommand(private val device: Device) : Command {
     override fun execute() {
-		// and calling a method accorting to its task
+        // and calling a method according to its task
         device.switch(true)
     }
 }
@@ -501,10 +507,10 @@ fun main() {
     // Invoker (the remote) gets commands for its buttons
     val remote = RemoteController(turnOn, turnOff)
 
-	// but Invoker itself is just executing the commands, has no idea which device its controlling and how
-    remote.firstButton()
+    // but Invoker itself is just executing the commands, has no idea which device its controlling and how
+    remote.firstButtonClicked()
 
-    remote.secondButton()
+    remote.secondButtonClicked()
 }
 ```
 
@@ -514,15 +520,15 @@ Adding the `Command` suffix to the names of specific commands seems to make sens
 # Summary
 The `Command` is one of my favorite patterns, most of the time I have used it with some form of `CommandProcessor`. It perfectly encapsulates the request and allows it to be moved and reused. It facilitates refactoring because it is easy to replace one command with another, or to change the internal implementation without affecting the clients of it.
 
-Command objects can contain a method to undo the changes they made. This is done by keeping the state of the `Receiver` before executing the command, or by executing the command with opposite parameters. Undoed commands can be put on a separate buffer, which allows them to be redone if necessary.
+Command objects can contain a method to undo the changes they made. This is done by keeping the state of the `Receiver` before executing the command, or by executing the command with opposite parameters. Reverted commands can be put on a separate buffer, which allows them to be redone if necessary.
 
 ## Pros
-- **encapsulation** - whole logic and method calls required to perform the task are inside a single object with generic and simple interface. It allows to queue execution, reuse code, simple testing and refactorization.
-- **dynamic behavior change** - passing command objects enables changing behavior of the `Invoker` in runtime, i.e. when application config is updated remotely
+- **encapsulation** - the whole logic and method calls required to perform the task are inside a single object with generic and simple interface. It allows queueing execution, reusing code, simple testing and refactorization.
+- **dynamic behavior change** - passing command objects enables changing behavior of the `Invoker` in the runtime, i.e. when application config is updated remotely
 - **multiple calls in one** - instead of calling multiple methods of a few `Receivers`, a single `Command` can be created that will do all that
 - **undo/redo** - this pattern naturally allows to undo and redo set of instructions
 - **simple extending** - adding new `Command` doesn't influence previous ones, or the calling `Invoker`
 
 ## Cons
-- **many similar classes** - depending on situation, using the `Command` pattern may cause having multiple classes with single line difference
-- **premature complication** - using this pattern too early may end up with single `Command` class used in one oplace, but surrounded with additional interfaces, `CommandProcessor`, etc.
+- **many similar classes** - depending on the situation, using the `Command` pattern may cause having multiple classes with single line difference
+- **premature complication** - using this pattern too early might end up with single `Command` class used in one place, but surrounded with additional interfaces, `CommandProcessor`, etc.
