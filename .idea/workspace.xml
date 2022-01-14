@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post in PL - Strategy Pattern in Kotlin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wedding.html" beforeDir="false" afterPath="$PROJECT_DIR$/wedding.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +48,7 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectCodeStyleSettingsMigration">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="ProjectId" id="1bOMxWd9OhXgRYgYDDxw1SkWKbM" />
   <component name="ProjectViewState">
@@ -83,11 +85,11 @@
       <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/img" />
+      <recent name="$PROJECT_DIR$/assets/css/images" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="$PROJECT_DIR$/_drafts" />
-      <recent name="$PROJECT_DIR$/assets/posts" />
-      <recent name="$PROJECT_DIR$/pl" />
     </key>
   </component>
   <component name="RunManager">

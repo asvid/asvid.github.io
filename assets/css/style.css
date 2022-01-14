@@ -435,13 +435,16 @@ th {
 tr:nth-child(even) {background-color: #f2f2f2;}
 
 #wedding{
-	background: #c8e6c9;
-	padding: 100px;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+	background: url("images/background2.jpg") no-repeat center center fixed;
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 	text-align: center;
+}
+
+#wedding .container{
+    background-color: #FFF7;
 }
 
 #wedding h1{
@@ -449,8 +452,26 @@ tr:nth-child(even) {background-color: #f2f2f2;}
     font-family: 'Zeyada', cursive;
 }
 
-#googlePlayButton{
-	width: 200px;
+#wedding p{
+    position: relative;
+}
+
+.iframe-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .post-header {
