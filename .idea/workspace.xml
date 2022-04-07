@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post in PL - Strategy Pattern in Kotlin">
-      <change afterPath="$PROJECT_DIR$/assets/posts/archive.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_posts/2022-04-04-tech_proposals_and_decision_logs.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2022-04-04-tech_proposals_and_decision_logs.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pl/_posts/2022-04-04-tech_proposals_and_decision_logs.md" beforeDir="false" afterPath="$PROJECT_DIR$/pl/_posts/2022-04-04-tech_proposals_and_decision_logs.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

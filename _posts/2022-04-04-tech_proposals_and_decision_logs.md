@@ -42,7 +42,7 @@ But not completely. I worked in interdisciplinary (mobile, backend) and uniform 
 There are places where an analyst (and/or PO, TL) prepares tickets and programmers simply execute them without going into the whole solution. And it might work. However, it is unlikely that anyone will grasp the nuances of all the technologies used with an extensive system. It is not difficult for me to imagine a situation wherein the middle of the implementation of some part of the solution an unforeseen problem comes out, and you have to go back to planning.
 Engaging developers sooner would have avoided such ping-pong.
 
-I am aware that I promote a break away from programming meat in favor of additional bureaucracy and meetings. From my experience, at a certain scale and level of complexity of the project, it significantly **saves time and work**.
+I am aware that I promote a break away from programming in favor of additional bureaucracy and meetings. From my experience, at a certain scale and level of complexity of the project, it significantly **saves time and work**.
 
 # Preconditions
 To even start thinking about documenting the implementation plan or consulting it with other teams, you need to know well in advance what should be delivered. Planning work with the appropriate level of detail for a year, quarter, or month ahead helps here. Transparency within the organization is also very important.
@@ -50,7 +50,7 @@ I like to check in on other teams' demos to find out what they are working on an
 
 If there is a deadline for introducing a complex change in 3 months, then you can slowly start to estimate the time-consumption, break the problem down into smaller parts, maybe you will have to do some spike, talk to people or teams with competence in the subject, consult the 3rd party providing e.g. hardware - documenting each stage will end with a 'tech proposal' for the solution with the biggest problems already solved.
 
-Procedures in the organization may require approval of changes by the architect or the security department. It is much easier to discuss changes when having a document, maybe with a diagram or API proposal. An architect can look at the 'tech proposal' at any time convenient for them, for example, coming down from an ivory tower. **It's easier to stuff your ideas when they're digestible**. The security department will also quickly point to potential problems or places that require attention, having some outline of the solution, not bare code that they may not understand.
+Procedures in the organization may require approval of changes by the architect or the security department. It is much easier to discuss changes when having a document, maybe with a diagram or API proposal. An architect can look at the 'tech proposal' at any time convenient for them, for example, coming down from an ivory tower. **It's easier to sell your ideas when they're presented in a digestible way**. The security department will also quickly point to potential problems or places that require attention, having some outline of the solution, not bare code that they may not understand.
 
 # When is it worth creating a tech proposal
 I've noticed that a good indicator is the emergence of doubts as to how to solve the problem or implement the feature. We don't have a full image before writing the code, but sometimes we manage to identify the biggest gaps well in advance.
