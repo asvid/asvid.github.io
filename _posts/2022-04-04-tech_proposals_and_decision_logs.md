@@ -15,7 +15,7 @@ tags:
 categories:
 - rss
 
-image: /assets/posts/adapter.jpg
+image: /assets/posts/archive.jpg
 
 ---
 

@@ -15,7 +15,7 @@ tags:
 categories:
 - programming
 
-image: /assets/posts/adapter.jpg
+image: /assets/posts/archive.jpg
 
 ---
 
