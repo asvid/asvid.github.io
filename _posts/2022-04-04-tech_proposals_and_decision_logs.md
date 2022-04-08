@@ -30,7 +30,7 @@ Is there still a need to write a plan today before the actual implementation, or
 `Tech Proposals` are a less formal way for internal documentation created before actual implementation. They also facilitate making technical decisions.
 
 Creating such documents is useful when:
-- we already have a 'system' and not just an 'application', i.e. many services and customers cooperating at different levels
+- we already have a 'system' and not just an 'application', i.e. multiple services and clients cooperating at different levels
 - bigger changes must go through the architect or the security department (best regards, fintech)
 - the new feature requires a lot of competence and cooperation between teams is needed
 - we work in a diffuse and asynchronous environment
