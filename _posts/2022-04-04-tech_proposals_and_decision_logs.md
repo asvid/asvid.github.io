@@ -31,9 +31,9 @@ Is there still a need to write a plan today before the actual implementation, or
 
 Creating such documents is useful when:
 - we already have a 'system' and not just an 'application', i.e. multiple services and clients cooperating at different levels
-- bigger changes must go through the architect or the security department (best regards, fintech)
-- the new feature requires a lot of competence and cooperation between teams is needed
-- we work in a diffuse and asynchronous environment
+- bigger changes must go through the architect or the security department (hello there, fintech)
+- the new feature requires a variety of competence and cooperation between teams
+- we work in a scattered and asynchronous environment
 
 Seemingly, a lot may depend on the way work is organized, the number of teams and their composition, and the approach to the ownership of system fragments or procedures in the company.
 
