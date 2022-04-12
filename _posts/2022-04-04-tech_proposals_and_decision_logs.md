@@ -19,12 +19,12 @@ image: /assets/posts/archive.jpg
 
 ---
 
-# "Post-design documentation"
+# "Post-implementation documentation"
 As the lecturers maliciously called it when they checked university-grade projects, the idea of which was to plan a project, document it, and then implement it according to plan. In practice, I usually was implementing it first so it just worked, and then documented the result. And let anyone who hasn't done that throw a stone first :)
 
 Lecturers (in Polish universities) are often older people with no commercial experience, used to water-fall project planning. Now we are all Agile, we have continuous delivery, self-documenting code, and other aids.
 
-Is there still a need to write a plan today before the actual implementation, or is it a relic of the past, art for art, and a university fad? Honestly, I would often be grateful even for quickly written post-design documentation...
+Is there still a need to write a plan today before the actual implementation, or is it a relic of the past, art for art, and a university fad? Honestly, I would often be grateful even for quickly written post-implementation docs...
 
 # Tech Proposal
 `Tech Proposals` are a less formal way for internal documentation created before actual implementation. They also facilitate making technical decisions.
