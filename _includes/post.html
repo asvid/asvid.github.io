@@ -22,14 +22,14 @@
 	   {% endcase %}
 	   {{ page.date | date: "%Y" }}
 
-<!--    <span class="read_time">({{ site.data.i18n.read_time }}:-->
-<!--      {% assign words = content | number_of_words %}-->
-<!--      {% if words < 360 %}-->
-<!--        1 min)-->
-<!--      {% else %}-->
-<!--        {{ words | divided_by:180 }} min)-->
-<!--      {% endif %}-->
-<!--      </span>-->
+         <!--    <span class="read_time">({{ site.data.i18n.read_time }}:-->
+         <!--      {% assign words = content | number_of_words %}-->
+         <!--      {% if words < 360 %}-->
+         <!--        1 min)-->
+         <!--      {% else %}-->
+         <!--        {{ words | divided_by:180 }} min)-->
+         <!--      {% endif %}-->
+         <!--      </span>-->
 	 </span>
 
         <span class="reading-time" title="Estimated read time">
@@ -44,26 +44,26 @@
 
             {{ content }}
         </div>
-<!--        {% unless page.categories == empty %}-->
-<!--        <ul class="tag_box list-unstyled list-inline">-->
-<!--            <li><i class="fa fa-folder-open"></i></li>-->
-<!--            {% assign categories_list = page.categories %}-->
-<!--            {% if categories_list.first[0] == null %}-->
-<!--            {% for category in categories_list %}-->
-<!--            <li><a href="{{ site.BASE_PATH }}/{{ site.categories_path }}#{{ category }}-ref">-->
-<!--                {{ category | join: "/" }} <span>({{ site.categories[category].size }})</span>-->
-<!--                {% unless forloop.last %},{% endunless %}-->
-<!--            </a></li>-->
-<!--            {% endfor %}-->
-<!--            {% else %}-->
-<!--            {% for category in categories_list %}-->
-<!--            <li><a href="{{ site.BASE_PATH }}/{{ site.categories_path }}#{{ category[0] }}-ref">-->
-<!--                {{ category[0] | join: "/" }} <span>/{{ category[1].size }})</span>-->
-<!--            </a></li>-->
-<!--            {% endfor %}-->
-<!--            {% endif %}-->
-<!--        </ul>-->
-<!--        {% endunless %}-->
+        <!--        {% unless page.categories == empty %}-->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            {% assign categories_list = page.categories %}-->
+        <!--            {% if categories_list.first[0] == null %}-->
+        <!--            {% for category in categories_list %}-->
+        <!--            <li><a href="{{ site.BASE_PATH }}/{{ site.categories_path }}#{{ category }}-ref">-->
+        <!--                {{ category | join: "/" }} <span>({{ site.categories[category].size }})</span>-->
+        <!--                {% unless forloop.last %},{% endunless %}-->
+        <!--            </a></li>-->
+        <!--            {% endfor %}-->
+        <!--            {% else %}-->
+        <!--            {% for category in categories_list %}-->
+        <!--            <li><a href="{{ site.BASE_PATH }}/{{ site.categories_path }}#{{ category[0] }}-ref">-->
+        <!--                {{ category[0] | join: "/" }} <span>/{{ category[1].size }})</span>-->
+        <!--            </a></li>-->
+        <!--            {% endfor %}-->
+        <!--            {% endif %}-->
+        <!--        </ul>-->
+        <!--        {% endunless %}-->
 
         {% unless page.tags == empty %}
         <ul class="list-inline">
@@ -96,6 +96,15 @@
         <hr>
 
         <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:{{ site.data.author.email }}">
+                        with email.
+                    </a>
+                </h3>
+            </section>
             <section class="share col-sm-6">
                 <h4 class="section-title">Share Post</h4>
                 <a class="btn btn-default btn-sm twitter"
