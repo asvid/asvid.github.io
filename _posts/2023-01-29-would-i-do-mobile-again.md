@@ -3,7 +3,7 @@ layout: post
 title: "Would you go for mobile development again, after 10 years of doing it?"
 date:  "2023-01-29 16:56"
 description: "
-
+I went to a meetup in my city last week and a guy I just met there popped a question after a while of conversation: with my experience, **would I go for mobile software development again** or pick a different area?
 "
 permalink: "would-i-do-mobile-again"
 comments: true
