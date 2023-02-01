@@ -102,7 +102,7 @@ This might be true for almost all sorts of software development. Because of the 
 The focus is on UX and not really on the scalability or maintainability of the whole system. And usually, you need the backend to even justify having an app. Depending on the project and organization, it may leave you as a mere consumer of the API without any impact on the whole system - I don’t enjoy that. I remember when the app I was working on was called _“**just a skin**”_ for _**the real app**_ running on the server. It didn’t feel good.
 
 ### Users will always blame the app
-Not the backend services, not the infrastructure, not the security team neglecting dangers, not the DevOps messing something, not the managers, product people, or designers for wrong decisions. It will be your baby app getting dreadful reviews in the app store. There will be also kind reviews, don’t worry :)
+Not the backend services, not the infrastructure, not the security team neglecting dangers, not the DevOps messing something up, not the managers, product people, or designers for wrong decisions. It will be your baby app getting dreadful reviews in the app store. There will be also kind reviews, don’t worry :)
 
 ### Career limiting?
 At some point, I’d like to design systems. But I don’t have much experience with the backend, I’m a bit scared of the infrastructure setup, binding everything together, handling AWS, containers, orchestrators, load-balancers, deployment schemes, etc. I understand the concepts though. I can learn that stuff but most likely I won’t get much experience. Most system architects (I guess) are former backend devs. Rarely there are mobile ones that step outside their comfort zone.
