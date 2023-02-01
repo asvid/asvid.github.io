@@ -4,7 +4,7 @@ paginate_path: "page:num"
 exclude: ["README.md"] # files to exclude
 highlighter: rouge
 markdown: kramdown
-google_analytics: UA-68530276-7
+google_analytics: G-313840737
 url: http://asvid.github.io/
 
 defaults:
