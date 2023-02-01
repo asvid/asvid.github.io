@@ -15,3 +15,4 @@ group :jekyll_plugins do
   gem 'jekyll-diagrams'
 end
 gem "webrick", "~> 1.8.1"
+gem "jekyll-sass-converter", "~> 2.0"
