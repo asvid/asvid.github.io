@@ -20,4 +20,4 @@ jobs:
     # Standard usage
     - uses:  asvid/jekyll-action@1.0.0
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
