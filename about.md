@@ -5,7 +5,7 @@ highlighter: null
 permalink: /about/
 ---
 
-I'm software engineer working with Android, currently in fintech. I also have some experience with Frontend, occasionally I do backend work.
+I'm software engineer working with Android. I also have some experience with Frontend, occasionally I do backend work.
 
 I'm clean code fan interested in software architecture and design patterns. I am pretty lazy, so I really like automating stuff (:snake: :heart:).
 

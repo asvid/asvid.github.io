@@ -5,7 +5,7 @@ highlighter: null
 permalink: /about/
 ---
 
-Jestem programistą Androida, ostatnio w projektach fintech. Mam też doświadczenie z Frontendem, zaglądam czasami na Backend lub do niskopoziomowych logów terminali płatniczych :)
+Jestem programistą Androida. Mam też doświadczenie z Frontendem, zaglądam czasami na Backend lub do niskopoziomowych logów terminali płatniczych :)
 
 Jestem fanem "czystego kodu", interesuje mnie architektura oprogramowania i wzorce projektowe. Jestem dość leniwy i
  uwielbiam automatyzować sobie pracę (:snake: :heart:).
