@@ -3,7 +3,7 @@ layout: post
 title: "Continuous Integration and Deployment: A Developer's Best Friends"
 date: "2023-06-16 17:34"
 description: "
-In the fast-paced world of software development, Continuous Integration and Deployment (CI/CD) have emerged as game-changing tools for developers. Discover how CI/CD can be your ultimate allies, streamlining workflows, automating tests, and boosting collaboration. From user-friendly services like CircleCI and Bitrise to the robust capabilities of GitLab and GitHub Actions, we'll guide you through the best options to supercharge your development process.
+Embrace the power of Continuous Integration and Deployment (CI/CD) in software development. Automate tests, streamline workflows, and boost collaboration with user-friendly services like CircleCI, Bitrise, GitLab, and GitHub Actions. Level up your development process today!
 "
 permalink: "2023-06-16-ci-is-your-friend"
 comments: true
@@ -19,10 +19,7 @@ tags:
   - Testing
   - Code Quality
 
-categories:
-  - programming
-
-image: /assets/posts/adapter.jpg
+image: /assets/posts/friendly_ci.jpg
 
 ---
 
@@ -58,37 +55,37 @@ While Jenkins is another free option, it is not cloud-based, so it may not be th
 
 CI offers several advantages for developers, whether working solo or in a team environment. Let's explore some key benefits:
 
-### Automated Testing
+#### Automated Testing
 
 CI enables developers to run automated tests, ensuring that any new changes or additions won't introduce regressions. By catching bugs early, developers can address issues promptly and maintain a stable codebase.
 
 CI won't write your tests for you, but it ensures that tests are executed for every developer on your team, every time they want to merge their code. I remember working on a system so complex to set up locally that I was not even able to run tests on my machine. I was just writing tests and pushing changes so CI could do its job :)
 
-### Enhanced Collaboration
+#### Enhanced Collaboration
 
 CI tools can integrate with messaging platforms like Slack, enabling automated notifications to team members regarding build status, test results, and deployments. This fosters effective communication, keeps everyone in the loop, and promotes a collaborative development environment.
 
 If you ever wrote a message to your team channel, so they know there is a PR for review, CI could do this for you. With proper setup, if the build after merge fails, the author of the faulty PR can also get a message to fix bugs.
 
-### Streamlined Code Reviews
+#### Streamlined Code Reviews
 
 CI can automatically trigger tests, static code analysis, and lint checks when pull requests are created or updated. This handles the mundane parts of code reviews, checking for typos, code conventions, etc., allowing for quick feedback on code quality and ensuring that potential issues are identified early. Human reviewers can focus on more creative aspects of the review. This automation saves developers from manual reviews and reduces the chance of introducing code style or formatting issues. While you should run these tools locally before committing your code, CI acts as a bodyguard, providing an additional layer of assurance.
 
-### Dependency Management
+#### Dependency Management
 
 CI can automate the process of updating dependencies in your projects. By monitoring package releases and automatically bumping versions, developers can keep their dependencies up to date, ensuring security patches and performance improvements are readily available.
 
-### Secure Storage for Signing Builds
+#### Secure Storage for Signing Keys
 
 Developers shouldn't have to keep signing keys for their software. By using CI to store and use signing keys, all team members can create signed builds (e.g., Android app) without the risk of losing the key due to hardware failure or malware.
 
-### Scheduled Releases
+#### Scheduled Releases
 
 If you ever wondered if there is a person running a build locally in the middle of the night and pushing it manually to the store to create a `NIGHTLY` release - there is no one like that. It's all scheduled tasks in CI.
 
 Scheduled tasks in CI can handle time-consuming test suites, running them daily or weekly.
 
-### CI Can Wrap Manual Steps into a Single Action
+#### Wrapping Manual Steps into a Single Action
 
 CI allows developers to automate repetitive tasks, such as creating a release. This includes building and signing apps, generating release notes, publishing to stores, or on servers.
 
@@ -100,7 +97,9 @@ Trust me, nothing says "I'm a professional" more to a client than being able to 
 
 ## Getting Started with GitHub Actions
 
-To kickstart your CI/CD journey, I recommend starting with GitHub Actions. Begin with simple tasks, such as running tests after every push to the `develop` branch in your pet project (you do have one, don't you?). This initial setup will familiarize you with CI/CD concepts. GitHub Actions provides a wide range of ready-to-use actions created by other developers, which can be found in the [GitHub Marketplace](https://github.com/marketplace?type=actions).
+To kickstart your CI/CD journey, I recommend starting with GitHub Actions. Begin with simple tasks, such as running tests after every push to the `develop` branch in your pet project (you do have one, don't you?). Nice starting point is here: [about-continuous-integration](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) 
+
+This initial setup will familiarize you with CI/CD concepts. GitHub Actions provides a wide range of ready-to-use actions created by other developers, which can be found in the [GitHub Marketplace](https://github.com/marketplace?type=actions).
 
 This very blog is built using Github Actions. It utilizes a custom Docker image to generate PlantUML diagrams and perform other tasks. But that's a story for [another time](https://asvid.github.io/github-page-deployment).
 
