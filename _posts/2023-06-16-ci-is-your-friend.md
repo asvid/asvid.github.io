@@ -9,15 +9,15 @@ permalink: "2023-06-16-ci-is-your-friend"
 comments: true
 toc: true
 tags:
-  - CI/CD
-  - Continuous Integration
-  - Continuous Deployment
-  - Software Development
-  - Automation
-  - DevOps
-  - Software Delivery
-  - Testing
-  - Code Quality
+- CI/CD
+- Continuous Integration
+- Continuous Deployment
+- Software Development
+- Automation
+- DevOps
+- Software Delivery
+- Testing
+- Code Quality
 
 image: /assets/posts/friendly_ci.jpg
 
