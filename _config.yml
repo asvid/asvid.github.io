@@ -12,9 +12,9 @@ defaults:
     scope:
       path: "" # empty string for all files
     values:
-      title: DevLog | Adam Świderski | software engineer blog
-      description: Software engineering and architecture | Android | Kotlin | Programming
-      page_title: DevLog
+      title: Adam's Coding Corner | Adam Świderski | software engineer blog
+      description: Writing around software engineering | Android | Kotlin | Programming
+      page_title: Adam's Coding Corner
 
 rss_path: feed.xml
 

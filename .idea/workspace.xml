@@ -5,9 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="New post about CI targeted at Junior devs">
-      <change afterPath="$PROJECT_DIR$/_drafts/2023-06-16-accidental-domain.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2023-06-16-ci-is-your-friend.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2023-06-16-ci-is-your-friend.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_includes/default_no_sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default_no_sidebar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-144x144.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-144x144.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-192x192.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-192x192.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-36x36.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-36x36.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-48x48.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-48x48.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-72x72.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-72x72.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/android-icon-96x96.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/android-icon-96x96.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-114x114.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-114x114.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-120x120.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-120x120.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-144x144.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-144x144.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-152x152.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-152x152.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-180x180.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-180x180.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-57x57.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-57x57.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-60x60.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-60x60.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-72x72.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-72x72.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-76x76.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-76x76.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon-precomposed.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon-precomposed.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/apple-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/apple-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/favicon-16x16.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/favicon-16x16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/favicon-32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/favicon-32x32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/favicon-96x96.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/favicon-96x96.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/ms-icon-144x144.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/ms-icon-144x144.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/ms-icon-150x150.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/ms-icon-150x150.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/ms-icon-310x310.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/ms-icon-310x310.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/ico/ms-icon-70x70.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ico/ms-icon-70x70.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,17 +92,18 @@
     "SONARLINT_PRECOMMIT_ANALYSIS": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "develop",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "last_opened_file_path": "/Users/asvid/repo/asvid.github.io/assets/ico",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Markdown",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/ico" />
       <recent name="$PROJECT_DIR$/pl/_posts" />
       <recent name="$PROJECT_DIR$/_drafts" />
       <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/assets/posts/ghpages" />
-      <recent name="C:\Users\Adam\repo\asvid.github.io\_includes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/_posts" />
