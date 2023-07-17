@@ -17,7 +17,6 @@ tags:
 - DevOps
 - Software Delivery
 - Testing
-- Code Quality
 
 image: /assets/posts/friendly_ci.jpg
 
