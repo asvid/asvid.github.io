@@ -36,6 +36,13 @@
 			</a>
 		</li>
 		{% endif %}
+		{% if site.data.author.youtube %}
+		<li>
+			<a class="btn btn-default btn-sm" href="https://www.youtube.com/@{{ site.data.author.youtube }}">
+				<i class="fa fa-youtube fa-lg"></i>
+			</a>
+		</li>
+		{% endif %}
 		{% if site.data.author.twitter %}
 		<li>
 			<a class="btn btn-default btn-sm" href="https://twitter.com/{{ site.data.author.twitter }}">

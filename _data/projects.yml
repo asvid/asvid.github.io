@@ -1,29 +1,24 @@
+- title: ZenTimer
+  description: Pomodoro timer pet project. Sounds boring but I wan't to have multiple clients (Android, iOS, Browser extension, smart watch) that are all in sync with current state of timer. I just started spiking it, and I stream progress on Twitch
+
 - title: Wedding App (work title)
   description: I wanted to play a bit with Flutter and my ex-work mate told me he is doing app for his wedding... so I combined both things :) It's Android/iOS app that uses Firebase for storing and sharing photos, guest book entries and venue info. There is also a Google map with quick jump to navigation to POI related to my wedding. BLoC architecture, CI/CD with Bitrise, custom fonts and colors including map. I had a lot of fun with async methods and connecting it all together with Realtime Database.
 
 - title: GdzieTaBiedra
-  description: App made for recruiting purpose. Recently completely rewritten using Uber RIBs pattern, Realm DB, Retrofit, RxJava2 and Kotlin of course.
+  description: App made for recruiting purpose. I rewrite it every few years with whatever is currently hyped technology.
   googlePlayLink: https://play.google.com/store/apps/details?id=com.hedgehog.gdzietabiedra
   github: https://github.com/asvid/GdzieTaBiedra
 
 - title: AirRide
   description: Never finished pneumatic car suspension controller. Android app is connected via Bluetooth with Arduino module controlling the valves. App allowed controlling suspension manually with pressing buttons, using accelerometer, and creating sequences stored in Realm. Communication was wrapped in Command Pattern which made changing the approach a lot easer. It was actually tested on real car :)
 
-- title: Fibaro App
-  description: Smartphone and tablet app to control intelligent home system. It’s an old app, refactored over time with MVP pattern and unit tests in in Spock / Groovy. We've also provided widgets and Android Watch App.
-  link: https://www.fibaro.com/
-  googlePlayLink: https://play.google.com/store/apps/details?id=com.fibaro
-  image: /assets/img/fibaro/logo%20fibaro.jpg
-
 - title: Frigo
   description: My graduation project. I've used Kotlin as weapon of choice for Android app. It uses Realm for storage and Retrofit for communication. App uses GCM for instant data synchronization and request caching if internet is not available. Backend of app is made in ExpressJS working on Heroku with MongoDB database. During development, I started an open source library for Android notifications called - Notti.
-  googlePlayLink: https://play.google.com/store/apps/details?id=com.aswiderski.frigo
   image: /assets/img/frigo/ic_launcher-web.png
 
 - title: Dinegra
   description: It’s a car assistant Android app. User can register fuel usage, call help, see POI on Google Map. App tracks drivers routes, that can be used in challenges or events (like Endomondo). OpenGL is used to create animated bot, that can talk with you. App also can be controlled by voice commands. App can also be a silent thief alarm - when armed, it will send you emails where the car is if it moves from parking place without disarming. We also made Websocket voice operated chat for drivers nearby, like CB radio.
   link: http://dinegra.com/
-  googlePlayLink: https://play.google.com/store/apps/details?id=com.lobo.dinegra
   image: /assets/img/fibaro/logo%20fibaro.jpg
 
 - title: Counter

@@ -22,7 +22,7 @@ feed:
   excerpt_only: true
   description: Adam Świderski blog
   posts_limit: 5
-  title: DevLog | Adam Świderski | software engineer blog
+  title: Adam's Coding Corner | Adam Świderski | software engineer blog
   categories:
     - rss
 

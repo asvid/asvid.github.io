@@ -5,9 +5,13 @@ highlighter: null
 permalink: /about/
 ---
 
-I'm software engineer working with Android. I also have some experience with Frontend, occasionally I do backend work.
+I’m a software engineer with diverse experience, having worked on educational apps, smart home technology, and large- scale financial tech projects. I prioritize writing clean and understandable code and ensuring its stability through robust testing. While applying SOLID, DRY, and other principles, I try to avoid hasty abstractions, to keep things as simple
+as possible, for as long as possible, and not over-engineer.
 
-I'm clean code fan interested in software architecture and design patterns. I am pretty lazy, so I really like automating stuff (:snake: :heart:).
+I have lots of experience with legacy code, but I also started some fresh green-field projects, and learned a lot by mistakes I made there.
+
+Furthermore, I enjoy task automatization with CI/CD approach in mind. I used to design and implement release procedures for mobile apps.
+
 
 In my spare time, I try not to forget how to play guitar :guitar:, read books :books:, watch really bad movies :movie_camera:, or wasting time on computer games :video_game:. I like camping :tent: and hiking :sunrise_over_mountains:.
 
@@ -18,9 +22,9 @@ Find me on [Linekdin][linkedin] / [Github][github] or just say `Hello` with an
 
 You can also check my [resume]({{ "/assets/cv.pdf" | absolute_url }})
 
-### Technologies
+### Project
 
-Here are listed some of my projects, with links to Google Play or code on GitHub.
+Here are listed some of my projects:
 
 {% for item in site.data.projects %}
   {% include project.html %}
@@ -29,7 +33,7 @@ Here are listed some of my projects, with links to Google Play or code on GitHub
 
 ### Technologies
 
-Alphabetically ordered list of tech I like to use
+Random ordered list of tech I like to use
 
 <div class="chipsContainer">
     <div class="row">

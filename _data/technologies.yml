@@ -2,17 +2,17 @@
   icon: /assets/img/technology/android.png
   link: https://www.android.com/
 
-- name: Android Studio
-  icon: /assets/img/technology/android-studio.jpg
-  link: https://developer.android.com/studio/index.html
+- name: Kotlin
+  icon: /assets/img/technology/kotlin_250x250.png
+  link: https://kotlinlang.org/
 
-- name: Arduino
-  icon: /assets/img/technology/arduino.png
-  link: https://www.arduino.cc/
+- name: Flutter
+  icon: https://static-00.iconduck.com/assets.00/flutter-icon-1651x2048-ojswpayr.png
+  link: https://flutter.dev
 
-- name: Bamboo
-  icon: /assets/img/technology/bamboo.png
-  link: https://atlassian.com/software/bamboo
+- name: Spring
+  icon: https://spring.io/img/logos/spring-initializr.svg
+  link: https://spring.io
 
 - name: BLE
   icon: /assets/img/technology/bt.png
@@ -21,6 +21,10 @@
 - name: Dagger
   icon: /assets/img/technology/android.png
   link: https://google.github.io/dagger/
+
+- name: Koin
+  icon: https://insert-koin.io/img/koin_new_logo.png
+  link: https://insert-koin.io
 
 - name: Espresso
   icon: /assets/img/technology/espresso.png
@@ -58,10 +62,6 @@
   icon: /assets/img/technology/junit.png
   link: https://junit.org
 
-- name: Kotlin
-  icon: /assets/img/technology/kotlin_250x250.png
-  link: https://kotlinlang.org/
-
 - name: Linux
   icon: /assets/img/technology/linux.png
   link: https://www.linux.com/
@@ -73,10 +73,6 @@
 - name: NodeJS
   icon: /assets/img/technology/nodejs.png
   link: https://nodejs.org/en/
-
-- name: Photoshop
-  icon: /assets/img/technology/photoshop.svg
-  link: https://www.adobe.com/pl/products/photoshop.html?mv=search&skwcid=AL!3085!3!190597917254!e!!g!!photoshop&s_kwcid=AL!3085!3!190597917254!e!!g!!photoshop&ef_id=WecAZQAAAF1Da3l0:20180128130446:s
 
 - name: Realm Database
   icon: /assets/img/technology/realm.png
@@ -93,6 +89,14 @@
 - name: SonarQube
   icon: /assets/img/technology/sonar.png
   link: https://www.sonarqube.org/
+
+- name: Detekt
+  icon: https://detekt.dev/img/favicon.svg
+  link: https://detekt.dev
+
+- name: Mockk
+  icon: https://mockk.io/doc/logo-site.png
+  link: https://mockk.io
 
 - name: Spock
   icon: /assets/img/technology/spock.png
