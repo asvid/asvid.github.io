@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="Updated name and favicon">
-      <change beforePath="$PROJECT_DIR$/.idea/asvid.github.io.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/asvid.github.io.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/author.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/author.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/projects.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/projects.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_data/technologies.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_data/technologies.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/about.md" beforeDir="false" afterPath="$PROJECT_DIR$/about.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
