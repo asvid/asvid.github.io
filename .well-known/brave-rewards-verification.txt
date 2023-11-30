@@ -1,0 +1,5 @@
+This is a Brave Creators publisher verification file.
+
+Domain: asvid.github.io
+Token: 00db707a2f93c0d8644066082c9f3f856362460da94f4a8e848fae57a64b4677
+
