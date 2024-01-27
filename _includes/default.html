@@ -45,11 +45,15 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68530276-7"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
 
-      gtag('config', 'UA-68530276-7');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-68530276-7');
     </script>
 
     <link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="{{ site.BASE_PATH }}/feed.xml">
@@ -108,7 +112,7 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="{{ site.BASE_PATH }}/">{{site.data.i18n.home}}</a></li>
             <li><a href="{{ site.ABOUT }}">{{site.data.i18n.about}}</a></li>
-<!--            <li><a href="{{ site.BASE_PATH}}/{{ site.categories_path }}">{{site.data.i18n.categories}}</a></li>-->
+            <!--            <li><a href="{{ site.BASE_PATH}}/{{ site.categories_path }}">{{site.data.i18n.categories}}</a></li>-->
             <li><a href="{{ site.BASE_PATH}}/{{ site.tags_path }}">{{site.data.i18n.tags}}</a></li>
         </ul>
     </div><!-- /.navbar-collapse -->
@@ -145,5 +149,15 @@
 <script type="text/javascript" src="{{ site.BASE_PATH }}/assets/resources/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="{{ site.BASE_PATH }}/assets/resources/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{{ site.BASE_PATH }}/assets/js/app.js"></script>
+<script type="text/javascript" src="https://unpkg.com/mermaid@8.9.3/dist/mermaid.min.js"></script>
+<script>
+    $(document).ready(function () {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: "default",
+        });
+        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+</script>
 </body>
 </html>

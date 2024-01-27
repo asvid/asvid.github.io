@@ -60,6 +60,8 @@ To add workflow go to your repository->actions->New workflow and then click link
 This will add `yaml` file with config inside repository in directory `.github/workflows`
 
 To publish Jekyll blog with not whitelisted plugins I used [Jekyll-Actions](https://github.com/marketplace/actions/jekyll-actions) configured inside workflow like this:
+
+
 ```yaml
 name: GitHub Pages publication
 
@@ -89,6 +91,8 @@ jobs:
       env:
         JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
 ```
+
+
 This action runs inside `ubuntu-16.04` container, and then:
 - downloads repository after each push (on every branch which is causing some issue)
 - is using cache to not download same `Gems` each run
