@@ -5,17 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="Updated name and favicon">
-      <change afterPath="$PROJECT_DIR$/_includes/mermaid.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/posts/mvc/mvcbanner.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2022-04-04-combined-listener-pattern.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2023-06-16-accidental-domain.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_includes/default_no_sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/default_no_sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tags.html" beforeDir="false" afterPath="$PROJECT_DIR$/tags.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -562,7 +553,7 @@
       <workItem from="1591782017696" duration="31000" />
       <workItem from="1591888571907" duration="323000" />
       <workItem from="1706355132601" duration="10601000" />
-      <workItem from="1706377212468" duration="4819000" />
+      <workItem from="1706377212468" duration="6766000" />
     </task>
     <task id="LOCAL-00001" summary="quick fix">
       <created>1467543297115</created>
