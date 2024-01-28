@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="Updated name and favicon">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -553,7 +552,7 @@
       <workItem from="1591782017696" duration="31000" />
       <workItem from="1591888571907" duration="323000" />
       <workItem from="1706355132601" duration="10601000" />
-      <workItem from="1706377212468" duration="6766000" />
+      <workItem from="1706377212468" duration="6892000" />
     </task>
     <task id="LOCAL-00001" summary="quick fix">
       <created>1467543297115</created>
