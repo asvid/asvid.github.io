@@ -14,6 +14,8 @@ tags:
 - android
 - ios
 - flutter
+categories:
+  - rss
 
 image: /assets/posts/go_mobile.png
 

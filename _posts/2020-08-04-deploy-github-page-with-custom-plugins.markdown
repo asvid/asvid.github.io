@@ -67,29 +67,29 @@ name: GitHub Pages publication
 
 on:
   push
-    
+
 jobs:
   jekyll:
     runs-on: ubuntu-16.04
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    # Use GitHub Actions' cache to shorten build times and decrease load on servers
-    - uses: actions/cache@v1
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gems-
-    # Standard usage
-    - uses:  helaili/jekyll-action@2.0.3
-      env:
-        JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
-    
-    # Specify the Jekyll source location as a parameter
-    - uses: helaili/jekyll-action@2.0.3
-      env:
-        JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+      # Use GitHub Actions' cache to shorten build times and decrease load on servers
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      # Standard usage
+      - uses:  helaili/jekyll-action@2.0.3
+        env:
+          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+
+      # Specify the Jekyll source location as a parameter
+      - uses: helaili/jekyll-action@2.0.3
+        env:
+          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
 ```
 
 

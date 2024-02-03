@@ -17,6 +17,8 @@ tags:
 - DevOps
 - Software Delivery
 - Testing
+categories:
+  - rss
 
 image: /assets/posts/friendly_ci.jpg
 
