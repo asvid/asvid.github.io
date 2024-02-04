@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="Updated name and favicon">
+      <change afterPath="$PROJECT_DIR$/_drafts/2024-02-04-MVP.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2020-08-04-deploy-github-page-with-custom-plugins.markdown" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2023-01-29-would-i-do-mobile-again.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2023-01-29-would-i-do-mobile-again.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2023-06-16-ci-is-your-friend.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2023-06-16-ci-is-your-friend.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2024-01-27-MVC.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_includes/mermaid.html" beforeDir="false" afterPath="$PROJECT_DIR$/_includes/mermaid.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,8 +33,12 @@
     <option name="SCHEME" value="Project" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="hexo_migration" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="MERGE" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
