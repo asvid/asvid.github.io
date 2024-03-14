@@ -1,26 +1,11 @@
----
-layout: null
----
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-	<channel>
-		<title>{{ page.title }}</title>
-		<description>{{ page.description }}</description>
-		<link>{{ site.url }}/</link>
-		<enclosure
-			url="http://www.gravatar.com/avatar/c0092be8e7a926ead4c4a818ea622858?s=210"
-			type="image/jpeg"
-			length="17239"
-			/>
-		<atom:link href="{{ site.url }}/{{ page.rss_path }}" rel="self" type="application/rss+xml" />
-		{% for post in site.categories["rss"] limit:10 %}
-			<item>
-				<title>{{ post.title }}</title>
-				<description>{{ post.description | xml_escape }}</description>
-				<pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
-				<link>{{ site.url }}{{ post.url }}</link>
-				<guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
-			</item>
-		{% endfor %}
-	</channel>
-</rss>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; URL=https://swiderski.tech/posts/index.xml">
+  <title>Redirecting...</title>
+</head>
+<body>
+  <p>If you are not redirected automatically, follow this <a href="https://swiderski.tech/posts/index.xml">link</a>.</p>
+</body>
+</html>

@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="26f3f85d-3fad-4fe8-93d9-ec762b1a8e1b" name="Default" comment="Updated name and favicon">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_drafts/2024-02-24-MVI.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2024-02-24-MVI.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_posts/mvi.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/posts/mvi.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
