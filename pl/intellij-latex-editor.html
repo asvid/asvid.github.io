@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/latex.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>IntelliJ IDEA jako edytor LaTeX </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   June
+	   21st,
+	     
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        8 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#latex-w-intellij-idea">LaTeX w IntelliJ IDEA</a></li>
+<li class="toc-entry toc-h1"><a href="#moje-założenia">Moje założenia</a></li>
+<li class="toc-entry toc-h1"><a href="#pluginy">Pluginy</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#texify">Texify</a></li>
+<li class="toc-entry toc-h2"><a href="#pdf-viewer">PDF Viewer</a></li>
+<li class="toc-entry toc-h2"><a href="#plantuml-integration">PlantUML Integration</a></li>
+<li class="toc-entry toc-h2"><a href="#file-watchers">File Watchers</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#mój-workflow">Mój workflow</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#problemywyzwania">Problemy/Wyzwania</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#braki">Braki</a></li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a></li>
+<li class="toc-entry toc-h1"><a href="#użyte-narzędzia">Użyte narzędzia</a></li>
+</ul>
+            </nav>
+
+            <blockquote>
+  <p>TL;DR: IntelliJ Idea świetnie nadaje się do pracy z LaTeX. Podstawową funkcjonalność zapewniają plugin-y, a sporo dodatkowych automatyzacji można sobie ustawić za pomocą File Watcher-ów. Brakuje mi tylko wyświetlania rozdziałów i sekcji jak np. w TexStudio.</p>
+</blockquote>
+
+<h1 id="latex-w-intellij-idea">LaTeX w IntelliJ IDEA</h1>
+<p>Nie pracuję z LaTeX-em zbyt często, ale ten format ma sporo zalet, zwłaszcza przy pracy nad dłuższymi formami pisanymi, zawierającymi sporo grafik, diagramów, formuł matematycznych itp. Zwykle korzystałem z TexStudio, ale postanowiłem sprawdzić, czy i jak poradzi sobie IntelliJ IDEA, którego używam na co dzień.</p>
+
+<p>I radzi sobie świetnie. Do TexStudio raczej już nie wrócę :) Bo i tak korzystałbym z IntelliJ do pisania np. fragmentów kodu, które potem wklejałbym do dedykowanego edytora LaTeX. A lubię mieć wszystko w jednym IDE.</p>
+
+<h1 id="moje-założenia">Moje założenia</h1>
+<p>Założyłem sobie, że chcę mieć framework do pisania dłuższych tekstów, docelowo do publikacji jako ebook lub do druku. Najchętniej mając wszystko w kodzie (diagramy, wykresy), używając kontroli wersji, czyli tak jak zwykle pracuję. Dlatego z miejsca odrzuciłem Google Docs czy MS Office. LaTeX wydaje się całkiem dobrym rozwiązaniem:</p>
+<ul>
+  <li>wszystko jest w kodzie, tekst, style formatowania, fragmenty kodu w dedykowanych plikach, diagramy</li>
+  <li>organizacja projektu w wielu folderach i plikach, np osobne pliki na rozdziały i jeden główny plik zbierający całość dokumentu</li>
+  <li>świetne wsparcie dla bibliografii, przypisów i spisu treści</li>
+  <li>łatwe generowanie PDF-ów</li>
+  <li>…i pewnie sporo innych zalet, których jeszcze nie poznałem.</li>
+</ul>
+
+<p>Jednak są pewne problemy:</p>
+<ul>
+  <li>podgląd dokumentu — nie jest dostępny od razu, dopiero po kompilacji. To może być nawet zaleta, bo nie skupiam się na wyglądzie, tylko na treści. A sam wygląd powinien podlegać z góry ustalonym regułom dla całego dokumentu. Można ustawić automatyczną kompilację i podgląd wewnątrz IDE.</li>
+  <li>kolorowanie składni kodu — póki co, brak oficjalnego wsparcia dla <code class="language-plaintext highlighter-rouge">Kotlina</code>, ale znalazłem szablon na <a href="https://github.com/cansik/kotlin-latex-listing">GitHubie</a></li>
+  <li>wsparcie dla diagramów — chyba są jakieś pakiety dla LaTeX-a ale nie chce mi się ich uczyć. Lubię <code class="language-plaintext highlighter-rouge">PlantUML</code> i najchętniej używałbym go bezpośrednio.</li>
+</ul>
+
+<h1 id="pluginy">Pluginy</h1>
+<p>IDE nie ma domyślnie wsparcia dla LaTeX-a, ale jest kilka przydatnych pluginów, które wykorzystałem:</p>
+
+<h2 id="texify">Texify</h2>
+<p>Najważniejszym pluginem jest <a href="https://plugins.jetbrains.com/plugin/9473-texify-idea">Texify</a>, który zapewnia tony funkcjonalności związanych z LaTeX. Od podświetlania i podpowiadania składni do kompilacji plików do PDF-a.</p>
+
+<p>Dodatkowo można tak ustawić plugin, żeby automatycznie po każdej zmianie generował podgląd pliku.</p>
+
+<p><img src="assets/posts/intellij_latex/texify.png" alt="Texify settings" class="center-image" /></p>
+
+<p>Dokument można ręcznie skompilować klikając w ikonę obok bloku <code class="language-plaintext highlighter-rouge">\begin</code>, lub tworząc customową akcję, jeśli jest potrzeba bardziej rozbudowanego procesu.</p>
+
+<h2 id="pdf-viewer">PDF Viewer</h2>
+<p>W zasadzie bezobsługowy plugin pozwalający na wyświetlanie PDF-ów bezpośrednio w IDE. Texify dobrze z nim współpracuje, automatycznie po kompilacji wyświetlając wynikowy plik PDF. <a href="ttps://plugins.jetbrains.com/plugin/14494-pdf-viewer">Strona pluginu</a></p>
+
+<h2 id="plantuml-integration">PlantUML Integration</h2>
+<p>Korzystam z <code class="language-plaintext highlighter-rouge">PlantUML</code> na blogu do tworzenia diagramów, głównie klas. Samo narzędzie jest dosyć potężne, a jednocześnie przyjazne. Ten plugin zapewnia wsparcie IDE do generowania podglądu i eksportowania diagramów do plików <code class="language-plaintext highlighter-rouge">.svg</code> lub <code class="language-plaintext highlighter-rouge">.png</code>. <a href="https://plugins.jetbrains.com/plugin/7017-plantuml-integration">Strona pluginu</a></p>
+
+<h2 id="file-watchers">File Watchers</h2>
+<p>Chyba domyślnie instalowany plugin do “wyklikania” automatyzacji wewnątrz IDE. Pozwala ustawić typ i lokalizację obserwowanych plików oraz co ma się wydarzyć, jeśli zostaną zmienione.</p>
+
+<p>Zwykle będzie to np. polecenie z linii komend z określonymi parametrami.</p>
+
+<p><a href="https://plugins.jetbrains.com/plugin/7177-file-watchers">Strona pluginu</a></p>
+
+<p>Do tego oczywiście w systemie trzeba mieć zainstalowany LaTeX, np. <code class="language-plaintext highlighter-rouge">MiKTeX</code>, którego IDE użyje do kompilacji plików do PDF-a.</p>
+
+<h1 id="mój-workflow">Mój workflow</h1>
+<p>Docelowo chciałbym, żeby mój workflow wyglądał tak:</p>
+<ol>
+  <li>Piszę tekst w dokumencie LaTeX, odwzorowując strukturę dokumentu w strukturze folderów.</li>
+  <li>Docieram do momentu, gdzie chcę wrzucić fragment kodu.
+    <ol>
+      <li>Tworzę nowy plik w odpowiednim folderze, z rozszerzeniem dla danego języka.</li>
+      <li>IDE zapewnia mi wsparcie składni dla wybranej technologii, formatowanie kodu itd.</li>
+      <li>Po napisaniu kodu linkuję plik w dokumencie LaTeX.</li>
+      <li>LaTeX poprawnie generuje kod w PDF, zachowując reguły kolorowania składni.</li>
+    </ol>
+  </li>
+  <li>Chcę dodać diagram, np. klas
+    <ol>
+      <li>Dodaję nowy plik <code class="language-plaintext highlighter-rouge">.puml</code>, tworzę w nim diagram w <code class="language-plaintext highlighter-rouge">PlantUML</code>.</li>
+      <li>IDE wyświetla podgląd diagramu.</li>
+      <li>Linkuję diagram w dokumencie LaTeX.</li>
+      <li>LaTeX generuje PDF-a z poprawnie wyświetlanym diagramem, narysowanym wektorowo (brak rozmycia pixeli, zaznaczanie tekstów z diagramu itd.).</li>
+    </ol>
+  </li>
+  <li>Podgląd PDF-a generuje się po każdej zmianie w dokumencie.</li>
+</ol>
+
+<h2 id="problemywyzwania">Problemy/Wyzwania</h2>
+<p>IntelliJ z pluginem <code class="language-plaintext highlighter-rouge">Texify</code> daje podobne możliwości co dedykowane edytory LaTeX, ale nie chce mi się ręcznie kopiować fragmentów kodu, lub generować <code class="language-plaintext highlighter-rouge">.svg</code> z diagramu i wrzucać do dokumentu. Do tego dochodzi brak wsparcia dla <code class="language-plaintext highlighter-rouge">Kotlina</code> w pakiecie <code class="language-plaintext highlighter-rouge">listings</code> do wyświetlania bloków kodu w LaTeX, oraz brak obsługi <code class="language-plaintext highlighter-rouge">.svg</code>.</p>
+
+<h3 id="kotlin">Kotlin</h3>
+<p>Pakiet <code class="language-plaintext highlighter-rouge">listings</code> jest dość prosty w obsłudze i ma spore wsparcie dla wielu języków. Niestety nie dla <code class="language-plaintext highlighter-rouge">Kotlina</code>, ale na szczęście pozwala na dodanie własnych reguł kolorowania składni. Kolorowanie składni w wygenerowanym PDF-ie nie jest co prawda obowiązkowe, ale za każdym razem, gdy otwieram fizyczną książkę z przykładami kodu, które są w całości tym samym kolorem, mam ochotę to przepisać w IDE. Po prostu źle mi się to czyta i zrozumienie co się dzieje, zajmuje mi znacznie więcej czasu.</p>
+
+<p>Gotowy schemat kolorowania składni dla <code class="language-plaintext highlighter-rouge">Kotlina</code> znalazłem <a href="https://github.com/cansik/kotlin-latex-listing">na GitHubie</a>. Wystarczy dorzucić plik do projektu i podlinkować w dokumencie LaTeX, np:</p>
+<div class="language-latex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">% pakiet LaTeX do wyświetlania bloków kodu</span>
+<span class="k">\usepackage</span><span class="p">{</span>listings<span class="p">}</span> 
+<span class="c">% linkowanie pliku z definicją stylu kolorowania dla Kotlina</span>
+<span class="k">\input</span><span class="p">{</span>kotlin<span class="p">_</span>def.tex<span class="p">}</span>
+<span class="c">% dodanie bloku kodu z pliku `Simple.kt`</span>
+<span class="k">\lstinputlisting</span><span class="na">[caption={Simple code listing.}, label={lst:example1}, language=Kotlin]</span><span class="p">{</span>Simple.kt<span class="p">}</span>
+</code></pre></div></div>
+<p>Podoba mi się zwłaszcza trzymanie kodu POZA dokumentem LaTeX. Dzięki temu pracuję z kodem tak, jak to zwykle robię, a potem tylko linkuję plik w dokumencie. Kolorowanie i podpowiadanie składni trochę rozleniwia, ale pozwala też sprawniej pracować.</p>
+
+<h3 id="diagramy-plantuml">Diagramy PlantUML</h3>
+<p>Tutaj sprawa się komplikuje. Nie ma gotowego wsparcia dla diagramów z <code class="language-plaintext highlighter-rouge">PlantUML</code> do LaTeX (a przynajmniej nie znalazłem). Można generować ręcznie plik graficzny z diagramu w osobnym pliku i potem podlinkować go w dokumencie. Ale LaTeX nie wspiera też <code class="language-plaintext highlighter-rouge">.svg</code> a nie chcę porozciąganych <code class="language-plaintext highlighter-rouge">.png</code> w moim ślicznym PDF-ie. Więc musiałbym generować <code class="language-plaintext highlighter-rouge">.svg</code> z diagramu, a następnie zamienić plik na <code class="language-plaintext highlighter-rouge">.pdf</code> który linkuję w dokumencie LaTeX.</p>
+
+<p>I tutaj wchodzą <code class="language-plaintext highlighter-rouge">File Watcher</code>-y, całe na biało. Z niewielką pomocą pakietu <code class="language-plaintext highlighter-rouge">svg</code> dla LaTeX.</p>
+
+<p>Najpierw musiałem zainstalować sobie narzędzia wywoływane przez <code class="language-plaintext highlighter-rouge">file watchery</code>:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PlantUML</code> przez Homebrew <code class="language-plaintext highlighter-rouge">brew install plantuml</code>. Po instalacji komenda <code class="language-plaintext highlighter-rouge">plantuml</code> powinna być dostępna w terminalu.</li>
+  <li><code class="language-plaintext highlighter-rouge">Inscape</code> to standardowa aplikacja z GUI, którą można pobrać <a href="https://inkscape.org/release/inkscape-1.1/">stąd</a>. Warto stworzyć link symboliczny, żeby wygodniej wywoływać aplikację z wiersza poleceń: <code class="language-plaintext highlighter-rouge">sudo ln -s /Applications/Inkscape.app/Contents/MacOS/inkscape /usr/local/bin</code></li>
+</ul>
+
+<p>Ustawiłem sobie 2 <code class="language-plaintext highlighter-rouge">File Watchery</code>:</p>
+<ol>
+  <li>Po każdej zmianie pliku <code class="language-plaintext highlighter-rouge">.puml</code> (którego wsparcie mam z pluginu <code class="language-plaintext highlighter-rouge">PlantUML Integration</code>) uruchamia polecenie <code class="language-plaintext highlighter-rouge">plantuml $FileName$ -tsvg</code> - czyli generuje plik <code class="language-plaintext highlighter-rouge">.svg</code> z diagramu.</li>
+  <li>Po każdej zmianie pliku <code class="language-plaintext highlighter-rouge">.svg</code> (czyli np. wygenerowaniu z poprzedniego kroku) wykonaj polecenie <code class="language-plaintext highlighter-rouge">inkscape --file=$FileName$  --export-pdf=$FileName$.pdf</code> - generuje plik <code class="language-plaintext highlighter-rouge">.pdf</code> z diagramem za pomocą aplikacji <code class="language-plaintext highlighter-rouge">Inkscape</code></li>
+</ol>
+
+<p><img src="assets/posts/intellij_latex/plantuml_fw.png" alt="PlantUML file watcher settings" class="center-image" />
+<img src="assets/posts/intellij_latex/svg_fw.png" alt="SVG file watcher settings" class="center-image" /></p>
+
+<p>I taki przygotowany automagicznie PDF z diagramem mogę podlinkować i umiejscowić w LaTeX:</p>
+<div class="language-latex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">\begin{figure}</span>[htbp]
+    <span class="k">\centering</span>
+    <span class="k">\includesvg</span><span class="p">{</span>test.svg<span class="p">}</span>
+    <span class="k">\caption</span><span class="p">{</span>svg image<span class="p">}</span>
+    <span class="k">\label</span><span class="p">{</span>fig:figure<span class="p">}</span>
+<span class="nt">\end{figure}</span>
+</code></pre></div></div>
+<p>Zwróć uwagę, że podaję nazwę pliku <code class="language-plaintext highlighter-rouge">.svg</code> a nie <code class="language-plaintext highlighter-rouge">.pdf</code> - pakiet <code class="language-plaintext highlighter-rouge">svg</code> dla LaTeX sam poszuka PDFa pasującego nazwą do podanego pliku.</p>
+
+<p>Projekt <code class="language-plaintext highlighter-rouge">LaTeX</code> którym się bawiłem znajduje się <a href="https://github.com/asvid/LatexTest">tutaj</a>.</p>
+
+<h1 id="braki">Braki</h1>
+<p>Najbardziej brakuje mi chyba ładnego podziału na rozdziały i sekcje, który miałem w TexStudio. Na razie IntelliJ nie potrafi tego wyświetlić, albo ja nie wiem jak to osiągnąć. Organizując strukturę folderów w projekcie, pewnie da się uzyskać podobną czytelność, ale nie sprawdziłem tego jeszcze w praktyce.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>IntelliJ IDEA z zestawem pluginów i <code class="language-plaintext highlighter-rouge">File Watcher</code>-ów skutecznie zastąpił mi dedykowane edytory LaTeX. Wydaje mi się, że zapewnia nawet większe możliwości, dzięki łatwej automatyzacji i wykorzystywaniu zewnętrznych narzędzi. Brakuje trochę ładnego podziału plików <code class="language-plaintext highlighter-rouge">.tex</code> na sekcje i rozdziały — choćby takiego jak wyświetlanie pól i metod w plikach z kodem. Niewątpliwą zaletą korzystania z jednego IDE, jest dobre wsparcie dla wielu technologii. Edytowanie fragmentów kodu w edytorach LaTeX albo przeklejanie z innego IDE nie jest zbyt wygodne, może powodować błędy lub nieczytelne formatowanie.</p>
+
+<p>Gdyby nie praca z kodem i diagramami (które lubię również mieć w kodzie), pewnie wystarczyłoby mi GoogleDocs. Jednak praca w LaTeX i trzymanie wszystkiego w kodzie oraz w osobnych plikach pozwala na przyjemne wersjonowanie zmian w Gicie. Mam więc bardzo znajomy dla siebie tryb pracy, mimo że wynikiem jest PDF, a nie oprogramowanie :)</p>
+
+<h1 id="użyte-narzędzia">Użyte narzędzia</h1>
+<ul>
+  <li><a href="https://miktex.org/">MiKTeX</a></li>
+  <li><a href="https://plantuml.com/">PlantUML</a></li>
+  <li><a href="https://inkscape.org/release/inkscape-1.1/">Inkscape</a></li>
+  <li><a href="https://github.com/cansik/kotlin-latex-listing">Kotlin color scheme for Latex listing</a></li>
+  <li><a href="https://www.jetbrains.com/idea/">IntelliJ IDEA Community</a>
+    <ul>
+      <li><a href="https://plugins.jetbrains.com/plugin/9473-texify-idea">Texify</a></li>
+      <li><a href="https://plugins.jetbrains.com/plugin/7017-plantuml-integration">PlantUML integration</a></li>
+      <li><a href="https://plugins.jetbrains.com/plugin/7177-file-watchers">File Watchers</a></li>
+      <li><a href="ttps://plugins.jetbrains.com/plugin/14494-pdf-viewer">PDF Viewer</a></li>
+    </ul>
+  </li>
+  <li>MacOS, ale powinno banglać podobnie na Linuxach</li>
+  <li><a href="https://github.com/asvid/LatexTest">Moje repo do zabaw z LaTeX</a></li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Today I learned-ref">-->
+        <!--                Today I learned <span>(2)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#IDE-ref">
+                    IDE <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#plugins-ref">
+                    plugins <span>(3)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#IntelliJ-ref">
+                    IntelliJ <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#LaTeX-ref">
+                    LaTeX <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=IntelliJ IDEA jako edytor LaTeX"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin-facade-pattern"
+                                    title="Fasada w Kotlinie">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin-adapter-pattern" title="Adapter w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

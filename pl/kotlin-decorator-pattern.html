@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/decorator.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Dekorator w Kotlinie </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   July
+	   3rd,
+	     
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        25 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#implementacja">Implementacja</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstrakcyjna">Abstrakcyjna</a></li>
+<li class="toc-entry toc-h2"><a href="#delegaty">Delegaty</a></li>
+<li class="toc-entry toc-h2"><a href="#interfejsy-komunikacyjne">Interfejsy komunikacyjne</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#nazewnictwo">Nazewnictwo</a></li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a></li>
+<li class="toc-entry toc-h1"><a href="#konsekwencje">Konsekwencje</a></li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+<p>Dekorator pozwala na dynamiczne dodanie lub zmianę zachowania konkretnego obiektu danej klasy, bez wpływu na inne obiekty tej samej klasy. W pewnych przypadkach pozwala to znacząco ograniczyć liczbę klas, przez wyciągnięcie współdzielonego zachowania do klasy dekorującej, zamiast rozbudowy struktury dziedziczenia.</p>
+
+<p>Zadaniem dekoratora jest “owinąć” (stąd inna nazwa: <code class="language-plaintext highlighter-rouge">Wrapper</code>) oryginalny obiekt i zmodyfikować lub nadpisać jego zachowanie. Klasa dekoratora ma ten sam interfejs co obiekt dekorowany, dlatego dla klienta nie ma znaczenia czy obiekt został udekorowany, czy nie. Co do zasady, Dekorator raczej nie dodaje nowych publicznych metod, bo klient korzystający z interfejsu oryginalnego obiektu i tak nie miałby do nich dostępu. Posiadanie tego samego interfejsu co oryginalny obiekt ma tę zaletę, że dekoratory mogą się swobodnie zagnieżdżać i owijać jeden w drugi.</p>
+
+<p>Dekorowanie odbywa się dynamicznie, w trakcie działania programu, a nie w czasie kompilacji. Obiekt dekorowany jest zwykle przekazywany w konstruktorze Dekoratora, ponieważ instancja <code class="language-plaintext highlighter-rouge">Dekoratora</code> nie ma sensu sam z siebie, bez obiektu, który owija.</p>
+
+<h1 id="implementacja">Implementacja</h1>
+<p>We wzorcu <code class="language-plaintext highlighter-rouge">Dekorator</code> wyróżniamy kilka elementów:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="266px" preserveAspectRatio="none" style="width:484px;height:266px;" version="1.1" viewBox="0 0 484 266" width="484px" zoomAndPan="magnify"><defs><filter height="300%" id="f1tb3b7t5t822i" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[321dae1e4c20a532a67879525d68ecc8]
+class Decorator--><rect fill="#FEFECE" filter="url(#f1tb3b7t5t822i)" height="60.8047" id="Decorator" style="stroke: #A80036; stroke-width: 1.5;" width="162" x="114.5" y="101" /><ellipse cx="159.75" cy="117" fill="#A9DCDF" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M159.8594,112.3438 L158.7031,117.4219 L161.0313,117.4219 L159.8594,112.3438 Z M158.375,110.1094 L161.3594,110.1094 L164.7188,122.5 L162.2656,122.5 L161.5,119.4375 L158.2188,119.4375 L157.4688,122.5 L155.0313,122.5 L158.375,110.1094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="63" x="180.25" y="121.1543">Decorator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="115.5" x2="275.5" y1="133" y2="133" /><polygon fill="none" points="125.5,139,129.5,143,125.5,147,121.5,143" style="stroke: #B38D22; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="136" x="134.5" y="147.2104">component: Component</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="115.5" x2="275.5" y1="153.8047" y2="153.8047" /><!--MD5=[ed6624c6556d5e7b1bd23032162d20b7]
+class Client--><rect fill="#FEFECE" filter="url(#f1tb3b7t5t822i)" height="32" id="Client" style="stroke: #A80036; stroke-width: 1.5;" width="67" x="6" y="8" /><ellipse cx="21" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M23.9688,29.6406 Q23.3906,29.9375 22.75,30.0781 Q22.1094,30.2344 21.4063,30.2344 Q18.9063,30.2344 17.5781,28.5938 Q16.2656,26.9375 16.2656,23.8125 Q16.2656,20.6875 17.5781,19.0313 Q18.9063,17.375 21.4063,17.375 Q22.1094,17.375 22.75,17.5313 Q23.4063,17.6875 23.9688,17.9844 L23.9688,20.7031 Q23.3438,20.125 22.75,19.8594 Q22.1563,19.5781 21.5313,19.5781 Q20.1875,19.5781 19.5,20.6563 Q18.8125,21.7188 18.8125,23.8125 Q18.8125,25.9063 19.5,26.9844 Q20.1875,28.0469 21.5313,28.0469 Q22.1563,28.0469 22.75,27.7813 Q23.3438,27.5 23.9688,26.9219 L23.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="35" x="35" y="28.1543">Client</text><!--MD5=[4e13963c9dc916a21a8436ef39422b32]
+class Component--><rect fill="#FEFECE" filter="url(#f1tb3b7t5t822i)" height="32" id="Component" style="stroke: #A80036; stroke-width: 1.5;" width="104" x="143.5" y="8" /><ellipse cx="158.5" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M154.4219,19.7656 L154.4219,17.6094 L161.8125,17.6094 L161.8125,19.7656 L159.3438,19.7656 L159.3438,27.8438 L161.8125,27.8438 L161.8125,30 L154.4219,30 L154.4219,27.8438 L156.8906,27.8438 L156.8906,19.7656 L154.4219,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="72" x="172.5" y="28.1543">Component</text><!--MD5=[b5bc18f2ff550a3ef28474c0b2646ebb]
+class ConcreteComponent--><rect fill="#FEFECE" filter="url(#f1tb3b7t5t822i)" height="32" id="ConcreteComponent" style="stroke: #A80036; stroke-width: 1.5;" width="161" x="312" y="115.5" /><ellipse cx="327" cy="131.5" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M329.9688,137.1406 Q329.3906,137.4375 328.75,137.5781 Q328.1094,137.7344 327.4063,137.7344 Q324.9063,137.7344 323.5781,136.0938 Q322.2656,134.4375 322.2656,131.3125 Q322.2656,128.1875 323.5781,126.5313 Q324.9063,124.875 327.4063,124.875 Q328.1094,124.875 328.75,125.0313 Q329.4063,125.1875 329.9688,125.4844 L329.9688,128.2031 Q329.3438,127.625 328.75,127.3594 Q328.1563,127.0781 327.5313,127.0781 Q326.1875,127.0781 325.5,128.1563 Q324.8125,129.2188 324.8125,131.3125 Q324.8125,133.4063 325.5,134.4844 Q326.1875,135.5469 327.5313,135.5469 Q328.1563,135.5469 328.75,135.2813 Q329.3438,135 329.9688,134.4219 L329.9688,137.1406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="129" x="341" y="135.6543">ConcreteComponent</text><!--MD5=[904674b7671ab8d47bc62d2f5c6c0c61]
+class ConcreteDecorator--><rect fill="#FEFECE" filter="url(#f1tb3b7t5t822i)" height="32" id="ConcreteDecorator" style="stroke: #A80036; stroke-width: 1.5;" width="152" x="119.5" y="223" /><ellipse cx="134.5" cy="239" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M137.4688,244.6406 Q136.8906,244.9375 136.25,245.0781 Q135.6094,245.2344 134.9063,245.2344 Q132.4063,245.2344 131.0781,243.5938 Q129.7656,241.9375 129.7656,238.8125 Q129.7656,235.6875 131.0781,234.0313 Q132.4063,232.375 134.9063,232.375 Q135.6094,232.375 136.25,232.5313 Q136.9063,232.6875 137.4688,232.9844 L137.4688,235.7031 Q136.8438,235.125 136.25,234.8594 Q135.6563,234.5781 135.0313,234.5781 Q133.6875,234.5781 133,235.6563 Q132.3125,236.7188 132.3125,238.8125 Q132.3125,240.9063 133,241.9844 Q133.6875,243.0469 135.0313,243.0469 Q135.6563,243.0469 136.25,242.7813 Q136.8438,242.5 137.4688,241.9219 L137.4688,244.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="120" x="148.5" y="243.1543">ConcreteDecorator</text><!--MD5=[4758994e2c5b8c480b5268b073beb8b0]
+reverse link Component to ConcreteComponent--><path d="M267.52,24 C267.52,24 392.5,24 392.5,24 C392.5,24 392.5,85.1 392.5,115.17 " fill="none" id="Component&lt;-ConcreteComponent" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="267.52,31,247.52,24,267.52,17,267.52,31" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[c50e16e7686754e8210f5940617c961a]
+reverse link Component to Decorator--><path d="M178.17,60.33 C178.17,60.33 178.17,100.71 178.17,100.71 " fill="none" id="Component&lt;-Decorator" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="171.17,60.33,178.17,40.33,185.17,60.33,171.17,60.33" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[c47b27c8bab0747c66501be7d041664a]
+reverse link Decorator to Component--><path d="M212.83,87.98 C212.83,87.98 212.83,40.28 212.83,40.28 " fill="none" id="Decorator&lt;-Component" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#FFFFFF" points="212.83,100.98,216.83,94.98,212.83,88.98,208.83,94.98,212.83,100.98" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[8c93f299b55ad87ea38bcbb606154285]
+reverse link Decorator to ConcreteDecorator--><path d="M195.5,182.02 C195.5,182.02 195.5,222.72 195.5,222.72 " fill="none" id="Decorator&lt;-ConcreteDecorator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="188.5,182.02,195.5,162.02,202.5,182.02,188.5,182.02" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[fa39e0b8b995cfad057d1e097dfd30f9]
+link Client to Component--><path d="M73.35,24 C93.78,24 120.24,24 143.3,24 " fill="none" id="Client-Component" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[2caf32c6e10ed268106628e7ff599f60]
+@startuml
+skinparam linetype ortho
+hide members
+show Decorator members
+
+class Client
+interface Component
+class ConcreteComponent implements Component
+abstract class Decorator implements Component{
+# component: Component
+}
+class ConcreteDecorator extends Decorator
+
+Client -right- Component : using
+
+Decorator o- - Component
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>Elementy:</p>
+<ul>
+  <li><strong>Client</strong> - klasa korzystająca z obiektu <code class="language-plaintext highlighter-rouge">Component</code>, zna tylko ten interfejs, a nie konkretne klasy, tym bardziej nie musi wiedzieć o istnieniu dekoratora</li>
+  <li><strong>Component</strong> - interfejs obiektu, który <code class="language-plaintext highlighter-rouge">Decorator</code> dekoruje</li>
+  <li><strong>ConcreteComponent</strong> - konkretna implementacja <code class="language-plaintext highlighter-rouge">Component</code>, która potem trafi w konstruktorze do dekoratora</li>
+  <li><strong>Decorator</strong> - abstrakcyjna klasa implementująca interfejs <code class="language-plaintext highlighter-rouge">Component</code> i przyjmująca w konstruktorze obiekt z tym interfejsem. Użycie klasy abstrakcyjnej, zamiast tylko interfejsu pozwala wymusić konstruktor na dziedziczących klasach, a jednocześnie nie pozwala stworzyć instancji. Jeśli <code class="language-plaintext highlighter-rouge">Decorator</code> przyjmuje obiekty z ogólnym interfejsem <code class="language-plaintext highlighter-rouge">Component</code> a nie konkretne klasy, może dekorować całe rodziny obiektów.</li>
+  <li><strong>ConcreteDecorator</strong> - konkretna implementacja dekoratora</li>
+</ul>
+
+<h2 id="abstrakcyjna">Abstrakcyjna</h2>
+<p>W kodzie prezentuje się to mniej więcej tak:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Component</span> <span class="p">{</span>
+	<span class="c1">// przykładowe metody dekorowanego interfejsu</span>
+    <span class="k">fun</span> <span class="nf">methodA</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">methodB</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// konkretna implementacja, może ich być wiele</span>
+<span class="kd">class</span> <span class="nc">ConcreteComponent</span> <span class="p">:</span> <span class="nc">Component</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodA</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodB</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="c1">// Dekorator `jest obiektem` Component i `posiada obiekt` Component</span>
+<span class="c1">// pole `component` jest `protected` i dzięki temu dostępne dla konkretnych Dekoratorów</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Decorator</span><span class="p">(</span><span class="k">protected</span> <span class="kd">val</span> <span class="py">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Component</span>
+
+<span class="c1">// Konkretna implementacja dekoratora, wymuszony konstruktor przyjmujący obiekt Component</span>
+<span class="kd">class</span> <span class="nc">ConcreteDecorator1</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Decorator</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// metody muszą być nadpisane</span>
+	<span class="c1">// w tym przypadku Dekorator wywołuje metody owijanego obiektu bez żadnych zmian</span>
+	<span class="c1">// czyli jest w zasadzie proxy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodA</span><span class="p">()</span> <span class="p">=</span> <span class="n">component</span><span class="p">.</span><span class="nf">methodA</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodB</span><span class="p">()</span> <span class="p">=</span> <span class="n">component</span><span class="p">.</span><span class="nf">methodB</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// kolejna implementacja Dekoratora</span>
+<span class="kd">class</span> <span class="nc">ConcreteDecorator2</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Decorator</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodA</span><span class="p">(){</span>
+		<span class="c1">// w tej wersji obiektu nie można wykonać methodA()</span>
+		<span class="c1">// może to być połączone ze sprawdzaniem parametrów komponentu</span>
+        <span class="k">throw</span> <span class="nc">Exception</span><span class="p">(</span><span class="s">"you can't do this"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">methodB</span><span class="p">(){</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"running methodB"</span><span class="p">)</span>
+        <span class="n">component</span><span class="p">.</span><span class="nf">methodB</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="c1">// "goły" obiekt `Component``</span>
+    <span class="kd">val</span> <span class="py">component</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">ConcreteComponent</span><span class="p">()</span>
+	<span class="c1">// pierwszy Dekorator owijający obiekt</span>
+    <span class="kd">val</span> <span class="py">dec1</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">ConcreteDecorator1</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+	<span class="c1">// drugi Dekorator, owijający obiekt owinięty już w pierwszy</span>
+    <span class="kd">val</span> <span class="py">dec2</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">ConcreteDecorator2</span><span class="p">(</span><span class="n">dec1</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Widać tutaj jak łatwo można zagnieżdżać Dekoratory. W tej implementacji <code class="language-plaintext highlighter-rouge">ConcreteDecorator1</code> to w zasadzie <code class="language-plaintext highlighter-rouge">Proxy</code> bo wywołuje bez zmian metody z przekazanego obiektu <code class="language-plaintext highlighter-rouge">Component</code>. Zwróć uwagę na <code class="language-plaintext highlighter-rouge">ConcreteDecorator2</code> - <code class="language-plaintext highlighter-rouge">methodA()</code> rzuca wyjątek. Dekorator może też zwracać stałą i w ogóle nie wykorzystywać przekazanego obiektu <code class="language-plaintext highlighter-rouge">Component</code>. <code class="language-plaintext highlighter-rouge">Dekorator</code> sam decyduje, jak się zachować. Na podstawie własności owijanego obiektu może zdecydować o rzuceniu wyjątku zamiast zwróceniu jakiejś wartości.</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="230px" preserveAspectRatio="none" style="width:260px;height:230px;" version="1.1" viewBox="0 0 260 230" width="260px" zoomAndPan="magnify"><defs><filter height="300%" id="f1ric03r6rr0xv" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacingAndGlyphs" textLength="227" x="21" y="16.708">Zagnieżdżone dekoratory</text><!--MD5=[6f4c31e31ed46a7e0543a94313411fae]
+cluster Decorator1--><polygon fill="#FFFFFF" filter="url(#f1ric03r6rr0xv)" points="22,54.9531,32,44.9531,235,44.9531,235,208.9531,225,218.9531,22,218.9531,22,54.9531" style="stroke: #000000; stroke-width: 1.5;" /><line style="stroke: #000000; stroke-width: 1.5;" x1="225" x2="234" y1="54.9531" y2="45.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="22" x2="225" y1="54.9531" y2="54.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="225" x2="225" y1="54.9531" y2="218.9531" /><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="89" x="80" y="70.9482">Decorator1</text><!--MD5=[5d3321ce2639da75d4ce36a408fe12af]
+cluster Decorator2--><polygon fill="#FFFFFF" filter="url(#f1ric03r6rr0xv)" points="46,102.9531,56,92.9531,211,92.9531,211,184.9531,201,194.9531,46,194.9531,46,102.9531" style="stroke: #000000; stroke-width: 1.5;" /><line style="stroke: #000000; stroke-width: 1.5;" x1="201" x2="210" y1="102.9531" y2="93.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="46" x2="201" y1="102.9531" y2="102.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="201" x2="201" y1="102.9531" y2="194.9531" /><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="89" x="80" y="118.9482">Decorator2</text><!--MD5=[245d2f63106c9e261e62f339c1a83039]
+entity Component--><polygon fill="#FFFFFF" filter="url(#f1ric03r6rr0xv)" points="67,142.9531,77,132.9531,189,132.9531,189,169.25,179,179.25,67,179.25,67,142.9531" style="stroke: #000000; stroke-width: 1.5;" /><line style="stroke: #000000; stroke-width: 1.5;" x1="179" x2="188" y1="142.9531" y2="133.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="67" x2="179" y1="142.9531" y2="142.9531" /><line style="stroke: #000000; stroke-width: 1.5;" x1="179" x2="179" y1="142.9531" y2="179.25" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="82" x="82" y="165.9482">Component</text><!--MD5=[31b8afc00d7d276a69f461fbe47369fa]
+@startuml
+title Zagnieżdżone dekoratory
+node Decorator1{
+node Decorator2{
+node Component{
+
+		}
+	}
+}
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h2 id="delegaty">Delegaty</h2>
+
+<p>Kotlin ma wbudowane wsparcie dla <a href="https://kotlinlang.org/docs/delegation.html">wzorca delegacji</a>, czyli kolejnego wzorca stawiającego kompozycję ponad dziedziczeniem. Ogólnie chodzi o to, żeby przekazywać (<strong>delegować</strong>) wykonanie zadania wynikającego z interfejsu klasy do jakiegoś obiektu będącego jej składnikiem, przekazanym w konstruktorze, lub wstrzykniętym przez DI. W ten sposób można sobie skomponować klasę z reużywalnych delegatów, zamiast powielać implementację lub tworzyć dziwne struktury dziedziczenia. Trochę taka metoda szablonowa tylko, że dla klasy — klasa szablonowa :)</p>
+
+<p>Delegaty można wykorzystać do implementacji <code class="language-plaintext highlighter-rouge">Dekoratora</code>. Delegaty w Kotlinie są tworzone przy użyciu słowa kluczowego <code class="language-plaintext highlighter-rouge">by</code>:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// podstawowy interfejs do użycia z Dekoratorem</span>
+<span class="kd">interface</span> <span class="nc">Component</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">sayHello</span><span class="p">():</span> <span class="nc">String</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">ConcreteComponent1</span> <span class="p">:</span> <span class="nc">Component</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sayHello</span><span class="p">()</span> <span class="p">=</span> <span class="s">"hello from ${javaClass.simpleName}"</span>
+<span class="p">}</span>
+
+<span class="c1">// delegujemy zachowanie z interfejsu `Component` do obiektu `component` z konstruktora</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Decorator</span><span class="p">(</span><span class="k">protected</span> <span class="kd">val</span> <span class="py">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">):</span> <span class="nc">Component</span> <span class="k">by</span> <span class="n">component</span>
+
+<span class="kd">class</span> <span class="nc">Decorator1</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Decorator</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// nadpisujemy metodę z komponentu, dodając informację z dekoratora</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sayHello</span><span class="p">()</span> <span class="p">=</span> <span class="s">"${component.sayHello()} and from ${javaClass.simpleName}"</span>
+<span class="p">}</span>
+
+<span class="c1">// nie ma potrzeby za każdym razem nadpisywać metody `sayHello()`</span>
+<span class="c1">// została "oddelegowana" do obiektu `component` z konstruktora</span>
+<span class="kd">class</span> <span class="nc">Decorator2</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Decorator</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">first</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">ConcreteComponent1</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">decOne</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">Decorator1</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">decTwo</span><span class="p">:</span> <span class="nc">Component</span> <span class="p">=</span> <span class="nc">Decorator2</span><span class="p">(</span><span class="n">decOne</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">first</span><span class="p">.</span><span class="nf">sayHello</span><span class="p">())</span>  <span class="c1">// hello from ConcreteComponent1</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">decOne</span><span class="p">.</span><span class="nf">sayHello</span><span class="p">())</span> <span class="c1">// hello from ConcreteComponent1 and from Decorator1</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">decTwo</span><span class="p">.</span><span class="nf">sayHello</span><span class="p">())</span> <span class="c1">// hello from ConcreteComponent1 and from Decorator1 and from Decorator2</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Alternatywnie, <code class="language-plaintext highlighter-rouge">component</code> może nie być nawet polem w abstrakcyjnym Dekoratorze. Wtedy dziedziczące konkretne dekoratory mogą użyć <code class="language-plaintext highlighter-rouge">super</code>, które oddeleguje wywołanie metody do obiektu <code class="language-plaintext highlighter-rouge">component</code> z konstruktora.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">AltDecorator</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">):</span> <span class="nc">Component</span> <span class="k">by</span> <span class="n">component</span>
+
+<span class="kd">class</span> <span class="nc">Decorator1</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Decorator</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sayHello</span><span class="p">()</span> <span class="p">=</span> <span class="s">"${super.sayHello()} and from ${javaClass.simpleName}"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Delegować można dowolną liczbę interfejsów, <strong>ale tylko interfejsów</strong>, a nie klas:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Component</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">sayHello</span><span class="p">():</span> <span class="nc">String</span>
+<span class="p">}</span>
+<span class="kd">interface</span> <span class="nc">Component2</span><span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">sayBye</span><span class="p">():</span> <span class="nc">String</span>
+<span class="p">}</span>
+
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Decorator</span><span class="p">(</span>
+        <span class="k">protected</span> <span class="kd">val</span> <span class="py">component</span><span class="p">:</span> <span class="nc">Component</span><span class="p">,</span>
+        <span class="k">protected</span> <span class="kd">val</span> <span class="py">component2</span><span class="p">:</span> <span class="nc">Component2</span>
+<span class="p">)</span> <span class="p">:</span>
+        <span class="nc">Component</span> <span class="k">by</span> <span class="n">component</span><span class="p">,</span>
+        <span class="nc">Component2</span> <span class="k">by</span> <span class="n">component2</span>
+</code></pre></div></div>
+<p>Dzięki użyciu delegatów, konkretny <code class="language-plaintext highlighter-rouge">Dekorator</code> może zawierać wyłącznie metody, które faktycznie chce zmienić. Abstrakcyjna klasa bazowa <code class="language-plaintext highlighter-rouge">Dekorator</code> mogłaby też zawierać wywołania wszystkich metod na obiekcie dekorowanym, wtedy dziedziczące po niej konkretne klasy nadpisywałyby tylko wymagane dla siebie metody. Ale jeśli można to samo osiągnąć pojedynczym słówkiem <code class="language-plaintext highlighter-rouge">by</code> to po co przepłacać? :)</p>
+
+<h2 id="interfejsy-komunikacyjne">Interfejsy komunikacyjne</h2>
+<p>Weźmy system wysyłający komunikaty tekstowe. Komunikaty mogą być wysłane przez Bluetooth lub TCP. Chcemy mieć możliwość wysłania samego tekstu, JSON-a oraz JSON-a z wiadomością zakodowaną Base64. Każdy rodzaj wiadomości powinien dać się przesyłać każdym medium. A z poziomu klienta nie powinno mieć znaczenia, jaki typ wiadomości i medium zostało wybrane.</p>
+
+<p>Ok zacznijmy od sposobów komunikacji:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ogólny interfejs komunikacyjny</span>
+<span class="kd">interface</span> <span class="nc">Comm</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">sendMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span>
+<span class="p">}</span>
+
+<span class="c1">// klasa obsługująca Bluetooth przy pomocy przekazanego BtBodule</span>
+<span class="kd">class</span> <span class="nc">BtComm</span><span class="p">(</span><span class="kd">val</span> <span class="py">bt</span><span class="p">:</span> <span class="nc">BtModule</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Comm</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sendMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">bt</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// klasa obsługująca TCP przy pomocy przekazanego TcpModule</span>
+<span class="kd">class</span> <span class="nc">TcpComm</span><span class="p">(</span><span class="kd">val</span> <span class="py">tcpModule</span><span class="p">:</span> <span class="nc">TcpModule</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Comm</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sendMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">tcpModule</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">TcpModule</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">send</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"sending message via TCP: $text"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nc">Result</span><span class="p">.</span><span class="nc">Success</span><span class="p">()</span> <span class="c1">// klasa sealed</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">BtModule</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">send</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"sending message via BT: $text"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nc">Result</span><span class="p">.</span><span class="nc">Success</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Klienty będą znały wyłącznie ogólny interfejs <code class="language-plaintext highlighter-rouge">Comm</code>, bez wiedzy, jaki to konkretnie sposób przesyłania wiadomości. Szczegółami przesyłania przez Bluetooth i TCP zajmą się osobne moduły. Z punktu widzenia interfejsu komunikacyjnego mamy tutaj fasadę na potencjalnie skomplikowane przesyłanie wiadomości, dzielenie na ramki, parowanie urządzeń, ustalenie adresu itd.</p>
+
+<p><code class="language-plaintext highlighter-rouge">BtComm</code> i <code class="language-plaintext highlighter-rouge">TcpComm</code> to konkretne klasy implementujące dekorowany interfejs, a nie dekoratory.</p>
+
+<p>Użycie np. Bluetooth może wyglądać tak:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">btModule</span> <span class="p">=</span> <span class="nc">BtModule</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">message</span> <span class="p">=</span> <span class="s">"hello"</span>
+<span class="kd">val</span> <span class="py">btComm</span><span class="p">:</span> <span class="nc">Comm</span> <span class="p">=</span> <span class="nc">BtComm</span><span class="p">(</span><span class="n">btModule</span><span class="p">)</span>
+<span class="n">btComm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="c1">// sending message via BT: hello</span>
+</code></pre></div></div>
+<p>Co spowoduje wysłanie gołego tekstu przez Bluetooth. Analogicznie wyglądałoby to dla TCP.</p>
+
+<h3 id="jsondecorator">JsonDecorator</h3>
+<p>Chcemy móc wysłać wiadomość w formacie JSON zarówno przez BT, jak i TCP. Można do tego wykorzystać dekorator:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// w tym dekoratorze delegowany `comm` nie jest polem a dziedziczące klasy nie mają do niego dostępu</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">CommDecorator</span><span class="p">(</span><span class="n">comm</span><span class="p">:</span> <span class="nc">Comm</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Comm</span> <span class="k">by</span> <span class="n">comm</span>
+
+<span class="kd">class</span> <span class="nc">JsonDecorator</span><span class="p">(</span><span class="n">comm</span><span class="p">:</span> <span class="nc">Comm</span><span class="p">)</span> <span class="p">:</span> <span class="nc">CommDecorator</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sendMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+		<span class="c1">// przez `super` wywoływana jest metoda z abstrakcyjnego dekoratora, </span>
+		<span class="c1">// która deleguje wywołanie do przekazanego `comm`</span>
+        <span class="k">return</span> <span class="k">super</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="s">"{\"message\":\"$text\"}"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>I użycie:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">tcpModule</span> <span class="p">=</span> <span class="nc">TcpModule</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">btModule</span> <span class="p">=</span> <span class="nc">BtModule</span><span class="p">()</span>
+
+<span class="kd">val</span> <span class="py">message</span> <span class="p">=</span> <span class="s">"hello"</span>
+<span class="c1">// owijamy komunikację TCP w dekorator JSON</span>
+<span class="kd">val</span> <span class="py">tcpJsonComm</span><span class="p">:</span> <span class="nc">Comm</span> <span class="p">=</span> <span class="nc">JsonDecorator</span><span class="p">(</span><span class="nc">TcpComm</span><span class="p">(</span><span class="n">tcpModule</span><span class="p">))</span>
+<span class="n">tcpJsonComm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="c1">// sending message via TCP: {"message":"hello"}</span>
+<span class="c1">// dla BT analogicznie:</span>
+<span class="kd">val</span> <span class="py">btJsonComm</span><span class="p">:</span> <span class="nc">Comm</span> <span class="p">=</span> <span class="nc">JsonDecorator</span><span class="p">(</span><span class="nc">BtComm</span><span class="p">(</span><span class="n">btModule</span><span class="p">))</span>
+<span class="n">btJsonComm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="c1">// sending message via BT: {"message":"hello"}</span>
+</code></pre></div></div>
+<p>Jeśli teraz doszedłby kolejny sposób komunikacji (Websockety, Firebase, gołąb pocztowy) i wiadomości powinny mieć taki sam format, to nie ma problemu. Po prostu udekoruje się nową implementację <code class="language-plaintext highlighter-rouge">Comm</code> już gotowym dekoratorem. Podobnie, jeśli powstanie nowy format wiadomości, przy pomocy dekoratora można użyć znanych już sposobów przesyłania.</p>
+
+<h3 id="base64decorator">Base64Decorator</h3>
+<p>Ostatni dekorator posłuży do kodowania wiadomości przy użyciu Base64:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Base46Decorator</span><span class="p">(</span><span class="n">comm</span><span class="p">:</span> <span class="nc">Comm</span><span class="p">)</span> <span class="p">:</span> <span class="nc">CommDecorator</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">sendMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">Result</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">super</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="nf">prepareMessage</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">prepareMessage</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">String</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">Base64</span><span class="p">.</span><span class="nf">getEncoder</span><span class="p">().</span><span class="nf">encodeToString</span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="nf">toByteArray</span><span class="p">())</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Ma nową prywatną metodę do przygotowania wiadomości. Nie rozszerza w ten sposób oryginalnego interfejsu, więc nie ma różnicy czy klient zna <code class="language-plaintext highlighter-rouge">Comm</code> czy <code class="language-plaintext highlighter-rouge">Base46Decorator</code> - ma dostęp do tych samych metod, więc raczej zdecyduje się na <code class="language-plaintext highlighter-rouge">Comm</code> ze względu na łatwą podmienialność implementacji. Takie podprogowe zachęcanie do dobrych zachowań.</p>
+
+<h3 id="kolejność-dekoratorów">Kolejność dekoratorów</h3>
+<p>Użycie wszystkiego razem:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">tcpBase64JsonComm</span><span class="p">:</span> <span class="nc">Comm</span> <span class="p">=</span> <span class="nc">JsonDecorator</span><span class="p">(</span> <span class="c1">// zapakuj wiadomość w strukturę JSON</span>
+        <span class="nc">Base46Decorator</span><span class="p">(</span> <span class="c1">// zakoduj całość Base64</span>
+                <span class="nc">TcpComm</span><span class="p">(</span> <span class="c1">// wyślij całość przez TCP</span>
+                        <span class="n">tcpModule</span>
+                <span class="p">)</span>
+        <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">tcpBase64JsonComm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="c1">// sending message via TCP: eyJtZXNzYWdlIjoiaGVsbG8ifQ==</span>
+
+<span class="c1">// inna kolejność dekoratorów</span>
+<span class="kd">val</span> <span class="py">tcpJsonBase64Comm</span><span class="p">:</span> <span class="nc">Comm</span> <span class="p">=</span> <span class="nc">Base46Decorator</span><span class="p">(</span> <span class="c1">// zakoduj samą wiadomość Base64</span>
+        <span class="nc">JsonDecorator</span><span class="p">(</span> <span class="c1">// zapakuj całość w strukturę JSON</span>
+                <span class="nc">TcpComm</span><span class="p">(</span> <span class="c1">// wyślij całość przez TCP</span>
+                        <span class="n">tcpModule</span>
+                <span class="p">)</span>
+        <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">tcpJsonBase64Comm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="c1">// sending message via TCP: {"message":"aGVsbG8="}</span>
+</code></pre></div></div>
+<p>Jak widać, kolejność dekoratorów ma kolosalne znaczenie. Co się właściwie stało?</p>
+<ul>
+  <li><strong>tcpBase64JsonComm</strong>
+    <ol>
+      <li>zapakuj wiadomość w strukturę JSON</li>
+      <li>zakoduj całość Base64</li>
+      <li>wyślij całość przez TCP</li>
+    </ol>
+  </li>
+  <li><strong>tcpJsonBase64Comm</strong>
+    <ol>
+      <li>zakoduj samą wiadomość Base64</li>
+      <li>zapakuj całość w strukturę JSON</li>
+      <li>wyślij całość przez TCP</li>
+    </ol>
+  </li>
+</ul>
+
+<p>Im głębiej znajduje się dekorator, tym później zostanie wywołany z wynikiem przetwarzania danych z wcześniejszych dekoratorów.</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="331px" preserveAspectRatio="none" style="width:1040px;height:331px;" version="1.1" viewBox="0 0 1040 331" width="1040px" zoomAndPan="magnify"><defs><filter height="300%" id="ffa8kcik7khqz" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="36" x2="36" y1="38.2969" y2="291.3594" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="198.5" x2="198.5" y1="38.2969" y2="291.3594" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="453.5" x2="453.5" y1="38.2969" y2="291.3594" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="788" x2="788" y1="38.2969" y2="291.3594" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="985" x2="985" y1="38.2969" y2="291.3594" /><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="53" x="8" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="39" x="15" y="22.9951">Client</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="53" x="8" y="290.3594" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="39" x="15" y="310.3545">Client</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="112" x="140.5" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="98" x="147.5" y="22.9951">JsonDecorator</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="112" x="140.5" y="290.3594" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="98" x="147.5" y="310.3545">JsonDecorator</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="136" x="383.5" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="122" x="390.5" y="22.9951">Base46Decorator</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="136" x="383.5" y="290.3594" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="122" x="390.5" y="310.3545">Base46Decorator</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="85" x="744" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="71" x="751" y="22.9951">TcpComm</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="85" x="744" y="290.3594" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="71" x="751" y="310.3545">TcpComm</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="91" x="938" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="77" x="945" y="22.9951">TcpModule</text><rect fill="#FEFECE" filter="url(#ffa8kcik7khqz)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="91" x="938" y="290.3594" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="77" x="945" y="310.3545">TcpModule</text><polygon fill="#A80036" points="186.5,65.4297,196.5,69.4297,186.5,73.4297,190.5,69.4297" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="36.5" x2="192.5" y1="69.4297" y2="69.4297" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="138" x="43.5" y="64.3638">sendMessage("hello")</text><polygon fill="#A80036" points="441.5,94.5625,451.5,98.5625,441.5,102.5625,445.5,98.5625" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="198.5" x2="447.5" y1="98.5625" y2="98.5625" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="231" x="205.5" y="93.4966">sendMessage({"message": "hello"})</text><polygon fill="#A80036" points="776.5,123.6953,786.5,127.6953,776.5,131.6953,780.5,127.6953" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="453.5" x2="782.5" y1="127.6953" y2="127.6953" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="311" x="460.5" y="122.6294">sendMessage("eyJtZXNzYWdlIjoiaGVsbG8ifQ==")</text><polygon fill="#A80036" points="973.5,152.8281,983.5,156.8281,973.5,160.8281,977.5,156.8281" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="788.5" x2="979.5" y1="156.8281" y2="156.8281" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="173" x="795.5" y="151.7622">send(body: "eyJtZXNzYW...)</text><polygon fill="#A80036" points="799.5,181.9609,789.5,185.9609,799.5,189.9609,795.5,185.9609" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="793.5" x2="984.5" y1="185.9609" y2="185.9609" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="78" x="805.5" y="180.895">Success/Fail</text><polygon fill="#A80036" points="464.5,211.0938,454.5,215.0938,464.5,219.0938,460.5,215.0938" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="458.5" x2="787.5" y1="215.0938" y2="215.0938" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="78" x="470.5" y="210.0278">Success/Fail</text><polygon fill="#A80036" points="209.5,240.2266,199.5,244.2266,209.5,248.2266,205.5,244.2266" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="203.5" x2="452.5" y1="244.2266" y2="244.2266" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="78" x="215.5" y="239.1606">Success/Fail</text><polygon fill="#A80036" points="47.5,269.3594,37.5,273.3594,47.5,277.3594,43.5,273.3594" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="41.5" x2="197.5" y1="273.3594" y2="273.3594" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="78" x="53.5" y="268.2935">Success/Fail</text><!--MD5=[7cb663a7f4207c828ea67b5c00e924de]
+@startuml
+
+Client -> JsonDecorator : sendMessage("hello")
+JsonDecorator -> Base46Decorator : sendMessage({"message": "hello"})
+Base46Decorator -> TcpComm : sendMessage("eyJtZXNzYWdlIjoiaGVsbG8ifQ==")
+TcpComm -> TcpModule : send(body: "eyJtZXNzYW...)
+TcpModule -> TcpComm : Success/Fail
+TcpComm -> Base46Decorator : Success/Fail
+Base46Decorator -> JsonDecorator : Success/Fail
+JsonDecorator -> Client : Success/Fail
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>Jak już pisałem wcześniej, któryś z dekoratorów mógłby też rzucić wyjątkiem albo w ogóle nie użyć metody z dekorowanego obiektu i zwrócić np. stałą. Bywa to pomocne np. kiedy jakieś dane chcemy zaciemnić w zależności od tego, gdzie je wysyłamy. Przykładowo logi z aplikacji z użyciem klasy</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">data class</span> <span class="nc">LogEntry</span> <span class="p">(</span><span class="kd">val</span> <span class="py">timestamp</span><span class="p">:</span> <span class="nc">Timestamp</span><span class="p">,</span> <span class="kd">val</span> <span class="py">tag</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">message</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>jeśli są przechowywane lokalnie niech mają wszystkie informacje</li>
+  <li>jeśli są wysyłane do naszego serwisu przez HTTPS niech tylko wrażliwe dane będą zaciemnione</li>
+  <li>jeśli na jakiś zewnętrzny monitoring to wysyłamy minimum informacji, może nawet samego TAG-a i timestamp.</li>
+</ul>
+
+<p>Nie ma sensu rozszerzać implementacji logowania lub wysyłki logów o te funkcjonalności. Można stworzyć dekoratory na <code class="language-plaintext highlighter-rouge">LogEntry</code>, które korzystając z wewnętrznej logiki, oczyszczałyby przed wysłaniem wiadomość. Zmiana polityki logowania lub dodanie nowych agregatorów nie spowoduje konieczności zmian interfejsów klas odpowiedzialnych za zbieranie czy wysyłkę logów, a jedynie podmianę dekoratorów.</p>
+
+<h3 id="extension-methods">Extension Methods</h3>
+<p>Wydaje się, że zamiast dodawać kolejne klasy i bawić się w delegaty można dopisać <code class="language-plaintext highlighter-rouge">extension methods</code> do interfejsu i w ten sposób przygotować wiadomość do wysłania jako JSON i/lub Base64.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nc">String</span><span class="p">.</span><span class="nf">toJsonMessage</span><span class="p">():</span> <span class="nc">String</span> <span class="p">=</span> <span class="s">"{\"message\":\"$this\"}"</span>
+<span class="k">fun</span> <span class="nc">String</span><span class="p">.</span><span class="nf">toBase64</span><span class="p">():</span> <span class="nc">String</span> <span class="p">=</span> <span class="nc">Base64</span><span class="p">.</span><span class="nf">getEncoder</span><span class="p">().</span><span class="nf">encodeToString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">toByteArray</span><span class="p">())</span>
+
+<span class="n">btComm</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="nf">toBase64</span><span class="p">().</span><span class="nf">toJsonMessage</span><span class="p">())</span> <span class="c1">// sending message via BT: {"message":"aGVsbG8="}</span>
+</code></pre></div></div>
+<p>Jednak teraz to klienty muszą wiedzieć, w jakiej formie wysyłać wiadomości, zamiast użyć udekorowanego obiektu z ogólnym interfejsem, który można im wstrzyknąć. Dodatkowo <code class="language-plaintext highlighter-rouge">extension method</code> może zostać niejawnie nadpisane w innym miejscu projektu, więc nigdy nie ma pewności, że wywołanie <code class="language-plaintext highlighter-rouge">toJsonMessage()</code> da taki sam rezultat. Pisałem już o tym w kontekście <a href="https://asvid.github.io/pl/kotlin-adapter-pattern#duck-typing">Wzorca Adapter</a>. W tym przypadku korzystam z klasy <code class="language-plaintext highlighter-rouge">String</code>, ale jeśli <code class="language-plaintext highlighter-rouge">toJsonMessage()</code> zwracałoby obiekt JSON, to metoda <code class="language-plaintext highlighter-rouge">toBase64()</code> musiałaby to uwzględnić — przy korzystaniu z dekoratorów interfejs jest zawsze ten sam i dekoratory nie muszą o sobie nic wiedzieć nawzajem.</p>
+
+<p>Kod przy wykorzystaniu <code class="language-plaintext highlighter-rouge">extension methods</code> jest znacznie prostszy niż z użyciem serii dekoratorów. Jednak jeśli metody rozszerzające zaczną być stosowane w wielu miejscach i z wieloma interfejsami, to ich utrzymanie może być kłopotliwe, podobnie jak testowanie. A jeśli nie będą stosowane nigdzie indziej, to może zwykłe metody w klasie wystarczą zamiast <code class="language-plaintext highlighter-rouge">extension methods</code>. Chociaż przyznam, że czasami preferuję składnię <code class="language-plaintext highlighter-rouge">instance.extMethod()</code> zamiast <code class="language-plaintext highlighter-rouge">extMethod(instance)</code>.</p>
+
+<h1 id="nazewnictwo">Nazewnictwo</h1>
+<p>Zwykle nie lubie w nazwach klas sufixów pochodzących ze wzorców projektowych, ale w przypadku <code class="language-plaintext highlighter-rouge">Dekoratora</code> dobrze mieć jasną informację o celu klasy. Mimo że interfejs klasy jest taki sam jak dekorowanego obiektu, to jednak sama instancja <code class="language-plaintext highlighter-rouge">Dekoratora</code> nie ma sensu, w przeciwieństwie do obiektu dekorowanego.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>The <code class="language-plaintext highlighter-rouge">Decorator</code> pattern is used where creating separate classes which are a combination of all possibilities would result in their explosion. This pattern focuses on creating object layers to transparently and dynamically complement objects with new tasks. The decorator provides an object with the same interface as the decorated object.</p>
+
+<p>While it is possible to add new public methods in the decorator, it may encourage clients to cast up or use the interface of a concrete decorator instead of a general component. The main advantage of the Decorator is its transparency to the customer, which is achieved by using the generic interface of the wrapped component.</p>
+
+<p>In the example with communication interfaces, if not for the decorator, you would probably need to extend clients with new functionalities or introduce all variations of message processing and the way of sending it in separate classes.</p>
+
+<p>Kotlin allows you to elegantly create decorators with delegates. Extension methods also kind of dekorują the original class, but are not a replacement or alternative to this pattern. Instead, they are an alternative to using the simple Java <code class="language-plaintext highlighter-rouge">Wrappers</code>, which add new public methods to objects that we don’t want or can’t extend.</p>
+
+<h1 id="konsekwencje">Konsekwencje</h1>
+
+<ul>
+  <li><strong>zmiana zachowania obiektu bez dziedziczenia</strong> - dziedziczenie jest właściwe tylko w przypadkach, gdzie klasa pochodna jest podtypem klasy bazowej (relacja na zasadzie generalizacja-&gt;specjalizacja) - <a href="https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&amp;redir_esc=y">“Effective Java”</a>. Pewnie dałoby się znaleźć takie połączenie pomiędzy <code class="language-plaintext highlighter-rouge">String</code> a pakietem <code class="language-plaintext highlighter-rouge">TCP</code>, jednak byłoby to trochę naciągane i mało elastyczne. Szczególnie dodając po drodze formatowanie do JSONa i kodowanie Base64. Trudno byłoby też użyć kod ponownie w przypadku wiadomości przesyłanej przez Bluetooth. Dekorator przez kompozycję warstw pozwala elastycznie zmieniać zachowanie obiektu, bez zmiany tego, czym obiekt jest.</li>
+  <li><strong>dynamiczne zmiany zachowania obiektu</strong> - obiekt można udekorować w trakcie działania programu, ponieważ nowe zachowania nie zmieniają interfejsu, a jedynie wpisują się w niego. Ten sam obiekt może w jednym miejscu być dekorowany jedną klasą, a w kolejnym drugą.</li>
+  <li><strong>SRP</strong> - duża monolityczna klasa z wieloma odpowiedzialnościami, może zostać przekształcona w zbiór dekoratorów używanych tylko tam, gdzie są potrzebne. Może to niestety prowadzić również do rzutowania w górę do interfejsu dekoratora lub odwoływaniu się do wewnętrznego dekorowanego obiektu z poziomu klienta (naruszenie prawa Demeter).</li>
+  <li><strong>kolejność stosowania dekoratorów jest ważna</strong> - przykład z wysłaniem wiadomości. Kolejność jest ważna, a jednocześnie same dekoratory nie wiedzą nic o sobie nawzajem. Odpowiedzialność tworzenia poprawnego zestawu dekoratorów powinna spoczywać na jakiejś np. <code class="language-plaintext highlighter-rouge">Fabryce</code> lub <code class="language-plaintext highlighter-rouge">Builderze</code> — o ile mamy do czynienia z rozbudowaną hierarchią.</li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#kotlin-ref">
+                    kotlin <span>(3)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Decorator Pattern-ref">
+                    Decorator Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#extension methods-ref">
+                    extension methods <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Wrapper-ref">
+                    Wrapper <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Dekorator w Kotlinie"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin-adapter-pattern"
+                                    title="Adapter w Kotlinie">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin_mediator_pattern" title="Mediator w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

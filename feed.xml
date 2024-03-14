@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://swiderski.tech/posts/index.xml"?>
+<rss version="2.0">
+  <channel>
+    <title>Redirecting...</title>
+    <link>https://swiderski.tech/posts/index.xml</link>
+    <description>If you are not redirected automatically, follow this <a
+        href="https://swiderski.tech/posts/index.xml">link</a>.</description>
+  </channel>
+</rss>

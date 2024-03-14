@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/mvvm-banner.png);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Android Presentation Patterns: MVVM </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   February
+	   9th,
+	   
+	   2024
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        16 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#evolution">Evolution</a></li>
+<li class="toc-entry toc-h2"><a href="#view-view-what">View-View-What?</a></li>
+<li class="toc-entry toc-h2"><a href="#advantages-of-mvvm">Advantages of MVVM</a></li>
+<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+
+            <h2 id="evolution">Evolution</h2>
+
+<p>There is a clear trajectory in presentation pattern evolution - decreased coupling. In MVC, components were closely situated, with numerous direct interactions. MVP addressed this by introducing a standard interface structure. It’s now possible to test some interactions without relying on UI (although it may sound somewhat peculiar when discussing presentation patterns, I admit). Nevertheless, there are still some challenges, such as maintaining view state or artificial awareness of view lifecycle in MVP. Does the <code class="language-plaintext highlighter-rouge">Model-View-ViewModel</code> pattern resolve these issues?</p>
+
+<h2 id="view-view-what">View-View-What?</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Model-View-ViewModel</code> (MVVM) is a design pattern that originated from Microsoft’s WPF (Windows Presentation Foundation) framework and gained popularity in Android development due to its effectiveness in handling UI-related concerns. MVVM emerged as an evolution of the traditional MVC (Model-View-Controller) pattern, tailored specifically for the needs of modern UI development. The roles of Model and View have remained unchanged since <code class="language-plaintext highlighter-rouge">MVP</code>, or even <code class="language-plaintext highlighter-rouge">MVC</code>. The most significant practical change in the <code class="language-plaintext highlighter-rouge">ViewModel</code> approach is actually not explicitly stated in the pattern’s name. It’s the <code class="language-plaintext highlighter-rouge">State</code>, and how it’s utilized.</p>
+
+<pre><code class="language-mermaid">classDiagram
+    class View {
+    }
+    class ViewModel {
+        -State
+        +getStateFlow()
+        +handleUiEvent()
+    }
+    class Model {
+        +data
+    }
+
+    View --&gt; ViewModel: observes state
+    View --&gt; ViewModel: passes UI Event
+    ViewModel --&gt; Model: using
+    ViewModel ..&gt; ViewModel: updates state
+</code></pre>
+
+<h3 id="state">State</h3>
+
+<p>That’s a very serious name for a fairly simple concept. It’s a container for data that a <code class="language-plaintext highlighter-rouge">View</code> needs to display. <code class="language-plaintext highlighter-rouge">State</code> will have fields for text input values, booleans controlling button display or not, lists of items to show in UI, etc.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">data class</span> <span class="nc">State</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="py">items</span><span class="p">:</span> <span class="nc">List</span><span class="p">&lt;</span><span class="nc">Int</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nf">emptyList</span><span class="p">(),</span>
+    <span class="kd">val</span> <span class="py">inputError</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">currentInput</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">isLoading</span><span class="p">:</span> <span class="nc">Boolean</span> <span class="p">=</span> <span class="k">false</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>How is that different from the <code class="language-plaintext highlighter-rouge">View</code> itself? Well, a <code class="language-plaintext highlighter-rouge">View</code> typically doesn’t have a single place for all the data that it is using. Data is scattered over multiple fields or arguments, and doesn’t create a consistent state. In MVC or MVP, <code class="language-plaintext highlighter-rouge">View</code> elements are changed independently, so the <code class="language-plaintext highlighter-rouge">Controller</code> or <code class="language-plaintext highlighter-rouge">Presenter</code> needs to be aware of how to set up the <code class="language-plaintext highlighter-rouge">View</code> to represent a particular state.</p>
+
+<p>In MVVM, the philosophy is a bit different.</p>
+
+<h3 id="viewmodel">ViewModel</h3>
+
+<p>Alright, so how does the <code class="language-plaintext highlighter-rouge">ViewModel</code> manage state? First of all, the <code class="language-plaintext highlighter-rouge">State</code> is immutable. We don’t want multiple places to update it without synchronization.</p>
+
+<p>But how can we modify an immutable state then?</p>
+
+<p><strong>We don’t.</strong></p>
+
+<p>Instead, we create a new state based on the existing one. Then, we push it to a flow that the <code class="language-plaintext highlighter-rouge">View</code> observes. You might want to have a private mutable flow so that the <code class="language-plaintext highlighter-rouge">ViewModel</code> can update the current state freely, and an immutable version of it so that the observer cannot inadvertently modify the flow.</p>
+
+<p>Here’s an example:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="kd">val</span> <span class="py">_state</span><span class="p">:</span> <span class="nc">MutableStateFlow</span><span class="p">&lt;</span><span class="nc">State</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nc">MutableStateFlow</span><span class="p">(</span><span class="nc">State</span><span class="p">())</span>
+<span class="kd">val</span> <span class="py">state</span><span class="p">:</span> <span class="nc">StateFlow</span><span class="p">&lt;</span><span class="nc">State</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_state</span>
+</code></pre></div></div>
+
+<p>To update the <code class="language-plaintext highlighter-rouge">State</code>, you can take the current version of the state, make necessary changes, and then push it to the flow. Here’s an example:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">_state</span><span class="p">.</span><span class="nf">update</span> <span class="p">{</span> <span class="n">currentState</span> <span class="p">-&gt;</span>
+    <span class="n">currentState</span><span class="p">.</span><span class="nf">copy</span><span class="p">(</span><span class="n">inputError</span> <span class="p">=</span> <span class="n">exception</span><span class="p">.</span><span class="n">message</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Using a <code class="language-plaintext highlighter-rouge">data class</code> to model the <code class="language-plaintext highlighter-rouge">State</code> allows you to use the <code class="language-plaintext highlighter-rouge">.copy()</code> function easily.</p>
+
+<p>By updating the <code class="language-plaintext highlighter-rouge">State</code> in this manner, each subsequent update will consider the previous state, helping to prevent race conditions and ensuring that the state is composed of multiple incremental updates.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">ViewModel</code> operates independently of the <code class="language-plaintext highlighter-rouge">View</code>, which is quite beneficial. <strong>Its primary role is to generate new states based on data or events from the <code class="language-plaintext highlighter-rouge">Model</code></strong>. The <code class="language-plaintext highlighter-rouge">ViewModel</code> does not have any reference to the <code class="language-plaintext highlighter-rouge">View</code> in any manner.</p>
+
+<h4 id="testing">Testing</h4>
+
+<p>In my opinion, the greatest benefit of using <code class="language-plaintext highlighter-rouge">MVVM</code> is how incredibly simple it is to test. The <code class="language-plaintext highlighter-rouge">ViewModel</code> is completely independent of Android or UI specifics; its sole purpose is to respond to UI events and generate new <code class="language-plaintext highlighter-rouge">State</code>. This isolation makes it a perfect black box :) Most tests will follow this pattern:</p>
+
+<ol>
+  <li>Set up the system under test (model data, initial state).</li>
+  <li>Trigger a UI event.</li>
+  <li>Verify if the state update meets expectations.</li>
+</ol>
+
+<p>And that’s all there is to it.</p>
+
+<h4 id="lifecycle-awareness">Lifecycle awareness</h4>
+
+<p>One challenge with <code class="language-plaintext highlighter-rouge">MVP</code> was that the <code class="language-plaintext highlighter-rouge">Presenter</code> often lacked awareness of when the <code class="language-plaintext highlighter-rouge">View</code> was displayed or destroyed. As a result, it could make unnecessary UI changes when they were no longer required. The typical workaround was to incorporate methods like <code class="language-plaintext highlighter-rouge">attachView</code> and <code class="language-plaintext highlighter-rouge">detachView</code> and ensure everything was properly linked.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ViewModel</code>, on the other hand, addresses this issue seamlessly with <code class="language-plaintext highlighter-rouge">viewModelScope</code>. As outlined in the documentation:</p>
+<blockquote>
+  <p>This scope will be canceled when ViewModel will be cleared, i.e ViewModel.onCleared is called.</p>
+
+  <p>This method will be called when this ViewModel is no longer used and will be destroyed.
+It is useful when ViewModel observes some data and you need to clear this subscription to prevent a leak of this ViewModel.</p>
+</blockquote>
+
+<p>Even though the <code class="language-plaintext highlighter-rouge">ViewModel</code> is independent of the <code class="language-plaintext highlighter-rouge">View</code>, it will be notified when it is no longer required.</p>
+
+<h4 id="databinding">Databinding</h4>
+
+<p>In the past, during the era of <code class="language-plaintext highlighter-rouge">XML</code> views, there existed a method called <strong>Databinding</strong>. It enabled the creation of a stream of updates to <code class="language-plaintext highlighter-rouge">View</code> elements, allowing the <em>data</em> from the <code class="language-plaintext highlighter-rouge">Model</code> to be directly bound to UI elements. This eliminated the need to expose separate methods in the <code class="language-plaintext highlighter-rouge">View</code> for each element and manually update them whenever changes occurred in the Model. While there were native approaches to achieve this, as well as some Rx libraries, I was never particularly fond of establishing a direct link between the <code class="language-plaintext highlighter-rouge">Model</code> and the <code class="language-plaintext highlighter-rouge">View</code> with intermediary tools.</p>
+
+<p>In my opinion, as of 2024, with the advent of Jetpack Compose, there is no longer a need for traditional databinding. Utilizing <code class="language-plaintext highlighter-rouge">StateFlow</code> with a straightforward <code class="language-plaintext highlighter-rouge">State</code> object that is consumed by <code class="language-plaintext highlighter-rouge">@Composable</code> functions to construct the UI is <strong>significantly simpler</strong>. I am uncertain whether databinding is even feasible with Jetpack Compose; perhaps it would involve utilizing multiple data streams, each corresponding to a specific UI element you wish to bind.</p>
+
+<p>In conclusion, I would advise against attempting databinding and instead embrace Jetpack Compose, leveraging a single <code class="language-plaintext highlighter-rouge">State</code> flow, and immensely enjoying the convenience of the <code class="language-plaintext highlighter-rouge">@Preview</code> annotation.</p>
+
+<h3 id="view">View</h3>
+
+<p>In contrast, the <code class="language-plaintext highlighter-rouge">View</code> maintains a reference to the <code class="language-plaintext highlighter-rouge">ViewModel</code> because it must observe the <code class="language-plaintext highlighter-rouge">State</code> and transmit UI events to it.</p>
+
+<p>Upon receiving each new <code class="language-plaintext highlighter-rouge">State</code> gathered by the <code class="language-plaintext highlighter-rouge">View</code>, the UI is updated to reflect the current state produced by the <code class="language-plaintext highlighter-rouge">ViewModel</code>. <strong>The <code class="language-plaintext highlighter-rouge">State</code> serves as the ultimate source of truth</strong>; the <code class="language-plaintext highlighter-rouge">View</code> should not retain its own data and then combine it with state changes to determine what should be displayed.</p>
+
+<p>The same principle applies to the logic as well – all operations related to UI handling should be encapsulated within the <code class="language-plaintext highlighter-rouge">ViewModel</code>, while business logic should reside in the <code class="language-plaintext highlighter-rouge">Model</code>.</p>
+
+<h4 id="ui-events">UI Events</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">View</code> is responsible for informing the <code class="language-plaintext highlighter-rouge">ViewModel</code> about UI interactions. This can be achieved by simply invoking public methods of the <code class="language-plaintext highlighter-rouge">ViewModel</code>, as the <code class="language-plaintext highlighter-rouge">View</code> holds a reference to it.
+Therefore, the <code class="language-plaintext highlighter-rouge">ViewModel</code> can expose a method such as:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">addButtonClicked</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">viewModelScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+        <span class="c1">// Functionality</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And the <code class="language-plaintext highlighter-rouge">View</code> will directly call this method:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Button</span><span class="p">(</span>
+    <span class="n">onClick</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">addButtonClicked</span><span class="p">()</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>However, this approach may not scale well. The <code class="language-plaintext highlighter-rouge">ViewModel</code> methods could become bloated with repetitive code for managing <code class="language-plaintext highlighter-rouge">viewModelScope</code>, handling potential errors, and updating state.</p>
+
+<p>A cleaner solution is to have the <code class="language-plaintext highlighter-rouge">ViewModel</code> manage events through a single public method.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sealed</span> <span class="kd">class</span> <span class="nc">Event</span> <span class="p">{</span>
+    <span class="n">data</span> <span class="kd">object</span> <span class="nc">AddButtonClicked</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">InputChanged</span><span class="p">(</span><span class="kd">val</span> <span class="py">input</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">RemoveItem</span><span class="p">(</span><span class="kd">val</span> <span class="py">item</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="p">------</span>
+<span class="c1">// Inside ViewModel:        </span>
+<span class="k">fun</span> <span class="nf">handleEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="nc">Event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">when</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">Event</span><span class="p">.</span><span class="nc">AddButtonClicked</span> <span class="p">-&gt;</span> <span class="nf">addButtonClicked</span><span class="p">()</span> <span class="c1">// calling private method</span>
+        <span class="k">is</span> <span class="nc">Event</span><span class="p">.</span><span class="nc">InputChanged</span> <span class="p">-&gt;</span> <span class="nf">inputChanged</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">input</span><span class="p">)</span>
+        <span class="k">is</span> <span class="nc">Event</span><span class="p">.</span><span class="nc">RemoveItem</span> <span class="p">-&gt;</span> <span class="nf">removeItem</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">item</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In general, all UI events should be directed to the <code class="language-plaintext highlighter-rouge">ViewModel</code> for decision-making and state updates. However, there can be exceptions, and the official decision tree from the <a href="https://developer.android.com/topic/architecture/ui-layer/events">Android Developer website</a> provides a good illustration of when it might be acceptable to have some logic in the <code class="language-plaintext highlighter-rouge">View</code>.
+<img src="/Users/asvid/repo/asvid.github.io/assets/posts/mvvm-decision-tree.png" alt="" title="Official decision tree for handling UI events from Android Developer website" /></p>
+
+<p>Another aspect to consider is whether the <code class="language-plaintext highlighter-rouge">ViewModel</code> should handle all UI logic or if certain more straightforward tasks can be managed by the <code class="language-plaintext highlighter-rouge">View</code> itself. When working with <code class="language-plaintext highlighter-rouge">Jetpack Compose</code>, there might be a temptation to incorporate some logic into <code class="language-plaintext highlighter-rouge">@Composable</code> functions since they are authored in Kotlin, similar to <code class="language-plaintext highlighter-rouge">ViewModel</code> code. My approach usually aligns with a decision-making process similar to the one depicted in the mentioned decision tree.</p>
+
+<p>For instance, if the <code class="language-plaintext highlighter-rouge">State</code> includes a list of items, but the UI only needs to display the number of items, I would leave this calculation in the <code class="language-plaintext highlighter-rouge">View</code> instead of introducing another <code class="language-plaintext highlighter-rouge">State</code> field solely to count the elements in the list every time it is updated. Similarly, if the task involves filtering elements within the list without altering the list itself, I would handle it in the <code class="language-plaintext highlighter-rouge">View</code>. However, for more complex filtering scenarios that require testing it might be better to place the logic in the <code class="language-plaintext highlighter-rouge">ViewModel</code>. Ultimately, the approach taken depends on the specific situation, but as a general guideline, I strive to centralize most logic in the <code class="language-plaintext highlighter-rouge">ViewModel</code>, except for trivial UI data that has no impact on the <code class="language-plaintext highlighter-rouge">State</code>.</p>
+
+<h4 id="side-effects">Side Effects</h4>
+
+<p>Not every UI element needs to be displayed by updating the <code class="language-plaintext highlighter-rouge">State</code>. Temporary UI components like <code class="language-plaintext highlighter-rouge">Snackbar</code> or <code class="language-plaintext highlighter-rouge">Toast</code>, which disappear quickly and typically convey information about an event such as an error or success, don’t necessarily need to be tied to the <code class="language-plaintext highlighter-rouge">State</code>. It is important for the <code class="language-plaintext highlighter-rouge">State</code> to be aware of whether an error was displayed or is no longer present (to prevent duplicate displays, for instance), but these events are often of the <strong>fire-and-forget</strong> nature, requiring no specific action from the user.</p>
+
+<p>These types of events are referred to as <code class="language-plaintext highlighter-rouge">Side Effects</code> and can be managed as a separate stream observed by the <code class="language-plaintext highlighter-rouge">View</code>:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sealed</span> <span class="kd">class</span> <span class="nc">SideEffect</span> <span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">ShowError</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">SideEffect</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">ShowToast</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">SideEffect</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="p">---</span>
+<span class="c1">// inside ViewMode:</span>
+<span class="k">private</span>
+<span class="kd">val</span> <span class="py">_sideEffect</span> <span class="p">=</span> <span class="nc">Channel</span><span class="p">&lt;</span><span class="nc">SIDE_EFFECT</span><span class="p">&gt;(</span><span class="nc">Channel</span><span class="p">.</span><span class="nc">BUFFERED</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">sideEffect</span><span class="p">:</span> <span class="nc">Flow</span><span class="p">&lt;</span><span class="nc">SIDE_EFFECT</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_sideEffect</span><span class="p">.</span><span class="nf">receiveAsFlow</span><span class="p">()</span>
+<span class="p">---</span>
+<span class="c1">// inside View:</span>
+<span class="n">lifecycleScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+    <span class="n">lifecycle</span><span class="p">.</span><span class="nf">repeatOnLifecycle</span><span class="p">(</span><span class="nc">Lifecycle</span><span class="p">.</span><span class="nc">State</span><span class="p">.</span><span class="nc">STARTED</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">launch</span> <span class="p">{</span>
+            <span class="n">viewModel</span><span class="p">.</span><span class="n">sideEffect</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span>
+                <span class="nf">handleSideEffect</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>By using <code class="language-plaintext highlighter-rouge">SideEffects</code>, the <code class="language-plaintext highlighter-rouge">View</code> gains the flexibility to determine how to display specific events. While a <code class="language-plaintext highlighter-rouge">ShowToast</code> side effect may be straightforward, handling a <code class="language-plaintext highlighter-rouge">ShowError</code> event could vary based on factors like the data in the event or the current UI state. It enables the <code class="language-plaintext highlighter-rouge">View</code> to decide whether to show the error as a Toast message, within a Snackbar, or by highlighting an input error, based on the context. This approach shifts the decision-making from the <code class="language-plaintext highlighter-rouge">ViewModel</code> to the <code class="language-plaintext highlighter-rouge">View</code>, simplifying future modifications and enhancing the modularity of the codebase.</p>
+
+<p>For <code class="language-plaintext highlighter-rouge">Side Effects</code>, I utilized <code class="language-plaintext highlighter-rouge">Channel</code> instead of <code class="language-plaintext highlighter-rouge">MutableStateFlow</code>. Given that there is no initial side effect to populate the stream, and there’s no need to retain events in the stream for late observers, opting for <code class="language-plaintext highlighter-rouge">Channel</code> seems more suitable than <code class="language-plaintext highlighter-rouge">StateFlow</code>.</p>
+
+<h4 id="previews">Previews</h4>
+
+<p>Utilizing <code class="language-plaintext highlighter-rouge">State</code> as an input to the <code class="language-plaintext highlighter-rouge">@Composable</code> function simplifies the process of creating Jetpack Compose previews. When breaking down the <code class="language-plaintext highlighter-rouge">View</code> into smaller <code class="language-plaintext highlighter-rouge">@Composables</code>, it is advisable to pass only the necessary data fields from the entire <code class="language-plaintext highlighter-rouge">State</code>. This helps reduce dependencies on changes and encourages the creation of concise methods that generate UI elements. Moreover, it facilitates previewing the UI in the IDE, enabling the verification of multiple value variants (such as long numbers, extensive text, dark mode, etc.) without needing to build the entire application.</p>
+
+<h3 id="unidirectional-dataflow">Unidirectional Dataflow</h3>
+
+<p>The term “unidirectional dataflow” frequently arises in discussions about <code class="language-plaintext highlighter-rouge">MVVM</code>. But what does it mean? It signifies that data moves in a single direction :) While there may be multiple data flows and the Producer may also observe another flow as an Observer, the flow serves as the sole communication interface. The <code class="language-plaintext highlighter-rouge">View</code> does not expose methods to manipulate its elements; instead, it observes the <code class="language-plaintext highlighter-rouge">State</code>. Similarly, the <code class="language-plaintext highlighter-rouge">ViewModel</code> does not reveal its internal methods but instead awaits UI Events to execute operations and update the <code class="language-plaintext highlighter-rouge">State</code>. There are no callbacks or waiting for responses. The system operates by sending events in one direction and anticipating updates to the <code class="language-plaintext highlighter-rouge">State</code>.</p>
+
+<p><a href="https://developer.android.com/jetpack/compose/architecture">For further information, visit the Android Developer Portal</a></p>
+
+<h3 id="model">Model</h3>
+
+<p>Similar to <code class="language-plaintext highlighter-rouge">MVC</code> and <code class="language-plaintext highlighter-rouge">MVP</code>, the <code class="language-plaintext highlighter-rouge">Model</code> in <code class="language-plaintext highlighter-rouge">MVVM</code> encompasses the business logic tailored to your specific scenario. While the <code class="language-plaintext highlighter-rouge">ViewModel</code> manages UI-related logic exclusively, any functionality unrelated to the UI should reside within the domain model code.</p>
+
+<h2 id="advantages-of-mvvm">Advantages of MVVM</h2>
+
+<ul>
+  <li>
+    <p><strong>Encapsulation</strong>: Each layer in MVVM is responsible for specific aspects of the application’s functionality. The model handles data and business logic, the view manages UI components and layout, and the view model orchestrates the interaction between the model and the view. This clear separation makes it easier to understand and maintain the codebase.</p>
+  </li>
+  <li>
+    <p><strong>Modularity</strong>: MVVM encourages modular development, allowing developers to focus on implementing and testing individual components independently. This modularity makes it easier to add new features, fix bugs, and refactor existing code without affecting other parts of the application.</p>
+  </li>
+  <li>
+    <p><strong>Isolation of Concerns</strong>: The separation of concerns in MVVM makes it easier to write unit tests for each component in isolation. Developers can write tests for the view model layer without needing to interact with the view or the model directly, leading to more focused and efficient testing.</p>
+  </li>
+  <li>
+    <p><strong>Mocking and Dependency Injection</strong>: MVVM simplifies the process of mocking dependencies and injecting test doubles into unit tests. View models can be tested with mock data sources or repositories, allowing developers to simulate different scenarios and edge cases easily.</p>
+  </li>
+  <li>
+    <p><strong>Reduced Boilerplate Code</strong>: MVVM reduces the amount of boilerplate code required for UI-related tasks by leveraging features like data binding and Android Architecture Components. This reduction in boilerplate code decreases the cognitive load associated with writing and maintaining tests, making it easier to ensure code quality and reliability.</p>
+  </li>
+  <li>
+    <p><strong>Lifecycle Awareness</strong>: The <code class="language-plaintext highlighter-rouge">ViewModel</code>, being a Jetpack component, is lifecycle-aware and handles configuration changes and lifecycle events in Android activities and fragments automatically. This streamlines the management of UI state and helps prevent memory leaks.</p>
+  </li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Given the numerous advantages that MVVM offers to Android development, it is highly recommended as the default pattern for most scenarios. Its clear separation of concerns facilitates the maintenance of a clean and structured codebase, enhancing readability, extensibility, and debugging capabilities. The improved testability and maintainability provided by MVVM streamline the development process, leading to faster iterations and higher code quality. Additionally, its seamless integration with Android Jetpack components and support for reactive programming paradigms make MVVM ideal for modern Android app development. This empowers developers to create responsive, scalable, and maintainable applications with ease.</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#MVVM-ref">
+                    MVVM <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Model-View-ViewModel-ref">
+                    Model-View-ViewModel <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Android Architecture-ref">
+                    Android Architecture <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#UI Design-ref">
+                    UI Design <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Software Development-ref">
+                    Software Development <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Android Presentation Patterns: MVVM"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/2024-01-29-MVP"
+                                    title="Android Presentation Patterns: MVP">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/2024-02-24-MVI" title="Android Presentation Patterns: MVI">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

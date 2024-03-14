@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/pizza.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Metoda szablonowa w Kotlinie </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   May
+	   13th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        17 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#przykłady-implementacji">Przykłady implementacji</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#podstawowy-wzorzec">Podstawowy wzorzec</a></li>
+<li class="toc-entry toc-h2"><a href="#pizza">Pizza</a></li>
+<li class="toc-entry toc-h2"><a href="#active-record">Active Record</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#zalety">Zalety</a></li>
+<li class="toc-entry toc-h2"><a href="#wady">Wady</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+<p>Metoda szablonowa to bardzo prosty wzorzec, pozwalający oddzielić to, co stałe od tego, co zmienne w rodzinie klas.  Polega na utworzeniu abstrakcyjnej klasy nadrzędnej, zawierającej kolejne kroki jakiegoś algorytmu i pozwoleniu klasom dziedziczącym z niej nadpisywać poszczególne kroki, ale nie sam algorytm, który je wykorzystuje.</p>
+
+<p>Pomyśl o tym, jak o pizzy — kroki do jej wykonania są z grubsza takie same, niezależnie od rodzaju. Najpierw ciasto, potem sos, dodatki i do pieca. Różne rodzaje pizzy mogą mieć różne ciasto, sos, dodatki lub czas wypiekania (chyba, nie wiem, nie znam się :) ), ale kolejność kroków i same kroki są dla każdego rodzaju takie same. Możemy więc uznać, że istnieje abstrakcyjna <code class="language-plaintext highlighter-rouge">Pizza</code> z metodą <code class="language-plaintext highlighter-rouge">zrób()</code>, ale dziedzicząca z niej klasa <code class="language-plaintext highlighter-rouge">Hawajska</code> czy <code class="language-plaintext highlighter-rouge">Pepperoni</code> nadpisze metodę dodającą dodatki bez zmiany samego algorytmu robienia pizzy.</p>
+
+<p>Mamy tutaj do czynienia z odwróceniem sterowania, bo to klasa nadrzędna <code class="language-plaintext highlighter-rouge">Pizza</code> wywołuje metody klasy podrzędnej, a nie odwrotnie jak to zwykle bywa.</p>
+
+<p>Ze wzorcem tym można się spotkać w bibliotekach, gdzie twórcy pozwalają nam rozszerzać klasy biblioteki i nadpisywać niektóre metody, zostawiając sobie kontrolę nad kolejnością ich wykonywania.</p>
+
+<h1 id="przykłady-implementacji">Przykłady implementacji</h1>
+<h2 id="podstawowy-wzorzec">Podstawowy wzorzec</h2>
+<p>Zacznę od ogólnego przykładu, pokazującego, na czym polega wzorzec Metody Szablonowej:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">AbstractClass</span> <span class="p">{</span> <span class="c1">// klasa nadrzędna</span>
+
+	<span class="c1">// tej metody nie da się nadpisać, bo nie jest `open`</span>
+    <span class="k">fun</span> <span class="nf">templateMethod</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// tytułowa Metoda Szablonowa, czyli algorytm z listą kroków</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"running template method"</span><span class="p">)</span>
+        <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="c1">// wywołania kolejnych kroków algorytmu</span>
+        <span class="nf">primitiveOperation2</span><span class="p">()</span>
+        <span class="nf">primitiveOperation3</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="c1">// krok algorytmu do nadpisania przez konkretną klasę</span>
+    
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">primitiveOperation2</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// krok algorytmu którego nie chcemy nadpisywać</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing abstract operation 2"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="c1">// kolejny krok algorytmu</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ConcreteClass</span> <span class="p">:</span> <span class="nc">AbstractClass</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// konkretna klasa</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// implementacja dla konkretnej klasy</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 1"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 3"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">AnotherConcreteClass</span> <span class="p">:</span> <span class="nc">AbstractClass</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// kolejna konkretna klasa</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 1"</span><span class="p">)</span> <span class="c1">// implementacja taka sama jak w `ConcreteClass`, niefajne powielanie kodu</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing another concrete operation 3"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>W klasie abstrakcyjnej mamy <code class="language-plaintext highlighter-rouge">templateMethod()</code> - nasz algorytm albo raczej listę kroków, czyli wywołań metod reprezentujących operacje prymitywne. Te operacje mogą posiadać domyślną implementację już w klasie abstrakcyjnej lub wymuszać dodanie implementacji w klasach dziedziczących. Określenie “prymitywne” w stosunku do kroków algorytmu ma jedynie sugerować, że same w sobie nie stanowią algorytmu i są podmienialne w konkretnych klasach.</p>
+
+<p>Metoda Szablonowa nie może być nadpisana przez klasy dziedziczące. Byłoby to możliwe, gdyby ta metoda była oznaczona jako <code class="language-plaintext highlighter-rouge">open</code>, ale Kotlin stawia na enkapsulację, więc metody i klasy są domyślnie <code class="language-plaintext highlighter-rouge">final</code>. Nadpisanie <code class="language-plaintext highlighter-rouge">templateMethod()</code> oznaczałoby zmianę algorytmu, a jego stała forma jest powodem zastosowania tego wzorca. Jeśli istnieje potrzeba zmiany algorytmu, może lepiej zastosować wzorzec <code class="language-plaintext highlighter-rouge">Strategia</code>.</p>
+
+<h2 id="pizza">Pizza</h2>
+<p>Przejdźmy do bardziej obrazowego przykładu ze wstępu: <strong>Pizzy</strong></p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span> <span class="p">{</span> <span class="c1">// klasa bazowa dla wszystkich rodzajów Pizzy</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// kroki dla każdej pizzy są takie same</span>
+        <span class="nf">makeDough</span><span class="p">()</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">bake</span><span class="p">()</span> <span class="p">{</span> 
+		<span class="c1">// domyślne implementacje kroków</span>
+		<span class="c1">// klasy dziedziczące muszą nadpisać tylko te wyróżniające się</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">applySauce</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">makeDough</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// konkretny rodzaj pizzy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// nadpisuje nakładanie dodatków zgodnie z przepisem</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+	<span class="c1">// ale nie kontroluje procesu przygotowywania samej pizzy</span>
+	
+	<span class="c1">// pozostałe metody mają zostawioną domyślną implementację</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">()</span> <span class="p">{</span> 
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// niestety, powielona implementacja jak dla poprzedniej klasy</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">makeDough</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// jedyna różnica do zwykłej Pepperoni</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>Mamy więc klasę <code class="language-plaintext highlighter-rouge">Pizza</code>, która zawiera wspólne dla wszystkich rodzajów pizzy kroki przygotowania. Poszczególne rodzaje pizzy nadpisują wyłącznie te kroki, które różnią się od domyślnych, np. inny rozmiar lub dodatki czy sos. Powstaje tutaj jednak problem ze współdzieleniem implementacji między klasami <code class="language-plaintext highlighter-rouge">Pepperoni</code> i <code class="language-plaintext highlighter-rouge">BigPepperoni</code> - mają takie same składniki, ale <code class="language-plaintext highlighter-rouge">BigPepperoni</code> zmienia także rozmiar ciasta. Wydaje się, że <code class="language-plaintext highlighter-rouge">BigPepperoni</code> powinna po prostu dziedziczyć po <code class="language-plaintext highlighter-rouge">Pepperoni</code> i nadpisywać tylko metodę <code class="language-plaintext highlighter-rouge">makeDough()</code>, ale wtedy klasa <code class="language-plaintext highlighter-rouge">Pepperoni</code> musiałaby być <code class="language-plaintext highlighter-rouge">open</code> i wprowadzałoby to kolejny poziom dziedziczenia. Łatwo sobie wyobrazić postępującą eksplozję klas, jeśli każdy rodzaj pizzy występowałby w 3 rozmiarach i z 2 sosami do wyboru. Zaczyna to przypominać powód istnienia wzorca <code class="language-plaintext highlighter-rouge">Factory</code>.</p>
+
+<h3 id="pizza-lambdy">Pizza Lambdy</h3>
+<p>Zamiast nadpisywać metody interfejsu klasy bazowej <code class="language-plaintext highlighter-rouge">Pizza</code>, możemy spróbować wykorzystać lambdy przekazywane w konstruktorze:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span><span class="p">(</span> <span class="c1">// konstruktor klasy bazowej przyjmuje lambdy, ale domyślnie mają już implementację</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">makeDough</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">applySauce</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">addIngredients</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">bake</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// metoda szablonowa bez zmian</span>
+        <span class="nf">makeDough</span><span class="p">()</span> <span class="c1">// wywołanie lambdy z konstruktora zamiast nadpisywalnej metody</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span> <span class="c1">// konkretna klasa</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// przekazuje lambdę w konstruktorze zmieniając domyślną implementację</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// znów powtórzona implementacja</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// nadpisana lambda rozmiaru ciasta</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>Wygląda już bardziej Kotlinowo :) W książce <sup id="fnref:effective_java" role="doc-noteref"><a href="#fn:effective_java" class="footnote" rel="footnote">1</a></sup> Joshua Bloch wspomina, że po wprowadzeniu lambd do Javy wzorzec <code class="language-plaintext highlighter-rouge">Metody Szablonowej</code> stracił na znaczeniu, bo wygodniej jest wstrzykiwać zachowanie jako lambdy w konstruktorze niż tworzyć konkretne klasy nadpisujące wybrane metody.</p>
+
+<p>Nadal występuje jednak problem z powielaniem implementacji. Można taką implementację zamknąć do jakiejś zmiennej i przekazywać klasom w konstruktorze.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">pepperoniAddons</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="n">pepperoniAddons</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="n">pepperoniAddons</span><span class="p">,</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>Działa. Jednak przekazywanie wszędzie <code class="language-plaintext highlighter-rouge">() -&gt; Unit</code> jest średnio bezpieczne i ułatwia powstawanie błędów, chociażby przez pomylenie kolejności argumentów. Można to częściowo rozwiązać przez używanie nazwanych parametrów w metodzie.</p>
+
+<h3 id="pizza-interfejsy">Pizza interfejsy</h3>
+<p>Zakładając, że nasze metody nie mają nic zwracać, a tylko wykonywać operacje na obiekcie, bezpieczniej będzie stworzyć konkretne interfejsy odpowiadające krokom algorytmu.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">DoughMaker</span> <span class="p">{</span> <span class="c1">// interfejs kroku algorytmu wytwarzania pizzy</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// pozwala wywołać obiekt implementujący interfejs jak lambdę</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"making dough"</span><span class="p">)</span> <span class="c1">// domyślna implementacja, Kotlin pozwala na to w interfejsach</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">SauceApplier</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"applying sauce"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">AddonsApplier</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"applying addons"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Baker</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"baking"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Mając takie interfejsy, abstrakcyjna klasa <code class="language-plaintext highlighter-rouge">Pizza</code> będzie wyglądać następująco:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span><span class="p">(</span> 
+	<span class="c1">// dzięki różnym typom nie da się pomylić kolejności argumentów</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">makeDough</span><span class="p">:</span> <span class="nc">DoughMaker</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">DoughMaker</span> <span class="p">{</span> 
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span> <span class="c1">// nadpisana domyślna implementacja z interfejsu</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">applySauce</span><span class="p">:</span> <span class="nc">SauceApplier</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">SauceApplier</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">addIngredients</span><span class="p">:</span> <span class="nc">AddonsApplier</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">AddonsApplier</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">bake</span><span class="p">:</span> <span class="nc">Baker</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Baker</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// metoda szablonowa wygląda identycznie jak poprzednio</span>
+        <span class="nf">makeDough</span><span class="p">()</span> <span class="c1">// jednak nie wywołujemy tutaj lambdy, a metodę `invoke()` konkretnego obiektu</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>Konkretne klasy mogą mieć wstrzykiwane te same obiekty implementujące interfejs, więc znika problem powielania kodu w wielu miejscach:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">PepperoniAddonsApplier</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">.</span><span class="nc">AddonsApplier</span> <span class="p">{</span> <span class="c1">// wspólny dla wszystkich rozmiarów Pepperoni</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">BigPizzaDoughMaker</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">.</span><span class="nc">DoughMaker</span> <span class="p">{</span> <span class="c1">// może być użyty z innymi rodzajami pizzy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="nc">PepperoniAddonsApplier</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="nc">PepperoniAddonsApplier</span><span class="p">,</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="nc">BigPizzaDoughMaker</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Pozwala to też na łatwe stworzenie zupełnie customowej Pizzy, bez potrzeby tworzenia nowej klasy:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">customPizza</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Pizza</span><span class="p">(</span>
+	<span class="n">applySauce</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">SauceApplier</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"adding super sauce"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">makeDough</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">DoughMaker</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"making super dough 48cm"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">addIngredients</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">AddonsApplier</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"no addons, its super by itself"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">bake</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Baker</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"I like it raw"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">)</span> <span class="p">{}</span>
+<span class="n">customPizza</span><span class="p">.</span><span class="nf">make</span><span class="p">()</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Czy to jeszcze <code class="language-plaintext highlighter-rouge">Metoda Szablonowa</code> czy już <code class="language-plaintext highlighter-rouge">Strategia</code>?</p>
+</blockquote>
+
+<h2 id="active-record">Active Record</h2>
+<p>Przykład zaczerpnięty ze świata Ruby (którego zupełnie nie znam), gdzie wziął się od wzorca zaproponowanego przez Martina Fowlera w książce <sup id="fnref:fowler" role="doc-noteref"><a href="#fn:fowler" class="footnote" rel="footnote">2</a></sup>. Ogólnie chodzi o to, że mamy klasę — model w rozumieniu MVC, która oprócz pól posiada metody pozwalające ten model zapisać czy usunąć, np. w bazie danych. Więcej o <sup id="fnref:active_record" role="doc-noteref"><a href="#fn:active_record" class="footnote" rel="footnote">3</a></sup>.</p>
+
+<p>W <code class="language-plaintext highlighter-rouge">Ruby on Rails</code> taki model ma dodatkowo sporo callbacków <sup id="fnref:ruby_active_record" role="doc-noteref"><a href="#fn:ruby_active_record" class="footnote" rel="footnote">4</a></sup>, tzw. hooków, które są wywoływane np. przed zapisem do bazy lub w przypadku błędu. I właśnie do takiego zastosowania wzorzec <code class="language-plaintext highlighter-rouge">Metoda Szablonowa</code> nadaje się idealnie. W Kotlinie można to zaimplementować tak:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">ActiveRecord</span> <span class="p">{</span> <span class="c1">// bazowa klasa ActiveRecord</span>
+	
+	<span class="c1">// metoda szablonowa, wywołująca hooki w odpowiedniej kolejności</span>
+    <span class="k">fun</span> <span class="nf">save</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// generyczna metoda zapisu obiektu w bazie danych</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"saving record $this"</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">beforeSave</span><span class="p">()</span> <span class="c1">// wywołanie hooka</span>
+        <span class="kd">val</span> <span class="py">isSuccess</span> <span class="p">=</span> <span class="nc">DB</span><span class="p">.</span><span class="nf">save</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// sam zapis do bazy może się udać lub nie</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isSuccess</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nf">afterSave</span><span class="p">()</span> <span class="c1">// kolejny hook na sukces zapisu</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nf">failedSave</span><span class="p">()</span> <span class="c1">// i hook w razie błędu</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">beforeSave</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// generyczny hook z domyślną implementacją, otwarty do nadpisania</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP beforeSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">afterSave</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP afterSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">failedSave</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP failedSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">DB</span> <span class="p">{</span> <span class="c1">// jakiś mock bazy danych</span>
+    <span class="k">fun</span> <span class="nf">save</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">):</span> <span class="nc">Boolean</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"DB is saving record: $record"</span><span class="p">)</span>
+        <span class="c1">// tutaj byłby zapis i zwrócenie true jeśli się powiodło, false jeśli nie</span>
+        <span class="k">return</span> <span class="k">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">User</span><span class="p">(</span><span class="k">private</span> <span class="kd">var</span> <span class="py">username</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// konkretny model dziedziczący po ActiveRecord</span>
+	
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">beforeSave</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// nadpisanie hooka</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"$this beforeSave()"</span><span class="p">)</span>
+        <span class="nf">sanitizeRecord</span><span class="p">()</span> <span class="c1">// wywołanie ewentualnego poprawienia danych przed zapisem</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">sanitizeRecord</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// poprawienie danych w modelu przed zapisem</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"$this sanitizeRecord()"</span><span class="p">)</span>
+        <span class="n">username</span><span class="p">.</span><span class="nf">trim</span><span class="p">()</span>
+        <span class="n">username</span> <span class="p">=</span> <span class="n">username</span><span class="p">.</span><span class="nf">filter</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="nf">isLetter</span><span class="p">()</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Post</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">()</span> <span class="c1">// inny model ActiveRecord, ale bez nadpisania hooków</span>
+</code></pre></div></div>
+<p>Mając tak skonstruowany <code class="language-plaintext highlighter-rouge">ActiveRecord</code> z hookami można łatwo wpiąć np. logowanie modyfikacji modelu, albo obsługę błędów zapisu czy właśnie poprawiania danych w modelu przed samym zapisaniem. Na podobnej zasadzie działa <code class="language-plaintext highlighter-rouge">JUnit</code>, gdzie oznaczamy metody-hooki adnotacjami <code class="language-plaintext highlighter-rouge">@BeforeEach</code> czy <code class="language-plaintext highlighter-rouge">@AfterAll</code>, żeby wywołać je przed każdym lub po wszystkich testach w klasie.</p>
+
+<p>Sam <code class="language-plaintext highlighter-rouge">ActiveRecord</code> jest jednak czasami określany jako <sup id="fnref:active_record_antipatern" role="doc-noteref"><a href="#fn:active_record_antipatern" class="footnote" rel="footnote">5</a></sup> i są ku temu całkiem dobre powody: naruszenie SRP (jedna klasa do operacji na bazie danych, walidacji modelu, przechowywania danych itd.), bezpośrednie mapowanie struktury bazy na obiekt, problemy z testowaniem. Jednak jak już wspominałem — Ruby to nie mój świat, a ten post nie jest o <code class="language-plaintext highlighter-rouge">ActiveRecord</code>, po prostu wzorzec <code class="language-plaintext highlighter-rouge">Metody Szablonowej</code> dobrze pasuje do takiego zastosowania.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>Wzorzec <code class="language-plaintext highlighter-rouge">Metody Szablonowej</code> jest dosyć prosty w swojej konstrukcji i chyba sam go stosowałem, nawet nie zdając sobie sprawy, że tak się właśnie nazywa. Pozwala on, zgodnie z nazwą, stworzyć szablon działania metody, jednocześnie wymuszając (lub tylko zezwalając na) nadpisanie poszczególnych kroków algorytmu w konkretnej implementacji, patrz Pizza.
+Mimo swojej prostoty i archaicznej konstrukcji nadal znajduje zastosowanie we współczesnych projektach, szczególnie w bibliotekach. Ma jednak kilka ograniczeń, których rozwiązanie przez wstrzykiwanie lambd czy całych obiektów zaczyna zacierać różnicę między <code class="language-plaintext highlighter-rouge">Metodą Szablonową</code> a <code class="language-plaintext highlighter-rouge">Strategią</code>. Niekoniecznie jest to złe, ale należy sobie zdawać sprawę, że może nie jest to najlepszy wzorzec w każdym przypadku gdzie mamy rodzinę klas z pewnymi wspólnymi zachowaniami. Jednak do implementacji mechaniki hooków wydaje się idealny.</p>
+
+<h2 id="zalety">Zalety</h2>
+<ul>
+  <li>stosunkowo prosta implementacja rodziny klas różniących się tylko częścią zachowań</li>
+  <li>ciekawe wykorzystanie w <code class="language-plaintext highlighter-rouge">ActiveRecord</code></li>
+  <li>może być użyteczny do implementacji hooków</li>
+  <li>w przypadku tworzenia biblioteki gdzie klienty rozszerzają jej elementy, zapewnia kontrolę nad kolejnością wywyoływania metod nadpisanych przez klienta</li>
+</ul>
+
+<h2 id="wady">Wady</h2>
+<ul>
+  <li>potencjalna eksplozja klas</li>
+  <li>klasa pochodna musi trochę wiedzieć o rodzicu, znać algorytm i wiedzieć które metody nadpisać, gdzie należy użyć <code class="language-plaintext highlighter-rouge">super()</code>, a gdzie nie</li>
+  <li>dziedziczenie zamiast kompozycji, gdzie zmiana na wstrzykiwanie lambd w konstruktorze w zasadzie zmienia wzorzec w <code class="language-plaintext highlighter-rouge">Strategię</code></li>
+</ul>
+
+<hr />
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:effective_java" role="doc-endnote">
+      <p><a href="https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&amp;redir_esc=y">“Java - efektywne programowanie”</a> <a href="#fnref:effective_java" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:fowler" role="doc-endnote">
+      <p><a href="https://books.google.pl/books?id=FyWZt5DdvFkC&amp;q=active+record&amp;pg=PT187&amp;redir_esc=y">Architektura systemów zarządzania przedsiębiorstwem. Wzorce projektowe</a> <a href="#fnref:fowler" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:active_record" role="doc-endnote">
+      <p><a href="https://en.wikipedia.org/wiki/Active_record_pattern">Active Record</a> <a href="#fnref:active_record" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:ruby_active_record" role="doc-endnote">
+      <p><a href="https://guides.rubyonrails.org/active_record_callbacks.html">Active Record w Ruby</a> <a href="#fnref:ruby_active_record" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:active_record_antipatern" role="doc-endnote">
+      <p><a href="https://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record">antywzorzec</a> <a href="#fnref:active_record_antipatern" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Template Method-ref">
+                    Template Method <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#behavioral design pattern-ref">
+                    behavioral design pattern <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Metoda szablonowa w Kotlinie"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin-abstract-factory"
+                                    title="Kotlin Abstract Factory">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin-strategy-pattern" title="Wzorzec Strategia w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

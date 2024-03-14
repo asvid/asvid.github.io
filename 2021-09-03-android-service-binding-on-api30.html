@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/api30fix.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Android service binding fix for API 30 </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   September
+	   3rd,
+	     
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        4 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#tldr">TL;DR</a></li>
+<li class="toc-entry toc-h1"><a href="#problem">Problem</a></li>
+<li class="toc-entry toc-h1"><a href="#the-solution">The solution</a></li>
+</ul>
+            </nav>
+
+            <h1 id="tldr">TL;DR</h1>
+<blockquote>
+  <p>If you want to use <code class="language-plaintext highlighter-rouge">bindService()</code> with external application services built with API 30 and above, add the <queries> attribute with the service package name to the client app manifest. More info [in the documentation](https://developer.android.com/training/package-visibility/declaring). Without it, `bindService()` will return `False` and the logs will tell you that an Intent-compatible service has not been found.</queries></p>
+
+  <p><a href="https://github.com/asvid/Android-Services-Sandbox">My repo with a working example</a></p>
+</blockquote>
+
+<h1 id="problem">Problem</h1>
+<p>I am recently working on communication between applications in Android. Overall, there are 3 ways to achieve this: Broadcasts, AIDL, and Messenger. Without going into details, Messenger seems to be the most suitable for my case. It is quite simple to use, on the basis of the <code class="language-plaintext highlighter-rouge">Bound Service</code>, more info <a href="https://developer.android.com/guide/components/bound-services#Messenger">here</a>.</p>
+
+<p>I already had a Proof of Concept project ready that I wanted to show to someone at work, so I cleaned it up a bit, bumped <code class="language-plaintext highlighter-rouge">target</code> and<code class="language-plaintext highlighter-rouge"> compileSdk</code> version to the <strong>API 30</strong> and… it stopped working.</p>
+
+<p>The call to the <code class="language-plaintext highlighter-rouge">bindService()</code> method returned <code class="language-plaintext highlighter-rouge">False</code>, which usually means the Service is not present in the Manifest - but it was. Back to <strong>API 29</strong> - and everything works again, so it wasn’t a typo in service package or something.</p>
+
+<p>#The reason
+After a while of googling, digging through StackOverflow, ritual cleaning of the project and Android Studio cache, I found the cause. It is described in more detail <a href="https://developer.android.com/training/package-visibility">in the documentation</a>, but in general it is about improving the security of the application. Before Android 11 (API 30), any application could check all other applications installed on the system using the <code class="language-plaintext highlighter-rouge">queryIntentActivities()</code> method. It could be a violation of the user’s privacy… or something, more info <a href="https://medium.com/androiddevelopers/package-visibility-in-android-11-cc857f221cd9">here</a>. Anyway, Android decided to do something about it, and from API 30, applications only have access to the 3rd party packages listed in their own Manifest inside <code class="language-plaintext highlighter-rouge">&lt;queries&gt;</code> attribute.</p>
+
+<p>The absence of this entry in the Manifest make 3rd party application services invisible and <code class="language-plaintext highlighter-rouge">bindService()</code> returns <code class="language-plaintext highlighter-rouge">False</code>. This can be seen in the Logcat logs, without filtering for only selected application:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I/AppFilter: Interaction: PackageSetting {&lt;client.app.package/PID&gt; -&gt; &lt;server.app.package/PID&gt;} Blocked
+W/ActivityManager: Unable to start service Intent { act=&lt;action&gt; pkg=&lt;server.app.package&gt;} U=0: not found
+</code></pre></div></div>
+
+<p>To make it funnier, the Service can be easily started with from <code class="language-plaintext highlighter-rouge">adb</code> and the same intent - there is no error :)</p>
+
+<blockquote>
+  <p>This change in Android does not affect the launch of internal Services, it is only about 3rd party Services, outside the application.</p>
+</blockquote>
+
+<h1 id="the-solution">The solution</h1>
+<p>All you need is to add <code class="language-plaintext highlighter-rouge">&lt;queries&gt;</code> in client app Manifest, where you want tu bind 3rd party app Service. With the same package name you set in the Intent:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">intent</span> <span class="p">=</span> <span class="nc">Intent</span><span class="p">(</span><span class="s">"example_action"</span><span class="p">)</span>
+<span class="n">intent</span><span class="p">.</span><span class="n">`package`</span> <span class="p">=</span> <span class="s">"io.github.asvid.services.server"</span>
+<span class="nf">bindService</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="nc">Context</span><span class="p">.</span><span class="nc">BIND_AUTO_CREATE</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Manifest:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">package=</span><span class="s">"io.github.asvid.services.client"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;queries&gt;</span>
+        <span class="nt">&lt;package</span> <span class="na">android:name=</span><span class="s">"io.github.asvid.services.server"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/queries&gt;</span>
+	...
+<span class="nt">&lt;/manifest&gt;</span>
+</code></pre></div></div>
+
+<p><a href="https://github.com/asvid/Android-Services-Sandbox">My repo with a working example</a></p>
+
+<p>Alternatively you can stay with <code class="language-plaintext highlighter-rouge">compileSdk 29</code> but I don’t recommend that :)</p>
+
+<h3 id="rant-over-android">Rant over Android</h3>
+<p>It took me far too long to find the cause of this problem… The <code class="language-plaintext highlighter-rouge">bindService()</code> method only returns <code class="language-plaintext highlighter-rouge">True / False</code> with no specific error message, although it can throw a <code class="language-plaintext highlighter-rouge">SecurityException</code> in the absence of permissions. I had to engrave in logs without an application filter. Even this does not help much, because the information “service not found”, and which can be launched with the same Intent with <code class="language-plaintext highlighter-rouge">adb</code>, only intensifies the confusion. <a href="https://medium.com/androiddevelopers/package-visibility-in-android-11-cc857f221cd9">Blogpost</a> with an explanation of the changes, does not mention <code class="language-plaintext highlighter-rouge">bindService()</code> at all, and I haven’t found a clear answer to my problem anywhere.</p>
+
+<p>Only painstaking work through the documentation of the changes introduced by API 30 led me to the solution. My guess is that there are some security reasons to prevent malicious applications from trying to launch other application Services and not to make it easier to use them… but come on. I just bumped the <code class="language-plaintext highlighter-rouge">compileSdk</code>, and without any warning or explanation my app stopped working as expected.</p>
+
+<p>There is so many API changes from version to version in Android that a single change can easily escape, even despite following the news. It is also difficult to remember the impact of each change on elements of the application that are not currently in use. And finding a solution can take a long time if the problem is unusual and the development tools are not helping.</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Android-ref">-->
+        <!--                Android <span>(1)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#rant-ref">
+                    rant <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#fix-ref">
+                    fix <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Android service binding fix for API 30"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-command-pattern"
+                                    title="Command Pattern in Kotlin">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/tech_proposals" title="Why should you use Tech proposals">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

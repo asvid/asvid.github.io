@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/mediator.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Mediator w Kotlinie </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   July
+	   17th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        20 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#implementacja">Implementacja</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstrakcyjna-implementacja">Abstrakcyjna implementacja</a></li>
+<li class="toc-entry toc-h2"><a href="#dialog">Dialog</a></li>
+<li class="toc-entry toc-h2"><a href="#chat">Chat</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#nazewnictwo">Nazewnictwo</a></li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#zalety">Zalety</a></li>
+<li class="toc-entry toc-h2"><a href="#wady">Wady</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+<p><code class="language-plaintext highlighter-rouge">Mediatorem</code> określamy obiekt, kapsułkujący interakcje pomiędzy obiektami (<code class="language-plaintext highlighter-rouge">komponentami</code>) z danego zbioru. Wzorzec ogranicza lub nawet ucina zupełnie, bezpośrednie zależności między obiektami. Komponenty mogą porozumiewać się ze sobą wyłącznie za pośrednictwem <code class="language-plaintext highlighter-rouge">Mediatora</code>, który staje się centralnym hubem przekazywania informacji oraz sterowania. <code class="language-plaintext highlighter-rouge">Mediator</code> steruje przepływem informacji, korzystając ze swojej wewnętrznej logiki.</p>
+
+<p>Można to porównać do wieży kontroli lotów (ATC). Komunikują się z nią piloci wszystkich samolotów z okolicy i to wieża decyduje o kolejności startów i lądowań. Wieża nie kontroluje jednak całego lotu we wszystkich aspektach, a jedynie organizuje samoloty względem siebie. Łatwo wyobrazić sobie chaos bez wieży, gdyby piloci wszystkich maszyn musieli komunikować się bezpośrednio ze sobą, aby ustalić, kto ma następny lądować.</p>
+
+<p>Z tego powodu, wzorzec <code class="language-plaintext highlighter-rouge">Mediator</code> wydaje mi się <strong>pasować raczej do refaktoryzacji</strong> klas z bliskiego otoczenia, których liczba wzajemnych interakcji zaczęła już przeszkadzać w utrzymaniu, ale mają dobrze ustalone odpowiedzialności. W pewnych przypadkach użycie <code class="language-plaintext highlighter-rouge">Mediatora</code> będzie miało sens od samego początku tworzenia kodu, ale może też być przerostem formy nad treścią.</p>
+
+<p>Dość powszechnym zastosowaniem tego wzorca jest <a href="https://developer.android.com/topic/libraries/architecture/viewmodel">View Model</a> znany z <code class="language-plaintext highlighter-rouge">Android Architecture Components</code>. Przechwytuje interakcje z UI i według własnej logiki informuje model danych oraz w drugą stronę — zmiany w modelu przekazuje do UI.</p>
+
+<h1 id="implementacja">Implementacja</h1>
+<p>Mediator ma bardzo prostą strukturę, wyróżniamy tak naprawdę 2 typy obiektów:</p>
+<ul>
+  <li><strong>Mediator</strong> - główny hub komunikacyjny, znany wszystkim <code class="language-plaintext highlighter-rouge">komponentom</code></li>
+  <li><strong>Component</strong> - nie zna innych komponentów, nie zależy od nich (choć może od innych klas). Komunikuje się wyłącznie z <code class="language-plaintext highlighter-rouge">Mediatorem</code> który przesyła, bądź nie, informację do odpowiednich <code class="language-plaintext highlighter-rouge">komponentów</code></li>
+</ul>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="371px" preserveAspectRatio="none" style="width:589px;height:371px;" version="1.1" viewBox="0 0 589 371" width="589px" zoomAndPan="magnify"><defs><filter height="300%" id="f15kzqpmebla5w" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[7bc5716ff34e8b57d97376709b158217]
+class Mediator--><rect fill="#FEFECE" filter="url(#f15kzqpmebla5w)" height="60.8047" id="Mediator" style="stroke: #A80036; stroke-width: 1.5;" width="193" x="199.5" y="8" /><ellipse cx="264.25" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M260.1719,19.7656 L260.1719,17.6094 L267.5625,17.6094 L267.5625,19.7656 L265.0938,19.7656 L265.0938,27.8438 L267.5625,27.8438 L267.5625,30 L260.1719,30 L260.1719,27.8438 L262.6406,27.8438 L262.6406,19.7656 L260.1719,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="55" x="284.75" y="28.1543">Mediator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="200.5" x2="391.5" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="200.5" x2="391.5" y1="48" y2="48" /><ellipse cx="210.5" cy="59" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="167" x="219.5" y="62.2104">notify(sender, event, context)</text><!--MD5=[57b036fc3adc6f308410e06146624c7b]
+class ConcreteMediator--><rect fill="#FEFECE" filter="url(#f15kzqpmebla5w)" height="99.2188" id="ConcreteMediator" style="stroke: #A80036; stroke-width: 1.5;" width="193" x="199.5" y="133" /><ellipse cx="236.55" cy="149" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M239.5188,154.6406 Q238.9406,154.9375 238.3,155.0781 Q237.6594,155.2344 236.9563,155.2344 Q234.4563,155.2344 233.1281,153.5938 Q231.8156,151.9375 231.8156,148.8125 Q231.8156,145.6875 233.1281,144.0313 Q234.4563,142.375 236.9563,142.375 Q237.6594,142.375 238.3,142.5313 Q238.9563,142.6875 239.5188,142.9844 L239.5188,145.7031 Q238.8938,145.125 238.3,144.8594 Q237.7063,144.5781 237.0813,144.5781 Q235.7375,144.5781 235.05,145.6563 Q234.3625,146.7188 234.3625,148.8125 Q234.3625,150.9063 235.05,151.9844 Q235.7375,153.0469 237.0813,153.0469 Q237.7063,153.0469 238.3,152.7813 Q238.8938,152.5 239.5188,151.9219 L239.5188,154.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="112" x="255.45" y="153.1543">ConcreteMediator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="200.5" x2="391.5" y1="165" y2="165" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="207.5" y="173" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="150" x="219.5" y="179.2104">componentA: ComponentA</text><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="207.5" y="185.8047" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="152" x="219.5" y="192.0151">componentB: ComponentB</text><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="207.5" y="198.6094" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="152" x="219.5" y="204.8198">componentC: ComponentC</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="200.5" x2="391.5" y1="211.4141" y2="211.4141" /><ellipse cx="210.5" cy="222.4141" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="167" x="219.5" y="225.6245">notify(sender, event, context)</text><!--MD5=[e17b787d69906b3f274da0ab749c8979]
+class ComponentA--><rect fill="#FEFECE" filter="url(#f15kzqpmebla5w)" height="60.8047" id="ComponentA" style="stroke: #A80036; stroke-width: 1.5;" width="134" x="444" y="152.5" /><ellipse cx="468.9" cy="168.5" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M471.8688,174.1406 Q471.2906,174.4375 470.65,174.5781 Q470.0094,174.7344 469.3063,174.7344 Q466.8063,174.7344 465.4781,173.0938 Q464.1656,171.4375 464.1656,168.3125 Q464.1656,165.1875 465.4781,163.5313 Q466.8063,161.875 469.3063,161.875 Q470.0094,161.875 470.65,162.0313 Q471.3063,162.1875 471.8688,162.4844 L471.8688,165.2031 Q471.2438,164.625 470.65,164.3594 Q470.0563,164.0781 469.4313,164.0781 Q468.0875,164.0781 467.4,165.1563 Q466.7125,166.2188 466.7125,168.3125 Q466.7125,170.4063 467.4,171.4844 Q468.0875,172.5469 469.4313,172.5469 Q470.0563,172.5469 470.65,172.2813 Q471.2438,172 471.8688,171.4219 L471.8688,174.1406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="80" x="485.1" y="172.6543">ComponentA</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="445" x2="577" y1="184.5" y2="184.5" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="452" y="192.5" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="108" x="464" y="198.7104">mediator: Mediator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="445" x2="577" y1="205.3047" y2="205.3047" /><!--MD5=[2d23e4e546ad390fcff8976b2772dab8]
+class ComponentB--><rect fill="#FEFECE" filter="url(#f15kzqpmebla5w)" height="60.8047" id="ComponentB" style="stroke: #A80036; stroke-width: 1.5;" width="134" x="14" y="152.5" /><ellipse cx="38.9" cy="168.5" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M41.8688,174.1406 Q41.2906,174.4375 40.65,174.5781 Q40.0094,174.7344 39.3063,174.7344 Q36.8063,174.7344 35.4781,173.0938 Q34.1656,171.4375 34.1656,168.3125 Q34.1656,165.1875 35.4781,163.5313 Q36.8063,161.875 39.3063,161.875 Q40.0094,161.875 40.65,162.0313 Q41.3063,162.1875 41.8688,162.4844 L41.8688,165.2031 Q41.2438,164.625 40.65,164.3594 Q40.0563,164.0781 39.4313,164.0781 Q38.0875,164.0781 37.4,165.1563 Q36.7125,166.2188 36.7125,168.3125 Q36.7125,170.4063 37.4,171.4844 Q38.0875,172.5469 39.4313,172.5469 Q40.0563,172.5469 40.65,172.2813 Q41.2438,172 41.8688,171.4219 L41.8688,174.1406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="80" x="55.1" y="172.6543">ComponentB</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="147" y1="184.5" y2="184.5" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="22" y="192.5" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="108" x="34" y="198.7104">mediator: Mediator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="147" y1="205.3047" y2="205.3047" /><!--MD5=[e6d1a495bc7bb1d100b4f2c4ad4e5681]
+class ComponentC--><rect fill="#FEFECE" filter="url(#f15kzqpmebla5w)" height="60.8047" id="ComponentC" style="stroke: #A80036; stroke-width: 1.5;" width="134" x="229" y="300" /><ellipse cx="253.9" cy="316" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M256.8688,321.6406 Q256.2906,321.9375 255.65,322.0781 Q255.0094,322.2344 254.3063,322.2344 Q251.8063,322.2344 250.4781,320.5938 Q249.1656,318.9375 249.1656,315.8125 Q249.1656,312.6875 250.4781,311.0313 Q251.8063,309.375 254.3063,309.375 Q255.0094,309.375 255.65,309.5313 Q256.3063,309.6875 256.8688,309.9844 L256.8688,312.7031 Q256.2438,312.125 255.65,311.8594 Q255.0563,311.5781 254.4313,311.5781 Q253.0875,311.5781 252.4,312.6563 Q251.7125,313.7188 251.7125,315.8125 Q251.7125,317.9063 252.4,318.9844 Q253.0875,320.0469 254.4313,320.0469 Q255.0563,320.0469 255.65,319.7813 Q256.2438,319.5 256.8688,318.9219 L256.8688,321.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="80" x="270.1" y="320.1543">ComponentC</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="230" x2="362" y1="332" y2="332" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="237" y="340" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="108" x="249" y="346.2104">mediator: Mediator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="230" x2="362" y1="352.8047" y2="352.8047" /><!--MD5=[8e81ab3b58f78fae49244c829d83e031]
+reverse link Mediator to ConcreteMediator--><path d="M296,89.45 C296,102.2 296,115.94 296,128.82 " fill="none" id="Mediator&lt;-ConcreteMediator" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="289,89.27,296,69.27,303,89.27,289,89.27" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[a2781058aa9d15017cf9f64c817cba17]
+link ComponentA to ConcreteMediator--><path d="M435.79,182.5 C427.72,182.5 419.37,182.5 410.97,182.5 " fill="none" id="ComponentA-&gt;ConcreteMediator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="400.69,182.5,406.69,186.5,412.69,182.5,406.69,178.5,400.69,182.5" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[608e62f498bbd178458c32e4de427cd6]
+reverse link ConcreteMediator to ComponentA--><path d="M400.6,193.12 C414.83,193.97 429.27,194.5 443,194.5 " fill="none" id="ConcreteMediator&lt;-ComponentA" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="400.6,193.12,409.3455,197.6495,405.5911,193.4181,409.8225,189.6638,400.6,193.12" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[8bd266d66d512b647d7b1782af128841]
+link ComponentB to ConcreteMediator--><path d="M156.2,182.5 C164.4,182.5 172.88,182.5 181.42,182.5 " fill="none" id="ComponentB-&gt;ConcreteMediator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="191.46,182.5,185.46,178.5,179.46,182.5,185.46,186.5,191.46,182.5" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[8bd266d66d512b647d7b1782af128841]
+link ComponentB to ConcreteMediator--><path d="M149,194.5 C159.51,194.5 170.44,194.19 181.37,193.66 " fill="none" id="ComponentB-&gt;ConcreteMediator-1" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="191.4,193.12,182.1964,189.6137,186.4074,193.391,182.6301,197.602,191.4,193.12" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[464d17aebb384ffd7960f229c45b2182]
+link ComponentC to ConcreteMediator--><path d="M296,295.57 C296,281.79 296,265.32 296,249.31 " fill="none" id="ComponentC-&gt;ConcreteMediator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="296,236.03,292,242.03,296,248.03,300,242.03,296,236.03" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[53c983cd5f3772e37eec8f911f1ad608]
+reverse link ConcreteMediator to ComponentC--><path d="M342.82,240.36 C376.84,285.83 409.63,342 364,342 " fill="none" id="ConcreteMediator&lt;-ComponentC" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="339.73,236.28,341.9465,245.8762,342.7369,240.2748,348.3382,241.0652,339.73,236.28" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[0c1b63eca5c37ab5d426f53298d1700e]
+@startuml
+
+interface Mediator{
+	+ notify(sender, event, context)
+}
+class ConcreteMediator implements Mediator{
+	- componentA: ComponentA
+	- componentB: ComponentB
+	- componentC: ComponentC
+	+ notify(sender, event, context)
+}
+
+class ComponentA{
+	- mediator: Mediator
+}
+class ComponentB{
+	- mediator: Mediator
+}
+class ComponentC{
+	- mediator: Mediator
+}
+
+ComponentA - -* ConcreteMediator::componentA
+ComponentB - -* ConcreteMediator::componentB
+ComponentC - -* ConcreteMediator::componentC
+
+ComponentA::mediator-left->ConcreteMediator::notify
+ComponentB::mediator-right->ConcreteMediator::notify
+ComponentC::mediator-up->ConcreteMediator::notify
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>Warto zauważyć, że jedynym potrzebnym interfejsem jest <code class="language-plaintext highlighter-rouge">Mediator</code>, który znają wszystkie <code class="language-plaintext highlighter-rouge">komponenty</code>. Każdy <code class="language-plaintext highlighter-rouge">komponent</code> jest osobnym i niezależnym obiektem, który pewnie już dziedziczy z innej klasy czy implementuje potrzebne interfejsy. Można się pokusić o wprowadzenie dodatkowego interfejsu <code class="language-plaintext highlighter-rouge">Component</code> ale niewiele by to dało, bo <code class="language-plaintext highlighter-rouge">Mediator</code> i tak musi znać konkretne interfejsy swoich <code class="language-plaintext highlighter-rouge">komponentów</code>, żeby po otrzymaniu wiadomości móc wywołać ich konkretne metody.</p>
+
+<p>Obiekt <code class="language-plaintext highlighter-rouge">mediatora</code> może otrzymać komponenty w konstruktorze, przez DI lub nawet stworzyć potrzebne instancje i zarządzać ich cyklem życia.</p>
+
+<h2 id="abstrakcyjna-implementacja">Abstrakcyjna implementacja</h2>
+<p>Przejdźmy do podstawowej implementacji w kodzie:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Mediator</span> <span class="p">{</span>
+    <span class="c1">// mediator deklaruje metody komunikacji</span>
+    <span class="k">fun</span> <span class="nf">method</span><span class="p">(</span><span class="n">sender</span><span class="p">:</span> <span class="nc">Any</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// różne komponenty, nie muszą mieć wspólnego interfejsu, ale muszą mieć referencję do Mediatora</span>
+<span class="c1">// nie powinny mieć zależności do siebie nawzajem, bo niszczy to sens Mediatora</span>
+<span class="kd">class</span> <span class="nc">ComponentA</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">mediator</span><span class="p">:</span> <span class="nc">Mediator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">operationA</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">mediator</span><span class="p">.</span><span class="nf">method</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">"arg A"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ComponentB</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">mediator</span><span class="p">:</span> <span class="nc">Mediator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">operationB</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">mediator</span><span class="p">.</span><span class="nf">method</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="mf">10.34</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ComponentC</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">mediator</span><span class="p">:</span> <span class="nc">Mediator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">operationC</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">mediator</span><span class="p">.</span><span class="nf">method</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nf">println</span><span class="p">(</span><span class="s">"print me!"</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Mediator hermetyzuje relacje pomiędzy komponentami</span>
+<span class="c1">// posiada referencje do wszystkich komponentów jakimi zarządza</span>
+<span class="c1">// czasami zarządza również ich cyklem życia</span>
+<span class="kd">class</span> <span class="nc">Concretemediator</span> <span class="p">:</span> <span class="nc">Mediator</span> <span class="p">{</span>
+
+    <span class="c1">// komponenty mogą być też wstrzykiwane lub przekazane w konstruktorze</span>
+    <span class="c1">// ale referencja do Mediatora musi być przekazana do obiektu</span>
+    <span class="kd">val</span> <span class="py">componentA</span> <span class="p">=</span> <span class="nc">ComponentA</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">componentB</span> <span class="p">=</span> <span class="nc">ComponentB</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">componentC</span> <span class="p">=</span> <span class="nc">ComponentC</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">method</span><span class="p">(</span><span class="n">sender</span><span class="p">:</span> <span class="nc">Any</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?)</span> <span class="p">{</span>
+		<span class="c1">// sprawdzenie jaki obiekt jest nadawcą</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Mediator wie co zrobić z otrzymaną wiadomością</span>
+            <span class="k">is</span> <span class="nc">ComponentA</span> <span class="p">-&gt;</span> <span class="nf">println</span><span class="p">(</span><span class="s">"arg from A: $args"</span><span class="p">)</span>
+            <span class="k">is</span> <span class="nc">ComponentB</span> <span class="p">-&gt;</span> <span class="nf">println</span><span class="p">(</span><span class="s">"arg from B: ${args as Float * 3}"</span><span class="p">)</span>
+            <span class="k">is</span> <span class="nc">ComponentC</span> <span class="p">-&gt;</span> <span class="p">(</span><span class="n">args</span> <span class="k">as</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Any</span><span class="p">).</span><span class="nf">invoke</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Zamiast metody <code class="language-plaintext highlighter-rouge">notify(sender, event, context)</code> użyłem tutaj <code class="language-plaintext highlighter-rouge">method(sender, args)</code> ale zasada jest ta sama, to interfejs <code class="language-plaintext highlighter-rouge">Mediatora</code> określa formę komunikacji. <code class="language-plaintext highlighter-rouge">Event</code> w pierwszym wypadku może być obiektem dziedziczącym po jakimś ogólnym interfejsie albo klasą <code class="language-plaintext highlighter-rouge">sealed</code>, co stworzy zamknięty zbiór zdarzeń, po którym łatwiej się poruszać.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Context</code> może oznaczać, z jakiego miejsca pochodzi wiadomość, np. czy produkt do koszyka zakupów został włożony z listy polecanych produktów dodatkowych, czy bezpośrednio ze strony produktu. Argumenty metody, czy nawet metod <code class="language-plaintext highlighter-rouge">Mediatora</code> będą mocno zależeć od konkretnej implementacji i potrzebnych informacji.</p>
+
+<h2 id="dialog">Dialog</h2>
+<p>Częstym przykładem zastosowania <code class="language-plaintext highlighter-rouge">Mediatora</code> są okienka dialogowe, zawierające elementy UI takie jak przyciski i pola tekstowe. Często zdarza się, że stan elementów interfejsu użytkownika zależy od siebie wzajemnie. Przycisk “OK” powinien być nieaktywny, jeśli nie wszystkie wymagane pola formularza zostały wypełnione itp. Jeśli elementów widoku jest sporo, liczba takich zależności między nimi może rosnąć i być ciężka do kontrolowania.</p>
+
+<p>Dlatego dobrym pomysłem jest posiadanie centralnego huba komunikacyjnego, który będzie zbierał zdarzenia z elementów UI i odpowiednio dostosowywał stan wyświetlanych elementów. Takim <code class="language-plaintext highlighter-rouge">Mediatorem</code> może być sam <code class="language-plaintext highlighter-rouge">Dialog</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// zarządca widoku, kontrolujący elementy UI do niego przypisane</span>
+<span class="kd">interface</span> <span class="nc">UiDirector</span> <span class="p">{</span>
+    <span class="c1">// `event` jest naiwnie Stringiem dla uproszczenia</span>
+    <span class="c1">// `sender` musi być elementem UI dziedziczącym po klasie `UiElement`</span>
+    <span class="k">fun</span> <span class="nf">notify</span><span class="p">(</span><span class="n">sender</span><span class="p">:</span> <span class="nc">UiElement</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// klasa `UiElement` jest komponentem UI osadzonym w `UiDirector`</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">UiElement</span><span class="p">(</span><span class="kd">val</span> <span class="py">uiDirector</span><span class="p">:</span> <span class="nc">UiDirector</span><span class="p">)</span>
+
+<span class="c1">// przycisk jest elementem UI</span>
+<span class="kd">class</span> <span class="nc">Button</span><span class="p">(</span><span class="n">uiDirector</span><span class="p">:</span> <span class="nc">UiDirector</span><span class="p">)</span> <span class="p">:</span> <span class="nc">UiElement</span><span class="p">(</span><span class="n">uiDirector</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">click</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// który powiadamia `uiDirector` o fakcie kliknięcia</span>
+        <span class="c1">// ale sam nie wykonuje żadnej logiki z tym związanej</span>
+        <span class="n">uiDirector</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">"click"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">TextBox</span><span class="p">(</span><span class="n">uiDirector</span><span class="p">:</span> <span class="nc">UiDirector</span><span class="p">)</span> <span class="p">:</span> <span class="nc">UiElement</span><span class="p">(</span><span class="n">uiDirector</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// TextBox również jest elementem UI</span>
+    <span class="c1">// przyjmijmy że posiada wewnętrzną logikę odświeżającą zawartość pola `text`</span>
+    <span class="c1">// która uwzględnia np. wklejanie tekstu, wpisywanie przez użytkownika ręcznie itd.</span>
+    <span class="c1">// i korzystając z `observable` po każdej zmianie informuje dialog</span>
+    <span class="c1">// dzięki temu nie trzeba w każdym miejscu zmieniającym `text` pamiętać o wywołaniu `notify`</span>
+    <span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span> <span class="k">by</span> <span class="nc">Delegates</span><span class="p">.</span><span class="nf">observable</span><span class="p">(</span><span class="s">""</span><span class="p">)</span> <span class="p">{</span> <span class="n">property</span><span class="p">,</span> <span class="n">oldValue</span><span class="p">,</span> <span class="n">newValue</span> <span class="p">-&gt;</span>
+        <span class="n">uiDirector</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">"text_changed"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Okienko dialogowe, zarządza stanem widoku na podstawie zdarzeń z komponentów UI</span>
+<span class="kd">class</span> <span class="nc">FancyDialog</span> <span class="p">:</span> <span class="nc">UiDirector</span> <span class="p">{</span>
+
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">title</span> <span class="p">=</span> <span class="s">"fancy dialog"</span>
+    <span class="c1">// dialog sam tworzy instancje swoich `komponentów`</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">okButton</span> <span class="p">=</span> <span class="nc">Button</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">cancelButton</span> <span class="p">=</span> <span class="nc">Button</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">input</span> <span class="p">=</span> <span class="nc">TextBox</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+    <span class="k">private</span> <span class="kd">var</span> <span class="py">inputText</span> <span class="p">=</span> <span class="s">""</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">notify</span><span class="p">(</span><span class="n">sender</span><span class="p">:</span> <span class="nc">UiElement</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// po każdej zmianie kontrolki dostaje zaktualizowane dane</span>
+            <span class="n">input</span> <span class="p">-&gt;</span> <span class="k">if</span> <span class="p">(</span><span class="n">event</span> <span class="p">==</span> <span class="s">"text_change"</span><span class="p">)</span> <span class="n">inputText</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="n">text</span>
+            <span class="c1">// posiada logikę wywoływaną po kliknięciach w przyciski</span>
+            <span class="n">okButton</span> <span class="p">-&gt;</span> <span class="k">if</span> <span class="p">(</span><span class="n">event</span> <span class="p">==</span> <span class="s">"click"</span><span class="p">)</span> <span class="nf">submit</span><span class="p">()</span>
+            <span class="n">cancelButton</span> <span class="p">-&gt;</span> <span class="k">if</span> <span class="p">(</span><span class="n">event</span> <span class="p">==</span> <span class="s">"click"</span><span class="p">)</span> <span class="nf">dismiss</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">dismiss</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">submit</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Pozwala to używać ponownie implementacji kontrolek UI, ponieważ nie mają żadnej konkretnej logiki poza zarządzaniem swoim własnym stanem. <code class="language-plaintext highlighter-rouge">Delegates.observable</code> w klasie <code class="language-plaintext highlighter-rouge">TextBox</code> ułatwia powiadamianie zarządcy widoku o zmianie. Nie trzeba tego robić w każdym miejscu zmieniającym pole <code class="language-plaintext highlighter-rouge">text</code>.</p>
+
+<h2 id="chat">Chat</h2>
+<p>Ciekawym przykładem zastosowania <code class="language-plaintext highlighter-rouge">Mediatora</code> jest chat. Mamy uczestników którzy wysyłają wiadomości publiczne lub bezpośrednio do innego uczestnika, ale to obiekt <code class="language-plaintext highlighter-rouge">Chatu</code> decyduje kto dostanie jaką wiadomość.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// pomocniczy alias</span>
+<span class="k">typealias</span> <span class="nc">ParticipantName</span> <span class="p">=</span> <span class="nc">String</span>
+
+<span class="c1">// interfejs Mediatora</span>
+<span class="kd">interface</span> <span class="nc">Chatroom</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">registerParticipant</span><span class="p">(</span><span class="n">participant</span><span class="p">:</span> <span class="nc">Participant</span><span class="p">)</span>
+    <span class="c1">// odbiorca wiadomości jest opcjonalny, wtedy wiadomość jest traktowana jako publiczna</span>
+    <span class="k">fun</span> <span class="nf">send</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="nc">ParticipantName</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nc">ParticipantName</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// klasa uczestnika ma bardzo proste API, ogranicza się do wysłania i odebrania wiadomości</span>
+<span class="c1">// nie ma tu logiki sterującej do kogo wiadomość trafia</span>
+<span class="kd">class</span> <span class="nc">Participant</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="k">private</span> <span class="kd">val</span> <span class="py">chatroom</span><span class="p">:</span> <span class="nc">Chatroom</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nf">init</span> <span class="p">{</span>
+		<span class="c1">// uczestnik rejestruje się na chacie</span>
+        <span class="n">chatroom</span><span class="p">.</span><span class="nf">registerParticipant</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+
+	<span class="c1">// potrafi wysłać wiadomość</span>
+    <span class="k">fun</span> <span class="nf">send</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nc">ParticipantName</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">chatroom</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span>
+    <span class="p">}</span>
+
+	<span class="c1">// i ją odebrać</span>
+    <span class="k">fun</span> <span class="nf">receive</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"[$name] gets: $message"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// object tylko ze względu na prostotę użycia w `main()`</span>
+<span class="kd">object</span> <span class="nc">SuperChat</span> <span class="p">:</span> <span class="nc">Chatroom</span> <span class="p">{</span>
+	<span class="c1">// tryby pracy chatu</span>
+    <span class="k">enum</span> <span class="kd">class</span> <span class="nc">Mode</span> <span class="p">{</span> 
+		<span class="nc">PUBLIC</span><span class="p">,</span> <span class="c1">// każda wiadomość trafia do wszystkich</span>
+		<span class="nc">PRIVATE</span><span class="p">,</span> <span class="c1">// tylko wiadomości z odbiorcą będą dostarczone</span>
+		<span class="nc">MIXED</span> <span class="c1">// wiadomości bezpośrednie trafiają tylko do odbiorcy, pozostałe do wszystkich</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="py">mode</span><span class="p">:</span> <span class="nc">Mode</span> <span class="p">=</span> <span class="nc">Mode</span><span class="p">.</span><span class="nc">PRIVATE</span>
+
+	<span class="c1">// lista uczestników do której wpisywani są po rejestracji</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">participants</span> <span class="p">=</span> <span class="n">mutableListOf</span><span class="p">&lt;</span><span class="nc">Participant</span><span class="p">&gt;()</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">registerParticipant</span><span class="p">(</span><span class="n">participant</span><span class="p">:</span> <span class="nc">Participant</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">participants</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">participant</span><span class="p">)</span>
+    <span class="p">}</span>
+
+	<span class="c1">// obsługa wiadomości od uczesników chatu</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">send</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">from</span><span class="p">:</span> <span class="nc">ParticipantName</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nc">ParticipantName</span><span class="p">?)</span> <span class="p">{</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">mode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// w zależności od trybu są wysyłane inaczej</span>
+            <span class="nc">Mode</span><span class="p">.</span><span class="nc">PUBLIC</span> <span class="p">-&gt;</span> <span class="n">participants</span><span class="p">.</span><span class="nf">forEach</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="nf">receive</span><span class="p">(</span><span class="s">"$from says: $message"</span><span class="p">)</span> <span class="p">}</span>
+            <span class="nc">Mode</span><span class="p">.</span><span class="nc">PRIVATE</span> <span class="p">-&gt;</span> <span class="n">participants</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="n">to</span> <span class="p">}</span><span class="o">?.</span><span class="nf">receive</span><span class="p">(</span><span class="s">"$from says: $message"</span><span class="p">)</span>
+            <span class="nc">Mode</span><span class="p">.</span><span class="nc">MIXED</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">to</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="n">participants</span><span class="p">.</span><span class="nf">forEach</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="nf">receive</span><span class="p">(</span><span class="s">"$from says: $message"</span><span class="p">)</span> <span class="p">}</span>
+                <span class="k">else</span> <span class="n">participants</span><span class="p">.</span><span class="nf">find</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="n">to</span> <span class="p">}</span><span class="o">?.</span><span class="nf">receive</span><span class="p">(</span><span class="s">"$from says: $message"</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">alice</span> <span class="p">=</span> <span class="nc">Participant</span><span class="p">(</span><span class="s">"Alice"</span><span class="p">,</span> <span class="nc">SuperChat</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">bob</span> <span class="p">=</span> <span class="nc">Participant</span><span class="p">(</span><span class="s">"Bob"</span><span class="p">,</span> <span class="nc">SuperChat</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">charlie</span> <span class="p">=</span> <span class="nc">Participant</span><span class="p">(</span><span class="s">"Charlie"</span><span class="p">,</span> <span class="nc">SuperChat</span><span class="p">)</span>
+
+    <span class="n">alice</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s">"hi all!"</span><span class="p">)</span>
+    <span class="n">bob</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s">"hi Alice"</span><span class="p">,</span> <span class="s">"Alice"</span><span class="p">)</span> <span class="c1">// tylko ta wiadomość zostanie wypisana</span>
+    <span class="n">charlie</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s">"hi Alice"</span><span class="p">)</span>
+
+    <span class="nc">SuperChat</span><span class="p">.</span><span class="n">mode</span> <span class="p">=</span> <span class="nc">SuperChat</span><span class="p">.</span><span class="nc">Mode</span><span class="p">.</span><span class="nc">PUBLIC</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Ponieważ tryb chata to początkowo <code class="language-plaintext highlighter-rouge">PRIVATE</code>, tylko wiadomość z adresatem zostanie wypisana <code class="language-plaintext highlighter-rouge">[Alice] gets: Bob says: hi Alice</code>. Pozostałe wiadomości trafią do <code class="language-plaintext highlighter-rouge">Mediatora</code>, ale nie do innych uczestników. Zmiana polityki dostarczania wiadomości spowoduje taki efekt dla <code class="language-plaintext highlighter-rouge">MIXED</code>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Alice] gets: Alice says: hi all!
+[Bob] gets: Alice says: hi all!
+[Charlie] gets: Alice says: hi all!
+[Alice] gets: Bob says: hi Alice
+[Alice] gets: Charlie says: hi Alice
+[Bob] gets: Charlie says: hi Alice
+[Charlie] gets: Charlie says: hi Alice
+</code></pre></div></div>
+<blockquote>
+  <p>Jest tutaj błąd, ponieważ Alice dostaje wiadomość od samej siebie. Jej <code class="language-plaintext highlighter-rouge">hi all</code> nie miało adresata, więc trafiło do wszystkich uczestników — w tym jej samej. Podobnie jak Charlie odpowiadając <code class="language-plaintext highlighter-rouge">hi Alice</code> ale bez adresata.</p>
+</blockquote>
+
+<p>Uczestnicy nie muszą wiedzieć o sobie nawzajem, żeby wysyłać sobie wiadomości, zajmuje się tym <code class="language-plaintext highlighter-rouge">Mediator</code> w formie obiektu <code class="language-plaintext highlighter-rouge">SuperChat</code>. Dodatkowo ma swoją wewnętrzną politykę rozsyłania wiadomości, nie jest tylko proxy pomiędzy obiektami. Chat mógłby mieć listę wyciszonych uczestników, którzy np. czasowo i za karę nie mogą wysyłać wiadomości. Ale zamiast blokować wysyłanie wiadomości, można zablokować ich dostarczanie bez informowania uczestnika o tym <code class="language-plaintext highlighter-rouge">shadow-banie</code>.</p>
+
+<h1 id="nazewnictwo">Nazewnictwo</h1>
+<p><code class="language-plaintext highlighter-rouge">Mediator</code> pod względem struktury jest bardzo prostym wzorcem, to w zasadzie 1 interfejs. Nie ma potrzeby dodawać tego do nazwy obiektów, które faktycznie pełnią funkcję Mediatora. W zależności od implementacji <code class="language-plaintext highlighter-rouge">Mediator</code> może nawet nie być widoczny na zewnątrz, w odróżnieniu od <code class="language-plaintext highlighter-rouge">Fasady</code>, która z definicji jest interfejsem wejściowym do jakiejś funkcjonalności.
+Z tego względu zdecydowanie unikałbym używania nazwy Mediator w nazwach klas. Nawet metoda <code class="language-plaintext highlighter-rouge">notify()</code> może i powinna odnosić się do domeny rozwiązywanego problemu, jak w przypadku chatu <code class="language-plaintext highlighter-rouge">send()</code>. Na dobrą sprawę, wzorzec ten powinien być transparentny na zewnątrz grupy klas i być wyłącznie szczegółem implementacyjnym, usprawnieniem organizacyjnym.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>Zadaniem Mediatora jest organizować komunikację między bliskimi klasami. Wzorzec <code class="language-plaintext highlighter-rouge">Mediator</code> uwalnia zależności pomiędzy komponentami. Przejmuje na siebie interakcję między nimi, stając się głównym hubem komunikacyjnym dla grupy klas. Odwracamy sterowanie, ponieważ komponenty zaczynają informować tylko “co się stało”, zamiast nakazywać innym, żeby “coś zrobiły”. Można go spotkać np. pod postacią <code class="language-plaintext highlighter-rouge">ViewModel</code> w Androidzie, gdzie oddziela interakcje UI od zmian modelu danych.</p>
+
+<p>Mediator, korzystając z wewnętrznej logiki, decyduje co zrobić z informacją przychodzącą od jednego ze swoich komponentów. Może wywołać metodę na jednym lub wielu komponentach. Z tego względu musi znać konkretne interfejsy komponentów, a nie jakiś generyczny pochodzący ze wzorca. Teoretycznie <code class="language-plaintext highlighter-rouge">Komponent</code> też może posiadać tylko metodę <code class="language-plaintext highlighter-rouge">notify()</code> i samemu decydować jak zareagować na dany komunikat od <code class="language-plaintext highlighter-rouge">Mediatora</code> (mediacje w obie strony), ale to znacząco komplikuje sprawę i wchodzi w inne wzorce.</p>
+
+<p>Należy uważać, żeby <code class="language-plaintext highlighter-rouge">Mediator</code> nie przerodził się w tzw. <strong>boski obiekt</strong>, rozrośnięty i skomplikowany, zawierający znaczną część logiki systemu. Mediator powinien być stosowany raczej lokalnie i nie jako interfejs dostępowy do funkcjonalności, w przeciwieństwie do Fasady.</p>
+
+<p>Dobrze nadaje się do refaktoryzacji, jeśli mamy grupę powiązanych klas, których ponowne użycie jest uciążliwe przez liczbę zależności. Usprawnia też testowanie, bo nie ma potrzeby tworzenia mocków grupy klas, a jedynie Mediatora. Jeśli wszystkie interakcje między komponentami zawierają się w Mediatorze, użycie tych samych komponentów, ale w innym kontekście będzie wymagało jedynie napisania nowego Mediatora.</p>
+
+<h2 id="zalety">Zalety</h2>
+<ul>
+  <li><strong>ucina wzajemne zależności</strong> - Mediator przejmuje komunikację między komponentami, więc nie muszą wiedzieć o sobie nawzajem.</li>
+  <li><strong>testowanie</strong> - wystarczy mock/stub Mediatora do przetestowania klasy, nie trzeba tworzyć całego drzewka zależności.</li>
+  <li><strong>ułatwia ponowne użycie kodu</strong> - brak zależności od innych komponentów pozwala użyć klasy w nowych miejscach w prosty sposób. Można użyć ponownie nawet całej funkcjonalności w nowym kontekście, tworząc nowy obiekt Mediatora bez zmian komponentów.</li>
+  <li><strong>przydatny w refaktoryzacji</strong> - Mediator pozwala rozplątać wzajemne zależności „dojrzałego” kodu, gdzie odpowiedzialności klas są już ustalone, ale ilość wzajemnych interakcji zaczyna przeszkadzać.</li>
+</ul>
+
+<h2 id="wady">Wady</h2>
+<ul>
+  <li><strong>boski obiekt</strong> - może rozwinąć się do ogromnych rozmiarów, “połykając” kolejne komponenty i stać się punktem dostępowym do funkcjonalności, zamiast tylko organizatorem komunikacji.</li>
+  <li><strong>przykrycie problemu zamiast rozwiązania</strong> - przesunięcie całej komunikacji i zależności między obiektami do Mediatora może spowodować, że obiekty nadal będą od siebie zależne, ale niejawnie. Zamiast posiadać referencje do siebie w kodzie, będą nadal oczekiwać określonych wywołań od strony Mediatora, żeby poprawnie spełniać swoje zadanie.</li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#kotlin-ref">
+                    kotlin <span>(3)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Mediator Pattern-ref">
+                    Mediator Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Mediator w Kotlinie"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin-decorator-pattern"
+                                    title="Dekorator w Kotlinie">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/remote-logger" title="Remote Logger">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

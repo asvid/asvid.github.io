@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/local-maven-repo/lib.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Android local libraries with Maven </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   January
+	   21st,
+	     
+	   2018
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        6 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#intro">Intro</a></li>
+<li class="toc-entry toc-h2"><a href="#entry-info">Entry info</a></li>
+<li class="toc-entry toc-h2"><a href="#how-to">How to</a></li>
+<li class="toc-entry toc-h2"><a href="#outro">Outro</a></li>
+</ul>
+            </nav>
+
+            <h2 id="intro">Intro</h2>
+<p>Have you ever created Android library? You know, when you are working on specific functionality in some project and get enlightenment “hey, I could use this in some other project!”. No? Well… you should - at least sometimes :) I don’t mean creating new ultimate architecture framework every week (we are not JavaScript developers after all), but writing simple tools that you know how to use and that will make your work easer on future projects. I recommend trying this, getting stars on GitHub and showing friends your library at <a href="https://android-arsenal.com/">AndroidArsenal</a> is cool.</p>
+
+<p>Here is some random tutorial on how to put your lib on <a href="https://jitpack.io/">JitPack</a>: <a href="https://medium.com/@ome450901/publish-an-android-library-by-jitpack-a0342684cbd0">How to JitPack your lib</a>. When it’s there, you can use it like every other dependency in project.</p>
+
+<h3 id="why-even">Why even</h3>
+<p>Anyway, this text is not about just creating libraries and putting them online. You may not want to make your libs opensource or store them externally, but still benefit from having great tools you’ve made. Solution is local <code class="language-plaintext highlighter-rouge">Maven</code> repository. It also gives you a <strong>very</strong> easy way to work on your library and test it immediately on project you need this library for. Without this, every time you want to fix or add something to your lib, you need to update it’s version, make release on Github, send it to <a href="https://jitpack.io/">JitPack</a>, wait until it builds, hope it won’t fail, update version of lib in your project, and then if everything goes well check if it does it’s work. Of course your lib should contain sample application that shows usage of all library features, so you can test if it’s working without this whole release process, but sometimes it’s not enough and you need to test on real project.</p>
+
+<h2 id="entry-info">Entry info</h2>
+<ul>
+  <li>you dont need to install anything in your system, it’s all in <code class="language-plaintext highlighter-rouge">Gradle</code> plugin</li>
+  <li>no need to use command line</li>
+  <li>no need to modify your project, just <code class="language-plaintext highlighter-rouge">build.gradle</code> file</li>
+  <li>you don’t have to know where are your local libs stored, but its good to know:
+    <ul>
+      <li>Unix/Mac OS X – ~/.m2</li>
+      <li>Windows – C:\Users{username}.m2</li>
+    </ul>
+  </li>
+  <li>each local release <strong>overrides previous one</strong> with same version number, so there is no need to update version each time (like for <a href="https://jitpack.io/">JitPack</a> or other remote <code class="language-plaintext highlighter-rouge">Maven</code> repository)</li>
+  <li>you may have many local versions of your library, versioning works in the same way. You can even develop separate versions of your lib that are used in different projects, because of different <code class="language-plaintext highlighter-rouge">minSdkVersion</code> etc.</li>
+</ul>
+
+<p>Sample code in <code class="language-plaintext highlighter-rouge">Kotlin</code> is available on <a href="https://github.com/asvid/local_maven_repo">GitHub</a>. There are 2 projects in repo: <code class="language-plaintext highlighter-rouge">app</code> that contains application using locally published libraries from project <code class="language-plaintext highlighter-rouge">library</code>. Library project has sample application and 2 library modules: <code class="language-plaintext highlighter-rouge">firstlib</code> and <code class="language-plaintext highlighter-rouge">secondlib</code>. They are dead simple and contain just custom button class that overrides initial background color.</p>
+
+<h2 id="how-to">How to</h2>
+
+<p>Sounds too good to be true? Don’t worry, there is no catch.</p>
+
+<h3 id="library">Library</h3>
+
+<p>In your library module <code class="language-plaintext highlighter-rouge">build.gradle</code> you have to add (usually on top of file):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apply plugin: 'maven-publish'
+</code></pre></div></div>
+
+<p>If you publishing your lib to JitPack, there is a chance you have below variables set. If not, just add below lines before <code class="language-plaintext highlighter-rouge">android</code> block.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def artifactId = 'your-library-name}'
+def groupId = 'com.your.package.name'
+</code></pre></div></div>
+
+<p>Now is the only tricky part. Following code should be added at the bottom of lib module <code class="language-plaintext highlighter-rouge">build.gradle</code>, after any blocks you already have there.</p>
+
+<h4 id="typical-case">Typical case</h4>
+<p>If your lib is single module, or you have many library modules in single project but without mutual dependencies:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
+
+          artifact bundleReleaseAar
+        }
+      }
+  }
+}
+</code></pre></div></div>
+
+<h4 id="not-so-typical-case">Not-so-typical case</h4>
+<p>If your library project contains many modules that are independent libs and one that is collection of them - it might sound stupid but sometimes it’s useful. You can use it also for single module, but it’s just an overkill. :</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>project.afterEvaluate {
+  publishing {
+      publications {
+        library(MavenPublication) {
+          setGroupId groupId 
+          setArtifactId artifactId 
+          version android.defaultConfig.versionName
+          artifact bundleReleaseAar 
+
+          pom.withXml {
+            def dependenciesNode = asNode().appendNode('dependencies')
+            configurations.compile.allDependencies.each {
+              if (it.group != null &amp;&amp; (it.name != null || "unspecified".equals(it.name)) &amp;&amp; it.version != null) {
+              def dependencyNode = dependenciesNode.appendNode('dependency')
+              dependencyNode.appendNode('groupId', it.group)
+              dependencyNode.appendNode('artifactId', it.name)
+              dependencyNode.appendNode('version', it.version)
+              }
+            }
+          }
+        }
+      }
+  }
+}
+</code></pre></div></div>
+
+<h4 id="protip">Protip</h4>
+
+<p>You can create file with publishing code and apply it in each module instead of copy-paste whole thing. You can see it used in <a href="https://github.com/asvid/local_maven_repo">Github project</a> in module <code class="language-plaintext highlighter-rouge">secondLib</code> of library project. There is a file <code class="language-plaintext highlighter-rouge">publish_local.gradle</code> in library project root folder that contains publishing code. In library module you can now just add</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apply from: '../publish_local.gradle'
+</code></pre></div></div>
+<p>Just remember to set variables <code class="language-plaintext highlighter-rouge">artifactId</code> and <code class="language-plaintext highlighter-rouge">groupId</code>, they are individual for each module.</p>
+
+<h4 id="publish-your-lib">Publish your lib</h4>
+<p>All you need to do now is run task: <code class="language-plaintext highlighter-rouge">publishToMavenLocal</code>.</p>
+
+<p><img src="http://asvid.github.io//assets/posts/local-maven-repo/gradle_task.png" alt="Gradle task" /></p>
+
+<p>So what is it for actually? You are telling <code class="language-plaintext highlighter-rouge">maven-publish</code> to release your library module to local <code class="language-plaintext highlighter-rouge">Maven</code> repository with name you’ve set in <code class="language-plaintext highlighter-rouge">artifactId</code> and package set in <code class="language-plaintext highlighter-rouge">groupId</code>. For multi-module project, it just iterates over modules and if they have <code class="language-plaintext highlighter-rouge">publishing</code> code they are also published to local repository.</p>
+
+<h3 id="project">Project</h3>
+
+<p>All you have to do in project you want to use locally published library, is add in project root <code class="language-plaintext highlighter-rouge">build.gradle</code> file <code class="language-plaintext highlighter-rouge">mavenLocal()</code> in repository list, so it looks like that:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>allprojects {
+  repositories {
+    mavenLocal()
+    jcenter()
+    ...
+</code></pre></div></div>
+<p>How it works: <code class="language-plaintext highlighter-rouge">Gradle</code> while building your project will look for dependencies first in local <code class="language-plaintext highlighter-rouge">Maven</code> repository, then if it won’t find requested dependency it will try <code class="language-plaintext highlighter-rouge">JCenter</code> etc. So if you are using CI, your library should be released on source that CI have access to, like remote repository (private Nexus server, JitPack).
+I highly recommend using local repository only for development and testing your lib, and then publishing it somewhere when you are sure your work is done.</p>
+
+<h2 id="outro">Outro</h2>
+
+<p>This approach to library development saved me <strong>tons</strong> of useless work and waiting for publishing on remote repository. I hope with this tutorial I can save some of your time. Or maybe you’ve figure it out in better way? :)</p>
+
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#rss-ref">-->
+        <!--                rss <span>(15)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#Maven-ref">
+                    Maven <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Gradle-ref">
+                    Gradle <span>(4)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#library-ref">
+                    library <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#modularization-ref">
+                    modularization <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#build config-ref">
+                    build config <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Android local libraries with Maven"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/color-changing-progress-bar"
+                                    title="Color changing progress bar">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/nyan-your-terminal" title="Nyan your terminal">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

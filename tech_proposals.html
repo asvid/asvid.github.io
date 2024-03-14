@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/archive.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Why should you use Tech proposals </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   April
+	   4th,
+	   
+	   2022
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        9 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#post-implementation-documentation">“Post-implementation documentation”</a></li>
+<li class="toc-entry toc-h1"><a href="#tech-proposal">Tech Proposal</a></li>
+<li class="toc-entry toc-h1"><a href="#preconditions">Preconditions</a></li>
+<li class="toc-entry toc-h1"><a href="#when-is-it-worth-creating-a-tech-proposal">When is it worth creating a tech proposal</a></li>
+<li class="toc-entry toc-h1"><a href="#what-does-a-tech-proposal-consist-of">What does a tech proposal consist of?</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#updating-the-document">Updating the document</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a></li>
+</ul>
+            </nav>
+
+            <h1 id="post-implementation-documentation">“Post-implementation documentation”</h1>
+<p>As the lecturers maliciously called it when they checked university-grade projects, the idea of which was to plan a project, document it, and then implement it according to plan. In practice, I usually was implementing it first so it just worked, and then documented the result. And let anyone who hasn’t done that throw a stone first :)</p>
+
+<p>Lecturers (in Polish universities) are often older people with no commercial experience, used to water-fall project planning. Now we are all Agile, we have continuous delivery, self-documenting code, and other aids.</p>
+
+<p>Is there still a need to write a plan today before the actual implementation, or is it a relic of the past, art for art, and a university fad? Honestly, I would often be grateful even for quickly written post-implementation docs…</p>
+
+<h1 id="tech-proposal">Tech Proposal</h1>
+<p><code class="language-plaintext highlighter-rouge">Tech Proposals</code> are a less formal way for internal documentation created before actual implementation. They also facilitate making technical decisions.</p>
+
+<p>Creating such documents is useful when:</p>
+<ul>
+  <li>we already have a ‘system’ and not just an ‘application’, i.e. multiple services and clients cooperating at different levels</li>
+  <li>bigger changes must go through the architect or the security department (hello there, fintech)</li>
+  <li>the new feature requires a variety of competence and cooperation between teams</li>
+  <li>we work in a scattered and asynchronous environment</li>
+</ul>
+
+<p>Seemingly, a lot may depend on the way work is organized, the number of teams and their composition, and the approach to the ownership of system fragments or procedures in the company.</p>
+
+<p>But not completely. I worked in interdisciplinary (mobile, backend) and uniform (Android only) teams, in startups without procedures, and in more Byzantine structures. In fact, in every single place (with appropriate assumptions), the creation of a document that several people could edit, comment on, or simply review, significantly reduced the number of errors and misunderstandings. Even if nobody wanted to get involved in my document, at least I had my ass covered, because I shared it with everyone and waited a bit for feedback.</p>
+
+<p>There are places where an analyst (and/or PO, TL) prepares tickets and programmers simply execute them without going into the whole solution. And it might work. However, it is unlikely that anyone will grasp the nuances of all the technologies used with an extensive system. It is not difficult for me to imagine a situation wherein the middle of the implementation of some part of the solution an unforeseen problem comes out, and you have to go back to planning.
+Engaging developers sooner would have avoided such ping-pong.</p>
+
+<p>I am aware that I promote a break away from programming in favor of additional bureaucracy and meetings. From my experience, at a certain scale and level of complexity of the project, it significantly <strong>saves time and work</strong>.</p>
+
+<h1 id="preconditions">Preconditions</h1>
+<p>To even start thinking about documenting the implementation plan or consulting it with other teams, you need to know well in advance what should be delivered. Planning work with the appropriate level of detail for a year, quarter, or month ahead helps here. Transparency within the organization is also very important.
+I like to check in on other teams’ demos to find out what they are working on and what they are planning to do. I can immediately offer help in an area that I know better, instead of hoping that everything will go well or that they will find me themselves. And <strong>karma does come back</strong>, other programmers themselves offer help when my team comes into their area of expertise. Don’t get me wrong, there is no goodwill or empathy here, we just <strong>prefer to be in control when someone rummages in our code</strong>, instead of fixing someone else’s errors ASAP or being blocked until they fix it. The whole organization benefits from it.</p>
+
+<p>If there is a deadline for introducing a complex change in 3 months, then you can slowly start to estimate the time-consumption, break the problem down into smaller parts, maybe you will have to do some spike, talk to people or teams with competence in the subject, consult the 3rd party providing e.g. hardware - documenting each stage will end with a ‘tech proposal’ for the solution with the biggest problems already solved.</p>
+
+<p>Procedures in the organization may require approval of changes by the architect or the security department. It is much easier to discuss changes when having a document, maybe with a diagram or API proposal. An architect can look at the ‘tech proposal’ at any time convenient for them, for example, coming down from an ivory tower. <strong>It’s easier to sell your ideas when they’re presented in a digestible way</strong>. The security department will also quickly point to potential problems or places that require attention, having some outline of the solution, not bare code that they may not understand.</p>
+
+<h1 id="when-is-it-worth-creating-a-tech-proposal">When is it worth creating a tech proposal</h1>
+<p>I’ve noticed that a good indicator is the emergence of doubts as to how to solve the problem or implement the feature. We don’t have a full image before writing the code, but sometimes we manage to identify the biggest gaps well in advance.
+Major changes may be beyond the competence of specific individuals or a team. Saved and shared information reduces the risk of time slips caused by staff shortages, the so-called bus factor. With well-written documentation and a committed team, each member can undertake the implementation of at least part of the solution, without having to wait until “that homie who knows what to do returns from vacation”.</p>
+
+<p>Self-documenting code is awesome, but if your solution extends beyond a single repository, it will never contain the complete image. Then it is better to create a document and (if necessary) add a link in the comment. The need can appear during a code review when someone asks “why so?”. Instead of sending the same link to every potential questioner, it is better to put it in the code.</p>
+
+<p>It is an unnecessary burden to create bloated documentation right at the start of a project. Then it is better to focus on using the <code class="language-plaintext highlighter-rouge">Decision Log</code> to store information about why a particular technology or solution was chosen. Getting into the legacy project without such information may introduce reluctance towards your predecessors :)</p>
+
+<h1 id="what-does-a-tech-proposal-consist-of">What does a tech proposal consist of?</h1>
+<p>It depends on the problem, system, stakeholders… there is no single pattern.</p>
+
+<p>I like it when it starts with the problem summary and the table of contents. This allows the reader to quickly find out if they are in the right place.</p>
+
+<p>Then you can put in the introductory information that you have at the time of writing the document, links to other documentation or spike results. This section may grow with the time, don’t be focus on getting all the info at first. Just write down what you already know and add new info as it appears.</p>
+
+<p>The most important part is an adequately detailed description of the solution. There are a few schools of thought: you can literally put pieces of code or SQL there, limit yourself to specifying an API, or a verbal/musical description of the implementation.
+Sequence or communication diagrams can be helpful and you don’t have to do them in a perfect UML, everyone will understand rectangles and arrows.
+In my opinion, the tech proposal should not focus on the implantation details, but rather on designing the logic and interaction between the various elements of the system. Implementation details will be a result of the adopted solution, organization or project standards, and the programmer’s preferences.</p>
+
+<p>It’s also nice to have a few options for solving the problem and mark your choice in the summary, leaving the others in the document. This gives you a better picture of the thought process as you work on the right solution. Proposals for solutions may come from different people, or they can be a result of conversations with others, which helps you not to fall into the anchoring bias field. Sometimes it’s worth putting a ridiculous solution in there, just to see how others stand out. But it also happened to me that the best solution was a mix between the first and the ridiculous one because it allowed me to think outside the box.
+The description of each option may end with a small summary of advantages and disadvantages, even in the form of a table. Not all flaws will be discovered, but this document will help you historically understand the motivation behind your decision.</p>
+
+<p>A ‘tech proposal’ written in this way naturally answers the questions:</p>
+<ul>
+  <li>What will be implemented?</li>
+  <li>Why?</li>
+  <li>What other solutions were considered?</li>
+  <li>Why they were not chosen?</li>
+</ul>
+
+<p>Example document may look like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Abstract
+Table of Contents
+Info
+Options
+ 1.
+ 2.
+ 3.
+Selected solution, summary, justification
+</code></pre></div></div>
+
+<p>Of course, in the future, it may turn out that the rejected solution would be better, but this is probably due to undiscovered conditions at the time of making the decision.</p>
+
+<h2 id="updating-the-document">Updating the document</h2>
+<p><code class="language-plaintext highlighter-rouge">Tech Proposal</code> is a living document, it is constantly changing and developing. It’s good if everyone can add a comment, but the document should have a single owner who keeps order and composition.</p>
+
+<p>After implementation, the document does not die, but I don’t see the need to update with every little change to the original solution. If the changes are large, they will probably require a new document, and you can link the previous one there. This document is for internal project documentation only and is valid only at the closure date. Documentation made available externally should be <strong>always</strong> kept up to date.</p>
+
+<h1 id="summary">Summary</h1>
+<p>A properly developed <code class="language-plaintext highlighter-rouge">tech proposal</code> allows not only to choose the best solution for the time being and gathered knowledge but also is a source of historical information on the development of the system. If you ever wondered “why exactly was something resolved this way” during your career, there would be an answer in the “tech proposal” (or “decision log”). The creation of such a document and teamwork on it is an additional effort that is justified only in certain cases. There is no reason to document every little change done to a single part of the system. However, it will be useful when the changes reach many services, exceed the team’s competencies, and maybe need to be coordinated over time.</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#documentation-ref">
+                    documentation <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#tech proposal-ref">
+                    tech proposal <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Why should you use Tech proposals"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/2021-09-03-android-service-binding-on-api30"
+                                    title="Android service binding fix for API 30">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/would-i-do-mobile-again" title="Would you go for mobile development again, after 10 years of doing it?">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

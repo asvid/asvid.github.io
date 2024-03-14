@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/strategy.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Strategy Pattern in Kotlin </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   June
+	   5th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        22 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#purpose">Purpose</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#the-problem">The Problem</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#implementation">Implementation</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstract">Abstract</a></li>
+<li class="toc-entry toc-h2"><a href="#the-solution">The solution</a></li>
+<li class="toc-entry toc-h2"><a href="#multiple-strategies">Multiple strategies</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#naming">Naming</a></li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#pros">Pros</a></li>
+<li class="toc-entry toc-h2"><a href="#cons">Cons</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="purpose">Purpose</h1>
+
+<p>The <code class="language-plaintext highlighter-rouge">Strategy</code> design pattern defines a family of algorithms and allows them to be used interchangeably. By <code class="language-plaintext highlighter-rouge">algorithm</code>, here I mean any logic, be it sorting, searching, or computing some value from data. It does not matter. It is, in a sense, an extension of the <a href="https://asvid.github.io/kotlin-template-method">Template Method</a> pattern, but inversely to it, <code class="language-plaintext highlighter-rouge">Strategy</code> prefers composition over inheritance. Strategies do not inherit from any specific class but only implement a common interface. This allows for easy code encapsulation and algorithm replacement without the inheritance overhead.</p>
+
+<h2 id="the-problem">The Problem</h2>
+<p>An example of a problem that can be solved by the <code class="language-plaintext highlighter-rouge">Strategy</code> may be the way of calculating the price taking into account the promotion kind:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">data class</span> <span class="nc">Item</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">price</span><span class="p">:</span> <span class="nc">Double</span><span class="p">)</span> <span class="c1">// product on the bill</span>
+
+<span class="k">enum</span> <span class="kd">class</span> <span class="nc">Promotion</span> <span class="p">{</span> <span class="c1">// enum with promotion kinds</span>
+    <span class="nc">NoPromotion</span><span class="p">,</span> <span class="nc">SpecialPromotion</span><span class="p">,</span> <span class="nc">ChristmasPromotion</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Bill</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">items</span> <span class="p">=</span> <span class="n">mutableListOf</span><span class="p">&lt;</span><span class="nc">Item</span><span class="p">&gt;()</span> <span class="c1">// list of producsts on the bill</span>
+    <span class="k">fun</span> <span class="nf">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nc">Item</span><span class="p">):</span> <span class="nc">Bill</span> <span class="p">{</span>
+        <span class="n">items</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">this</span>
+    <span class="p">}</span>
+
+	<span class="c1">// method calculating final price from list of items and selected promotion</span>
+    <span class="k">fun</span> <span class="nf">calculateFinalPrice</span><span class="p">(</span><span class="n">promotion</span><span class="p">:</span> <span class="nc">Promotion</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">initialSum</span> <span class="p">=</span> <span class="n">items</span><span class="p">.</span><span class="nf">sumOf</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">price</span> <span class="p">}</span>
+		
+        <span class="c1">// checking promotion and using right algorythm to calculate price</span>
+        <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">promotion</span><span class="p">)</span> <span class="p">{</span> 
+            <span class="nc">Promotion</span><span class="p">.</span><span class="nc">NoPromotion</span> <span class="p">-&gt;</span> <span class="n">initialSum</span>
+            <span class="nc">Promotion</span><span class="p">.</span><span class="nc">SpecialPromotion</span> <span class="p">-&gt;</span> <span class="k">when</span> <span class="p">{</span>
+                <span class="n">initialSum</span> <span class="p">&gt;</span> <span class="mi">20</span> <span class="p">-&gt;</span> <span class="n">initialSum</span> <span class="p">*</span> <span class="mf">0.95</span>
+                <span class="n">initialSum</span> <span class="p">&gt;</span> <span class="mi">30</span> <span class="p">-&gt;</span> <span class="n">initialSum</span> <span class="p">*</span> <span class="mf">0.85</span>
+                <span class="n">initialSum</span> <span class="p">&gt;</span> <span class="mi">40</span> <span class="p">-&gt;</span> <span class="n">initialSum</span> <span class="p">*</span> <span class="mf">0.75</span>
+                <span class="k">else</span> <span class="p">-&gt;</span> <span class="n">initialSum</span>
+            <span class="p">}</span>
+            <span class="nc">Promotion</span><span class="p">.</span><span class="nc">ChristmasPromotion</span> <span class="p">-&gt;</span> <span class="n">initialSum</span> <span class="p">*</span> <span class="mf">0.80</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<blockquote>
+  <p>I’m aware that <code class="language-plaintext highlighter-rouge">Double</code> is not the best type to use for money operations, but for the ease of use in this post examples I decided to use it.</p>
+</blockquote>
+
+<p>We have 3 promotions here, one of which <code class="language-plaintext highlighter-rouge">NoPromotion</code> does not change anything. The implementation of the method calculating the promotion is in the <code class="language-plaintext highlighter-rouge">Bill</code> class - so in addition to collecting products, the class also calculates the final price, we do not have the <code class="language-plaintext highlighter-rouge">Single Responsibility Principle</code> preserved here.</p>
+
+<p>If there happens to be a new promotion request, just add an <code class="language-plaintext highlighter-rouge">enum</code> and its implementation inside <code class="language-plaintext highlighter-rouge">Bill</code> class. The IDE will report that the new case is not handled if you forget. It doesn’t look extremely bad, other than the lack of SRP.</p>
+
+<p>Now let’s assume that in addition to the standard receipt, you want to be able to issue an invoice that takes into account the same promotions.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Invoice</span> <span class="p">{</span>
+	<span class="o">..</span><span class="p">.</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>You could copy the code that calculates the promotion, or you could artificially extract some abstract receipt class with promotion implementation from which <code class="language-plaintext highlighter-rouge">Invoice</code> and <code class="language-plaintext highlighter-rouge">Bill</code> would inherit. Unless, of course, they are not already inheriting from another class.</p>
+
+<p>And then there will be some class that does not fit into this hierarchy, which will also require the implementation of promotions…</p>
+
+<h1 id="implementation">Implementation</h1>
+<p>And then the ‘Strategy’ comes in, all in white <sup id="fnref:na_bialo" role="doc-noteref"><a href="#fn:na_bialo" class="footnote" rel="footnote">1</a></sup>. It allows you to easily transfer the method of calculating individual promotions to separate classes with a common interface. In such a way that customers do not even need to know what specific promotion are they using.</p>
+
+<h2 id="abstract">Abstract</h2>
+<p>Let’s start from abstract implementation to understand all pieces of this pattern:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// the client class, strategy is provided in the constructor</span>
+<span class="kd">class</span> <span class="nc">Context</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">strategy</span><span class="p">:</span> <span class="nc">Strategy</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// using generic strategy interface</span>
+    <span class="k">fun</span> <span class="nf">useStrategy</span><span class="p">()</span> <span class="p">=</span> <span class="n">strategy</span><span class="p">.</span><span class="nf">use</span><span class="p">()</span> 
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Strategy</span> <span class="p">{</span> <span class="c1">// using interface instead of class is very important</span>
+    <span class="c1">// abstract or concrete class would limit using the strategy only to its hierarchy</span>
+    <span class="k">fun</span> <span class="nf">use</span><span class="p">()</span> <span class="c1">// strategies usually have single public method</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">StrategyA</span> <span class="p">:</span> <span class="nc">Strategy</span> <span class="p">{</span> <span class="c1">// first strategy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">use</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// concrete algorithm implementation</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"using strategy A"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">StrategyB</span> <span class="p">:</span> <span class="nc">Strategy</span> <span class="p">{</span> <span class="c1">// second strategy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">use</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"using strategy B"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// using either strategy is identical</span>
+	<span class="c1">// strategies are transparent for the client</span>
+    <span class="kd">val</span> <span class="py">contextA</span> <span class="p">=</span> <span class="nc">Context</span><span class="p">(</span><span class="nc">StrategyA</span><span class="p">())</span>
+    <span class="n">contextA</span><span class="p">.</span><span class="nf">useStrategy</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">contextB</span> <span class="p">=</span> <span class="nc">Context</span><span class="p">(</span><span class="nc">StrategyB</span><span class="p">())</span>
+    <span class="n">contextB</span><span class="p">.</span><span class="nf">useStrategy</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>We have here the <code class="language-plaintext highlighter-rouge">Context</code> class, so the client using the Strategy. It only knows the strategy interface, not the concrete classes. This allows you to easily expand the family of strategies with a new one, without updating the customers. Due to the use of the interface, and not the <code class="language-plaintext highlighter-rouge">Strategy</code> class, specific Strategies are loosely related to each other, while guaranteeing clients a common API.</p>
+
+<p>It can be represented symbolically like this:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="219px" preserveAspectRatio="none" style="width:351px;height:219px;" version="1.1" viewBox="0 0 351 219" width="351px" zoomAndPan="magnify"><defs><filter height="300%" id="f1ddnuxc5dfma5" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[377953f0e8c8c0131a700fca43c84158]
+class Strategy--><rect fill="#FEFECE" filter="url(#f1ddnuxc5dfma5)" height="60.8047" id="Strategy" style="stroke: #A80036; stroke-width: 1.5;" width="86" x="186.5" y="17.5" /><ellipse cx="201.5" cy="33.5" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M197.4219,29.2656 L197.4219,27.1094 L204.8125,27.1094 L204.8125,29.2656 L202.3438,29.2656 L202.3438,37.3438 L204.8125,37.3438 L204.8125,39.5 L197.4219,39.5 L197.4219,37.3438 L199.8906,37.3438 L199.8906,29.2656 L197.4219,29.2656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="54" x="215.5" y="37.6543">Strategy</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="187.5" x2="271.5" y1="49.5" y2="49.5" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="187.5" x2="271.5" y1="57.5" y2="57.5" /><ellipse cx="197.5" cy="68.5" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="29" x="206.5" y="71.7104">use()</text><!--MD5=[fb2c36b2228036912ded869496673559]
+class StrategyA--><rect fill="#FEFECE" filter="url(#f1ddnuxc5dfma5)" height="60.8047" id="StrategyA" style="stroke: #A80036; stroke-width: 1.5;" width="93" x="119" y="148" /><ellipse cx="134" cy="164" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M136.9688,169.6406 Q136.3906,169.9375 135.75,170.0781 Q135.1094,170.2344 134.4063,170.2344 Q131.9063,170.2344 130.5781,168.5938 Q129.2656,166.9375 129.2656,163.8125 Q129.2656,160.6875 130.5781,159.0313 Q131.9063,157.375 134.4063,157.375 Q135.1094,157.375 135.75,157.5313 Q136.4063,157.6875 136.9688,157.9844 L136.9688,160.7031 Q136.3438,160.125 135.75,159.8594 Q135.1563,159.5781 134.5313,159.5781 Q133.1875,159.5781 132.5,160.6563 Q131.8125,161.7188 131.8125,163.8125 Q131.8125,165.9063 132.5,166.9844 Q133.1875,168.0469 134.5313,168.0469 Q135.1563,168.0469 135.75,167.7813 Q136.3438,167.5 136.9688,166.9219 L136.9688,169.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="61" x="148" y="168.1543">StrategyA</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="120" x2="211" y1="180" y2="180" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="120" x2="211" y1="188" y2="188" /><ellipse cx="130" cy="199" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="29" x="139" y="202.2104">use()</text><!--MD5=[5225eab3c9fb4b6b2d3119e6d561acff]
+class StrategyB--><rect fill="#FEFECE" filter="url(#f1ddnuxc5dfma5)" height="60.8047" id="StrategyB" style="stroke: #A80036; stroke-width: 1.5;" width="93" x="247" y="148" /><ellipse cx="262" cy="164" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M264.9688,169.6406 Q264.3906,169.9375 263.75,170.0781 Q263.1094,170.2344 262.4063,170.2344 Q259.9063,170.2344 258.5781,168.5938 Q257.2656,166.9375 257.2656,163.8125 Q257.2656,160.6875 258.5781,159.0313 Q259.9063,157.375 262.4063,157.375 Q263.1094,157.375 263.75,157.5313 Q264.4063,157.6875 264.9688,157.9844 L264.9688,160.7031 Q264.3438,160.125 263.75,159.8594 Q263.1563,159.5781 262.5313,159.5781 Q261.1875,159.5781 260.5,160.6563 Q259.8125,161.7188 259.8125,163.8125 Q259.8125,165.9063 260.5,166.9844 Q261.1875,168.0469 262.5313,168.0469 Q263.1563,168.0469 263.75,167.7813 Q264.3438,167.5 264.9688,166.9219 L264.9688,169.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="61" x="276" y="168.1543">StrategyB</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="248" x2="339" y1="180" y2="180" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="248" x2="339" y1="188" y2="188" /><ellipse cx="258" cy="199" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="29" x="267" y="202.2104">use()</text><!--MD5=[6754354365917abf8f1a56af1b7e344c]
+class Context--><rect fill="#FEFECE" filter="url(#f1ddnuxc5dfma5)" height="73.6094" id="Context" style="stroke: #A80036; stroke-width: 1.5;" width="129" x="14" y="12" /><ellipse cx="51.05" cy="28" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M54.0188,33.6406 Q53.4406,33.9375 52.8,34.0781 Q52.1594,34.2344 51.4563,34.2344 Q48.9563,34.2344 47.6281,32.5938 Q46.3156,30.9375 46.3156,27.8125 Q46.3156,24.6875 47.6281,23.0313 Q48.9563,21.375 51.4563,21.375 Q52.1594,21.375 52.8,21.5313 Q53.4563,21.6875 54.0188,21.9844 L54.0188,24.7031 Q53.3938,24.125 52.8,23.8594 Q52.2063,23.5781 51.5813,23.5781 Q50.2375,23.5781 49.55,24.6563 Q48.8625,25.7188 48.8625,27.8125 Q48.8625,29.9063 49.55,30.9844 Q50.2375,32.0469 51.5813,32.0469 Q52.2063,32.0469 52.8,31.7813 Q53.3938,31.5 54.0188,30.9219 L54.0188,33.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="48" x="69.95" y="32.1543">Context</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="142" y1="44" y2="44" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="22" y="52" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="103" x="34" y="58.2104">strategy: Strategy</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="142" y1="64.8047" y2="64.8047" /><ellipse cx="25" cy="75.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="77" x="34" y="79.0151">useStrategy()</text><!--MD5=[3721c023616dd408735c2a2f04171f35]
+reverse link Strategy to StrategyA--><path d="M205.69,96.81 C197.16,113.93 187.8,132.72 180.26,147.86 " fill="none" id="Strategy&lt;-StrategyA" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="199.47,93.59,214.66,78.8,212.01,99.83,199.47,93.59" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[eb590129a3151ce6b23f47d20e04fd76]
+reverse link Strategy to StrategyB--><path d="M253.31,96.81 C261.84,113.93 271.2,132.72 278.74,147.86 " fill="none" id="Strategy&lt;-StrategyB" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="246.99,99.83,244.34,78.8,259.53,93.59,246.99,99.83" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[0a7be358f08202a33cfcf8e27bbb9c25]
+link Context to Strategy--><path d="M144.5,54 C154.7,58.63 165.57,61.56 176,63.02 " fill="none" id="Context-&gt;Strategy" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="186.24,64,177.6578,59.1682,181.2623,63.528,176.9026,67.1325,186.24,64" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[c9218dab97db00e954a388727e33d939]
+@startuml
+
+interface Strategy{
++ use()
+  }
+
+class StrategyA implements Strategy{
++ use()
+  }
+class StrategyB implements Strategy{
++ use()
+  }
+
+class Context{
+	- strategy: Strategy
+	+ useStrategy()
+}
+
+Context::strategy -> Strategy
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h2 id="the-solution">The solution</h2>
+<p>Promotions can be encapsulated in specific classes:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Promotion</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span>
+    <span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span>
+<span class="p">}</span>
+
+<span class="c1">// singleton, because this strategy doesn't need to keep its state - but it could</span>
+<span class="kd">object</span> <span class="nc">ChristmasPromotion</span> <span class="p">:</span> <span class="nc">Promotion</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="kd">val</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"Christmas Promotion"</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">sum</span> <span class="p">*</span> <span class="mf">0.8</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// this is a NullObject, a special case of Strategy not performing any actions</span>
+<span class="kd">object</span> <span class="nc">NoPromotion</span> <span class="p">:</span> <span class="nc">Promotion</span> <span class="p">{</span> 
+    <span class="k">override</span> <span class="kd">val</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"No Promotion"</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">sum</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">SpecialPromotion</span> <span class="p">:</span> <span class="nc">Promotion</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="kd">val</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"Special Promotion"</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">when</span> <span class="p">{</span>
+            <span class="n">sum</span> <span class="p">&gt;</span> <span class="mi">20</span> <span class="p">-&gt;</span> <span class="n">sum</span> <span class="p">*</span> <span class="mf">0.95</span>
+            <span class="n">sum</span> <span class="p">&gt;</span> <span class="mi">30</span> <span class="p">-&gt;</span> <span class="n">sum</span> <span class="p">*</span> <span class="mf">0.85</span>
+            <span class="n">sum</span> <span class="p">&gt;</span> <span class="mi">40</span> <span class="p">-&gt;</span> <span class="n">sum</span> <span class="p">*</span> <span class="mf">0.75</span>
+            <span class="k">else</span> <span class="p">-&gt;</span> <span class="n">sum</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Having such implementation of promotions, the <code class="language-plaintext highlighter-rouge">Bill</code> class gets simplified to:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Bill</span> <span class="p">{</span>
+    <span class="o">..</span><span class="p">.</span>
+	<span class="c1">// strategies can be passed in the constructor, or in the method that uses them</span>
+    <span class="k">fun</span> <span class="nf">calculateFinalPrice</span><span class="p">(</span><span class="n">promotion</span><span class="p">:</span> <span class="nc">Promotion</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"applying ${promotion.name}"</span><span class="p">)</span>
+        <span class="kd">val</span> <span class="py">initialSum</span> <span class="p">=</span> <span class="n">items</span><span class="p">.</span><span class="nf">sumOf</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">price</span> <span class="p">}</span>
+        <span class="k">return</span> <span class="n">promotion</span><span class="p">.</span><span class="nf">calculate</span><span class="p">(</span><span class="n">initialSum</span><span class="p">)</span> <span class="c1">// the promotion object calculates the price</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Maybe this is not the best example, because we still don’t have SRP - the <code class="language-plaintext highlighter-rouge">Bill</code> still calculates the final amount, but now at least delegates it to the<code class="language-plaintext highlighter-rouge"> Promotion</code> object.
+Adding a new type of promotion doesn’t cause any update in the <code class="language-plaintext highlighter-rouge">Bill</code> class. The same promotion classes can be used in the <code class="language-plaintext highlighter-rouge">Invoice</code> class or any other class that needs to include them.</p>
+
+<p>It is much easier to test the logic in separate classes than in the initial example with the <code class="language-plaintext highlighter-rouge">when</code> condition. Adding another promotion will not cause the need to fix the existing tests, but only add new ones for the new class.
+In order not to spoil this testing awesomeness, make sure that <code class="language-plaintext highlighter-rouge">Strategy</code> gets all the values it needs in the public method or the constructor, rather than magically extracting them from some configuration.
+Often the ‘strategy’ does not need to store its state, but only performs some actions on provided data. This is one of the few cases where the use of <code class="language-plaintext highlighter-rouge">Singleton</code> makes sense.</p>
+
+<h2 id="multiple-strategies">Multiple strategies</h2>
+<p>OK, with single strategy it’s cool, but nothing stops us from making <code class="language-plaintext highlighter-rouge">Bill</code> have many kinds of strategies. Final price may vary depending on taxes or loyalty program.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Tax</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">applyTaxes</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Promotion</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">applyPromotion</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">LoyaltyProgram</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">applyPolicy</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Strategies can be passed as a parameter in the method where they are to be used, but they can also be passed in the constructor of a client object. Below is an example with default values (probably the simplest kind of <a href="https://asvid.github.io/kotlin-builder-pattern">Builder</a> in Kotlin), which allows you to overwrite only those strategies that are actually to be different than the default ones.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Bill</span><span class="p">(</span> 
+	<span class="c1">// all strategies here are `object`s, </span>
+	<span class="c1">// their implementation is an irrelevant detail</span>
+    <span class="kd">val</span> <span class="py">tax</span><span class="p">:</span> <span class="nc">Tax</span> <span class="p">=</span> <span class="nc">DefaultTax</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">promotion</span><span class="p">:</span> <span class="nc">Promotion</span> <span class="p">=</span> <span class="nc">NoPromotion</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">clientPolicy</span><span class="p">:</span> <span class="nc">LoyaltyProgram</span> <span class="p">=</span> <span class="nc">NewClient</span>
+<span class="p">)</span>
+
+<span class="kd">val</span> <span class="py">newClientAnarchist</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span>
+        <span class="n">tax</span> <span class="p">=</span> <span class="nc">NoTax</span><span class="p">,</span> <span class="c1">// well it's not how it works in real life...</span>
+        <span class="n">clientPolicy</span> <span class="p">=</span> <span class="nc">NewClient</span>
+<span class="p">)</span>
+
+<span class="kd">val</span> <span class="py">returningClientWithSpecialPromotionBill</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span>
+        <span class="n">clientPolicy</span> <span class="p">=</span> <span class="nc">ReturningClient</span><span class="p">,</span>
+        <span class="n">promotion</span> <span class="p">=</span> <span class="nc">SpecialPromotion</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>A <a href="https://asvid.github.io/kotlin-static-factory-methods">Static Factory</a> can also become handy</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Bill</span> <span class="k">private</span> <span class="k">constructor</span> <span class="p">(</span>
+        <span class="k">private</span> <span class="kd">val</span> <span class="py">tax</span><span class="p">:</span> <span class="nc">Tax</span><span class="p">,</span>
+        <span class="k">private</span> <span class="kd">val</span> <span class="py">promotion</span><span class="p">:</span> <span class="nc">Promotion</span><span class="p">,</span>
+        <span class="k">private</span> <span class="kd">val</span> <span class="py">clientPolicy</span><span class="p">:</span> <span class="nc">ReturningClientPolicy</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="o">..</span><span class="p">.</span>
+    <span class="k">companion</span> <span class="k">object</span> <span class="nc">Factory</span><span class="p">{</span>
+        <span class="kd">val</span> <span class="py">defaultTax</span> <span class="p">=</span> <span class="nc">DefaultTax</span>
+        <span class="kd">val</span> <span class="py">defaultPromotion</span> <span class="p">=</span> <span class="nc">NoPromotion</span>
+        <span class="kd">val</span> <span class="py">defaultClientPolicy</span> <span class="p">=</span> <span class="nc">NewClient</span>
+
+        <span class="k">fun</span> <span class="nf">returningClient</span><span class="p">():</span> <span class="nc">Bill</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span>
+                <span class="n">defaultTax</span><span class="p">,</span> <span class="n">defaultPromotion</span><span class="p">,</span> <span class="nc">ReturningClient</span>
+        <span class="p">)</span>
+
+        <span class="k">fun</span> <span class="nf">returningClientWithSpecialPromotion</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span>
+                <span class="n">defaultTax</span><span class="p">,</span> <span class="nc">SpecialPromotion</span><span class="p">,</span> <span class="nc">ReturningClient</span>
+        <span class="p">)</span>
+
+        <span class="k">fun</span> <span class="nf">newClientAnarchist</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span>
+                <span class="nc">NoTax</span><span class="p">,</span> <span class="n">defaultPromotion</span><span class="p">,</span> <span class="nc">NewClient</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><strong>But now class <code class="language-plaintext highlighter-rouge">Bill</code> becomes aware of at least some concrete implementations of <code class="language-plaintext highlighter-rouge">Strategy</code></strong></p>
+
+<p>The calculation of the individual components of the final amount must be performed in a fixed order, you cannot charge tax from promotion, etc. Similar to the <a href="https://asvid.github.io/kotlin-template-method">Template Method</a> approach, the <code class="language-plaintext highlighter-rouge">Bill</code> class is responsible for the correct sequence of steps, but the Strategy pattern allows the implementation of these steps to be replaced.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">calculateFinalPrice</span><span class="p">():</span> <span class="nc">Double</span> <span class="p">{</span>
+	<span class="kd">val</span> <span class="py">initialSum</span> <span class="p">=</span> <span class="n">items</span><span class="p">.</span><span class="nf">sumOf</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">price</span> <span class="p">}</span>
+	<span class="k">return</span> <span class="n">initialSum</span><span class="p">.</span><span class="nf">run</span> <span class="p">{</span> 
+		<span class="n">promotion</span><span class="p">.</span><span class="nf">applyPromotion</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// `this` is the initial sum</span>
+	<span class="p">}.</span><span class="nf">run</span> <span class="p">{</span>
+		<span class="n">clientPolicy</span><span class="p">.</span><span class="nf">applyPolicy</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// now it's the amount after applying the promotion</span>
+	<span class="p">}.</span><span class="nf">run</span> <span class="p">{</span>
+		<span class="n">tax</span><span class="p">.</span><span class="nf">applyTaxes</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// and after loyalty policy</span>
+	<span class="p">}</span> <span class="c1">// returning final amount after all the modifiers</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Different taxes would apply to specific types of products rather than the entire bill. However, assuming that tax law is constantly changing, the use of the <code class="language-plaintext highlighter-rouge">Tax</code> strategy allows for quick response to new regulations without the need to update strategy clients.</p>
+
+<p>I admit that I’m not a fan of such operations queuing with the <code class="language-plaintext highlighter-rouge">run ()</code> methods. Fortunately, this can be improved by using the extension functions:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nc">Double</span><span class="p">.</span><span class="nf">applyPromotion</span><span class="p">(</span><span class="n">promotion</span><span class="p">:</span> <span class="nc">Promotion</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">promotion</span><span class="p">.</span><span class="nf">applyPromotion</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nc">Double</span><span class="p">.</span><span class="nf">applyPolicy</span><span class="p">(</span><span class="n">policy</span><span class="p">:</span> <span class="nc">LoyaltyProgram</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">policy</span><span class="p">.</span><span class="nf">applyPolicy</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nc">Double</span><span class="p">.</span><span class="nf">applyTaxes</span><span class="p">(</span><span class="n">tax</span><span class="p">:</span> <span class="nc">Tax</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">tax</span><span class="p">.</span><span class="nf">applyTaxes</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>And then we have:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">calculateFinalPrice</span><span class="p">():</span> <span class="nc">Double</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">initialSum</span> <span class="p">=</span> <span class="n">items</span><span class="p">.</span><span class="nf">sumOf</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">price</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="n">initialSum</span>
+            <span class="p">.</span><span class="nf">applyPromotion</span><span class="p">(</span><span class="n">promotion</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">applyPolicy</span><span class="p">(</span><span class="n">clientPolicy</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">applyTaxes</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>
+	<span class="c1">// nice :)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="invoke">Invoke</h3>
+<p>Because the <code class="language-plaintext highlighter-rouge">Strategy</code> tends to have a single public method, you can consider using the <code class="language-plaintext highlighter-rouge">invoke()</code> operator. Additionally, the <code class="language-plaintext highlighter-rouge">annonmous class</code> instead of a default implementation of the strategy, to not multiply the <code class="language-plaintext highlighter-rouge">NullObjects</code>:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Tax</span> <span class="p">{</span>
+    <span class="c1">// having this allows to use object as a method</span>
+    <span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span>
+<span class="p">}</span>
+<span class="o">..</span><span class="p">.</span>
+<span class="kd">class</span> <span class="nc">Bill</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">tax</span><span class="p">:</span> <span class="nc">Tax</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Tax</span> <span class="p">{</span>
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="n">sum</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+		<span class="o">..</span><span class="p">.</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="o">..</span><span class="p">.</span>
+    <span class="k">fun</span> <span class="nf">calculateFinalPrice</span><span class="p">():</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">initialSum</span> <span class="p">=</span> <span class="n">items</span><span class="p">.</span><span class="nf">sumOf</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">price</span> <span class="p">}</span>
+        <span class="k">return</span> <span class="n">initialSum</span><span class="p">.</span><span class="nf">run</span><span class="p">{</span>
+            <span class="nf">promotion</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// calling the `invoke()`</span>
+        <span class="p">}.</span><span class="nf">run</span> <span class="p">{</span>
+            <span class="nf">clientPolicy</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">}.</span><span class="nf">run</span> <span class="p">{</span>
+            <span class="nf">tax</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// using annonmous classes allows you to create new strategies on the fly</span>
+<span class="c1">// but not having them as a concrete class kills a lot of benefits of the pattern</span>
+<span class="kd">val</span> <span class="py">customBill</span> <span class="p">=</span> <span class="nc">Bill</span><span class="p">(</span><span class="n">promotion</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Promotion</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">applyPromotion</span><span class="p">(</span><span class="n">sum</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">sum</span> <span class="p">*</span> <span class="mf">0.123512</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h1 id="naming">Naming</h1>
+<p>Naming conventions may vary from team to team or project to project. I personally prefer the meaningful domain name rather than using pattern-function-part modifiers.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// I like this more</span>
+<span class="kd">class</span> <span class="nc">SpecialPromotion</span><span class="p">:</span> <span class="nc">Promotion</span><span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">initialPrice</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span><span class="p">{</span>
+        <span class="o">..</span><span class="p">.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// than this</span>
+<span class="kd">class</span> <span class="nc">SpecialPromotionStrategy</span><span class="p">:</span> <span class="nc">PromotionStrategy</span><span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">use</span><span class="p">(</span><span class="n">initialPrice</span><span class="p">:</span> <span class="nc">Double</span><span class="p">):</span> <span class="nc">Double</span><span class="p">{</span>
+        <span class="o">..</span><span class="p">.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Using the first style, I don’t even have to think if I’m using the <code class="language-plaintext highlighter-rouge">Strategy Pattern</code>. I’m using the domain <code class="language-plaintext highlighter-rouge">Promotion</code> class that knows how to calculate the final price with its internal rules. What information does it really give me to have the <code class="language-plaintext highlighter-rouge">Strategy</code> in the name? Should we also add <code class="language-plaintext highlighter-rouge">Singleton</code> to every Kotlin <code class="language-plaintext highlighter-rouge">object</code> name?</p>
+
+<p>This preference stands for all design patterns. Sadly common practise (especially in older projects) is to strictly stick to often unwritten rules. So you can immediately know that the class is part of particular pattern. Because someone (like a junior-dev with 20 years of experience) has memorized a book with patterns and is able to implement it only fallowing the template strictly.</p>
+
+<p>If you are interested in this topic, I can recommend a great talk by <a href="https://youtu.be/ZsHMHukIlJY?t=1517">Kevlin Henney - Seven Ineffective Codding Habbits of Many Programmers</a>, where amongst others, he talks about naming.</p>
+
+<h1 id="summary">Summary</h1>
+<p>The <code class="language-plaintext highlighter-rouge">Strategy</code> pattern creates a family of algorithms, enclosing the differing logic in separate classes while hiding it from clients behind the interface. It enables the interchangeable use of implementations. The use of the strategy simplifies the customer code, avoids code duplication and conditional statements. Significantly simplifies testing - by separating client testing from strategy algorithms.</p>
+
+<p>This pattern should be used quite often, even if initially the whole “family” of strategies will consist of 1 class. The advantages of encapsulating code outweigh the disadvantages of adding an interface and a new class. Often, sooner than later, it turns out that a given algorithm needs to be used somewhere else, or there is a need to add another one. 
+However, don’t overdo it. There will be places where creating the Strategy is pointless, when an algorithm is 1 line of code used in 1 place with no prospect of spreading.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Kotlin</code> offers interesting possibilities for using the Strategy, thanks to named arguments, using the<code class="language-plaintext highlighter-rouge"> invoke () </code>operator and the<code class="language-plaintext highlighter-rouge"> extension functions</code>. However, you should pay attention to whether the syntactic sugar makes it difficult to test or to use the code elsewhere.</p>
+
+<h2 id="pros">Pros</h2>
+<ul>
+  <li><strong>algorithm encapsulation</strong> - the entire algorithm is inside a separate class, ready to be used in any place of the system.</li>
+  <li><strong>composition over inheritance</strong> — no close connection between algorithm and the client.</li>
+  <li><strong>anty-IF policy</strong> - only strategy knows how to process data, client is using the generic interface, so conditional expressions are gone.</li>
+  <li><strong>implementation interchangeability</strong> - different implementations, e.g. sorting, may work better in certain cases. The strategy allows you to quickly provide an “acceptable” algorithm and then correct it without changing the client.</li>
+  <li><strong>ease of testing</strong> - independent client and strategy testing. Changes to the strategy do not force the client tests to be fixed.</li>
+</ul>
+
+<h2 id="cons">Cons</h2>
+<ul>
+  <li><strong>having more object instances</strong> - using <code class="language-plaintext highlighter-rouge">object</code> so Singletons helps with this issue.</li>
+  <li><strong>can be overused</strong> - if there is <strong>absolutely</strong> no chance that the algorithm will be used anywhere else, or there is a need for an alternate version, then adding a strategy may be unnecessary…, but it will make testing easier anyway.</li>
+</ul>
+
+<hr />
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:na_bialo" role="doc-endnote">
+      <p>I’m sorry for this very Polish inside joke, but it just fits too good :) origin: https://www.youtube.com/watch?v=FeZYsTVrpMY <a href="#fnref:na_bialo" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Strategy Pattern-ref">
+                    Strategy Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#behavioral design pattern-ref">
+                    behavioral design pattern <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Strategy Pattern in Kotlin"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-template-method"
+                                    title="Kotlin Template Method">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/kotlin-facade-pattern" title="Facade Pattern in Kotlin">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

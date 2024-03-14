@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/lodz.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Kotlin Static Factory Methods </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   February
+	   15th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        17 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#purpose">Purpose</a></li>
+<li class="toc-entry toc-h1"><a href="#example-usage">Example usage</a></li>
+<li class="toc-entry toc-h1"><a href="#elements">Elements</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#companion-object">Companion Object</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#alternative---top-level-functions">Alternative - Top-level functions</a></li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#pros">Pros</a></li>
+<li class="toc-entry toc-h2"><a href="#cons">Cons</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="purpose">Purpose</h1>
+
+<p>There is a concise error in the title, there are no static methods in Kotlin. But there are ways to achieve similar behavior to proposed by Joshua Bloch in Effective Java book - using static factory methods instead of constructors. This is also completely different from the Factory Method design pattern, don’t confuse those.</p>
+
+<p>Long story short, these are methods that create object instances based on supplied arguments (or even without them) and that you can call from anywhere without the need of having an instance of a class that contains them. To do so in Java, you would use the <code class="language-plaintext highlighter-rouge">static</code> keyword, which means that method is part of a class (understood as a type) rather than an object, and you can call it without creating an instance. We don’t have this possibility in Kotlin, but we can get a similar effect with <code class="language-plaintext highlighter-rouge">companion object</code>.</p>
+
+<h1 id="example-usage">Example usage</h1>
+<p>Even if the phrase “static factory method” sounds alien, I’m sure you saw it being used in code. Typical static factory methods may look like this:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">locale</span> <span class="p">=</span> <span class="nc">Locale</span><span class="p">.</span><span class="nf">forLanguageTag</span><span class="p">(</span><span class="s">"PL"</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">today</span> <span class="p">=</span> <span class="nc">LocalDate</span><span class="p">.</span><span class="nf">now</span><span class="p">(</span><span class="nc">ZoneId</span><span class="p">.</span><span class="nf">of</span><span class="p">(</span><span class="s">"GMT"</span><span class="p">))</span>
+<span class="kd">val</span> <span class="py">time</span> <span class="p">=</span> <span class="nc">LocalDateTime</span><span class="p">.</span><span class="nf">of</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">someNumber</span> <span class="p">=</span> <span class="nc">Double</span><span class="p">.</span><span class="nf">fromBits</span><span class="p">(</span><span class="mh">0x10000000000000L</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">formattedPi</span> <span class="p">=</span> <span class="nc">String</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="s">"%.2f"</span><span class="p">,</span> <span class="mf">3.14159265358979323</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Also, every primitive type in Kotlin is created using one, not with a constructor.</p>
+
+<h1 id="elements">Elements</h1>
+<p>The main rule here will be to use well-named methods instead of constructor, that should be private just like in Builder Pattern. Popular factory method names are:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">from</code> or <code class="language-plaintext highlighter-rouge">valueOf</code> - type conversion method, it takes a single argument and returns another object with the same value
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">instant</span> <span class="p">=</span> <span class="nc">Instant</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span>
+  <span class="kd">val</span> <span class="py">date</span> <span class="p">=</span> <span class="nc">Date</span><span class="p">.</span><span class="nf">from</span><span class="p">(</span><span class="n">instant</span><span class="p">)</span>
+  
+  <span class="kd">val</span> <span class="py">prime</span> <span class="p">=</span> <span class="nc">BigInteger</span><span class="p">.</span><span class="nf">valueOf</span><span class="p">(</span><span class="nc">Long</span><span class="p">.</span><span class="nc">MAX_VALUE</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">of</code> - the aggregating method, that takes multiple arguments and returns instance containing all of them
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">cutlery</span> <span class="p">=</span> <span class="nc">EnumSet</span><span class="p">.</span><span class="nf">of</span><span class="p">(</span><span class="nc">Fork</span><span class="p">,</span> <span class="nc">Spoon</span><span class="p">,</span> <span class="nc">Knife</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">instance</code>, <code class="language-plaintext highlighter-rouge">getInstance</code> or <code class="language-plaintext highlighter-rouge">instanceOf</code> - a method returning instance, often seen in Singletons (so not really in Kotlin :) ) it may take arguments and return the same instance for provided values but it’s not guaranteed
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">luke</span><span class="p">:</span> <span class="nc">StackWalker</span> <span class="p">=</span> <span class="nc">StackWalker</span><span class="p">.</span><span class="nf">getInstance</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">create</code> or <code class="language-plaintext highlighter-rouge">newInstance</code> - similar to <code class="language-plaintext highlighter-rouge">getInstance</code> but this time a new instance is guaranteed each time
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">array</span> <span class="p">=</span> <span class="nc">Array</span><span class="p">.</span><span class="nf">newInstance</span><span class="p">(</span><span class="nc">String</span><span class="o">::</span><span class="k">class</span><span class="p">.</span><span class="n">java</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">get&lt;&lt;Type&gt;&gt;</code> - similar to <code class="language-plaintext highlighter-rouge">getInstance</code> but returns the same instance of the object when the factory method is in a separate class. <code class="language-plaintext highlighter-rouge">&lt;&lt;Type&gt;&gt;</code> is the type of returned object
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">path</span> <span class="p">=</span> <span class="nc">Path</span><span class="p">.</span><span class="nf">of</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="s">"to/file/store"</span><span class="p">)</span>             <span class="c1">// already familiar method 'of()'</span>
+  <span class="kd">val</span> <span class="py">fileStore</span><span class="p">:</span> <span class="nc">FileStore</span> <span class="p">=</span> <span class="nc">Files</span><span class="p">.</span><span class="nf">getFileStore</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>     <span class="c1">// &lt;&lt;Type&gt;&gt; to FileStore</span>
+  <span class="c1">// in this case for the same `Path` instance, new `FileStore` instance will be created each time</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">new&lt;&lt;Type&gt;&gt;</code> - analogically to the previous example but for getting a new instance each time
+    <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">val</span> <span class="py">br</span><span class="p">:</span> <span class="nc">BufferedReader</span> <span class="p">=</span> <span class="nc">Files</span><span class="p">.</span><span class="nf">newBufferedReader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>The above-mentioned names are fairly generic, but nothing should stop you from using more descriptive like <code class="language-plaintext highlighter-rouge">forLanguageTag</code> or <code class="language-plaintext highlighter-rouge">fromBits</code> like in previous examples. The most important thing is for the static factory method name to go along with already known name patterns for this use-case. There is no other way to distinguish it from “normal” methods (that don’t return an instance) at the first sight.</p>
+
+<h2 id="companion-object">Companion Object</h2>
+
+<p>So in Java, such methods had to be static members of a class, but in Kotlin we have <code class="language-plaintext highlighter-rouge">companion object</code>. It allows us to call the method without explicitly creating an instance of a class (but in fact, <code class="language-plaintext highlighter-rouge">object</code> is an instance). Programmers deeply anchored in Java often use it just as a container for keeping constants and methods that they want to be <code class="language-plaintext highlighter-rouge">static</code>, but it has many interesting features:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">companion object</code> is a special case of an inside-class <code class="language-plaintext highlighter-rouge">object</code> so a Kotlin Singleton</li>
+  <li>Its fields and methods behave similar to <code class="language-plaintext highlighter-rouge">static</code> ones in Java, but are still members of an instance with all its consequences, like access modifiers.</li>
+  <li>It can implement an interface or extend a class.</li>
+  <li>Class having <code class="language-plaintext highlighter-rouge">companion object</code> has access to its fields, even private ones.</li>
+  <li>Interfaces also can have <code class="language-plaintext highlighter-rouge">companion object</code>.</li>
+  <li>It’s not being inherited, subclasses don’t have access to parents object.</li>
+  <li>It’s not accessible from the instance, just like the inner <code class="language-plaintext highlighter-rouge">object</code>.</li>
+  <li>It can have a name, but it’s optional - by default it can be reached with the <code class="language-plaintext highlighter-rouge">Companion</code> name.</li>
+  <li>There can single <code class="language-plaintext highlighter-rouge">companion object</code> inside a class, but any number of normal <code class="language-plaintext highlighter-rouge">objects</code>.</li>
+  <li>Unlike <code class="language-plaintext highlighter-rouge">inner</code> classes it doesn’t have access to fields and methods of the parent object, just like inside <code class="language-plaintext highlighter-rouge">object</code>.</li>
+  <li>Parent class name already points to <code class="language-plaintext highlighter-rouge">companion object</code>, there is no need to call it like <code class="language-plaintext highlighter-rouge">&lt;&lt;Class&gt;&gt;.Companion.&lt;&lt;method()&gt;&gt;</code>.</li>
+</ul>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// the companion object in InterestingObject class is extending this abstract class</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Printer</span> <span class="p">{</span> 
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">():</span> <span class="nc">String</span>
+
+    <span class="k">fun</span> <span class="nf">print</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">name</span> <span class="p">=</span> <span class="nf">getName</span><span class="p">()</span>
+        <span class="nf">println</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// private constructor so instance of this class can't be created in traditional way</span>
+<span class="kd">class</span> <span class="nc">InterestingObject</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">()</span> <span class="p">{</span> 
+
+    <span class="kd">object</span> <span class="nc">Factory</span> <span class="p">:</span> <span class="nc">Printer</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// ordinary inside object</span>
+        <span class="nd">@JvmStatic</span> <span class="c1">// generating true static methods for Java interoperability</span>
+        <span class="k">fun</span> <span class="nf">create</span><span class="p">()</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">()</span>
+
+        <span class="c1">// only companion object override methods can be @JvmStatic</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">():</span> <span class="nc">String</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s">"Interesting Object"</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">companion</span> <span class="k">object</span> <span class="nc">CompanionFactory</span> <span class="p">:</span> <span class="nc">Printer</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// companion object with a custom name</span>
+        <span class="k">private</span> <span class="kd">val</span> <span class="py">secret</span> <span class="p">=</span> <span class="s">"No one can know this"</span> <span class="c1">// private companion object field, not accessable outside the class</span>
+        <span class="kd">val</span> <span class="py">publicInfo</span> <span class="p">=</span> <span class="s">"***** ***"</span> <span class="c1">// publicly available field</span>
+        
+        <span class="k">fun</span> <span class="nf">create</span><span class="p">()</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">()</span>
+        <span class="nd">@JvmStatic</span> 
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">():</span> <span class="nc">String</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s">"Interesting Object from Companion"</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">// instance method has access to private companion object field</span>
+    <span class="k">fun</span> <span class="nf">getSecret</span><span class="p">()</span> <span class="p">=</span> <span class="n">secret</span>
+<span class="p">}</span>
+
+<span class="kd">val</span> <span class="py">obj0</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">()</span> <span class="c1">// error, private constructor doesn't allow to create instance this way</span>
+<span class="kd">val</span> <span class="py">obj1</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nf">create</span><span class="p">()</span> <span class="c1">// method from CompanionFactory so from the companion object</span>
+<span class="kd">val</span> <span class="py">obj2</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nc">Factory</span><span class="p">.</span><span class="nf">create</span><span class="p">()</span> <span class="c1">// method from Factory object</span>
+<span class="kd">val</span> <span class="py">obj3</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nc">CompanionFactory</span><span class="p">.</span><span class="nf">create</span><span class="p">()</span> <span class="c1">// companion object method again but with unnecessary companion object name</span>
+
+<span class="kd">val</span> <span class="py">secret</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nc">CompanionFactory</span><span class="p">.</span><span class="n">secret</span> <span class="c1">// error, no access to the private field in companion object</span>
+<span class="kd">val</span> <span class="py">secret2</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nf">create</span><span class="p">().</span><span class="nf">getSecret</span><span class="p">()</span> <span class="c1">// but you can get it from the instance method</span>
+<span class="kd">val</span> <span class="py">publicInfo</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="n">publicInfo</span> <span class="c1">// this field is accessable from companion object</span>
+
+<span class="c1">// calling abstract class methods</span>
+<span class="kd">val</span> <span class="py">print1</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nf">print</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">print2</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nc">Factory</span><span class="p">.</span><span class="nf">print</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">print3</span> <span class="p">=</span> <span class="nc">InterestingObject</span><span class="p">.</span><span class="nc">CompanionFactory</span><span class="p">.</span><span class="nf">print</span><span class="p">()</span>
+
+<span class="c1">// error, you can't call in-class objects from the instance</span>
+<span class="nc">InterestingObject</span><span class="p">.</span><span class="nf">create</span><span class="p">().</span><span class="nc">Factory</span><span class="p">.</span><span class="nf">getName</span><span class="p">()</span>
+<span class="nc">InterestingObject</span><span class="p">.</span><span class="nf">create</span><span class="p">().</span><span class="nc">CompanionFactory</span><span class="p">.</span><span class="nf">getName</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The code example below shows incrementing variable <code class="language-plaintext highlighter-rouge">counter</code> each time when a new <code class="language-plaintext highlighter-rouge">CountMe</code> instance is created. Like I already wrote subclass <code class="language-plaintext highlighter-rouge">ReallyCountMe</code> doesn’t have access to its parents <code class="language-plaintext highlighter-rouge">companion object</code>. Nonetheless, when a new <code class="language-plaintext highlighter-rouge">ReallyCountMe</code> instance is created <code class="language-plaintext highlighter-rouge">counter</code> is also being incremented.</p>
+
+<p>It happens because parent constructor and <code class="language-plaintext highlighter-rouge">init</code> bloc is called each time, and <code class="language-plaintext highlighter-rouge">counter</code> field is part of Singleton - the <code class="language-plaintext highlighter-rouge">companion object</code>, so each time instance is created (parent or subclass) the same variable <code class="language-plaintext highlighter-rouge">counter</code> is incremented.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="kd">class</span> <span class="nc">CountMe</span><span class="p">(</span><span class="kd">val</span> <span class="py">objectName</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">init</span> <span class="p">{</span>
+        <span class="n">count</span><span class="p">++</span>  <span class="c1">// incrementing counter in companion object</span>
+    <span class="p">}</span>
+    <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="py">count</span> <span class="p">=</span> <span class="mi">0</span> <span class="c1">// every CountMe instance have access to this field</span>
+        <span class="k">fun</span> <span class="nf">printCount</span><span class="p">()</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"count = $count"</span><span class="p">)</span>
+    <span class="p">}</span>   
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ReallyCountMe</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">CountMe</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1">// usage</span>
+<span class="nc">CountMe</span><span class="p">.</span><span class="nf">printCount</span><span class="p">()</span> <span class="c1">// prints 0</span>
+<span class="nc">CountMe</span><span class="p">(</span><span class="s">"1"</span><span class="p">)</span>
+<span class="nc">CountMe</span><span class="p">(</span><span class="s">"2"</span><span class="p">)</span>
+<span class="nc">CountMe</span><span class="p">(</span><span class="s">"3"</span><span class="p">)</span>
+<span class="nc">CountMe</span><span class="p">.</span><span class="nf">printCount</span><span class="p">()</span> <span class="c1">// prints 3</span>
+
+<span class="nc">ReallyCountMe</span><span class="p">(</span><span class="s">"1"</span><span class="p">)</span>
+<span class="nc">ReallyCountMe</span><span class="p">(</span><span class="s">"2"</span><span class="p">)</span>
+<span class="nc">ReallyCountMe</span><span class="p">(</span><span class="s">"3"</span><span class="p">)</span>
+
+<span class="nc">CountMe</span><span class="p">.</span><span class="nf">printCount</span><span class="p">()</span> <span class="c1">// prints 6</span>
+</code></pre></div></div>
+<p>Every <code class="language-plaintext highlighter-rouge">CountMe</code> instance has a reference to the same (and the only) <code class="language-plaintext highlighter-rouge">companion object</code> instance.</p>
+
+<p>Another example from library <code class="language-plaintext highlighter-rouge">Fiel</code> (simple HTTP client), where <code class="language-plaintext highlighter-rouge">Result</code> subclasses are created with <code class="language-plaintext highlighter-rouge">companion object</code> methods:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sealed</span> <span class="kd">class</span> <span class="nc">Result</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">V</span> <span class="p">:</span> <span class="nc">Any</span><span class="p">?,</span> <span class="k">out</span> <span class="nc">E</span> <span class="p">:</span> <span class="nc">Exception</span><span class="p">&gt;</span> <span class="p">{</span>
+<span class="o">..</span><span class="p">.</span>
+<span class="k">companion</span> <span class="k">object</span> <span class="p">{</span>
+        <span class="c1">// Factory methods</span>
+        <span class="k">fun</span> <span class="p">&lt;</span><span class="nc">E</span> <span class="p">:</span> <span class="nc">Exception</span><span class="p">&gt;</span> <span class="nf">error</span><span class="p">(</span><span class="n">ex</span><span class="p">:</span> <span class="nc">E</span><span class="p">)</span> <span class="p">=</span> <span class="nc">Failure</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+
+        <span class="k">fun</span> <span class="p">&lt;</span><span class="nc">V</span> <span class="p">:</span> <span class="nc">Any</span><span class="p">?&gt;</span> <span class="nf">success</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nc">V</span><span class="p">)</span> <span class="p">=</span> <span class="nc">Success</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">fun</span> <span class="p">&lt;</span><span class="nc">V</span> <span class="p">:</span> <span class="nc">Any</span><span class="p">?&gt;</span> <span class="nf">of</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nc">V</span><span class="p">?,</span> <span class="n">fail</span><span class="p">:</span> <span class="p">(()</span> <span class="p">-&gt;</span> <span class="nc">Exception</span><span class="p">)</span> <span class="p">=</span> <span class="p">{</span> <span class="nc">Exception</span><span class="p">()</span> <span class="p">}):</span> <span class="nc">Result</span><span class="p">&lt;</span><span class="nc">V</span><span class="p">,</span> <span class="nc">Exception</span><span class="p">&gt;</span> <span class="p">=</span>
+                <span class="n">value</span><span class="o">?.</span><span class="nf">let</span> <span class="p">{</span> <span class="nf">success</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="p">}</span> <span class="o">?:</span> <span class="nf">error</span><span class="p">(</span><span class="nf">fail</span><span class="p">())</span>
+
+        <span class="k">fun</span> <span class="p">&lt;</span><span class="nc">V</span> <span class="p">:</span> <span class="nc">Any</span><span class="p">?,</span> <span class="nc">E</span><span class="p">:</span> <span class="nc">Exception</span><span class="p">&gt;</span> <span class="nf">of</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">V</span><span class="p">):</span> <span class="nc">Result</span><span class="p">&lt;</span><span class="nc">V</span><span class="p">,</span> <span class="nc">E</span><span class="p">&gt;</span> <span class="p">=</span> <span class="k">try</span> <span class="p">{</span>
+            <span class="nf">success</span><span class="p">(</span><span class="nf">f</span><span class="p">())</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">ex</span><span class="p">:</span> <span class="nc">Exception</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">error</span><span class="p">(</span><span class="n">ex</span> <span class="k">as</span> <span class="nc">E</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="companion-object-extensions">Companion Object Extensions</h3>
+<p>There are times where you don’t have the chance to modify class <code class="language-plaintext highlighter-rouge">companion object</code>, like when it comes from 3rd party library. But if the class has the <code class="language-plaintext highlighter-rouge">companion object</code> then you can use <code class="language-plaintext highlighter-rouge">extension functions</code> on it.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// --- external module, like 3rd party library ---</span>
+<span class="kd">class</span> <span class="nc">ExternalClass</span> <span class="p">{</span>
+    <span class="k">companion</span> <span class="k">object</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ExternalClassWithoutCompanion</span>
+
+<span class="kd">interface</span> <span class="nc">Car</span><span class="p">{</span>
+    <span class="k">companion</span> <span class="k">object</span>
+<span class="p">}</span>
+
+<span class="c1">// --- internal module ---</span>
+<span class="kd">class</span> <span class="nc">Ferrari</span><span class="p">:</span> <span class="nc">Car</span> <span class="c1">// internal class implementing interface from the library</span>
+<span class="k">fun</span> <span class="nc">Car</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">getFerrari</span><span class="p">():</span><span class="nc">Ferrari</span> <span class="p">=</span> <span class="nc">Ferrari</span><span class="p">()</span> <span class="c1">// library class extension method creating instance of internal class</span>
+
+<span class="c1">// usage</span>
+<span class="kd">val</span> <span class="py">ferrari</span> <span class="p">=</span> <span class="nc">Car</span><span class="p">.</span><span class="nf">getFerrari</span><span class="p">()</span>
+
+<span class="c1">// other extensions function examples</span>
+<span class="k">fun</span> <span class="nc">ExternalClass</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="p">=</span> <span class="s">"Wow! Extending class companion"</span>
+<span class="k">fun</span> <span class="nc">Car</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="p">=</span> <span class="s">"Wow! Extending interface companion"</span>
+<span class="k">fun</span> <span class="nc">ExternalClassWithoutCompanion</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="p">=</span> <span class="s">"Wow!"</span> <span class="c1">// error, this class has no companion object</span>
+<span class="k">fun</span> <span class="nc">ExternalClassWithoutCompanion</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="p">=</span> <span class="s">"Wow!"</span> <span class="c1">// extension method for the class instance</span>
+
+<span class="c1">// usage</span>
+<span class="nc">ExternalClass</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="c1">// new extension method of ExternalClass companion object </span>
+<span class="nc">ExternalClassWithoutCompanion</span><span class="p">.</span><span class="nf">newMethod</span><span class="p">()</span> <span class="c1">// error, newMethod() is instance method, not companion object</span>
+<span class="nc">ExternalClassWithoutCompanion</span><span class="p">().</span><span class="nf">newMethod</span><span class="p">()</span> <span class="c1">// this will work, extension method is used on the instance</span>
+</code></pre></div></div>
+
+<p>Again using <code class="language-plaintext highlighter-rouge">Fuel</code> library, where <code class="language-plaintext highlighter-rouge">Result</code> class has <code class="language-plaintext highlighter-rouge">companion object</code>. <code class="language-plaintext highlighter-rouge">Result</code> class itself is <code class="language-plaintext highlighter-rouge">sealed</code> so you cant extend it outside its module.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nc">Result</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">awersomeNewMethod</span><span class="p">(){</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"This wasn't originally here"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//usage</span>
+<span class="nc">Result</span><span class="p">.</span><span class="nf">awersomeNewMethod</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Using <code class="language-plaintext highlighter-rouge">companion object</code> can make clients of your APIs lives much easier, even if you put an empty one in a public class or interface. It allows them to extend functionality without building wrappers or extending classes - and this is why a lot of Kotlin features exist in the first place.</p>
+
+<h1 id="alternative---top-level-functions">Alternative - Top-level functions</h1>
+
+<p>Another interesting way of creating instances are <code class="language-plaintext highlighter-rouge">top-level functions</code>, known for example from:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">intList</span> <span class="p">=</span> <span class="nf">listOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">someSet</span> <span class="p">=</span> <span class="nf">setOf</span><span class="p">(</span><span class="s">"1"</span><span class="p">,</span> <span class="s">"2"</span><span class="p">,</span> <span class="s">"3"</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">someMap</span> <span class="p">=</span> <span class="nf">mapOf</span><span class="p">(</span><span class="mi">1</span> <span class="n">to</span> <span class="s">"1"</span><span class="p">,</span> <span class="mi">2</span> <span class="n">to</span> <span class="s">"2"</span><span class="p">)</span>
+</code></pre></div></div>
+<p>They are especially useful for creating simple but often used objects like lists or maps. Like the name may suggest those functions exist outside (above?) of the classes, and for that reason, they are publicly available (ok, they can be also private but whats the point then?). You should be aware of accidental function shadowing, for example:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// adding such function in the project</span>
+<span class="k">fun</span> <span class="nf">listOf</span><span class="p">(</span><span class="k">vararg</span> <span class="n">item</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">=</span> <span class="n">item</span><span class="p">.</span><span class="nf">asList</span><span class="p">()</span>
+
+<span class="c1">// we are shadowing function from kotlin.collections without any trace in code it self (no additional imports)</span>
+<span class="kd">val</span> <span class="py">intList</span> <span class="p">=</span> <span class="nf">listOf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>   <span class="c1">// our top-level function</span>
+<span class="kd">val</span> <span class="py">intList2</span> <span class="p">=</span> <span class="nf">listOf</span><span class="p">(</span><span class="s">"1"</span><span class="p">,</span> <span class="s">"2"</span><span class="p">)</span> <span class="c1">// function from kotlin.collections</span>
+</code></pre></div></div>
+<p>It’s not necessarily evil, but it may surprise you. So it’s smarter to avoid too generic names, and not abuse <code class="language-plaintext highlighter-rouge">top-level functions</code>. Also to not litter IDE suggestions, because they will be popping out there.</p>
+
+<h1 id="summary">Summary</h1>
+<p>Kotlin with its syntactic sugar, such as named arguments, makes writing code much more pleasant than Java. Still using methods to create instances instead of constructors is often a good idea. Static Factory Methods are often used in Kotlin itself or by 3rd party library creators.</p>
+
+<p>I tried to show interesting ways of using <code class="language-plaintext highlighter-rouge">companion object</code> which <strong>is not just a container for constants</strong>, or is emulating the <code class="language-plaintext highlighter-rouge">static</code> keyword from Java. Kotlin creators are extensively using it, for example in Coroutines - so I guess we should too.</p>
+
+<h2 id="pros">Pros</h2>
+<ul>
+  <li>
+    <p><strong>methods have descriptive names</strong></p>
+
+    <p>Some languages allow naming constructors, unfortunately not Kotlin or Java. Static Factory Methods are a way of achieving this functionality.</p>
+  </li>
+  <li>
+    <p><strong>methods can take same the argument types in the same order</strong></p>
+
+    <p>As long as they have different names, the list of arguments may be identical. You can’t get this with a barebone constructor. Named arguments and default values may cover this issue just a bit.</p>
+  </li>
+  <li>
+    <p><strong>you don’t always need a new instance</strong></p>
+
+    <p>The constructor will always create a new instance, but method may first check some cache and return instance that is already created.</p>
+  </li>
+  <li>
+    <p><strong>any subtype can be returned</strong></p>
+
+    <p>This subtype may not even be public. You can create a <code class="language-plaintext highlighter-rouge">companion object</code> inside an interface and return instances of the internal types that implement it. Client will see only the public interface.</p>
+  </li>
+</ul>
+
+<h2 id="cons">Cons</h2>
+<ul>
+  <li>
+    <p><strong>you can’t extend a class that have only a private constructor</strong></p>
+
+    <p>But this can always be a strong suggestion to use composition over inheritance :)</p>
+  </li>
+  <li>
+    <p><strong>no easy way to distinguish Static Factory Methods from usual methods</strong></p>
+
+    <p>Using constructor is clearly visible in the code, but the factory method looks like any other method. The automated documentation generation also won’t be picking those methods as ways to create instance. Using common nomenclature for naming static factory methods may help, examples are <a href="#elements">here</a></p>
+  </li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Static Factory Methods-ref">
+                    Static Factory Methods <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#construction design pattern-ref">
+                    construction design pattern <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Kotlin Static Factory Methods"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-builder-pattern"
+                                    title="Kotlin Builder Pattern">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/kotlin-factory-method" title="Kotlin Factory Method">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

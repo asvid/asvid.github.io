@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/mvi.png);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Android Presentation Patterns: MVI </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   February
+	   24th,
+	   
+	   2024
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        16 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#there-is-another">There is another</a></li>
+<li class="toc-entry toc-h2"><a href="#mvvmi">MV(VM)I</a></li>
+<li class="toc-entry toc-h2"><a href="#redux">Redux</a></li>
+<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+
+            <blockquote>
+  <p>I have already covered <a href="https://asvid.github.io/2024-01-27-MVC">MVC</a>, <a href="https://asvid.github.io/2024-01-29-MVP">MVP</a>, and <a href="https://asvid.github.io/2024-02-09-MVVM">MVVM</a>. But…</p>
+</blockquote>
+
+<h2 id="there-is-another">There is another</h2>
+
+<p>Just when you might think that <code class="language-plaintext highlighter-rouge">MVVM</code> is already sufficient, if not perfect, for the majority of cases, I introduce you to yet another MV-structured architecture. However, there’s a twist. This one, known as <code class="language-plaintext highlighter-rouge">Model View Intent</code>, is more fluid in nature compared to the previously mentioned patterns. In my opinion, it spans a spectrum starting from a basic <code class="language-plaintext highlighter-rouge">MVVM</code> with event/action communication flow and extending to <code class="language-plaintext highlighter-rouge">Redux</code> for global app state management, with the inclusion of feature or module-specific local state storage. The boundaries are flexible within this spectrum.</p>
+
+<p>But what exactly is the <code class="language-plaintext highlighter-rouge">Intent</code> here? Forget about the Android <code class="language-plaintext highlighter-rouge">Intent</code> class; it is unrelated. In this pattern, “Intent” serves as an abstraction over an event or action. For example, when a user clicks a button, they likely have a certain intention such as “log me in” or “delete my account”. Likewise, if your phone discovers a new Bluetooth device, it triggers an event that may lead to an <code class="language-plaintext highlighter-rouge">pair new device</code> intent.</p>
+
+<p>In essence, the intent typically originates in the <code class="language-plaintext highlighter-rouge">View</code> (though it can originate elsewhere, such as a background event or push notification), then it is relayed to the <code class="language-plaintext highlighter-rouge">Model</code> for processing. Subsequently, the state is updated, and the <code class="language-plaintext highlighter-rouge">View</code> receives the refreshed data for display.</p>
+
+<pre><code class="language-mermaid">flowchart TD
+    V[View] --&gt;|UI event| VM(ViewModel)
+    VM --&gt;|do something| M(Model)
+    M --&gt;|performing operations| M
+    M --&gt;|result| VM
+    VM --&gt;|new state| V
+</code></pre>
+
+<p>But how is that different from MVVM?</p>
+
+<h2 id="mvvmi">MV(VM)I</h2>
+
+<p>In many <code class="language-plaintext highlighter-rouge">MVVM</code> implementations, the <code class="language-plaintext highlighter-rouge">View</code> often calls methods directly on the <code class="language-plaintext highlighter-rouge">ViewModel</code>, as explained in my <a href="https://asvid.github.io/2024-02-09-MVVM#ui-events">previous post</a>. However, the <code class="language-plaintext highlighter-rouge">View</code> can also emit events defined by the <code class="language-plaintext highlighter-rouge">ViewModel</code> through a single contact method, as also detailed in that post. This approach represents a basic introduction to MVI, where <code class="language-plaintext highlighter-rouge">MVVM</code> uses events for communication from the View to the ViewModel.</p>
+
+<p>It’s common to encounter a significant amount of boilerplate code in each <code class="language-plaintext highlighter-rouge">ViewModel</code>, involving tasks such as managing state, executing coroutines within <code class="language-plaintext highlighter-rouge">viewModelScope</code>, and so on. This repetitive code can be abstracted and separated, allowing the <code class="language-plaintext highlighter-rouge">ViewModel</code> to focus on its core responsibilities without being cluttered by mundane tasks. I came across an insightful video that guides you through this process comprehensively, providing a deeper understanding beyond just showcasing the end result:</p>
+
+<p><a href="https://www.youtube.com/watch?v=E6obYmkkdko">How to write your own MVI system and why you shouldn’t</a></p>
+
+<p>The title of the video implies that manually creating an MVI system may not be the optimal approach, suggesting the use of available libraries instead. While I agree with this point, as there are indeed libraries that can automate these processes for you, I also believe it is crucial to grasp the underlying mechanics to truly comprehend how it functions.</p>
+
+<h3 id="the-container">The Container</h3>
+
+<p>The place where you put all the boring stuff is <code class="language-plaintext highlighter-rouge">Container</code>, encompassing the <code class="language-plaintext highlighter-rouge">STATE</code>, and the capability to trigger <code class="language-plaintext highlighter-rouge">SIDE EFFECTS</code> – events that do not alter the state directly but necessitate some action from the View. In this setup, the <code class="language-plaintext highlighter-rouge">Container</code> carries out state alterations based on the logic defined in the <code class="language-plaintext highlighter-rouge">ViewModel</code>, executing within a coroutine scope managed by the <code class="language-plaintext highlighter-rouge">ViewModel</code>. It’s important to note that the <code class="language-plaintext highlighter-rouge">ViewModel</code> is not a <code class="language-plaintext highlighter-rouge">Container</code>; instead, it utilizes it. Following the principle of <strong>composition over inheritance</strong>, <code class="language-plaintext highlighter-rouge">ViewModel</code> leverages the functionality of the <code class="language-plaintext highlighter-rouge">Container</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">ViewModel</code> remains the entity responsible for declaring events, side effects, and the state. This approach restricts their scope, ensuring they are tailored to handle tasks relevant to the specific section of the User Interface. If a more global event occurs, it should not be managed by a particular <code class="language-plaintext highlighter-rouge">ViewModel</code>; instead, all relevant ViewModels should observe the pertinent changes in the <code class="language-plaintext highlighter-rouge">Model</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// UI will display this:</span>
+<span class="kd">data class</span> <span class="nc">State</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="py">items</span><span class="p">:</span> <span class="nc">List</span><span class="p">&lt;</span><span class="nc">Int</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nf">emptyList</span><span class="p">(),</span>
+    <span class="kd">val</span> <span class="py">inputError</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">currentInput</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="py">isLoading</span><span class="p">:</span> <span class="nc">Boolean</span> <span class="p">=</span> <span class="k">false</span>
+<span class="p">)</span>
+
+<span class="c1">// UI will observe those:</span>
+<span class="k">sealed</span> <span class="kd">class</span> <span class="nc">SideEffect</span> <span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">ShowError</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">SideEffect</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">ShowToast</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">SideEffect</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// and UI will send those:</span>
+<span class="k">sealed</span> <span class="kd">class</span> <span class="nc">Event</span> <span class="p">{</span>
+    <span class="n">data</span> <span class="kd">object</span> <span class="nc">AddButtonClicked</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">InputChanged</span><span class="p">(</span><span class="kd">val</span> <span class="py">input</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">RemoveItem</span><span class="p">(</span><span class="kd">val</span> <span class="py">item</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Event</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The View Model code:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ViewModel</span> <span class="p">:</span> <span class="nc">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="kd">val</span> <span class="py">container</span> <span class="p">=</span> <span class="nc">Container</span><span class="p">&lt;</span><span class="nc">State</span><span class="p">,</span> <span class="nc">SideEffect</span><span class="p">&gt;(</span><span class="n">viewModelScope</span><span class="p">,</span> <span class="nc">State</span><span class="p">())</span>
+    <span class="o">..</span><span class="p">.</span>
+</code></pre></div></div>
+
+<p>Handling UI events with the only public method in ViewModel:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">handleEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="nc">Event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">when</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">Event</span><span class="p">.</span><span class="nc">AddButtonClicked</span> <span class="p">-&gt;</span> <span class="nf">addButtonClicked</span><span class="p">()</span>
+        <span class="k">is</span> <span class="nc">Event</span><span class="p">.</span><span class="nc">InputChanged</span> <span class="p">-&gt;</span> <span class="nf">inputChanged</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">input</span><span class="p">)</span>
+        <span class="k">is</span> <span class="nc">Event</span><span class="p">.</span><span class="nc">RemoveItem</span> <span class="p">-&gt;</span> <span class="nf">removeItem</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">item</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If you are thinking about logging user actions, this may be the place to do it.</p>
+
+<p>Events are handled like that:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">fun</span> <span class="nf">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">=</span> <span class="n">container</span><span class="p">.</span><span class="nf">intent</span> <span class="p">{</span> <span class="c1">// this block implements logic of changing the state</span>
+    <span class="nf">showLoading</span><span class="p">()</span> <span class="c1">// calling another method that uses container</span>
+    <span class="nc">Model</span><span class="p">.</span><span class="nf">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">onSuccess</span> <span class="p">{</span> <span class="nf">hideLoading</span><span class="p">()</span> <span class="p">}</span>
+        <span class="p">.</span><span class="nf">onFailure</span> <span class="p">{</span> <span class="n">error</span> <span class="p">-&gt;</span>
+            <span class="nf">hideLoading</span><span class="p">()</span>
+            <span class="n">container</span><span class="p">.</span><span class="nf">postSideEffect</span><span class="p">(</span><span class="nc">SideEffect</span><span class="p">.</span><span class="nc">ShowError</span><span class="p">(</span><span class="n">error</span><span class="p">.</span><span class="n">message</span><span class="p">.</span><span class="nf">orEmpty</span><span class="p">()))</span> <span class="c1">// using side effect</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">showLoading</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">container</span><span class="p">.</span><span class="nf">reduce</span> <span class="p">{</span> <span class="c1">// reduce means take the current STATE, and produce new one from it</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">isLoading</span> <span class="p">=</span> <span class="k">true</span><span class="p">)</span> <span class="c1">// actual state changing logic</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">private</span> <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">hideLoading</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">container</span><span class="p">.</span><span class="nf">reduce</span> <span class="p">{</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">isLoading</span> <span class="p">=</span> <span class="k">false</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The equivalent in more traditional MVVM would be</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">private</span> <span class="k">fun</span> <span class="nf">hideLoading</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">viewModelScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+        <span class="n">_state</span><span class="p">.</span><span class="nf">update</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="nf">copy</span><span class="p">(</span><span class="n">isLoading</span> <span class="p">=</span> <span class="k">false</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The refinement may not be drastic, but it streamlines the process by eliminating the necessity to remember to utilize <code class="language-plaintext highlighter-rouge">viewModelScope</code>, resulting in cleaner and more readable code. The updates to the <code class="language-plaintext highlighter-rouge">STATE</code> become more apparent, enhancing clarity, especially when managing numerous events.</p>
+
+<h3 id="under-the-hood">Under the hood</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">Container</code> itself is pretty simple in code:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Container</span><span class="p">&lt;</span><span class="nc">STATE</span><span class="p">,</span> <span class="nc">SIDE_EFFECT</span><span class="p">&gt;(</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">scope</span><span class="p">:</span> <span class="nc">CoroutineScope</span><span class="p">,</span>
+    <span class="n">initialState</span><span class="p">:</span> <span class="nc">STATE</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">_state</span><span class="p">:</span> <span class="nc">MutableStateFlow</span><span class="p">&lt;</span><span class="nc">STATE</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nc">MutableStateFlow</span><span class="p">(</span><span class="n">initialState</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">state</span><span class="p">:</span> <span class="nc">StateFlow</span><span class="p">&lt;</span><span class="nc">STATE</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_state</span>
+
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">_sideEffect</span> <span class="p">=</span> <span class="nc">Channel</span><span class="p">&lt;</span><span class="nc">SIDE_EFFECT</span><span class="p">&gt;(</span><span class="nc">Channel</span><span class="p">.</span><span class="nc">BUFFERED</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">sideEffect</span><span class="p">:</span> <span class="nc">Flow</span><span class="p">&lt;</span><span class="nc">SIDE_EFFECT</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">_sideEffect</span><span class="p">.</span><span class="nf">receiveAsFlow</span><span class="p">()</span>
+
+
+    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">reducer</span><span class="p">:</span> <span class="nc">STATE</span><span class="p">.()</span> <span class="p">-&gt;</span> <span class="nc">STATE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">withContext</span><span class="p">(</span><span class="nc">SINGLE_THREAD</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">_state</span><span class="p">.</span><span class="n">value</span> <span class="p">=</span> <span class="n">_state</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="nf">reducer</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">intent</span><span class="p">(</span><span class="n">transform</span><span class="p">:</span> <span class="k">suspend</span> <span class="nc">Container</span><span class="p">&lt;</span><span class="nc">STATE</span><span class="p">,</span> <span class="nc">SIDE_EFFECT</span><span class="p">&gt;.()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">scope</span><span class="p">.</span><span class="nf">launch</span><span class="p">(</span><span class="nc">SINGLE_THREAD</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// to make handling intents non-blocking</span>
+            <span class="k">this</span><span class="nd">@Container</span><span class="p">.</span><span class="nf">transform</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">postSideEffect</span><span class="p">(</span><span class="n">sideEffect</span><span class="p">:</span> <span class="nc">SIDE_EFFECT</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">_sideEffect</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">sideEffect</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span>
+        <span class="k">private</span> <span class="kd">val</span> <span class="py">SINGLE_THREAD</span> <span class="p">=</span> <span class="nf">newSingleThreadContext</span><span class="p">(</span><span class="s">"mvi"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Container</code> encapsulates the ViewModel’s coroutine scope and initial state, facilitating the organization of all state-changing logic. It does not execute actual tasks, as that responsibility remains with the ViewModel. The threading logic implemented is basic yet functional, serving its purpose effectively. Generics inheritance from a <code class="language-plaintext highlighter-rouge">BaseState</code> or <code class="language-plaintext highlighter-rouge">BaseSideEffect</code> is unnecessary in this setup. The primary role of the <code class="language-plaintext highlighter-rouge">Container</code> is to streamline the ViewModel boilerplate and enhance the clarity of tasks performed by it. The focus here is on local state management within a single UI component, a single ViewModel, and a collection of events and state properties.</p>
+
+<p>This refined implementation, extending simple MVVM with UI events and abstracting boilerplate, is designed to simplify and enhance readability. Keeping the structure straightforward and avoiding unnecessary complexity will take you a long way, so don’t overthink it :)</p>
+
+<h2 id="redux">Redux</h2>
+
+<p>At the other end of the spectrum lies <code class="language-plaintext highlighter-rouge">Redux</code>, known for its global state management, global actions, reducers, and middleware. I don’t want to go too deep into this, because I agree with arguments made in <a href="https://www.youtube.com/watch?v=q7y6NQ_ou0A">this video</a>, that on Android there is no need for such architecture. Unlike presentation architectures like <code class="language-plaintext highlighter-rouge">MVC</code> or <code class="language-plaintext highlighter-rouge">MVVM</code>, <code class="language-plaintext highlighter-rouge">Redux</code> provides a comprehensive framework for the entire application – a feature that can be advantageous but requires careful consideration.</p>
+
+<p>Here are key elements of <code class="language-plaintext highlighter-rouge">Redux</code>:</p>
+
+<ol>
+  <li><strong>Store</strong>: The core of Redux architecture, serving as the central hub that houses the application’s state. The store is responsible for:
+    <ul>
+      <li>Managing the application state.</li>
+      <li>Providing access to the state.</li>
+      <li>Enabling state modifications.</li>
+      <li>Registering listeners for state changes.</li>
+    </ul>
+  </li>
+  <li><strong>Actions</strong>: Plain objects that represent the intention to change the state. Actions are the only way to send data from the application to the store. Actions can optionally carry additional data.</li>
+  <li><strong>Reducers</strong>: Pure functions responsible for specifying how the application’s state changes in response to actions. A reducer takes the current state and an action as arguments, and returns the new state. Reducers must be pure functions, meaning they must return the same output for the same input, without modifying the input arguments or causing side effects.</li>
+  <li><strong>Middleware</strong>: Functions that provide a third-party extension point between dispatching an action and the moment it reaches the reducer. Middleware can intercept actions and perform various tasks, such as logging, async operations, or routing.</li>
+  <li><strong>Selectors</strong>: Functions used to extract specific pieces of data from the Redux store state. Selectors help in keeping the codebase maintainable by encapsulating the logic for extracting data.</li>
+  <li><strong>Components</strong>: User interface elements that interact with the Redux store by dispatching actions and reading state. Components can subscribe to the Redux store to receive updates when the state changes.</li>
+</ol>
+
+<p>The sequence of actions will look like that:</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Component as UI Component
+    participant Store as Redux Store
+    participant Reducer as Reducer
+    participant Middleware as Middleware
+    Component -&gt;&gt; Store: Observe state
+    Component -&gt;&gt; Store: Dispatch Action
+    Store -&gt;&gt; Middleware: Apply Middleware
+    Middleware -&gt;&gt; Reducer: Process Action
+    Reducer -&gt;&gt; Store: Return New State
+    Store -&gt;&gt; Component: Update
+</code></pre>
+
+<p>This approach can be immensely helpful when handling events that do not originate from the UI; for example, scenarios where multiple visible components on the UI need to be updated based on data obtained from a web socket. In this setup, small components observe only the data that is relevant to them and are alerted when changes occur. State modifications occur in a single location, making all reducers that change the state easily accessible. No logic is hidden in just another <code class="language-plaintext highlighter-rouge">helper/handler/manager/service</code>. All events are consolidated in one place, facilitating the creation of an app-wide state diagram outlining the actions to be taken, the processes involved in each event, and the resulting new state. The <code class="language-plaintext highlighter-rouge">Store</code> serves as an excellent logging point for the entire flow of actions, providing insights into each step. Additionally, reducers have a clear and singular purpose, promoting best practices and the creation of concise methods and classes.</p>
+
+<p>The concepts of Events, Store, and Reducers are platform-agnostic terms, applicable across various languages and technologies. Implanting this architecture enables the creation of consistent behaviors across native Android, iOS, and Desktop applications that respond similarly to the same interactions. Centralizing interactions and features makes it effortless to track them, contributing to a more organized and maintainable codebase.</p>
+
+<h3 id="the-catch">The Catch</h3>
+
+<p>The complexity can escalate when dealing with a <code class="language-plaintext highlighter-rouge">global</code> state in more intricate real-life scenarios. While it may seem straightforward in tutorial projects or blogpost sample apps, the number of events and reducers can quickly become overwhelming as the app grows. Managing a <code class="language-plaintext highlighter-rouge">global</code> state that encompasses all data utilized by every UI element in the app can pose significant challenges. Although each reducer typically handles a single action, the repercussions of an action can ripple through multiple parts of the state, with various reducers potentially modifying the same fields, leading to overwritten updates based on the sequence of their completion.</p>
+
+<p>When it comes to navigation and managing the back stack, using native Android solutions may not be feasible as the entire UI rendering is contingent upon the <code class="language-plaintext highlighter-rouge">global</code> state. In this paradigm, transitioning back necessitates a modification in the state, requiring a different approach to conceptualize mobile app development compared to traditional methods.</p>
+
+<p>Introducing <code class="language-plaintext highlighter-rouge">Redux</code> to an existing application can also present hurdles. While starting a new project from scratch allows for easier integration, retrofitting existing logic into reducers, consolidating distributed data pieces into a <code class="language-plaintext highlighter-rouge">global</code> state, and reworking navigation and UI rendering based on this architecture can be a formidable task.</p>
+
+<p>These challenges are commonly addressed by <code class="language-plaintext highlighter-rouge">MVI</code>/<code class="language-plaintext highlighter-rouge">Redux</code> libraries, emphasizing the importance of leveraging established solutions rather than creating a custom implementation. While I worked on a project that utilized a custom Redux implementation successfully, the uniqueness of the problem it solved facilitated this approach. The app operated with minimal user input, predominantly receiving events from the backend or connected devices. The linear step-by-step user flow with simple UI components and no complex navigation worked seamlessly within the Redux-style solution.</p>
+
+<p>When preparing to write this post I noticed that the articles, videos, conference presentations about <code class="language-plaintext highlighter-rouge">Redux/MVI</code> <strong>boomed around 2018-2020 and then kinda died</strong>. There was a lot of libraries supporting it, often leveraging Rx. The advent of coroutines and Jetpack has simplified app development. Developers may have realized that simplicity can be achieved without relying on athird-party libraries or nesting multiple third-party solutions. Because like already mentioned - you don’t want to implement MVI/Redux yourself.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I view <code class="language-plaintext highlighter-rouge">MVI</code> as a diverse spectrum of architectures, encompassing a range from <code class="language-plaintext highlighter-rouge">MVVM</code> with predefined events to the global app state management of <code class="language-plaintext highlighter-rouge">Redux</code>. Within this spectrum, you can find approaches like packaging <code class="language-plaintext highlighter-rouge">MVVM</code> boilerplate into a <code class="language-plaintext highlighter-rouge">Container</code>, utilizing a <code class="language-plaintext highlighter-rouge">Store</code> per <code class="language-plaintext highlighter-rouge">ViewModel</code>, or adopting a distributed app state model where multiple <code class="language-plaintext highlighter-rouge">ViewModels</code> share a <code class="language-plaintext highlighter-rouge">Store</code>.</p>
+
+<p>While a global app state can offer certain advantages, it also introduces challenges such as a steep learning curve for new developers, complexity in state management, and the potential for a high volume of events. Although this type of architecture may be ideal for specific problems, I generally tend to keep things simple, small, and scoped - like <code class="language-plaintext highlighter-rouge">MVVM</code> with UI events.</p>
+
+<p>This post concludes the series on Android Presentation patterns. Reflecting on this journey, I have gathered several key takeaways:</p>
+
+<ul>
+  <li>Unidirectional data flow simplifies and streamlines the architecture.
+    <ul>
+      <li>Events should indicate what happened, not dictate the next action.</li>
+      <li>No callbacks. Observe relevant data and react to the changes.</li>
+    </ul>
+  </li>
+  <li>Each component in the system should fulfill a single purpose.
+    <ul>
+      <li>Keep things straightforward and scoped.</li>
+    </ul>
+  </li>
+  <li>Avoid the temptation to over-engineer where simplicity suffices.
+    <ul>
+      <li>Complex inheritance structures, excessive generics, and elaborate interface hierarchies may not always be practical.</li>
+    </ul>
+  </li>
+  <li>Choose the right tool for the task.
+    <ul>
+      <li>While a particular tool may seem enticing, it’s essential to select the most suitable approach based on the problem at hand.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Remember, not every problem requires a sophisticated solution - sometimes <strong>a simple and pragmatic approach is the most effective</strong>.</p>
+
+<hr />
+<p>Some materials I used when writing this post:</p>
+
+<ol>
+  <li><a href="https://medium.com/huawei-developers/stateful-android-apps-with-mvi-architecture-model-view-intent-d106b09bd967">Stateful Android Apps With MVI (MODEL — VIEW — INTENT)</a></li>
+  <li><a href="https://krishanmadushankadev.medium.com/android-mvi-model-view-intent-architecture-example-code-bc7dc8edb33">Android MVI (Model-View-Intent) Architecture — Example code</a></li>
+  <li><a href="https://medium.com/@myofficework000/mvvm-to-mvi-a-guide-to-migrating-your-android-architecture-8d3cb5bb9f06">MVVM to MVI: A Guide to Migrating Your Android Architecture</a></li>
+  <li><a href="https://blog.jesusdmedinac.com/mvvm-vs-mvi-for-jetpack-compose-e7e5e2f11e0b">MVVM vs MVI for Jetpack Compose</a></li>
+  <li><a href="https://blog.mindorks.com/mvi-architecture-android-tutorial-for-beginners-step-by-step-guide">MVI Architecture - Android Tutorial for Beginners - Step By Step Guide</a></li>
+  <li><a href="https://betterprogramming.pub/all-you-need-for-mvi-is-kotlin-how-to-reduce-without-reducer-5e986856610f">All you need for MVI is Kotlin - how to reduce without reducer</a></li>
+  <li><a href="https://medium.com/nerd-for-tech/reactdroid-reactive-mvi-architecture-for-android-part-2-44c3c2810f52">Reactive MVI architecture for Android part 2</a></li>
+  <li><a href="https://www.droidcon.com/2023/09/24/lighten-mvi-architecture-delegate-responsibilities-to-new-components/">Lighten MVI architecture - delegate responsibilities to new components</a></li>
+  <li><a href="https://www.youtube.com/watch?v=E6obYmkkdko">How to write your own MVI system and why you shouldn’t</a></li>
+  <li><a href="https://www.youtube.com/watch?v=DGSihxSVdfc">MVVM vs MVI Case Study</a></li>
+  <li><a href="https://www.youtube.com/watch?v=VenLRGHx3D4">State Managers Are Making Your Code Worse In React</a></li>
+</ol>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#rss-ref">-->
+        <!--                rss <span>(15)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Architecture-ref">
+                    Architecture <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Model View Intent-ref">
+                    Model View Intent <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#MVVM-ref">
+                    MVVM <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#MVI-ref">
+                    MVI <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Redux-ref">
+                    Redux <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#State Management-ref">
+                    State Management <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Software Development-ref">
+                    Software Development <span>(4)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Mobile Apps-ref">
+                    Mobile Apps <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Design Patterns-ref">
+                    Design Patterns <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#User Interface-ref">
+                    User Interface <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Android Presentation Patterns: MVI"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/2024-02-09-MVVM"
+                                    title="Android Presentation Patterns: MVVM">&larr; Previous</a></li>
+            
+            
+            <li class="next disabled"><a>Next &rarr;</a>
+                
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

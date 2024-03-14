@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/ide-settings-repo/cockpit.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>IntelliJ settings repo </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   July
+	   19th,
+	   
+	   2020
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        4 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#today-by-a-complete-accident-i-found-that-there-is-a-thing-called-settings-repository">Today by a complete accident I found that there is a thing called settings repository.</a></li>
+<li class="toc-entry toc-h1"><a href="#how-to-set-this-up">How to set this up</a></li>
+<li class="toc-entry toc-h1"><a href="#bonus-i-didnt-test-this-one">Bonus (I didn’t test this one)</a></li>
+</ul>
+            </nav>
+
+            <p>My setup looks like this: I have Windows PC with Linux installed on a separate drive, also I have 2 MacBooks for work, and rarely used Linux ThinkPad. Keeping my IntelliJ settings in sync at all of those machines wasn’t really possible. If I find some setting that improves my workflow at my office machine, and after some time I want to work on a pet project on my own PC - I get this itch of not having this setting I had on MacBook… so I can export my settings and then import it. And the other way around multiplied by the number of machines.</p>
+
+<h1 id="today-by-a-complete-accident-i-found-that-there-is-a-thing-called-settings-repository">Today by a complete accident I found that there is a thing called <code class="language-plaintext highlighter-rouge">settings repository</code>.</h1>
+
+<p>What it does is basically storing your settings in the repository of your choice and automatically synchronizing local settings with those in the repo. So I used the same repo on all machines (ok on 2 yet) and it looks like it’s solving my problem. I use the same repo for Android Studio and IntelliJ settings since I like to have the same settings for keyboard shortcuts, macros, default code style, etc. So far so good, no issues. But as I said - I learned this today 😄</p>
+
+<p>There is another option to sync your settings in IntelliJ Idea, with official JetBrains plugin IDE Settings Sync <a href="https://plugins.jetbrains.com/plugin/9922-ide-settings-sync">IDE Settings Sync</a> but it has rating 2.1 out of 5 with a majority of 1s so… I stick with setting repo.</p>
+
+<h1 id="how-to-set-this-up">How to set this up</h1>
+
+<p>I recommend starting with creating new repository for your settings on GitHub. I believe most developers already have an account there and since some time ago private repos are free.</p>
+
+<p>After setting the repo copy its HTTPS address</p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.18.24.png" alt="Settings repo address" height="300px" /></p>
+
+<p>And go to IntelliJ File→Manage IDE Settings→Settings Repository, or CMD+Shift+A and type <code class="language-plaintext highlighter-rouge">settings repository</code> if you are lazyass like me.</p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.20.38.png" alt="Settings repo option" height="300px" /></p>
+
+<p>You will now have to paste the link to your new repo and click <code class="language-plaintext highlighter-rouge">Override Remote</code> - this is like initial commit and push for your settings.</p>
+
+<p>You may be asked for GitHub login/password but it is recommended to use <code class="language-plaintext highlighter-rouge">an access token</code> that you can generate for each machine separately on your GitHub Settings page. To generate new one you need to go to your account settings→Developer Settings→Personal Access Tokens and click “Generate new token” button</p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.27.20.png" alt="Adding GitHub token" width="900px" /></p>
+
+<p>Now the worst part - picking up the name for token, so if you call your computer for example <code class="language-plaintext highlighter-rouge">Anton</code> I suggest something like <code class="language-plaintext highlighter-rouge">IDE settings - Anton</code> so you know where it’s used and if you replace Anton with another machine you will know which token to remove. For Scopes all you need is <code class="language-plaintext highlighter-rouge">repo</code></p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_20.31.03.png" alt="Github token scopes" height="300px" /></p>
+
+<p>After you generate the token with a shiny green button on the bottom you will have one and only chance to copy it. When you paste token to IntelliJ popup it should work like a charm and send your settings to GitHub. If you inspect settings repository now you can see that your IDE code styles, color scheme, inspections, live templates a lot of other XML files are there. Also plugins settings but unfortunately not plugin list - you have to manually install plugins on every machine.</p>
+
+<p>You will have to repeat this procedure on every machine with a new token, you don’t want to use the same token everywhere. After the initial commit with settings is pushed to a repository on the next computer you should rather pick “override local” or better “merge” button when adding the repository for synchronizing settings. This will try to merge your current IDE settings with those at the repository, and sometimes you may face a conflict 😄</p>
+
+<p>Your settings will be synchronized with repo each time you open or close IDE or with every Project Update or a Push from IDE is performed. You can also manually request an update with going to VCS→Sync Settings→Merge</p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.01.34.png" alt="Force sync settings" height="400px" /></p>
+
+<h1 id="bonus-i-didnt-test-this-one">Bonus (I didn’t test this one)</h1>
+
+<p>There is also an option to set additional setting sources as read-only repositories - for example, if in your organization you have some live templates, file templates, deployment options, etc. but you shouldn’t be able to randomly override those. You do it in Preferences→Tools→Settings Repository with little + on the bottom.</p>
+
+<p><img src="assets/posts/ide-settings-repo/Screen_Shot_2020-07-18_at_21.12.31.png" alt="Read-only sources" height="600px" /></p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#IDE-ref">
+                    IDE <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#plugins-ref">
+                    plugins <span>(3)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#IntelliJ-ref">
+                    IntelliJ <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#settings-ref">
+                    settings <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=IntelliJ settings repo"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/shellscriptbasics"
+                                    title="Shell script basics">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/github-page-deployment" title="Ultimate Github Page Deployment">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

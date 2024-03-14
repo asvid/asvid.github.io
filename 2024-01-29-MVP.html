@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/mvp_banner.png);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Android Presentation Patterns: MVP </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   January
+	   29th,
+	   
+	   2024
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        27 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#but-mvc-does-the-job">But MVC does the job!</a></li>
+<li class="toc-entry toc-h2"><a href="#the-presenter-is-born">The Presenter is born</a></li>
+<li class="toc-entry toc-h2"><a href="#the-boilerplate">The boilerplate</a></li>
+<li class="toc-entry toc-h2"><a href="#common-problems-of-mvp">Common problems of MVP</a></li>
+<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+
+            <h2 id="but-mvc-does-the-job">But MVC does the job!</h2>
+
+<p>When examining the <strong>MVC pattern</strong> <a href="https://asvid.github.io/2024-01-27-MVC">as described here</a>, it’s evident that the
+direct relationship between the <code class="language-plaintext highlighter-rouge">View</code>
+and <code class="language-plaintext highlighter-rouge">Controller</code> is problematic. Tight coupling results in challenging testing, where changes in one class necessitate
+updates in another, and it doesn’t scale well. In complex views, there can be multiple conditions for setting values in
+UI elements, depending on the current state of the UI and responses from the <code class="language-plaintext highlighter-rouge">Model</code>. Dealing with complex logic when
+testing becomes challenging… <strong>leads to anarchy</strong>.</p>
+
+<p>This issue was apparent to developers, prompting some to propose better ways to implement MVC, as
+discussed <a href="https://medium.com/upday-devs/android-architecture-patterns-part-1-model-view-controller-3baecef5f2b6">here</a>.
+In this approach, the <code class="language-plaintext highlighter-rouge">Controller</code> is a separate class from the <code class="language-plaintext highlighter-rouge">Fragment</code> or <code class="language-plaintext highlighter-rouge">Activity</code>. Since it’s an independent
+object from Android Framework instances, interfaces can be employed to mock components and facilitate testing.</p>
+
+<h2 id="the-presenter-is-born">The Presenter is born</h2>
+
+<p>The evolution of <strong>MVP</strong>, as known in the context of Android development, can be traced back to Google’s Web Toolkit (
+GWT). In the mid-2000s, GWT adopted MVP as a response to the challenges faced in building modular and testable web
+applications.</p>
+
+<p>Let’s have an interface for the <code class="language-plaintext highlighter-rouge">View</code> and the new <code class="language-plaintext highlighter-rouge">Controller</code> type, but let’s call it <code class="language-plaintext highlighter-rouge">Presenter</code> since it’s
+responsible for presenting model data to the <code class="language-plaintext highlighter-rouge">View</code>. A simple diagram may look like this:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="317px" preserveAspectRatio="none" style="width:159px;height:317px;" version="1.1" viewBox="0 0 159 317" width="159px" zoomAndPan="magnify"><defs><filter height="300%" id="f1t0bnbpfwtd0c" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[7e20e022571e30ec1001cf6eabd7f3e2]
+class Model--><rect fill="#FEFECE" filter="url(#f1t0bnbpfwtd0c)" height="48" id="Model" style="stroke: #A80036; stroke-width: 1.5;" width="69" x="28.03" y="8" /><ellipse cx="43.03" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M45.9988,29.6406 Q45.4206,29.9375 44.78,30.0781 Q44.1394,30.2344 43.4363,30.2344 Q40.9363,30.2344 39.6081,28.5938 Q38.2956,26.9375 38.2956,23.8125 Q38.2956,20.6875 39.6081,19.0313 Q40.9363,17.375 43.4363,17.375 Q44.1394,17.375 44.78,17.5313 Q45.4363,17.6875 45.9988,17.9844 L45.9988,20.7031 Q45.3738,20.125 44.78,19.8594 Q44.1863,19.5781 43.5613,19.5781 Q42.2175,19.5781 41.53,20.6563 Q40.8425,21.7188 40.8425,23.8125 Q40.8425,25.9063 41.53,26.9844 Q42.2175,28.0469 43.5613,28.0469 Q44.1863,28.0469 44.78,27.7813 Q45.3738,27.5 45.9988,26.9219 L45.9988,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="37" x="57.03" y="28.1543">Model</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="29.03" x2="96.03" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="29.03" x2="96.03" y1="48" y2="48" /><!--MD5=[c045e12321b83266d36d22b9096c24ea]
+class View--><rect fill="#FEFECE" filter="url(#f1t0bnbpfwtd0c)" height="48" id="View" style="stroke: #A80036; stroke-width: 1.5;" width="61" x="32.03" y="258" /><ellipse cx="47.03" cy="274" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M42.9519,269.7656 L42.9519,267.6094 L50.3425,267.6094 L50.3425,269.7656 L47.8738,269.7656 L47.8738,277.8438 L50.3425,277.8438 L50.3425,280 L42.9519,280 L42.9519,277.8438 L45.4206,277.8438 L45.4206,269.7656 L42.9519,269.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="29" x="61.03" y="278.1543">View</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="33.03" x2="92.03" y1="290" y2="290" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="33.03" x2="92.03" y1="298" y2="298" /><!--MD5=[3de993ac3dd18e6abf686ebe9c2e07b2]
+class Presenter--><rect fill="#FEFECE" filter="url(#f1t0bnbpfwtd0c)" height="48" id="Presenter" style="stroke: #A80036; stroke-width: 1.5;" width="92" x="16.53" y="133" /><ellipse cx="31.53" cy="149" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M27.4519,144.7656 L27.4519,142.6094 L34.8425,142.6094 L34.8425,144.7656 L32.3738,144.7656 L32.3738,152.8438 L34.8425,152.8438 L34.8425,155 L27.4519,155 L27.4519,152.8438 L29.9206,152.8438 L29.9206,144.7656 L27.4519,144.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="60" x="45.53" y="153.1543">Presenter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="17.53" x2="107.53" y1="165" y2="165" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="17.53" x2="107.53" y1="173" y2="173" /><!--MD5=[82aca0a06d5f07aba49351e577400cf5]
+link Model to Presenter--><path d="M35.56,56.03 C27.54,64.54 19.77,74.85 15.53,86 C9.09,102.97 19.92,119.92 32.8,132.9 " fill="none" id="Model-Presenter" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="46" x="16.53" y="99.0669">notifies</text><!--MD5=[b0338ffdce8d089cadd954bee23935a4]
+link Presenter to Model--><path d="M65.2,132.81 C66.14,123.55 67.07,112.79 67.53,103 C68.27,87.42 67.02,69.92 65.58,56.32 " fill="none" id="Presenter-Model" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="79" x="68.53" y="99.0669">manipulates</text><!--MD5=[8875c3698b788d44f6b8338bb7156fa2]
+link View to Presenter--><path d="M67.41,257.71 C69.71,244.11 71.71,226.61 70.53,211 C69.8,201.16 68.3,190.39 66.8,181.13 " fill="none" id="View-Presenter" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="56" x="71.53" y="224.0669">interacts</text><!--MD5=[b45dd2cbd812e1afa4f94e30207d9218]
+link Presenter to View--><path d="M30.77,181.13 C21.86,189.44 13.31,199.61 8.53,211 C0.57,229.96 15.74,248.25 32.01,261.38 " fill="none" id="Presenter-View" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="52" x="9.53" y="224.0669">updates</text><!--MD5=[cacd3eb2ef55641690a8b299d53795de]
+@startuml
+
+class Model {
+}
+
+interface View {
+}
+
+interface Presenter {
+}
+
+Model - - Presenter: notifies
+View - - Presenter: interacts
+Presenter - - Model: manipulates
+Presenter - - View: updates
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>Please note that <code class="language-plaintext highlighter-rouge">View</code> and <code class="language-plaintext highlighter-rouge">Presenter</code> are interfaces, and while they still keep a reference to each other, it’s only
+by the interface, not the concrete implementation. The interfaces are providing only methods relevant for particular UI
+interactions.</p>
+
+<h3 id="let-there-be-contract">Let there be Contract!</h3>
+
+<p>Okay, so now there is a set of interfaces, implemented by a concrete <code class="language-plaintext highlighter-rouge">View</code> and <code class="language-plaintext highlighter-rouge">Presenter</code>, to serve for a particular
+UI screen. It would be nice to keep them close, so it’s clear which <code class="language-plaintext highlighter-rouge">View</code> talks to which <code class="language-plaintext highlighter-rouge">Presenter</code>, there is always a
+1-to-1 relation.</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="347px" preserveAspectRatio="none" style="width:448px;height:347px;" version="1.1" viewBox="0 0 448 347" width="448px" zoomAndPan="magnify"><defs><filter height="300%" id="f12e3fac8a2dem" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[f55ae190dcc35e34f52f0c80dd6d68de]
+class ItemListContract--><rect fill="#FEFECE" filter="url(#f12e3fac8a2dem)" height="48" id="ItemListContract" style="stroke: #A80036; stroke-width: 1.5;" width="135" x="154" y="288" /><ellipse cx="169" cy="304" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M164.9219,299.7656 L164.9219,297.6094 L172.3125,297.6094 L172.3125,299.7656 L169.8438,299.7656 L169.8438,307.8438 L172.3125,307.8438 L172.3125,310 L164.9219,310 L164.9219,307.8438 L167.3906,307.8438 L167.3906,299.7656 L164.9219,299.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="103" x="183" y="308.1543">ItemListContract</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="155" x2="288" y1="320" y2="320" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="155" x2="288" y1="328" y2="328" /><!--MD5=[3de993ac3dd18e6abf686ebe9c2e07b2]
+class Presenter--><rect fill="#FEFECE" filter="url(#f12e3fac8a2dem)" height="73.6094" id="Presenter" style="stroke: #A80036; stroke-width: 1.5;" width="133" x="54" y="135" /><ellipse cx="87.45" cy="151" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M83.3719,146.7656 L83.3719,144.6094 L90.7625,144.6094 L90.7625,146.7656 L88.2938,146.7656 L88.2938,154.8438 L90.7625,154.8438 L90.7625,157 L83.3719,157 L83.3719,154.8438 L85.8406,154.8438 L85.8406,146.7656 L83.3719,146.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="60" x="105.55" y="155.1543">Presenter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="55" x2="186" y1="167" y2="167" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="55" x2="186" y1="175" y2="175" /><ellipse cx="65" cy="186" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="85" x="74" y="189.2104">addItem(): void</text><ellipse cx="65" cy="198.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="74" y="202.0151">removeItem(): void</text><!--MD5=[c045e12321b83266d36d22b9096c24ea]
+class View--><rect fill="#FEFECE" filter="url(#f12e3fac8a2dem)" height="112.0234" id="View" style="stroke: #A80036; stroke-width: 1.5;" width="139" x="253" y="116" /><ellipse cx="303.75" cy="132" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M299.6719,127.7656 L299.6719,125.6094 L307.0625,125.6094 L307.0625,127.7656 L304.5938,127.7656 L304.5938,135.8438 L307.0625,135.8438 L307.0625,138 L299.6719,138 L299.6719,135.8438 L302.1406,135.8438 L302.1406,127.7656 L299.6719,127.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="29" x="324.25" y="136.1543">View</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="254" x2="391" y1="148" y2="148" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="254" x2="391" y1="156" y2="156" /><ellipse cx="264" cy="167" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="108" x="273" y="170.2104">displayError(): void</text><ellipse cx="264" cy="179.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="92" x="273" y="183.0151">hideError(): void</text><ellipse cx="264" cy="192.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="111" x="273" y="195.8198">displayItems(): void</text><ellipse cx="264" cy="205.4141" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="113" x="273" y="208.6245">showLoading(): void</text><ellipse cx="264" cy="218.2188" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="273" y="221.4292">hideLoading(): void</text><!--MD5=[2d8a0744bffe955294e25c7e153d1ab0]
+class ConcreteItemListFragment--><rect fill="#FEFECE" filter="url(#f12e3fac8a2dem)" height="48" id="ConcreteItemListFragment" style="stroke: #A80036; stroke-width: 1.5;" width="197" x="240" y="8" /><ellipse cx="255" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M257.9688,29.6406 Q257.3906,29.9375 256.75,30.0781 Q256.1094,30.2344 255.4063,30.2344 Q252.9063,30.2344 251.5781,28.5938 Q250.2656,26.9375 250.2656,23.8125 Q250.2656,20.6875 251.5781,19.0313 Q252.9063,17.375 255.4063,17.375 Q256.1094,17.375 256.75,17.5313 Q257.4063,17.6875 257.9688,17.9844 L257.9688,20.7031 Q257.3438,20.125 256.75,19.8594 Q256.1563,19.5781 255.5313,19.5781 Q254.1875,19.5781 253.5,20.6563 Q252.8125,21.7188 252.8125,23.8125 Q252.8125,25.9063 253.5,26.9844 Q254.1875,28.0469 255.5313,28.0469 Q256.1563,28.0469 256.75,27.7813 Q257.3438,27.5 257.9688,26.9219 L257.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="165" x="269" y="28.1543">ConcreteItemListFragment</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="241" x2="436" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="241" x2="436" y1="48" y2="48" /><!--MD5=[868b98e16cbd15b54c084456cfa52b00]
+class ConcreteItemListPresenter--><rect fill="#FEFECE" filter="url(#f12e3fac8a2dem)" height="48" id="ConcreteItemListPresenter" style="stroke: #A80036; stroke-width: 1.5;" width="199" x="6" y="8" /><ellipse cx="21" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M23.9688,29.6406 Q23.3906,29.9375 22.75,30.0781 Q22.1094,30.2344 21.4063,30.2344 Q18.9063,30.2344 17.5781,28.5938 Q16.2656,26.9375 16.2656,23.8125 Q16.2656,20.6875 17.5781,19.0313 Q18.9063,17.375 21.4063,17.375 Q22.1094,17.375 22.75,17.5313 Q23.4063,17.6875 23.9688,17.9844 L23.9688,20.7031 Q23.3438,20.125 22.75,19.8594 Q22.1563,19.5781 21.5313,19.5781 Q20.1875,19.5781 19.5,20.6563 Q18.8125,21.7188 18.8125,23.8125 Q18.8125,25.9063 19.5,26.9844 Q20.1875,28.0469 21.5313,28.0469 Q22.1563,28.0469 22.75,27.7813 Q23.3438,27.5 23.9688,26.9219 L23.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="167" x="35" y="28.1543">ConcreteItemListPresenter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="204" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="204" y1="48" y2="48" /><!--MD5=[7f044d79ef11b537743994f5693351b8]
+link View to ItemListContract--><path d="M282,228.33 C269.93,244.83 257.07,262.4 246.32,277.09 " fill="none" id="View-&gt;ItemListContract" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="238.56,287.69,245.3316,285.211,245.6478,278.0069,238.8762,280.4858,238.56,287.69" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[661531c0dab5366aeee69d72e35b4ba6]
+link Presenter to ItemListContract--><path d="M147.04,209.26 C162.49,230.38 181.85,256.83 196.95,277.46 " fill="none" id="Presenter-&gt;ItemListContract" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="204.64,287.96,204.3191,280.756,197.5459,278.2815,197.8668,285.4854,204.64,287.96" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[d769cab7769bfd0bafef13f332a21d84]
+link ConcreteItemListFragment to View--><path d="M335.82,56.1 C334.53,67.21 332.91,81.22 331.24,95.61 " fill="none" id="ConcreteItemListFragment-&gt;View" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="338.14,96.87,328.88,115.93,324.23,95.26,338.14,96.87" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[48510c7adf690c7202095bbd68197ddf]
+link ConcreteItemListPresenter to Presenter--><path d="M108.01,56.1 C109.75,72.13 112.15,94.2 114.38,114.73 " fill="none" id="ConcreteItemListPresenter-&gt;Presenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="121.37,114.2,116.57,134.84,107.45,115.71,121.37,114.2" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[6290896c82f94d3c8d255e9170d2e2c8]
+@startuml
+
+interface ItemListContract {
+}
+
+interface Presenter {
++addItem(): void
++removeItem(): void
+}
+
+interface View {
++displayError(): void
++hideError(): void
++displayItems(): void
++showLoading(): void
++hideLoading(): void
+}
+
+View - -* ItemListContract
+Presenter - -* ItemListContract
+
+class ConcreteItemListFragment {
+}
+
+class ConcreteItemListPresenter {
+}
+
+ConcreteItemListFragment - -|> View
+ConcreteItemListPresenter - -|> Presenter
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>It looks nicer in Kotlin code:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">ItemListContract</span> <span class="p">{</span>
+    <span class="kd">interface</span> <span class="nc">View</span> <span class="p">{</span>
+        <span class="k">fun</span> <span class="nf">displayError</span><span class="p">(</span><span class="n">errorMessage</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span>
+        <span class="k">fun</span> <span class="nf">hideError</span><span class="p">()</span>
+        <span class="k">fun</span> <span class="nf">displayItems</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nc">List</span><span class="p">&lt;</span><span class="nc">Int</span><span class="p">&gt;)</span>
+        <span class="k">fun</span> <span class="nf">showLoading</span><span class="p">()</span>
+        <span class="k">fun</span> <span class="nf">hideLoading</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="kd">interface</span> <span class="nc">Presenter</span> <span class="p">{</span>
+        <span class="k">fun</span> <span class="nf">addItem</span><span class="p">()</span>
+        <span class="k">fun</span> <span class="nf">removeItem</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The Activity being the <code class="language-plaintext highlighter-rouge">View</code> will look like this:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MainActivity</span> <span class="p">:</span> <span class="nc">AppCompatActivity</span><span class="p">(),</span> <span class="nc">ItemListContract</span><span class="p">.</span><span class="nc">View</span> <span class="p">{</span>
+    <span class="c1">// creating instance of the presenter, can be also injected by DI</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">presenter</span><span class="p">:</span> <span class="nc">ItemListContract</span><span class="p">.</span><span class="nc">Presenter</span> <span class="p">=</span> <span class="nc">MainViewPresenter</span><span class="p">()</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+        <span class="c1">// giving Presenter instance of the View</span>
+        <span class="c1">// this should happen when the View is actually ready to perform its tasks</span>
+        <span class="c1">// because Presenter may want to display something right after getting reference to the View</span>
+        <span class="n">presenter</span><span class="p">.</span><span class="nf">attachView</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="o">..</span><span class="p">.</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Presenter</code>:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MainViewPresenter</span> <span class="p">:</span> <span class="nc">ItemListContract</span><span class="p">.</span><span class="nc">Presenter</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">lateinit</span> <span class="kd">var</span> <span class="py">view</span><span class="p">:</span> <span class="nc">ItemListContract</span><span class="p">.</span><span class="nc">View</span>
+
+    <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="nc">ItemListContract</span><span class="p">.</span><span class="nc">View</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">view</span> <span class="p">=</span> <span class="n">view</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>No magic here, simple passing a reference to <code class="language-plaintext highlighter-rouge">this</code> from <code class="language-plaintext highlighter-rouge">View</code> to <code class="language-plaintext highlighter-rouge">Presenter</code>, and from now on, the <code class="language-plaintext highlighter-rouge">Presenter</code> should
+be safe to call <code class="language-plaintext highlighter-rouge">View</code> methods. This is why it should happen in the <code class="language-plaintext highlighter-rouge">Activity</code> or <code class="language-plaintext highlighter-rouge">Fragment</code> <code class="language-plaintext highlighter-rouge">onCreate</code> and not in
+the <code class="language-plaintext highlighter-rouge">Presenter</code> constructor. Otherwise, you would have to call some extra <code class="language-plaintext highlighter-rouge">onViewReady()</code> on the <code class="language-plaintext highlighter-rouge">Presenter</code> when you
+have your view prepared, with all elements assigned to fields with <code class="language-plaintext highlighter-rouge">findViewById()</code> etc.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">View</code> and the <code class="language-plaintext highlighter-rouge">Presenter</code> know only each other through the <code class="language-plaintext highlighter-rouge">Contract</code>, so it should be nice to write <code class="language-plaintext highlighter-rouge">Presenter</code>
+tests, with mocking of the <code class="language-plaintext highlighter-rouge">View</code> and verifying which methods were called and passed arguments.</p>
+
+<h2 id="the-boilerplate">The boilerplate</h2>
+
+<p>You probably already identified the ugly part now. Each presenter has a method <code class="language-plaintext highlighter-rouge">attachView</code> or similar, but it’s not
+really part of any common interface for <code class="language-plaintext highlighter-rouge">Presenter</code>. It would be really great to have some sort of framework, taking
+care of all the boilerplate methods for <code class="language-plaintext highlighter-rouge">View</code> and <code class="language-plaintext highlighter-rouge">Presenter</code>, so <code class="language-plaintext highlighter-rouge">Contract</code> can focus only on relevant methods for
+a particular UI scenario.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">View</code> and <code class="language-plaintext highlighter-rouge">Presenter</code> couple should also be detached to avoid memory leaks when the view is destroyed.</p>
+
+<p>All <code class="language-plaintext highlighter-rouge">Presenter</code> work is done on the UI thread. It would be great to perform tasks on other threads, and cancel them when
+the View is destroyed since the result it’s not relevant anymore.</p>
+
+<p>This can be achieved by introducing an abstract <code class="language-plaintext highlighter-rouge">BasePresenter</code>, which is also a <code class="language-plaintext highlighter-rouge">CoroutineScope</code>. The diagram starts
+to be really complex, for a simple presentation layer architecture:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="359px" preserveAspectRatio="none" style="width:618px;height:359px;" version="1.1" viewBox="0 0 618 359" width="618px" zoomAndPan="magnify"><defs><filter height="300%" id="f1nzlqmqc7tud0" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[3de993ac3dd18e6abf686ebe9c2e07b2]
+class Presenter--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="73.6094" id="Presenter" style="stroke: #A80036; stroke-width: 1.5;" width="185" x="211" y="275" /><ellipse cx="235" cy="291" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M230.9219,286.7656 L230.9219,284.6094 L238.3125,284.6094 L238.3125,286.7656 L235.8438,286.7656 L235.8438,294.8438 L238.3125,294.8438 L238.3125,297 L230.9219,297 L230.9219,294.8438 L233.3906,294.8438 L233.3906,286.7656 L230.9219,286.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="60" x="251" y="295.1543">Presenter</text><rect fill="#FFFFFF" height="15.9688" style="stroke: #000000; stroke-width: 1.0; stroke-dasharray: 2.0,2.0;" width="71" x="328" y="272" /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="69" x="329" y="284.1387">VIEW: View</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="212" x2="395" y1="307" y2="307" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="212" x2="395" y1="315" y2="315" /><ellipse cx="222" cy="326" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="159" x="231" y="329.2104">attachView(view: VIEW): void</text><ellipse cx="222" cy="338.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="103" x="231" y="342.0151">detachView(): void</text><!--MD5=[c045e12321b83266d36d22b9096c24ea]
+class View--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="48" id="View" style="stroke: #A80036; stroke-width: 1.5;" width="61" x="465" y="288" /><ellipse cx="480" cy="304" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M475.9219,299.7656 L475.9219,297.6094 L483.3125,297.6094 L483.3125,299.7656 L480.8438,299.7656 L480.8438,307.8438 L483.3125,307.8438 L483.3125,310 L475.9219,310 L475.9219,307.8438 L478.3906,307.8438 L478.3906,299.7656 L475.9219,299.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="29" x="494" y="308.1543">View</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="466" x2="525" y1="320" y2="320" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="466" x2="525" y1="328" y2="328" /><!--MD5=[6979f7adbd9240483579b480224105c8]
+class BasePresenter--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="99.2188" id="BasePresenter" style="stroke: #A80036; stroke-width: 1.5;" width="195" x="7" y="116" /><ellipse cx="22" cy="132" fill="#A9DCDF" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M22.1094,127.3438 L20.9531,132.4219 L23.2813,132.4219 L22.1094,127.3438 Z M20.625,125.1094 L23.6094,125.1094 L26.9688,137.5 L24.5156,137.5 L23.75,134.4375 L20.4688,134.4375 L19.7188,137.5 L17.2813,137.5 L20.625,125.1094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="90" x="36" y="136.1543">BasePresenter</text><rect fill="#FFFFFF" height="15.9688" style="stroke: #000000; stroke-width: 1.0; stroke-dasharray: 2.0,2.0;" width="71" x="134" y="113" /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="69" x="135" y="125.1387">VIEW: View</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="8" x2="201" y1="148" y2="148" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="15" y="156" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="59" x="27" y="162.2104">view: VIEW</text><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="15" y="168.8047" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="42" x="27" y="175.0151">job: Job</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="8" x2="201" y1="181.6094" y2="181.6094" /><ellipse cx="18" cy="192.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="128" x="27" y="195.8198">onViewAttached(): void</text><ellipse cx="18" cy="205.4141" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="132" x="27" y="208.6245">onViewDetached(): void</text><!--MD5=[c63c32526c0e0d64cf90bb5b2f5fa9f6]
+class CoroutineScope--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="48" id="CoroutineScope" style="stroke: #A80036; stroke-width: 1.5;" width="132" x="38.5" y="288" /><ellipse cx="53.5" cy="304" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M49.4219,299.7656 L49.4219,297.6094 L56.8125,297.6094 L56.8125,299.7656 L54.3438,299.7656 L54.3438,307.8438 L56.8125,307.8438 L56.8125,310 L49.4219,310 L49.4219,307.8438 L51.8906,307.8438 L51.8906,299.7656 L49.4219,299.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="100" x="67.5" y="308.1543">CoroutineScope</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="39.5" x2="169.5" y1="320" y2="320" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="39.5" x2="169.5" y1="328" y2="328" /><!--MD5=[f55ae190dcc35e34f52f0c80dd6d68de]
+class ItemListContract--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="48" id="ItemListContract" style="stroke: #A80036; stroke-width: 1.5;" width="135" x="240" y="8" /><ellipse cx="255" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M250.9219,19.7656 L250.9219,17.6094 L258.3125,17.6094 L258.3125,19.7656 L255.8438,19.7656 L255.8438,27.8438 L258.3125,27.8438 L258.3125,30 L250.9219,30 L250.9219,27.8438 L253.3906,27.8438 L253.3906,19.7656 L250.9219,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="103" x="269" y="28.1543">ItemListContract</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="241" x2="374" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="241" x2="374" y1="48" y2="48" /><!--MD5=[068645c2cb95fe9c35fca6b5c6718abc]
+class ItemListView--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="99.2188" id="ItemListView" style="stroke: #A80036; stroke-width: 1.5;" width="139" x="426" y="116" /><ellipse cx="454.05" cy="132" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M449.9719,127.7656 L449.9719,125.6094 L457.3625,125.6094 L457.3625,127.7656 L454.8938,127.7656 L454.8938,135.8438 L457.3625,135.8438 L457.3625,138 L449.9719,138 L449.9719,135.8438 L452.4406,135.8438 L452.4406,127.7656 L449.9719,127.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="78" x="470.95" y="136.1543">ItemListView</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="427" x2="564" y1="148" y2="148" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="427" x2="564" y1="156" y2="156" /><ellipse cx="437" cy="167" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="108" x="446" y="170.2104">displayError(): void</text><ellipse cx="437" cy="179.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="92" x="446" y="183.0151">hideError(): void</text><ellipse cx="437" cy="192.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="113" x="446" y="195.8198">showLoading(): void</text><ellipse cx="437" cy="205.4141" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="446" y="208.6245">hideLoading(): void</text><!--MD5=[33dcfa6e86f61687128411d98853a0c6]
+class ItemListPresenter--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="73.6094" id="ItemListPresenter" style="stroke: #A80036; stroke-width: 1.5;" width="141" x="237" y="128.5" /><ellipse cx="252" cy="144.5" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M247.9219,140.2656 L247.9219,138.1094 L255.3125,138.1094 L255.3125,140.2656 L252.8438,140.2656 L252.8438,148.3438 L255.3125,148.3438 L255.3125,150.5 L247.9219,150.5 L247.9219,148.3438 L250.3906,148.3438 L250.3906,140.2656 L247.9219,140.2656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="109" x="266" y="148.6543">ItemListPresenter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="238" x2="377" y1="160.5" y2="160.5" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="238" x2="377" y1="168.5" y2="168.5" /><ellipse cx="248" cy="179.5" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="85" x="257" y="182.7104">addItem(): void</text><ellipse cx="248" cy="192.3047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="257" y="195.5151">removeItem(): void</text><!--MD5=[2d8a0744bffe955294e25c7e153d1ab0]
+class ConcreteItemListFragment--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="48" id="ConcreteItemListFragment" style="stroke: #A80036; stroke-width: 1.5;" width="197" x="410" y="8" /><ellipse cx="425" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M427.9688,29.6406 Q427.3906,29.9375 426.75,30.0781 Q426.1094,30.2344 425.4063,30.2344 Q422.9063,30.2344 421.5781,28.5938 Q420.2656,26.9375 420.2656,23.8125 Q420.2656,20.6875 421.5781,19.0313 Q422.9063,17.375 425.4063,17.375 Q426.1094,17.375 426.75,17.5313 Q427.4063,17.6875 427.9688,17.9844 L427.9688,20.7031 Q427.3438,20.125 426.75,19.8594 Q426.1563,19.5781 425.5313,19.5781 Q424.1875,19.5781 423.5,20.6563 Q422.8125,21.7188 422.8125,23.8125 Q422.8125,25.9063 423.5,26.9844 Q424.1875,28.0469 425.5313,28.0469 Q426.1563,28.0469 426.75,27.7813 Q427.3438,27.5 427.9688,26.9219 L427.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="165" x="439" y="28.1543">ConcreteItemListFragment</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="411" x2="606" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="411" x2="606" y1="48" y2="48" /><!--MD5=[868b98e16cbd15b54c084456cfa52b00]
+class ConcreteItemListPresenter--><rect fill="#FEFECE" filter="url(#f1nzlqmqc7tud0)" height="48" id="ConcreteItemListPresenter" style="stroke: #A80036; stroke-width: 1.5;" width="199" x="6" y="8" /><ellipse cx="21" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M23.9688,29.6406 Q23.3906,29.9375 22.75,30.0781 Q22.1094,30.2344 21.4063,30.2344 Q18.9063,30.2344 17.5781,28.5938 Q16.2656,26.9375 16.2656,23.8125 Q16.2656,20.6875 17.5781,19.0313 Q18.9063,17.375 21.4063,17.375 Q22.1094,17.375 22.75,17.5313 Q23.4063,17.6875 23.9688,17.9844 L23.9688,20.7031 Q23.3438,20.125 22.75,19.8594 Q22.1563,19.5781 21.5313,19.5781 Q20.1875,19.5781 19.5,20.6563 Q18.8125,21.7188 18.8125,23.8125 Q18.8125,25.9063 19.5,26.9844 Q20.1875,28.0469 21.5313,28.0469 Q22.1563,28.0469 22.75,27.7813 Q23.3438,27.5 23.9688,26.9219 L23.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="167" x="35" y="28.1543">ConcreteItemListPresenter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="204" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="204" y1="48" y2="48" /><!--MD5=[7177f644a2b2e5ba82275f57987587b1]
+reverse link BasePresenter to Presenter--><path d="M187.8,226.99 C210.27,243.3 233.87,260.44 253.85,274.95 " fill="none" id="BasePresenter&lt;-Presenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="183.39,232.43,171.32,215.02,191.61,221.11,183.39,232.43" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[540c90b6d688b93f3b0596fe0d874fbe]
+reverse link BasePresenter to CoroutineScope--><path d="M104.5,235.24 C104.5,254.23 104.5,273.54 104.5,287.91 " fill="none" id="BasePresenter&lt;-CoroutineScope" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="97.5,235.02,104.5,215.02,111.5,235.02,97.5,235.02" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[bc05001bde156ecd605503bab89f99d1]
+link ItemListContract to ItemListView--><path d="M340.68,56.21 C359.86,69.63 384.97,87.19 409.37,104.25 " fill="none" id="ItemListContract-&gt;ItemListView" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="413.69,98.73,426.06,115.93,405.66,110.2,413.69,98.73" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[ffb1dab9a0bd49948d8a7ec4f7fe39e5]
+link ItemListContract to ItemListPresenter--><path d="M307.5,56.21 C307.5,70.65 307.5,89.88 307.5,108.14 " fill="none" id="ItemListContract-&gt;ItemListPresenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="314.5,108.39,307.5,128.39,300.5,108.39,314.5,108.39" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[b138289ae3f949f9a0117b2a6b8d9ac8]
+link ItemListPresenter to Presenter--><path d="M306.5,202.59 C306.06,218.37 305.54,237.24 305.06,254.79 " fill="none" id="ItemListPresenter-&gt;Presenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="312.05,255.07,304.5,274.87,298.06,254.68,312.05,255.07" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[d92bd1d8ae4db75a5734ae7e8b874715]
+link ItemListView to View--><path d="M495.5,215.02 C495.5,232.12 495.5,251.22 495.5,267.85 " fill="none" id="ItemListView-&gt;View" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="502.5,267.91,495.5,287.91,488.5,267.91,502.5,267.91" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[712fac2d8937eb1de59dfb2be1b98611]
+link ConcreteItemListPresenter to ItemListPresenter--><path d="M141.15,56.21 C167.05,73.07 202.99,96.47 234.84,117.2 " fill="none" id="ConcreteItemListPresenter-&gt;ItemListPresenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="239.09,111.61,252.03,128.39,231.45,123.34,239.09,111.61" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[59370cb92b6a97e81b61cc8066731696]
+link ConcreteItemListPresenter to BasePresenter--><path d="M105.32,56.21 C105.24,67.43 105.13,81.56 105.02,95.87 " fill="none" id="ConcreteItemListPresenter-&gt;BasePresenter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="112.02,95.99,104.87,115.93,98.02,95.88,112.02,95.99" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[561e34408e1181358f9e0f39161a7507]
+link ConcreteItemListFragment to ItemListView--><path d="M506.21,56.21 C505.1,67.43 503.7,81.56 502.29,95.87 " fill="none" id="ConcreteItemListFragment-&gt;ItemListView" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="509.24,96.72,500.3,115.93,495.3,95.34,509.24,96.72" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[84337dbb3bc3f37b84820334900a4463]
+@startuml
+
+interface Presenter<VIEW: View> {
++attachView(view: VIEW): void
++detachView(): void
+}
+
+interface View {
+}
+
+abstract class BasePresenter<VIEW: View> {
+-view: VIEW
+-job: Job
++onViewAttached(): void
++onViewDetached(): void
+}
+interface CoroutineScope
+BasePresenter <|- - Presenter
+BasePresenter <|- - CoroutineScope
+
+interface ItemListContract {
+}
+
+interface ItemListView {
++displayError(): void
++hideError(): void
++showLoading(): void
++hideLoading(): void
+}
+
+interface ItemListPresenter {
++addItem(): void
++removeItem(): void
+}
+
+class ConcreteItemListFragment{
+}
+
+ItemListContract - -|> ItemListView
+ItemListContract - -|> ItemListPresenter
+ItemListPresenter - -|> Presenter
+ItemListView - -|> View
+ConcreteItemListPresenter - -|> ItemListPresenter
+ConcreteItemListPresenter - -|> BasePresenter
+ConcreteItemListFragment - -|> ItemListView
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h3 id="basepresenter">BasePresenter</h3>
+
+<p>It looks more complex than it is. Each <code class="language-plaintext highlighter-rouge">ConcretePresenter</code> implements <code class="language-plaintext highlighter-rouge">Contract.Presenter</code> for its domain capabilities
+and
+<code class="language-plaintext highlighter-rouge">BasePresenter</code> for common methods like <code class="language-plaintext highlighter-rouge">attachView()</code> or <code class="language-plaintext highlighter-rouge">detachView()</code>.
+The <code class="language-plaintext highlighter-rouge">BasePresenter</code> provides <code class="language-plaintext highlighter-rouge">CoroutineContext</code>, so running methods on the Model won’t happen on the UI thread, and jobs
+will be
+canceled when the view is detached.</p>
+
+<p>Kotlin implementation:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">BasePresenter</span><span class="p">&lt;</span><span class="nc">VIEW</span> <span class="p">:</span> <span class="nc">View</span><span class="p">&gt;</span> <span class="p">:</span> <span class="nc">Presenter</span><span class="p">&lt;</span><span class="nc">VIEW</span><span class="p">&gt;,</span> <span class="nc">CoroutineScope</span> <span class="p">{</span>
+    <span class="k">internal</span> <span class="k">lateinit</span> <span class="kd">var</span> <span class="py">view</span><span class="p">:</span> <span class="nc">VIEW</span>
+
+    <span class="k">private</span> <span class="kd">var</span> <span class="py">job</span><span class="p">:</span> <span class="nc">Job</span> <span class="p">=</span> <span class="nc">SupervisorJob</span><span class="p">()</span>
+
+    <span class="k">override</span> <span class="kd">val</span> <span class="py">coroutineContext</span><span class="p">:</span> <span class="nc">CoroutineContext</span>
+        <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="nc">IO</span> <span class="p">+</span> <span class="n">job</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="nc">VIEW</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">view</span> <span class="p">=</span> <span class="n">view</span>
+        <span class="nf">onViewAttached</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">detachView</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">job</span><span class="p">.</span><span class="nf">cancel</span><span class="p">()</span>
+        <span class="nf">onViewDetached</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">onViewAttached</span><span class="p">()</span>
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">onViewDetached</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Because the jobs are performed outside the UI thread, and only the UI thread can modify UI elements, the <code class="language-plaintext highlighter-rouge">View</code> methods
+implementation has to use something like this:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">displayLoading</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">runOnUiThread</span> <span class="p">{</span>
+        <span class="n">progressBar</span><span class="p">.</span><span class="n">visibility</span> <span class="p">=</span> <span class="nc">View</span><span class="p">.</span><span class="nc">VISIBLE</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="view-and-presenter-interfaces">View and Presenter interfaces</h3>
+
+<p>There are also new interfaces for generic <code class="language-plaintext highlighter-rouge">View</code> and <code class="language-plaintext highlighter-rouge">Presenter</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Presenter</span><span class="p">&lt;</span><span class="nc">VIEW</span> <span class="p">:</span> <span class="nc">View</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">attachView</span><span class="p">(</span><span class="n">view</span><span class="p">:</span> <span class="nc">VIEW</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">detachView</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">View</span>
+
+<span class="c1">// Contract</span>
+<span class="kd">interface</span> <span class="nc">Contract</span> <span class="p">{</span>
+    <span class="kd">interface</span> <span class="nc">ConcreteView</span> <span class="p">:</span> <span class="nc">View</span>
+
+    <span class="kd">interface</span> <span class="nc">ConcretePresenter</span> <span class="p">:</span> <span class="nc">Presenter</span><span class="p">&lt;</span><span class="nc">ConcreteView</span><span class="p">&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Using generics guarantees everything is connected in the right way. The <code class="language-plaintext highlighter-rouge">MainViewPresenter</code> now has to inherit from both
+the contract presenter interface and the <code class="language-plaintext highlighter-rouge">BasePresenter</code>. It’s not ideal but allows keeping behavior relevant to the
+contract in a separate place from behavior relevant to the presenter base functionality.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MainViewPresenter</span> <span class="p">:</span> <span class="nc">Contract</span><span class="p">.</span><span class="nc">ConcretePresenter</span><span class="p">,</span> <span class="nc">BasePresenter</span><span class="p">&lt;</span><span class="nc">Contract</span><span class="p">.</span><span class="nc">ConcreteView</span><span class="p">&gt;()</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">ConcretePresenter</code> and <code class="language-plaintext highlighter-rouge">BasePresenter&lt;Contract.ConcreteView&gt;</code> have the same <code class="language-plaintext highlighter-rouge">ConcreteView</code> view, so it all
+works nicely. This way, the <code class="language-plaintext highlighter-rouge">View</code> doesn’t have to know about the <code class="language-plaintext highlighter-rouge">BasePresenter</code> interface to use <code class="language-plaintext highlighter-rouge">attachView()</code>
+and <code class="language-plaintext highlighter-rouge">detachView()</code>. Those methods are part of the <code class="language-plaintext highlighter-rouge">Presenter</code> interface that <code class="language-plaintext highlighter-rouge">ConcretePresenter</code>
+inherits. <code class="language-plaintext highlighter-rouge">BasePresenter</code>
+also inherits this interface, and it provides the actual implementation for assigning the <code class="language-plaintext highlighter-rouge">View</code> reference and handling
+job
+cancellation. Still, it gives <code class="language-plaintext highlighter-rouge">ConcretePresenter</code> implementation a way to perform some actions when the view is attached
+with the</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="k">fun</span> <span class="nf">onViewAttached</span><span class="p">()</span>
+<span class="k">abstract</span> <span class="k">fun</span> <span class="nf">onViewDetached</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>So with a relatively small cost of remembering to always inherit from <code class="language-plaintext highlighter-rouge">BasePresenter</code>, we get nice separation of
+behaviors, and our <code class="language-plaintext highlighter-rouge">Contract</code> can focus on UI handling, rather than technical details of threading etc.</p>
+
+<p>There were no changes for the <code class="language-plaintext highlighter-rouge">View</code> implementation; the <code class="language-plaintext highlighter-rouge">ConcretePresenter</code> interface has all the relevant methods.</p>
+
+<h3 id="presenter-implementation">Presenter implementation</h3>
+
+<p>Let’s look into <code class="language-plaintext highlighter-rouge">MainViewPresenter</code> code:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">launch</span> <span class="p">{</span>
+        <span class="n">view</span><span class="p">.</span><span class="nf">displayLoading</span><span class="p">()</span>
+        <span class="nc">Model</span><span class="p">.</span><span class="nf">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">onFailure</span> <span class="p">{</span> <span class="n">error</span> <span class="p">-&gt;</span>
+                <span class="n">view</span><span class="p">.</span><span class="nf">hideLoading</span><span class="p">()</span>
+                <span class="nf">displayErrorMessage</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="p">.</span><span class="nf">onSuccess</span> <span class="p">{</span>
+                <span class="n">view</span><span class="p">.</span><span class="nf">hideLoading</span><span class="p">()</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Every method from <code class="language-plaintext highlighter-rouge">ConcretePresenter</code> looks similar. It’s wrapped in a <code class="language-plaintext highlighter-rouge">launch</code> block because the <code class="language-plaintext highlighter-rouge">BasePresenter</code> is a
+<code class="language-plaintext highlighter-rouge">CoroutineScope</code>, and it sets the context in its implementation:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="kd">var</span> <span class="py">job</span><span class="p">:</span> <span class="nc">Job</span> <span class="p">=</span> <span class="nc">SupervisorJob</span><span class="p">()</span>
+<span class="k">override</span> <span class="kd">val</span> <span class="py">coroutineContext</span><span class="p">:</span> <span class="nc">CoroutineContext</span>
+<span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Dispatchers</span><span class="p">.</span><span class="nc">IO</span> <span class="p">+</span> <span class="n">job</span>
+</code></pre></div></div>
+
+<p>The Job is canceled when the view is detached. In my implementation, the <code class="language-plaintext highlighter-rouge">Model</code> returns a Kotlin <code class="language-plaintext highlighter-rouge">Result</code>, so I
+can handle errors nicely with the <code class="language-plaintext highlighter-rouge">onFailure()</code> extension method.
+The <code class="language-plaintext highlighter-rouge">removeItem()</code> method tells the <code class="language-plaintext highlighter-rouge">View</code> to display some loading. Some, because it’s up to the <code class="language-plaintext highlighter-rouge">View</code> implementation
+on
+how to do this. The <code class="language-plaintext highlighter-rouge">Presenter</code> has no idea if it’s a <code class="language-plaintext highlighter-rouge">LinearProgressIndicator</code> or <code class="language-plaintext highlighter-rouge">CircularProgressIndicator</code>, or maybe
+a
+Dialog with text “please wait”. Thanks to this, the whole UI can even get redesigned with very little impact on
+the <code class="language-plaintext highlighter-rouge">Presenter</code>.
+The <code class="language-plaintext highlighter-rouge">Controller</code> typically had to know much more about <code class="language-plaintext highlighter-rouge">View</code> details.
+The same goes for <code class="language-plaintext highlighter-rouge">displayErrorMessage()</code>. We can define what data is passed to <code class="language-plaintext highlighter-rouge">View</code> in the <code class="language-plaintext highlighter-rouge">Contract</code>, and we don’t
+have to rely on any Android Framework limitations here.</p>
+
+<p>After an item is successfully removed, the <code class="language-plaintext highlighter-rouge">Presenter</code> is just hiding the loading. What about refreshing data? Well, it
+happens
+automatically:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onViewAttached</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">launch</span> <span class="p">{</span>
+        <span class="nc">Model</span><span class="p">.</span><span class="n">itemsFlow</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">items</span> <span class="p">-&gt;</span>
+            <span class="n">view</span><span class="p">.</span><span class="nf">displayItems</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Presenter</code> is observing the items’ flow from the Model and updating the <code class="language-plaintext highlighter-rouge">View</code> with each new change. The
+old-fashioned way of achieving
+this would be to get new data from the Model after removing an item and passing it to the <code class="language-plaintext highlighter-rouge">View</code>.</p>
+
+<h2 id="common-problems-of-mvp">Common problems of MVP</h2>
+
+<p>While Model-View-Presenter (MVP) offers several advantages over MVC, it’s important to be aware of some common issues
+associated with this architectural pattern.</p>
+
+<ol>
+  <li><strong>Boilerplate Code:</strong>
+    <ul>
+      <li>Each component (Model, View, and Presenter) requires its own set of interfaces and implementations, leading to
+verbose code.</li>
+    </ul>
+  </li>
+  <li><strong>Complexity for Simple UIs:</strong>
+    <ul>
+      <li>For simple user interfaces, the introduction of MVP may seem like an overhead. In cases where the UI logic is
+straightforward, the additional layers introduced by MVP might be considered unnecessary.</li>
+    </ul>
+  </li>
+  <li><strong>Learning Curve:</strong>
+    <ul>
+      <li>Developers who are new to MVP may find it challenging to understand the separation of concerns and the proper
+communication flow between the components. This can result in a steeper learning curve compared to simpler
+patterns.</li>
+    </ul>
+  </li>
+  <li><strong>Presenter Responsibilities:</strong>
+    <ul>
+      <li>Determining what should go into the Presenter and what should stay in the View or Model is not always
+straightforward. Deciding on the proper distribution of responsibilities can lead to ambiguity and inconsistencies
+across implementations.</li>
+    </ul>
+  </li>
+  <li><strong>Tight Coupling:</strong>
+    <ul>
+      <li>While MVP aims to reduce coupling compared to MVC, there’s still a potential for tight coupling between the View
+and Presenter, especially if not implemented carefully. This can make it harder to replace or modify one component
+without affecting the other.</li>
+    </ul>
+  </li>
+  <li><strong>Difficulty in Lifecycle Management:</strong>
+    <ul>
+      <li>Managing the lifecycle of components in MVP, especially in Android where the activity and fragment lifecycles are
+critical, can be challenging. Improper management may result in memory leaks or unexpected behavior.</li>
+    </ul>
+  </li>
+  <li><strong>No standardization:</strong>
+    <ul>
+      <li>Unlike some other patterns, there is no strict standardization for MVP, leading to variations in implementations.
+This lack of a standard can make it challenging for developers to move between projects seamlessly.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>It’s important to note that the issues mentioned above are not inherent flaws in MVP but rather considerations and
+trade-offs. The appropriateness of MVP depends on the specific needs of the project and the <strong>preferences and experience
+of the development team</strong>. Additionally, some of these issues can be mitigated with proper design practices and
+libraries that support MVP, such as dependency injection frameworks.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>MVP is a step in the right direction from MVC. It’s also not that hard to actually refactor from MVC to MVP. Nowadays,
+we can <strong>benefit from using coroutines, flows, or <code class="language-plaintext highlighter-rouge">Result</code> class</strong> to avoid callback hell and easy threading. The
+pattern
+provides clear(er) separation of concerns. It’s finally easy to test code between Model and the View.</p>
+
+<p>The MVP pattern version I showed in this post requires a bit of boilerplate, even for low complexity UI. But at the same
+time, a lot of technical issues are hidden, and developers may focus solely on the <code class="language-plaintext highlighter-rouge">Contract</code>.</p>
+
+<p>Even now when I look at the extended MVP diagram, it looks a bit scary. There are a lot of interfaces, and it may look
+like an overkill. If only there was a way to achieve similar separation of concerns, testability, and ease of use… oh
+wait, there is <strong>MVVM</strong> :)</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Model-View-Presenter-ref">
+                    Model-View-Presenter <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#MVP-ref">
+                    MVP <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Android Architecture-ref">
+                    Android Architecture <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#UI Design-ref">
+                    UI Design <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Software Development-ref">
+                    Software Development <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Android Presentation Patterns: MVP"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/2024-01-27-MVC"
+                                    title="Android Presentation Patterns: MVC">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/2024-02-09-MVVM" title="Android Presentation Patterns: MVVM">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

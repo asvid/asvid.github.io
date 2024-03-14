@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/plyta.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Kotlin Factory Method </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   February
+	   26th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        49 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#purpose">Purpose</a></li>
+<li class="toc-entry toc-h1"><a href="#implementation-examples">Implementation examples</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#example-from-the-gang-of-four-simple">Example from “the gang of four” (simple)</a></li>
+<li class="toc-entry toc-h2"><a href="#more-interesting-example-from-the-gang-of-four">More interesting example from the gang of four</a></li>
+<li class="toc-entry toc-h2"><a href="#sealed-class">Sealed class</a></li>
+<li class="toc-entry toc-h2"><a href="#factories-with-registry">Factories with registry</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#pros">Pros</a></li>
+<li class="toc-entry toc-h2"><a href="#cons">Cons</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="purpose">Purpose</h1>
+
+<p>Just like Builder, the Factory is a creational pattern. It describes an interface used to deliver instances. Instead of calling object constructor, we can call a method of the Factory which will generate interface implementation - the concrete object. What makes it different from Builder is that usually none or very few arguments need to be passed. It’s Factory’s job to fulfill all required by the object dependencies.</p>
+
+<p>Factory can deliver objects of various types implementing the same interface just by the passed arguments. The complete interface from implementation isolation allows effortless replacing implementation in runtime.</p>
+
+<p>When using Factory you rather tell it: “I know just <code class="language-plaintext highlighter-rouge">this</code> and <code class="language-plaintext highlighter-rouge">that</code> give me instance implementing the expected interface”. Example: <code class="language-plaintext highlighter-rouge">Locale.forLanguageTag("pl-PL")</code> will give us <code class="language-plaintext highlighter-rouge">Locale</code> instance with full country or language name even if they were not provided. In the case of Builder, it would rather be telling: “give me instance with <code class="language-plaintext highlighter-rouge">this</code> and <code class="language-plaintext highlighter-rouge">that</code> set and leave everything else default”. Factories often have injected dependencies that allow them to create complex objects with just minimum input data from the client.</p>
+
+<p>There are few variants of this pattern:</p>
+<ul>
+  <li>Static Factory Method (already described <a href="https://asvid.github.io/kotlin-static-factory-methods">here</a>)</li>
+  <li>“typical” Factory Method</li>
+  <li>Abstract Factory</li>
+</ul>
+
+<p>Here, I’d like to focus on Factory Method and leave Abstract Factory for the future one.</p>
+
+<h1 id="implementation-examples">Implementation examples</h1>
+
+<p>Factory Method pattern itself can take multiple forms. The most important common feature is relying only on the delivered object interface instead of concrete implementation.</p>
+
+<h2 id="example-from-the-gang-of-four-simple">Example from “the gang of four” (simple)</h2>
+
+<p>Fairly basic example, coming from the book “Design Patterns: Elements of Reusable Object-Oriented Software”<sup id="fnref:design_patterns" role="doc-noteref"><a href="#fn:design_patterns" class="footnote" rel="footnote">1</a></sup> by so called ‘gang of four’ (Gamma, Helm, Johnson, Vlissides).</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// basic example of Factory Method</span>
+<span class="kd">val</span> <span class="py">creator</span><span class="p">:</span> <span class="nc">Creator</span> <span class="p">=</span> <span class="nc">ConcreteCreator</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">concreteProduct</span><span class="p">:</span> <span class="nc">Product</span> <span class="p">=</span> <span class="n">creator</span><span class="p">.</span><span class="nf">factoryMethod</span><span class="p">()</span>
+<span class="n">concreteProduct</span><span class="p">.</span><span class="nf">doStuff</span><span class="p">()</span>
+
+<span class="c1">// instance can be still created with a constructor</span>
+<span class="kd">val</span> <span class="py">concreteProduct2</span> <span class="p">=</span> <span class="nc">ConcreteProduct</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="201px" preserveAspectRatio="none" style="width:630px;height:201px;" version="1.1" viewBox="0 0 630 201" width="630px" zoomAndPan="magnify"><defs><filter height="300%" id="f4pprg9jce5cz" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[72136138052d025cffdce3c22fbd185f]
+class Product--><rect fill="#FEFECE" filter="url(#f4pprg9jce5cz)" height="48" id="Product" style="stroke: #A80036; stroke-width: 1.5;" width="80" x="35" y="14.5" /><ellipse cx="50" cy="30.5" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M45.9219,26.2656 L45.9219,24.1094 L53.3125,24.1094 L53.3125,26.2656 L50.8438,26.2656 L50.8438,34.3438 L53.3125,34.3438 L53.3125,36.5 L45.9219,36.5 L45.9219,34.3438 L48.3906,34.3438 L48.3906,26.2656 L45.9219,26.2656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="48" x="64" y="34.6543">Product</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="36" x2="114" y1="46.5" y2="46.5" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="36" x2="114" y1="54.5" y2="54.5" /><!--MD5=[2c589014e840926a718801db2289e0a7]
+class Creator--><rect fill="#FEFECE" filter="url(#f4pprg9jce5cz)" height="60.8047" id="Creator" style="stroke: #A80036; stroke-width: 1.5;" width="161" x="241.5" y="8" /><ellipse cx="294.25" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M290.1719,19.7656 L290.1719,17.6094 L297.5625,17.6094 L297.5625,19.7656 L295.0938,19.7656 L295.0938,27.8438 L297.5625,27.8438 L297.5625,30 L290.1719,30 L290.1719,27.8438 L292.6406,27.8438 L292.6406,19.7656 L290.1719,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="47" x="314.75" y="28.1543">Creator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="242.5" x2="401.5" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="242.5" x2="401.5" y1="48" y2="48" /><ellipse cx="252.5" cy="59" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="135" x="261.5" y="62.2104">factoryMethod():Product</text><!--MD5=[9fa9675923b2c821721124a66decc968]
+class ConcreteCreator--><rect fill="#FEFECE" filter="url(#f4pprg9jce5cz)" height="60.8047" id="ConcreteCreator" style="stroke: #A80036; stroke-width: 1.5;" width="161" x="241.5" y="130" /><ellipse cx="267.75" cy="146" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M270.7188,151.6406 Q270.1406,151.9375 269.5,152.0781 Q268.8594,152.2344 268.1563,152.2344 Q265.6563,152.2344 264.3281,150.5938 Q263.0156,148.9375 263.0156,145.8125 Q263.0156,142.6875 264.3281,141.0313 Q265.6563,139.375 268.1563,139.375 Q268.8594,139.375 269.5,139.5313 Q270.1563,139.6875 270.7188,139.9844 L270.7188,142.7031 Q270.0938,142.125 269.5,141.8594 Q268.9063,141.5781 268.2813,141.5781 Q266.9375,141.5781 266.25,142.6563 Q265.5625,143.7188 265.5625,145.8125 Q265.5625,147.9063 266.25,148.9844 Q266.9375,150.0469 268.2813,150.0469 Q268.9063,150.0469 269.5,149.7813 Q270.0938,149.5 270.7188,148.9219 L270.7188,151.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="104" x="284.25" y="150.1543">ConcreteCreator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="242.5" x2="401.5" y1="162" y2="162" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="242.5" x2="401.5" y1="170" y2="170" /><ellipse cx="252.5" cy="181" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="135" x="261.5" y="184.2104">factoryMethod():Product</text><!--MD5=[990132e04f994323e3060f5453bb4352]
+class ConcreteProduct--><rect fill="#FEFECE" filter="url(#f4pprg9jce5cz)" height="48" id="ConcreteProduct" style="stroke: #A80036; stroke-width: 1.5;" width="138" x="6" y="136.5" /><ellipse cx="21" cy="152.5" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M23.9688,158.1406 Q23.3906,158.4375 22.75,158.5781 Q22.1094,158.7344 21.4063,158.7344 Q18.9063,158.7344 17.5781,157.0938 Q16.2656,155.4375 16.2656,152.3125 Q16.2656,149.1875 17.5781,147.5313 Q18.9063,145.875 21.4063,145.875 Q22.1094,145.875 22.75,146.0313 Q23.4063,146.1875 23.9688,146.4844 L23.9688,149.2031 Q23.3438,148.625 22.75,148.3594 Q22.1563,148.0781 21.5313,148.0781 Q20.1875,148.0781 19.5,149.1563 Q18.8125,150.2188 18.8125,152.3125 Q18.8125,154.4063 19.5,155.4844 Q20.1875,156.5469 21.5313,156.5469 Q22.1563,156.5469 22.75,156.2813 Q23.3438,156 23.9688,155.4219 L23.9688,158.1406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="106" x="35" y="156.6543">ConcreteProduct</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="143" y1="168.5" y2="168.5" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="143" y1="176.5" y2="176.5" /><path d="M437.5,143 L437.5,151.5664 L396.5,180.4023 L437.5,159.5664 L437.5,168.1328 A0,0 0 0 0 437.5,168.1328 L618.5,168.1328 A0,0 0 0 0 618.5,168.1328 L618.5,153 L608.5,143 L437.5,143 A0,0 0 0 0 437.5,143 " fill="#FBFB77" filter="url(#f4pprg9jce5cz)" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M608.5,143 L608.5,153 L618.5,153 L608.5,143 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="160" x="443.5" y="160.0669">return ConcreteProduct()</text><!--MD5=[ef1bc5798733e6fc5a6eca0cf841bcae]
+reverse link Creator to ConcreteCreator--><path d="M322,89.62 C322,103.28 322,117.64 322,129.76 " fill="none" id="Creator&lt;-ConcreteCreator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="315,89.16,322,69.16,329,89.16,315,89.16" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[03f389ab946010d19db5823a3056b88d]
+reverse link Product to ConcreteProduct--><path d="M75,82.8 C75,100.93 75,121.26 75,136.43 " fill="none" id="Product&lt;-ConcreteProduct" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="68,82.64,75,62.64,82,82.64,68,82.64" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[9dc137b59224eeda98fbbd954d4d5c7e]
+link ConcreteCreator to ConcreteCreator$$$RIGHT--><!--MD5=[a5721544b3315a4dd5c5555f4ca9a3e5]
+link ConcreteProduct to ConcreteCreator--><path d="M144.13,160.5 C174.25,160.5 209.75,160.5 241.08,160.5 " fill="none" id="ConcreteProduct-ConcreteCreator" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#000000" points="169.25,147.5664,163.25,150.5664,169.25,153.5664,169.25,147.5664" style="stroke: #000000; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="48" x="175.25" y="153.5669">creates</text><!--MD5=[2581168bfc5293689036e11391bdd1f5]
+@startuml
+interface Product
+interface Creator{
++factoryMethod():Product
+}
+
+class ConcreteCreator extends Creator{
++factoryMethod():Product
+}
+
+class ConcreteProduct extends Product
+
+note right of ConcreteCreator::factoryMethod
+return ConcreteProduct()
+end note
+
+ConcreteCreator .left. ConcreteProduct : > creates
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h3 id="elements">Elements</h3>
+
+<ul>
+  <li><strong>Product</strong> - interface of the object created by the factory</li>
+  <li><strong>ConcreteProduct</strong> - implementation of <code class="language-plaintext highlighter-rouge">Product</code> interface, a concrete object that will be created by Factory</li>
+  <li><strong>Creator</strong> - Factory interface, it has declaration of the factory method returning <code class="language-plaintext highlighter-rouge">Product</code></li>
+  <li><strong>ConcreteCreator</strong> - Factory implementation, building <code class="language-plaintext highlighter-rouge">Product</code> instance, in this case it’s <code class="language-plaintext highlighter-rouge">ConcreteProduct</code></li>
+</ul>
+
+<h3 id="implementation">Implementation</h3>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// generic product interface</span>
+<span class="kd">interface</span> <span class="nc">Product</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">doStuff</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// "concrete" product implementing interface</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">ConcreteProduct</span> <span class="p">:</span> <span class="nc">Product</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">doStuff</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"ConcreteProduct is doing stuff"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Creator</span> <span class="p">{</span>
+    <span class="c1">// factory method that returns `Product` implementation</span>
+    <span class="k">fun</span> <span class="nf">factoryMethod</span><span class="p">()</span> <span class="p">:</span> <span class="nc">Product</span>
+<span class="p">}</span>
+
+<span class="c1">// "concrete" factory implementation, building `ConcreteProduct`</span>
+<span class="kd">class</span> <span class="nc">ConcreteCreator</span><span class="p">:</span> <span class="nc">Creator</span> <span class="p">{</span>
+    <span class="c1">// returned type has to be generic interface, </span>
+    <span class="c1">// returning internal `ConcreteProduct` will cause compile time error</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">factoryMethod</span><span class="p">()</span> <span class="p">:</span> <span class="nc">Product</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"ConcreteCreator is using factory method"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nc">ConcreteProduct</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>There is nothing similar to <code class="language-plaintext highlighter-rouge">internal class</code> in Java, but it fits nicely into the above use. Using <code class="language-plaintext highlighter-rouge">internal</code> prevents leaking internal types. This is especially useful when building a library or SDK and you don’t want to reveal implementation.</p>
+
+<h2 id="more-interesting-example-from-the-gang-of-four">More interesting example from the gang of four</h2>
+
+<p>The same book contains a more exciting example. Let’s assume that we have an application, where you can create and then modify geometric figures. Each figure will contain information about its points coordinates and method to calculate area. It’s easy to imagine that every figure will be scaled or moved differently. Instead of creating methods for that inside figure class, we can have another object the <code class="language-plaintext highlighter-rouge">Manipulator</code>, that will handle those operations for the given figure. But we don’t want our client to know and understand implementation details for <code class="language-plaintext highlighter-rouge">Figure</code> or <code class="language-plaintext highlighter-rouge">Manipulator</code></p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// creating an instance with the constructor</span>
+<span class="kd">val</span> <span class="py">square</span> <span class="p">=</span> <span class="nc">Square</span><span class="p">()</span>
+<span class="c1">// using square manipulator but through a generic interface</span>
+<span class="n">square</span><span class="p">.</span><span class="nf">createManipulator</span><span class="p">().</span><span class="nf">drag</span><span class="p">()</span>
+
+<span class="kd">val</span> <span class="py">figureFactory</span><span class="p">:</span> <span class="nc">FigureFactory</span> <span class="p">=</span> <span class="nc">ByTypeFactory</span><span class="p">()</span>
+<span class="c1">// creating a circle with a factory method that takes `enum` describing expected figure type</span>
+<span class="kd">val</span> <span class="py">circle</span><span class="p">:</span> <span class="nc">Figure</span> <span class="p">=</span> <span class="n">figureFactory</span><span class="p">.</span><span class="nf">createFigure</span><span class="p">(</span><span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Circle</span><span class="p">)</span>
+<span class="c1">// similar figure manipulation</span>
+<span class="n">circle</span><span class="p">.</span><span class="nf">createManipulator</span><span class="p">().</span><span class="nf">drag</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="239px" preserveAspectRatio="none" style="width:936px;height:239px;" version="1.1" viewBox="0 0 936 239" width="936px" zoomAndPan="magnify"><defs><filter height="300%" id="f1liu346wd4v6p" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[a2a6247c4220d285c6759f2fd5931a4f]
+class Figure--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="60.8047" id="Figure" style="stroke: #A80036; stroke-width: 1.5;" width="245" x="262" y="14.5" /><ellipse cx="360.75" cy="30.5" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M356.6719,26.2656 L356.6719,24.1094 L364.0625,24.1094 L364.0625,26.2656 L361.5938,26.2656 L361.5938,34.3438 L364.0625,34.3438 L364.0625,36.5 L356.6719,36.5 L356.6719,34.3438 L359.1406,34.3438 L359.1406,26.2656 L356.6719,26.2656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="39" x="381.25" y="34.6543">Figure</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="263" x2="506" y1="46.5" y2="46.5" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="263" x2="506" y1="54.5" y2="54.5" /><ellipse cx="273" cy="65.5" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="219" x="282" y="68.7104">createManipulator(): FigureManipulator</text><!--MD5=[c1c26b472d76d3c531c49386aa3b2fab]
+class FigureManipulator--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="73.6094" id="FigureManipulator" style="stroke: #A80036; stroke-width: 1.5;" width="145" x="644" y="8" /><ellipse cx="659" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M654.9219,19.7656 L654.9219,17.6094 L662.3125,17.6094 L662.3125,19.7656 L659.8438,19.7656 L659.8438,27.8438 L662.3125,27.8438 L662.3125,30 L654.9219,30 L654.9219,27.8438 L657.3906,27.8438 L657.3906,19.7656 L654.9219,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="113" x="673" y="28.1543">FigureManipulator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="645" x2="788" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="645" x2="788" y1="48" y2="48" /><ellipse cx="655" cy="59" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="34" x="664" y="62.2104">drag()</text><ellipse cx="655" cy="71.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="664" y="75.0151">resize(scale: Float)</text><!--MD5=[ed6624c6556d5e7b1bd23032162d20b7]
+class Client--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="48" id="Client" style="stroke: #A80036; stroke-width: 1.5;" width="67" x="542" y="21" /><ellipse cx="557" cy="37" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M559.9688,42.6406 Q559.3906,42.9375 558.75,43.0781 Q558.1094,43.2344 557.4063,43.2344 Q554.9063,43.2344 553.5781,41.5938 Q552.2656,39.9375 552.2656,36.8125 Q552.2656,33.6875 553.5781,32.0313 Q554.9063,30.375 557.4063,30.375 Q558.1094,30.375 558.75,30.5313 Q559.4063,30.6875 559.9688,30.9844 L559.9688,33.7031 Q559.3438,33.125 558.75,32.8594 Q558.1563,32.5781 557.5313,32.5781 Q556.1875,32.5781 555.5,33.6563 Q554.8125,34.7188 554.8125,36.8125 Q554.8125,38.9063 555.5,39.9844 Q556.1875,41.0469 557.5313,41.0469 Q558.1563,41.0469 558.75,40.7813 Q559.3438,40.5 559.9688,39.9219 L559.9688,42.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="35" x="571" y="41.1543">Client</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="543" x2="608" y1="53" y2="53" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="543" x2="608" y1="61" y2="61" /><!--MD5=[a7f9118cae7621dd25d25149752faef0]
+class Circle--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="60.8047" id="Circle" style="stroke: #A80036; stroke-width: 1.5;" width="245" x="310" y="155" /><ellipse cx="411.25" cy="171" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M414.2188,176.6406 Q413.6406,176.9375 413,177.0781 Q412.3594,177.2344 411.6563,177.2344 Q409.1563,177.2344 407.8281,175.5938 Q406.5156,173.9375 406.5156,170.8125 Q406.5156,167.6875 407.8281,166.0313 Q409.1563,164.375 411.6563,164.375 Q412.3594,164.375 413,164.5313 Q413.6563,164.6875 414.2188,164.9844 L414.2188,167.7031 Q413.5938,167.125 413,166.8594 Q412.4063,166.5781 411.7813,166.5781 Q410.4375,166.5781 409.75,167.6563 Q409.0625,168.7188 409.0625,170.8125 Q409.0625,172.9063 409.75,173.9844 Q410.4375,175.0469 411.7813,175.0469 Q412.4063,175.0469 413,174.7813 Q413.5938,174.5 414.2188,173.9219 L414.2188,176.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="34" x="431.75" y="175.1543">Circle</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="311" x2="554" y1="187" y2="187" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="311" x2="554" y1="195" y2="195" /><ellipse cx="321" cy="206" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="219" x="330" y="209.2104">createManipulator(): FigureManipulator</text><!--MD5=[5655ee3e2a0d028d03fe20f829576392]
+class Square--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="60.8047" id="Square" style="stroke: #A80036; stroke-width: 1.5;" width="245" x="14" y="155" /><ellipse cx="109.75" cy="171" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M112.7188,176.6406 Q112.1406,176.9375 111.5,177.0781 Q110.8594,177.2344 110.1563,177.2344 Q107.6563,177.2344 106.3281,175.5938 Q105.0156,173.9375 105.0156,170.8125 Q105.0156,167.6875 106.3281,166.0313 Q107.6563,164.375 110.1563,164.375 Q110.8594,164.375 111.5,164.5313 Q112.1563,164.6875 112.7188,164.9844 L112.7188,167.7031 Q112.0938,167.125 111.5,166.8594 Q110.9063,166.5781 110.2813,166.5781 Q108.9375,166.5781 108.25,167.6563 Q107.5625,168.7188 107.5625,170.8125 Q107.5625,172.9063 108.25,173.9844 Q108.9375,175.0469 110.2813,175.0469 Q110.9063,175.0469 111.5,174.7813 Q112.0938,174.5 112.7188,173.9219 L112.7188,176.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="45" x="130.25" y="175.1543">Square</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="258" y1="187" y2="187" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="258" y1="195" y2="195" /><ellipse cx="25" cy="206" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="219" x="34" y="209.2104">createManipulator(): FigureManipulator</text><!--MD5=[e1ca513c2965ed11f2825883d743c792]
+class CircleManipulator--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="86.4141" id="CircleManipulator" style="stroke: #A80036; stroke-width: 1.5;" width="140" x="598.5" y="142" /><ellipse cx="613.5" cy="158" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M616.4688,163.6406 Q615.8906,163.9375 615.25,164.0781 Q614.6094,164.2344 613.9063,164.2344 Q611.4063,164.2344 610.0781,162.5938 Q608.7656,160.9375 608.7656,157.8125 Q608.7656,154.6875 610.0781,153.0313 Q611.4063,151.375 613.9063,151.375 Q614.6094,151.375 615.25,151.5313 Q615.9063,151.6875 616.4688,151.9844 L616.4688,154.7031 Q615.8438,154.125 615.25,153.8594 Q614.6563,153.5781 614.0313,153.5781 Q612.6875,153.5781 612,154.6563 Q611.3125,155.7188 611.3125,157.8125 Q611.3125,159.9063 612,160.9844 Q612.6875,162.0469 614.0313,162.0469 Q614.6563,162.0469 615.25,161.7813 Q615.8438,161.5 616.4688,160.9219 L616.4688,163.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="108" x="627.5" y="162.1543">CircleManipulator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="599.5" x2="737.5" y1="174" y2="174" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="606.5" y="182" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="69" x="618.5" y="188.2104">figure:Circle</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="599.5" x2="737.5" y1="194.8047" y2="194.8047" /><ellipse cx="609.5" cy="205.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="34" x="618.5" y="209.0151">drag()</text><ellipse cx="609.5" cy="218.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="618.5" y="221.8198">resize(scale: Float)</text><!--MD5=[8305de2eb2fa89e0a7aeb36616251316]
+class SquareManipulator--><rect fill="#FEFECE" filter="url(#f1liu346wd4v6p)" height="86.4141" id="SquareManipulator" style="stroke: #A80036; stroke-width: 1.5;" width="151" x="774" y="142" /><ellipse cx="789" cy="158" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M791.9688,163.6406 Q791.3906,163.9375 790.75,164.0781 Q790.1094,164.2344 789.4063,164.2344 Q786.9063,164.2344 785.5781,162.5938 Q784.2656,160.9375 784.2656,157.8125 Q784.2656,154.6875 785.5781,153.0313 Q786.9063,151.375 789.4063,151.375 Q790.1094,151.375 790.75,151.5313 Q791.4063,151.6875 791.9688,151.9844 L791.9688,154.7031 Q791.3438,154.125 790.75,153.8594 Q790.1563,153.5781 789.5313,153.5781 Q788.1875,153.5781 787.5,154.6563 Q786.8125,155.7188 786.8125,157.8125 Q786.8125,159.9063 787.5,160.9844 Q788.1875,162.0469 789.5313,162.0469 Q790.1563,162.0469 790.75,161.7813 Q791.3438,161.5 791.9688,160.9219 L791.9688,163.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="119" x="803" y="162.1543">SquareManipulator</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="775" x2="924" y1="174" y2="174" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="782" y="182" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="78" x="794" y="188.2104">figure:Square</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="775" x2="924" y1="194.8047" y2="194.8047" /><ellipse cx="785" cy="205.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="34" x="794" y="209.0151">drag()</text><ellipse cx="785" cy="218.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="107" x="794" y="221.8198">resize(scale: Float)</text><!--MD5=[f4cc9a892b9c16e80b7240b9eb9afdd4]
+reverse link Figure to Client--><path d="M512.38,45 C522.22,45 532.06,45 541.9,45 " fill="none" id="Figure&lt;-Client" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="507.23,45,516.23,49,512.23,45,516.23,41,507.23,45" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[ab736171ab82f0b4c452276d47a0429b]
+link Client to FigureManipulator--><path d="M609.1,45 C618.98,45 628.87,45 638.75,45 " fill="none" id="Client-&gt;FigureManipulator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="643.92,45,634.92,41,638.92,45,634.92,49,643.92,45" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[1208200553d00bbe7eda75b0249f99fe]
+reverse link Figure to Circle--><path d="M401.39,94.57 C407.83,113.09 415.03,133.76 420.87,150.57 " fill="none" id="Figure&lt;-Circle" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="394.76,96.79,394.8,75.6,407.98,92.19,394.76,96.79" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[5c5634ce16133b21b91ad1b283e43e6f]
+reverse link Figure to Square--><path d="M313.76,85.36 C276.58,106.05 231.52,131.12 196.14,150.81 " fill="none" id="Figure&lt;-Square" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="310.42,79.21,331.3,75.6,317.22,91.45,310.42,79.21" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[f745ff3e46e838b3cd63a21585c73d8c]
+reverse link FigureManipulator to CircleManipulator--><path d="M697.3,101.21 C692.61,114.67 687.68,128.86 683.24,141.62 " fill="none" id="FigureManipulator&lt;-CircleManipulator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="690.71,98.85,703.89,82.26,703.93,103.45,690.71,98.85" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[0b4cc6e4ee6faa3483244ef44685b8ff]
+reverse link FigureManipulator to SquareManipulator--><path d="M765.66,97.01 C779.8,111.68 795.07,127.53 808.66,141.62 " fill="none" id="FigureManipulator&lt;-SquareManipulator" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="760.28,101.52,751.44,82.26,770.36,91.8,760.28,101.52" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[4a5e81087d34e3b1b87ab7673ecfdf7f]
+link Circle to CircleManipulator--><path d="M556.5,205 C566.81,208.5 577.58,210.43 588.18,211.14 " fill="none" id="Circle-&gt;CircleManipulator" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#A80036" points="598.27,211.46,589.4005,207.1785,593.2725,211.3025,589.1485,215.1745,598.27,211.46" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[3277e2ff6db09dd9c84d1bbef9338242]
+link Square to SquareManipulator--><path d="M260.5,205 C305.76,205 262.75,134.54 302,112 C386.21,63.63 646,84.05 739,112 C758.18,117.76 777.11,128.06 793.73,139.13 " fill="none" id="Square-&gt;SquareManipulator" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#A80036" points="797.9,141.96,792.6832,133.6063,793.7574,139.1602,788.2035,140.2344,797.9,141.96" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[78933a94b8c2a9ed9069ccf6e4c4ad7a]
+@startuml
+interface Figure{
++createManipulator(): FigureManipulator
+}
+interface FigureManipulator {
++drag()
++resize(scale: Float)
+}
+
+class Client
+
+Client -left-> Figure
+Client -right-> FigureManipulator
+
+class Circle extends Figure {
++createManipulator(): FigureManipulator
+}
+class Square extends Figure {
++createManipulator(): FigureManipulator
+}
+
+class CircleManipulator extends FigureManipulator {
+-figure:Circle
++drag()
++resize(scale: Float)
+}
+
+class SquareManipulator extends FigureManipulator {
+-figure:Square
++drag()
++resize(scale: Float)
+}
+
+Circle::createManipulator .right.> CircleManipulator
+Square::createManipulator .right.> SquareManipulator
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h3 id="elements-1">Elements</h3>
+
+<ul>
+  <li><strong>Figure</strong> - figure itnerface implemented by classes <code class="language-plaintext highlighter-rouge">Circle</code>, <code class="language-plaintext highlighter-rouge">Square</code> and <code class="language-plaintext highlighter-rouge">Line</code></li>
+  <li><strong>FigureManipulator</strong> - interface of figure manipulator</li>
+  <li><strong>CircleManipulator</strong> - implementation of <code class="language-plaintext highlighter-rouge">FigureManipulator</code> for concrete figure, like <code class="language-plaintext highlighter-rouge">Circle</code> in this case</li>
+</ul>
+
+<h3 id="implementation-1">Implementation</h3>
+
+<h4 id="figure">Figure</h4>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Figure</span> <span class="p">{</span>
+    <span class="c1">// Figure can create FigureManipulator for itself, </span>
+    <span class="c1">// but for client it will always be generic and not concrete</span>
+    <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">():</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Figure</span><span class="p">&gt;</span> <span class="c1">// metoda wytwórcza</span>
+<span class="p">}</span>
+
+<span class="c1">// `internal` class means that its not available outside its module,</span>
+<span class="c1">// but visible only for classes that its being compiled with.</span>
+<span class="c1">// This is useful when building a library, when you don't want to leak internal types.</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">Circle</span><span class="p">:</span> <span class="nc">Figure</span> <span class="p">{</span>
+    <span class="c1">// Manipulator can be replaced with new one without the need of updating clients</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">()</span> <span class="p">=</span> <span class="nc">CircleManipulator</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">Square</span> <span class="p">:</span> <span class="nc">Figure</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">()</span> <span class="p">=</span> <span class="nc">SquareManipulator</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">Line</span> <span class="p">:</span> <span class="nc">Figure</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">()</span> <span class="p">=</span> <span class="nc">LineManipulator</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h4 id="manipulator">Manipulator</h4>
+<p><code class="language-plaintext highlighter-rouge">Manipulator</code> interface allows for Figure dragging and resizing. The concrete implementation is tightly connected with the type of Figure it will manipulate.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// generic here ensures that a concrete `FigureManipulator` </span>
+<span class="c1">// will handle just the concrete type of Figure, </span>
+<span class="c1">// ex. `CircleManipulator` can't handle `Square`</span>
+<span class="kd">interface</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">T</span> <span class="p">:</span> <span class="nc">Figure</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// constructor parameter type must be the one declared in FigureManipulator</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">CircleManipulator</span><span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">figure</span><span class="p">:</span> <span class="nc">T</span><span class="p">)</span> <span class="p">:</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">Circle</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"CircleManipulator is manipulating circle $figure"</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"CircleManipulator is resizing circle $figure"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">SquareManipulator</span><span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">figure</span><span class="p">:</span> <span class="nc">T</span><span class="p">)</span> <span class="p">:</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">Square</span><span class="p">&gt;</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">LineManipulator</span><span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">figure</span><span class="p">:</span> <span class="nc">T</span><span class="p">)</span> <span class="p">:</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">Line</span><span class="p">&gt;</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+</code></pre></div></div>
+<h4 id="factory">Factory</h4>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">FigureFactory</span> <span class="p">{</span>
+    <span class="c1">// enum types for provided by the factory Figures</span>
+    <span class="k">enum</span> <span class="kd">class</span> <span class="nc">Type</span> <span class="p">{</span> <span class="nc">Circle</span><span class="p">,</span> <span class="nc">Square</span><span class="p">,</span> <span class="nc">Line</span><span class="p">,</span> <span class="nc">Undefined</span> <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">createFigure</span><span class="p">(</span><span class="n">type</span><span class="p">:</span> <span class="nc">Type</span><span class="p">):</span> <span class="nc">Figure</span>
+<span class="p">}</span>
+
+<span class="c1">// Common Factory implementation where it creates instances for provided enum type</span>
+<span class="kd">class</span> <span class="nc">ByTypeFactory</span> <span class="p">:</span> <span class="nc">FigureFactory</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createFigure</span><span class="p">(</span><span class="n">type</span><span class="p">:</span> <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">):</span> <span class="nc">Figure</span> <span class="p">=</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// compilation error will happen if not all enum types are handled</span>
+            <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Circle</span> <span class="p">-&gt;</span> <span class="nc">Circle</span><span class="p">()</span>
+            <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Square</span> <span class="p">-&gt;</span> <span class="nc">Square</span><span class="p">()</span>
+            <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Line</span> <span class="p">-&gt;</span> <span class="nc">Line</span><span class="p">()</span>
+            <span class="c1">// `Undefined` is not handled explicitly but it will fall in the `else`</span>
+            <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="nc">Exception</span><span class="p">(</span><span class="s">"unknown figure, don't know how to create it"</span><span class="p">)</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">FigureFactory</code> contains an enum reflecting <code class="language-plaintext highlighter-rouge">Figure</code> types created by it. Not using directly types of delivered instances have a few benefits:</p>
+<ul>
+  <li>It doesn’t leak internal types of concrete implementations. Factory shares just the <code class="language-plaintext highlighter-rouge">enum</code> and clients see only the generic interface, not concrete types.</li>
+  <li>To use enum type, you need to call it by factory interface like <code class="language-plaintext highlighter-rouge">FigureFactory.Type.Circle</code>. It minimizes the risk of using the wrong <code class="language-plaintext highlighter-rouge">Type</code> enum from some other factory or another place. Of course, IDE will highlight this error, but it can be just avoided. Using a less generic name like <code class="language-plaintext highlighter-rouge">FigureType</code> for enum can also help.</li>
+  <li><code class="language-plaintext highlighter-rouge">Figure</code> has no idea in what forms it can be created, but Factory knows what instances it can deliver. This is why figure type enum belongs to <code class="language-plaintext highlighter-rouge">FigureFactory</code> rather than <code class="language-plaintext highlighter-rouge">Figure</code>.</li>
+  <li>The enum <code class="language-plaintext highlighter-rouge">FigureFactory.Type</code> makes sense only used with the factory. Putting it outside this interface may suggest that it’s worth using it in a completely different context… which may then cause issues with maintaining the code in the future.</li>
+</ul>
+
+<h4 id="other-factory-implementations">Other Factory implementations</h4>
+<p>Anonymous objects (no concrete class but implementing an interface) can also be delivered by the Factory:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// factory can create anonymous objects, for client it doesn't matter</span>
+<span class="kd">class</span> <span class="nc">UndefinedFigureFactory</span> <span class="p">:</span> <span class="nc">FigureFactory</span> <span class="p">{</span>
+    <span class="c1">// whatever the `type` parameter is, the same object will be returned</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createFigure</span><span class="p">(</span><span class="n">type</span><span class="p">:</span> <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">)</span> <span class="p">=</span> <span class="k">object</span><span class="p">:</span> <span class="nc">Figure</span> <span class="p">{</span>
+        <span class="c1">// with the same manipulator</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">()</span> <span class="p">=</span> <span class="k">object</span><span class="p">:</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">Figure</span><span class="p">&gt;</span> <span class="p">{</span>
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"UndefinedFigure dragging"</span><span class="p">)</span>
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"UndefinedFigure resizing"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// usage</span>
+<span class="nc">UndefinedFigureFactory</span><span class="p">()</span>
+        <span class="p">.</span><span class="nf">createFigure</span><span class="p">(</span><span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Circle</span><span class="p">)</span> <span class="c1">// type doesn't really matter in this Factory</span>
+        <span class="p">.</span><span class="nf">createManipulator</span><span class="p">()</span> <span class="c1">// but instance API is the same</span>
+        <span class="p">.</span><span class="nf">drag</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Frequently when writing tests you don’t need a concrete object but just a stub or a mock, that will allow you to verify code correctness. This is easily achievable with the Factory interface and implementing its variant for tests, which is then injected wherever it’s needed:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// for testing it's sometimes useful to replace real factory with some kind of stub</span>
+<span class="kd">class</span> <span class="nc">FakeFactory</span> <span class="p">:</span> <span class="nc">FigureFactory</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createFigure</span><span class="p">(</span><span class="n">type</span><span class="p">:</span> <span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">):</span> <span class="nc">Figure</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">FakeFigure</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// for client it doesn't matter as long as it gets instance implementing `Figure` interface</span>
+<span class="kd">class</span> <span class="nc">FakeFigure</span> <span class="p">:</span> <span class="nc">Figure</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">():</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Figure</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">FakeFigureManipulator</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">FakeFigureManipulator</span> <span class="p">:</span> <span class="nc">FigureManipulator</span><span class="p">&lt;</span><span class="nc">FakeFigure</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"FakeFigure dragging"</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"FakeFigure resizing"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// usage</span>
+<span class="kd">val</span> <span class="py">figure</span> <span class="p">=</span> <span class="nc">FakeFactory</span><span class="p">()</span>
+                <span class="p">.</span><span class="nf">createFigure</span><span class="p">(</span><span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Circle</span><span class="p">)</span> <span class="c1">// this wont be Circle for sure...</span>
+<span class="n">figure</span><span class="p">.</span><span class="nf">createManipulator</span><span class="p">().</span><span class="nf">drag</span><span class="p">()</span> <span class="c1">// but it will behave like one :)</span>
+</code></pre></div></div>
+<p>You may even be tempted to randomly select the factory implementation. It doesn’t make much sense in the case of geometric figures, but the procedural generated map elements or enemies in the game seem to be a pretty neat example.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// randomly picks `ByTypeFactory` or `FakeFactory`</span>
+<span class="c1">// client won't notice any difference, because it knows only the `FigureFactory` interface</span>
+<span class="kd">object</span> <span class="nc">RandomFigureFactory</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">getFigureFactory</span><span class="p">():</span> <span class="nc">FigureFactory</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nc">Random</span><span class="p">.</span><span class="nf">nextBoolean</span><span class="p">())</span> <span class="nc">ByTypeFactory</span><span class="p">()</span> <span class="k">else</span> <span class="nc">FakeFactory</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// uusage</span>
+<span class="nc">RandomFigureFactory</span><span class="p">.</span><span class="nf">getFigureFactory</span><span class="p">()</span> <span class="c1">// randomly picked `FigureFactory`, `Fake` or `ByType`</span>
+        <span class="p">.</span><span class="nf">createFigure</span><span class="p">(</span><span class="nc">FigureFactory</span><span class="p">.</span><span class="nc">Type</span><span class="p">.</span><span class="nc">Circle</span><span class="p">)</span>
+        <span class="c1">// you can't be sure which object you get, but it always be `Figure`</span>
+        <span class="p">.</span><span class="nf">createManipulator</span><span class="p">().</span><span class="nf">drag</span><span class="p">()</span> <span class="c1">// so you can manipulate it like always</span>
+</code></pre></div></div>
+
+<h2 id="sealed-class">Sealed class</h2>
+<p>Suppose we have 3 databases in the app: <code class="language-plaintext highlighter-rouge">MySQL</code>, <code class="language-plaintext highlighter-rouge">Realm</code> and <code class="language-plaintext highlighter-rouge">MongoDB</code>. Although they are completely different (SQL, object-oriented, No-SQL), we make them available for clients hidden behind a common interface <code class="language-plaintext highlighter-rouge">Database</code>. To facilitate the use of a specific database, we will use a factory that will provide us with an instance of the database only based on the configuration.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// various database configurations</span>
+<span class="kd">val</span> <span class="py">mySqlConfig</span> <span class="p">=</span> <span class="nc">MySqlConfig</span><span class="p">(</span><span class="s">"dbAddress"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">realmConfig</span> <span class="p">=</span> <span class="nc">RealmConfig</span> <span class="c1">// object so a Kotlin Singleton without a constructor</span>
+<span class="kd">val</span> <span class="py">mongoDbConfig</span> <span class="p">=</span> <span class="nc">MongoDbConfig</span><span class="p">(</span><span class="s">"fileUri"</span><span class="p">,</span> <span class="s">"table"</span><span class="p">)</span>
+
+<span class="c1">// you can't be sure which instance you will get from the factory</span>
+<span class="kd">val</span> <span class="py">db</span><span class="p">:</span> <span class="nc">Database</span> <span class="p">=</span> <span class="nc">DatabaseFactory</span><span class="p">.</span><span class="nf">getDatabaseForConfig</span><span class="p">(</span><span class="n">mySqlConfig</span><span class="p">)</span>
+<span class="c1">// just the interface is known</span>
+<span class="n">db</span><span class="p">.</span><span class="nf">save</span><span class="p">(</span><span class="s">"Save me!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="563.6719px" preserveAspectRatio="none" style="width:890px;height:563px;" version="1.1" viewBox="0 0 890 563" width="890.625px" zoomAndPan="magnify"><defs><filter height="300%" id="f1pjvvrhdc6gb" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.34375" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.6875" dy="4.6875" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[ed3afe56f065d25b4329669e73deaf58]
+class Database--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="86.261" id="Database" style="stroke: #A80036; stroke-width: 1.7578125;" width="133.5938" x="216.2109" y="292.9688" /><ellipse cx="245.3906" cy="311.7188" fill="#B4A7E5" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M240.6116,306.7566 L240.6116,304.2297 L249.2725,304.2297 L249.2725,306.7566 L246.3794,306.7566 L246.3794,316.2231 L249.2725,316.2231 L249.2725,318.75 L240.6116,318.75 L240.6116,316.2231 L243.5046,316.2231 L243.5046,306.7566 L240.6116,306.7566 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="70.3125" x="264.375" y="316.5871">Database</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="217.3828" x2="348.6328" y1="330.4688" y2="330.4688" /><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="217.3828" x2="348.6328" y1="339.8438" y2="339.8438" /><ellipse cx="229.1016" cy="352.7344" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="103.125" x="239.6484" y="356.4966">save(item: Any)</text><ellipse cx="229.1016" cy="367.7399" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="97.2656" x="239.6484" y="371.5021">getItem(id: Int)</text><!--MD5=[e8391f0a80070d935972f1287a6892f2]
+class DatabaseConfig--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="63.208" id="DatabaseConfig" style="stroke: #A80036; stroke-width: 1.7578125;" width="154.6875" x="375.5859" y="159.375" /><ellipse cx="393.1641" cy="181.604" fill="#DA70D6" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M392.5598,182.2632 Q390.3809,181.4392 389.6118,180.542 Q388.8611,179.6265 388.8611,178.0884 Q388.8611,176.1108 390.1245,174.9756 Q391.3879,173.8403 393.5852,173.8403 Q394.5923,173.8403 395.5811,174.0784 Q396.5881,174.2981 397.5769,174.7559 L397.5769,177.5574 Q396.6614,176.8982 395.6909,176.5686 Q394.7388,176.2207 393.8049,176.2207 Q392.7795,176.2207 392.2119,176.6418 Q391.6626,177.063 391.6626,177.832 Q391.6626,178.4363 392.0654,178.8391 Q392.4683,179.2236 393.75,179.6997 L394.9951,180.1758 Q396.7346,180.8167 397.5586,181.8787 Q398.4009,182.9407 398.4009,184.552 Q398.4009,186.7493 397.1008,187.8296 Q395.8008,188.9099 393.1641,188.9099 Q392.0837,188.9099 391.0034,188.6536 Q389.9231,188.3972 388.916,187.9028 L388.916,184.9365 Q390.0513,185.7422 391.1316,186.145 Q392.2119,186.5479 393.2556,186.5479 Q394.3176,186.5479 394.9036,186.0718 Q395.4895,185.5774 395.4895,184.7168 Q395.4895,184.0576 395.0867,183.5815 Q394.7021,183.0872 393.9697,182.7942 L392.5598,182.2632 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="107.8125" x="414.2578" y="178.2875">«Sealed Class»</text><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="117.1875" x="409.5703" y="194.6571">DatabaseConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="376.7578" x2="529.1016" y1="203.833" y2="203.833" /><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="376.7578" x2="529.1016" y1="213.208" y2="213.208" /><!--MD5=[52c395cb079904194a5f9e036051fbb7]
+class MySqlConfig--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="86.261" id="MySqlConfig" style="stroke: #A80036; stroke-width: 1.7578125;" width="124.2188" x="390.8203" y="292.9688" /><ellipse cx="408.3984" cy="311.7188" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M411.8774,318.3289 Q411.2,318.6768 410.4492,318.8416 Q409.6985,319.0247 408.8745,319.0247 Q405.9448,319.0247 404.3884,317.1021 Q402.8503,315.1611 402.8503,311.499 Q402.8503,307.8369 404.3884,305.896 Q405.9448,303.9551 408.8745,303.9551 Q409.6985,303.9551 410.4492,304.1382 Q411.2183,304.3213 411.8774,304.6692 L411.8774,307.8552 Q411.145,307.1777 410.4492,306.8665 Q409.7534,306.5369 409.021,306.5369 Q407.4463,306.5369 406.6406,307.8003 Q405.835,309.0454 405.835,311.499 Q405.835,313.9526 406.6406,315.2161 Q407.4463,316.4612 409.021,316.4612 Q409.7534,316.4612 410.4492,316.1499 Q411.145,315.8203 411.8774,315.1428 L411.8774,318.3289 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="86.7188" x="424.8047" y="316.5871">MySqlConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="391.9922" x2="513.8672" y1="330.4688" y2="330.4688" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="400.1953" y="339.8438" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="55.0781" x="414.2578" y="347.1216">address</text><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="400.1953" y="354.8492" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="26.9531" x="414.2578" y="362.1271">port</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="391.9922" x2="513.8672" y1="369.8547" y2="369.8547" /><!--MD5=[207a63b0d24a43a57c4c40639c3039fa]
+class RealmConfig--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="71.2555" id="RealmConfig" style="stroke: #A80036; stroke-width: 1.7578125;" width="127.7344" x="556.6406" y="300.5859" /><ellipse cx="574.2188" cy="319.3359" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M577.6978,325.946 Q577.0203,326.2939 576.2695,326.4587 Q575.5188,326.6418 574.6948,326.6418 Q571.7651,326.6418 570.2087,324.7192 Q568.6707,322.7783 568.6707,319.1162 Q568.6707,315.4541 570.2087,313.5132 Q571.7651,311.5723 574.6948,311.5723 Q575.5188,311.5723 576.2695,311.7554 Q577.0386,311.9385 577.6978,312.2864 L577.6978,315.4724 Q576.9653,314.7949 576.2695,314.4836 Q575.5737,314.1541 574.8413,314.1541 Q573.2666,314.1541 572.4609,315.4175 Q571.6553,316.6626 571.6553,319.1162 Q571.6553,321.5698 572.4609,322.8333 Q573.2666,324.0784 574.8413,324.0784 Q575.5737,324.0784 576.2695,323.7671 Q576.9653,323.4375 577.6978,322.76 L577.6978,325.946 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="90.2344" x="590.625" y="324.2043">RealmConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="557.8125" x2="683.2031" y1="338.0859" y2="338.0859" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="566.0156" y="347.4609" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="55.0781" x="580.0781" y="354.7388">dbName</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="557.8125" x2="683.2031" y1="362.4664" y2="362.4664" /><!--MD5=[07c24d9336a4648d3cc1e2290cbf08bb]
+class MongoDBConfig--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="86.261" id="MongoDBConfig" style="stroke: #A80036; stroke-width: 1.7578125;" width="152.3438" x="725.9766" y="292.9688" /><ellipse cx="743.5547" cy="311.7188" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M747.0337,318.3289 Q746.3562,318.6768 745.6055,318.8416 Q744.8547,319.0247 744.0308,319.0247 Q741.1011,319.0247 739.5447,317.1021 Q738.0066,315.1611 738.0066,311.499 Q738.0066,307.8369 739.5447,305.896 Q741.1011,303.9551 744.0308,303.9551 Q744.8547,303.9551 745.6055,304.1382 Q746.3745,304.3213 747.0337,304.6692 L747.0337,307.8552 Q746.3013,307.1777 745.6055,306.8665 Q744.9097,306.5369 744.1772,306.5369 Q742.6025,306.5369 741.7969,307.8003 Q740.9912,309.0454 740.9912,311.499 Q740.9912,313.9526 741.7969,315.2161 Q742.6025,316.4612 744.1772,316.4612 Q744.9097,316.4612 745.6055,316.1499 Q746.3013,315.8203 747.0337,315.1428 L747.0337,318.3289 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="114.8438" x="759.9609" y="316.5871">MongoDBConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="727.1484" x2="877.1484" y1="330.4688" y2="330.4688" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="735.3516" y="339.8438" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="38.6719" x="749.4141" y="347.1216">fileUri</text><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="735.3516" y="354.8492" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="71.4844" x="749.4141" y="362.1271">tableName</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="727.1484" x2="877.1484" y1="369.8547" y2="369.8547" /><!--MD5=[3690b9f4311f61baafb357edffdfd4f9]
+class MySql--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="101.2665" id="MySql" style="stroke: #A80036; stroke-width: 1.7578125;" width="155.8594" x="7.0313" y="450" /><ellipse cx="59.4727" cy="468.75" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M62.9517,475.3601 Q62.2742,475.708 61.5234,475.8728 Q60.7727,476.0559 59.9487,476.0559 Q57.019,476.0559 55.4626,474.1333 Q53.9246,472.1924 53.9246,468.5303 Q53.9246,464.8682 55.4626,462.9272 Q57.019,460.9863 59.9487,460.9863 Q60.7727,460.9863 61.5234,461.1694 Q62.2925,461.3525 62.9517,461.7004 L62.9517,464.8865 Q62.2192,464.209 61.5234,463.8977 Q60.8276,463.5681 60.0952,463.5681 Q58.5205,463.5681 57.7148,464.8315 Q56.9092,466.0767 56.9092,468.5303 Q56.9092,470.9839 57.7148,472.2473 Q58.5205,473.4924 60.0952,473.4924 Q60.8276,473.4924 61.5234,473.1812 Q62.2192,472.8516 62.9517,472.1741 L62.9517,475.3601 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="41.0156" x="83.4961" y="473.6183">MySql</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="8.2031" x2="161.7188" y1="487.5" y2="487.5" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="16.4063" y="496.875" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="125.3906" x="30.4688" y="504.1529">config:MySqlConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="8.2031" x2="161.7188" y1="511.8805" y2="511.8805" /><ellipse cx="19.9219" cy="524.7711" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="103.125" x="30.4688" y="528.5334">save(item: Any)</text><ellipse cx="19.9219" cy="539.7766" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="97.2656" x="30.4688" y="543.5389">getItem(id: Int)</text><!--MD5=[76720713d741c1b729a86cf9a3614322]
+class Realm--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="101.2665" id="Realm" style="stroke: #A80036; stroke-width: 1.7578125;" width="158.2031" x="203.9063" y="450" /><ellipse cx="255.7617" cy="468.75" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M259.2407,475.3601 Q258.5632,475.708 257.8125,475.8728 Q257.0618,476.0559 256.2378,476.0559 Q253.3081,476.0559 251.7517,474.1333 Q250.2136,472.1924 250.2136,468.5303 Q250.2136,464.8682 251.7517,462.9272 Q253.3081,460.9863 256.2378,460.9863 Q257.0618,460.9863 257.8125,461.1694 Q258.5815,461.3525 259.2407,461.7004 L259.2407,464.8865 Q258.5083,464.209 257.8125,463.8977 Q257.1167,463.5681 256.3843,463.5681 Q254.8096,463.5681 254.0039,464.8315 Q253.1982,466.0767 253.1982,468.5303 Q253.1982,470.9839 254.0039,472.2473 Q254.8096,473.4924 256.3843,473.4924 Q257.1167,473.4924 257.8125,473.1812 Q258.5083,472.8516 259.2407,472.1741 L259.2407,475.3601 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="44.5313" x="279.7852" y="473.6183">Realm</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="205.0781" x2="360.9375" y1="487.5" y2="487.5" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="213.2813" y="496.875" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="127.7344" x="227.3438" y="504.1529">config:RealmConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="205.0781" x2="360.9375" y1="511.8805" y2="511.8805" /><ellipse cx="216.7969" cy="524.7711" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="103.125" x="227.3438" y="528.5334">save(item: Any)</text><ellipse cx="216.7969" cy="539.7766" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="97.2656" x="227.3438" y="543.5389">getItem(id: Int)</text><!--MD5=[aea1937f4b67311897318c410219d001]
+class MongoDB--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="101.2665" id="MongoDB" style="stroke: #A80036; stroke-width: 1.7578125;" width="179.2969" x="403.125" y="450" /><ellipse cx="453.3984" cy="468.75" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M456.8774,475.3601 Q456.2,475.708 455.4492,475.8728 Q454.6985,476.0559 453.8745,476.0559 Q450.9448,476.0559 449.3884,474.1333 Q447.8503,472.1924 447.8503,468.5303 Q447.8503,464.8682 449.3884,462.9272 Q450.9448,460.9863 453.8745,460.9863 Q454.6985,460.9863 455.4492,461.1694 Q456.2183,461.3525 456.8774,461.7004 L456.8774,464.8865 Q456.145,464.209 455.4492,463.8977 Q454.7534,463.5681 454.021,463.5681 Q452.4463,463.5681 451.6406,464.8315 Q450.835,466.0767 450.835,468.5303 Q450.835,470.9839 451.6406,472.2473 Q452.4463,473.4924 454.021,473.4924 Q454.7534,473.4924 455.4492,473.1812 Q456.145,472.8516 456.8774,472.1741 L456.8774,475.3601 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="69.1406" x="477.0703" y="473.6183">MongoDB</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="404.2969" x2="581.25" y1="487.5" y2="487.5" /><rect fill="none" height="7.0313" style="stroke: #C82930; stroke-width: 1.171875;" width="7.0313" x="412.5" y="496.875" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="148.8281" x="426.5625" y="504.1529">config:MongoDBConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="404.2969" x2="581.25" y1="511.8805" y2="511.8805" /><ellipse cx="416.0156" cy="524.7711" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="103.125" x="426.5625" y="528.5334">save(item: Any)</text><ellipse cx="416.0156" cy="539.7766" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="97.2656" x="426.5625" y="543.5389">getItem(id: Int)</text><!--MD5=[dcda66dabdb739ec36f1175150e3c9d5]
+class Factory--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="71.2555" id="Factory" style="stroke: #A80036; stroke-width: 1.7578125;" width="414.8438" x="159.9609" y="14.0625" /><ellipse cx="335.4492" cy="32.8125" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M338.9282,39.4226 Q338.2507,39.7705 337.5,39.9353 Q336.7493,40.1184 335.9253,40.1184 Q332.9956,40.1184 331.4392,38.1958 Q329.9011,36.2549 329.9011,32.5928 Q329.9011,28.9307 331.4392,26.9897 Q332.9956,25.0488 335.9253,25.0488 Q336.7493,25.0488 337.5,25.2319 Q338.269,25.415 338.9282,25.7629 L338.9282,28.949 Q338.1958,28.2715 337.5,27.9602 Q336.8042,27.6306 336.0718,27.6306 Q334.4971,27.6306 333.6914,28.894 Q332.8857,30.1392 332.8857,32.5928 Q332.8857,35.0464 333.6914,36.3098 Q334.4971,37.5549 336.0718,37.5549 Q336.8042,37.5549 337.5,37.2437 Q338.1958,36.9141 338.9282,36.2366 L338.9282,39.4226 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="53.9063" x="359.4727" y="37.6808">Factory</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="161.1328" x2="573.6328" y1="51.5625" y2="51.5625" /><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="161.1328" x2="573.6328" y1="60.9375" y2="60.9375" /><ellipse cx="172.8516" cy="73.8281" fill="#84BE84" rx="3.5156" ry="3.5156" style="stroke: #038048; stroke-width: 1.171875;" /><text fill="#000000" font-family="sans-serif" font-size="12.8906" lengthAdjust="spacingAndGlyphs" textLength="384.375" x="183.3984" y="77.5904">getDatabaseForConfig(config: DatabaseConfig): Database</text><!--MD5=[e436ab185262843af2a10138430799b2]
+class BadConfig--><rect fill="#FEFECE" filter="url(#f1pjvvrhdc6gb)" height="56.25" id="BadConfig" style="stroke: #A80036; stroke-width: 1.7578125;" width="111.3281" x="746.4844" y="472.2656" /><ellipse cx="764.0625" cy="491.0156" fill="#ADD1B2" rx="12.8906" ry="12.8906" style="stroke: #A80036; stroke-width: 1.171875;" /><path d="M767.5415,497.6257 Q766.864,497.9736 766.1133,498.1384 Q765.3625,498.3215 764.5386,498.3215 Q761.6089,498.3215 760.0525,496.3989 Q758.5144,494.458 758.5144,490.7959 Q758.5144,487.1338 760.0525,485.1929 Q761.6089,483.252 764.5386,483.252 Q765.3625,483.252 766.1133,483.4351 Q766.8823,483.6182 767.5415,483.9661 L767.5415,487.1521 Q766.8091,486.4746 766.1133,486.1633 Q765.4175,485.8337 764.6851,485.8337 Q763.1104,485.8337 762.3047,487.0972 Q761.499,488.3423 761.499,490.7959 Q761.499,493.2495 762.3047,494.5129 Q763.1104,495.7581 764.6851,495.7581 Q765.4175,495.7581 766.1133,495.4468 Q766.8091,495.1172 767.5415,494.4397 L767.5415,497.6257 Z " /><text fill="#000000" font-family="sans-serif" font-size="14.0625" lengthAdjust="spacingAndGlyphs" textLength="73.8281" x="780.4688" y="495.8839">BadConfig</text><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="747.6563" x2="856.6406" y1="509.7656" y2="509.7656" /><line style="stroke: #A80036; stroke-width: 1.7578125;" x1="747.6563" x2="856.6406" y1="519.1406" y2="519.1406" /><!--MD5=[0ea4d8f4ea5c0bb52a65fc7fd9bb9d16]
+reverse link DatabaseConfig to MySqlConfig--><path d="M452.9297,246.8437 C452.9297,262.0078 452.9297,278.25 452.9297,292.6055 " fill="none" id="DatabaseConfig&lt;-MySqlConfig" style="stroke: #A80036; stroke-width: 1.171875;" /><polygon fill="none" points="444.7266,246.293,452.9297,222.8555,461.1328,246.293,444.7266,246.293" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[f909cb0bf82b2f3f64aecefaa79ed1cd]
+reverse link DatabaseConfig to RealmConfig--><path d="M506.9297,238.2539 C530.625,258.4805 557.9883,281.8125 579.9141,300.5156 " fill="none" id="DatabaseConfig&lt;-RealmConfig" style="stroke: #A80036; stroke-width: 1.171875;" /><polygon fill="none" points="501.3867,244.3125,488.8828,222.8555,512.0391,231.832,501.3867,244.3125" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[9f8ef88e884ced8c4827e697ac88cbeb]
+reverse link DatabaseConfig to MongoDBConfig--><path d="M552.3281,231.1875 C598.8047,249.6094 654.8086,272.0977 704.8828,292.9688 C711.6797,295.8047 718.7227,298.7813 725.7773,301.7813 " fill="none" id="DatabaseConfig&lt;-MongoDBConfig" style="stroke: #A80036; stroke-width: 1.171875;" /><polygon fill="none" points="549.1289,238.7461,530.3555,222.4922,555.1641,223.4883,549.1289,238.7461" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[9a42e96c6861c084d5f7a6de380dd3cf]
+reverse link Database to MySql--><path d="M212.707,394.9102 C190.7227,412.8633 166.6641,432.5039 145.418,449.8477 " fill="none" id="Database&lt;-MySql" style="stroke: #A80036; stroke-width: 1.171875; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="207.6328,388.4648,230.9766,379.9922,218.0039,401.168,207.6328,388.4648" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[8bd8e643dbfb9f06be917f896190aa48]
+reverse link Database to Realm--><path d="M283.0078,403.8516 C283.0078,419.1328 283.0078,435.1289 283.0078,449.5547 " fill="none" id="Database&lt;-Realm" style="stroke: #A80036; stroke-width: 1.171875; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="274.8047,403.4297,283.0078,379.9922,291.2109,403.4297,274.8047,403.4297" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[7379f05c3efcd7dd7bdf2f783ebcd200]
+reverse link Database to MongoDB--><path d="M356.7656,394.3711 C380.25,412.4648 406.0078,432.3281 428.7422,449.8477 " fill="none" id="Database&lt;-MongoDB" style="stroke: #A80036; stroke-width: 1.171875; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="351.6797,400.793,338.1211,379.9922,361.6875,387.8086,351.6797,400.793" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[98f46e32fdde865fd41664dfdb841b74]
+reverse link MongoDBConfig to BadConfig--><path d="M802.1484,403.5586 C802.1484,427.6055 802.1484,453.457 802.1484,472.2188 " fill="none" id="MongoDBConfig&lt;-BadConfig" style="stroke: #A80036; stroke-width: 1.171875;" /><polygon fill="none" points="793.9453,403.4297,802.1484,379.9922,810.3516,403.4297,793.9453,403.4297" style="stroke: #A80036; stroke-width: 1.171875;" /><!--MD5=[a91b523e14a03f2f12413c50a59599a0]
+link Factory to Database--><path d="M158.7891,72.6563 C64.6172,72.6563 173.9883,212.3906 240.0234,287.9531 " fill="none" id="Factory-&gt;Database" style="stroke: #A80036; stroke-width: 2.34375;" /><polygon fill="#A80036" points="243.9141,292.3945,240.4966,281.3705,240.0556,287.9849,233.4412,287.5439,243.9141,292.3945" style="stroke: #A80036; stroke-width: 2.34375;" /><!--MD5=[04825660b8a892bbb4c834f5c8facf2c]
+reverse link Factory to DatabaseConfig--><path d="M582.2578,72.9961 C619.6289,77.4961 552.5039,126.2695 501.7734,159.3633 " fill="none" id="Factory&lt;-DatabaseConfig" style="stroke: #A80036; stroke-width: 2.34375;" /><polygon fill="#A80036" points="575.9766,72.6563,586.253,77.9102,581.8273,72.9748,586.7627,68.549,575.9766,72.6563" style="stroke: #A80036; stroke-width: 2.34375;" /><!--MD5=[c6b6d407474fc30dacdbaa74273f4c5b]
+link DatabaseConfig to Database--><!--MD5=[d11574a876a96b03e0b247d115a06c01]
+@startuml
+scale 900 width
+
+interface Database {
++save(item: Any)
++getItem(id: Int)
+}
+
+class DatabaseConfig << (S,orchid) Sealed Class >>{
+
+}
+
+class MySqlConfig extends DatabaseConfig{
+-address
+-port
+}
+class RealmConfig extends DatabaseConfig{
+-dbName
+}
+class MongoDBConfig extends DatabaseConfig{
+-fileUri
+-tableName
+}
+
+class MySql implements Database{
+-config:MySqlConfig
++save(item: Any)
++getItem(id: Int)
+}
+class Realm implements Database{
+-config:RealmConfig
++save(item: Any)
++getItem(id: Int)
+}
+class MongoDB implements Database{
+-config:MongoDBConfig
++save(item: Any)
++getItem(id: Int)
+}
+
+class Factory{
++getDatabaseForConfig(config: DatabaseConfig): Database
+}
+
+class BadConfig extends MongoDBConfig
+
+Factory::getDatabaseForConfig-[bold]->Database
+Factory::getDatabaseForConfig<-[bold]-DatabaseConfig
+DatabaseConfig-[hidden]->Database
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// common interface available for clients</span>
+<span class="kd">interface</span> <span class="nc">Database</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">save</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span>
+    <span class="k">fun</span> <span class="nf">getItem</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// concrete implementation of `Database`, taking configuration as constructor parameter</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">MySql</span><span class="p">(</span><span class="kd">val</span> <span class="py">config</span><span class="p">:</span> <span class="nc">MySqlConfig</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Database</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">save</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"saving $item in MySQL"</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getItem</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"getting item at $id from MySQL"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">Realm</span><span class="p">(</span><span class="kd">val</span> <span class="py">config</span><span class="p">:</span> <span class="nc">RealmConfig</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Database</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">MongoDB</span><span class="p">(</span><span class="kd">val</span> <span class="py">config</span><span class="p">:</span> <span class="nc">MongoDbConfig</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Database</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+</code></pre></div></div>
+
+<p>There is no <code class="language-plaintext highlighter-rouge">enum</code> type to return database instance like previously, but a configuration object.</p>
+
+<p>It was possible with Kotlin <code class="language-plaintext highlighter-rouge">sealed</code> class. It can be extended only with classes declared in the same file, so it gives strict control over subtypes. Some people even call it an “enum on steroids”, even though <code class="language-plaintext highlighter-rouge">enum</code> itself is a fully functional object and also can have methods and fields, not only name.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sealed</span> <span class="kd">class</span> <span class="nc">DatabaseConfig</span>
+
+<span class="c1">// since Kotlin 1.1 also `data class` can be used</span>
+<span class="c1">// and subclasses can be created outside `sealed` class but still in the same file</span>
+<span class="kd">data class</span> <span class="nc">MySqlConfig</span><span class="p">(</span><span class="kd">val</span> <span class="py">address</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">port</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">DatabaseConfig</span><span class="p">()</span>
+<span class="kd">object</span> <span class="nc">RealmConfig</span> <span class="p">:</span> <span class="nc">DatabaseConfig</span><span class="p">()</span> <span class="c1">// Singletons are often used with `sealed` classes</span>
+
+<span class="c1">// other classes can extend an `open` class also outside this file</span>
+<span class="k">open</span> <span class="kd">class</span> <span class="nc">MongoDbConfig</span><span class="p">(</span><span class="kd">val</span> <span class="py">fileUri</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="kd">val</span> <span class="py">tableName</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">DatabaseConfig</span><span class="p">()</span>
+
+<span class="c1">// Factory creating Database instance according to provided configuration</span>
+<span class="kd">object</span> <span class="nc">DatabaseFactory</span> <span class="p">{</span>
+    <span class="c1">// method is taking generic `DatabaseConfig` interface and returns generic `Database` instance</span>
+    <span class="k">fun</span> <span class="nf">getDatabaseForConfig</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nc">DatabaseConfig</span><span class="p">):</span> <span class="nc">Database</span> <span class="p">{</span>
+        <span class="c1">// `when` connected with `sealed class` guarantees handling every case</span>
+        <span class="c1">// or compile time error - just like enum</span>
+        <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">is</span> <span class="nc">MongoDbConfig</span> <span class="p">-&gt;</span> <span class="nc">MongoDB</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">is</span> <span class="nc">MySqlConfig</span> <span class="p">-&gt;</span> <span class="nc">MySql</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="k">is</span> <span class="nc">RealmConfig</span> <span class="p">-&gt;</span> <span class="nc">Realm</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            
+            <span class="c1">// `BadConfig` extends `MongoDbConfig` but if this case is missing it won't cause an error</span>
+            <span class="c1">// because `BadConfig` is `MongoDbConfig` this case will be handled in first line</span>
+            <span class="k">is</span> <span class="nc">BadConfig</span> <span class="p">-&gt;</span> <span class="nc">MongoDB</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> 
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Meanwhile in another file:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// error, you cant extend sealed class outside its file</span>
+<span class="kd">data class</span> <span class="nc">BadConfig</span><span class="p">(</span><span class="kd">val</span> <span class="py">badData</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">DatabaseConfig</span><span class="p">()</span>
+<span class="c1">// open class MongoDbConfig allows extending</span>
+<span class="kd">data class</span> <span class="nc">BadConfig</span><span class="p">(</span><span class="kd">val</span> <span class="py">badData</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">MongoDbConfig</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Using <code class="language-plaintext highlighter-rouge">open</code> classes should be well thought through, and in case of classes already extending <code class="language-plaintext highlighter-rouge">sealed</code> class, it looks like an antipattern, questioning the point of having <code class="language-plaintext highlighter-rouge">sealed</code> class in the first place.</p>
+
+<h2 id="factories-with-registry">Factories with registry</h2>
+
+<p>Inside the book “Thinking in Java”<sup id="fnref:thinking_in_java" role="doc-noteref"><a href="#fn:thinking_in_java" class="footnote" rel="footnote">2</a></sup> Bruce Eckel described an interesting example of using <code class="language-plaintext highlighter-rouge">Static Factory Method</code> (already covered <a href="https://asvid.github.io/kotlin-static-factory-methods">here</a>) connected with a Factory with the registry. The main point is to allow adding objects with their own factories, implementing a common interface, to the registry of top-level Factory creating their instances - without even knowing concrete types of the objects. In the previous examples, Factory interface defined types like <code class="language-plaintext highlighter-rouge">Square, Circle, Line</code> or we had a limited number of classes extending <code class="language-plaintext highlighter-rouge">sealed</code> one. In this case, the Top-level Factory role is limited to run <code class="language-plaintext highlighter-rouge">Static Factory Method</code> of registered type. Created object and its internal factory can come from the external module and be unknown to the Top-level Factory when it’s being compiled - as long as it will implement correct interfaces.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// AirFilter has a companion object with method `create()` so a Static Factory Method</span>
+<span class="kd">val</span> <span class="py">airFilter</span><span class="p">:</span> <span class="nc">Part</span> <span class="p">=</span> <span class="nc">AirFilter</span><span class="p">.</span><span class="nf">create</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">fuelFilter</span><span class="p">:</span> <span class="nc">Part</span> <span class="p">=</span> <span class="nc">FuelFilter</span><span class="p">.</span><span class="nf">create</span><span class="p">()</span>
+<span class="kd">val</span> <span class="py">fuelFilter</span><span class="p">:</span> <span class="nc">Part</span> <span class="p">=</span> <span class="nc">FuelFilter</span><span class="p">()</span> <span class="c1">// error, private constructor doesn't allow it</span>
+
+<span class="c1">// registering the factory, class name points to companion object</span>
+<span class="nc">RandomPartCreator</span><span class="p">.</span><span class="nf">registerFactory</span><span class="p">(</span><span class="nc">AirFilter</span><span class="p">)</span>
+<span class="nc">RandomPartCreator</span><span class="p">.</span><span class="nf">registerFactory</span><span class="p">(</span><span class="nc">FuelFilter</span><span class="p">)</span>
+<span class="nc">RandomPartCreator</span><span class="p">.</span><span class="nf">registerFactory</span><span class="p">(</span><span class="nc">OilFilter</span><span class="p">)</span>
+<span class="c1">// factory not being a companion object can also be registered</span>
+<span class="nc">RandomPartCreator</span><span class="p">.</span><span class="nf">registerFactory</span><span class="p">(</span><span class="nc">EngineFactory</span><span class="p">())</span>
+
+<span class="c1">// let's have 10 instances</span>
+<span class="nf">repeat</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// random instance creating, we don't know the concrete type</span>
+    <span class="kd">val</span> <span class="py">randomPart</span> <span class="p">=</span> <span class="nc">RandomPartCreator</span><span class="p">.</span><span class="nf">createRandomPart</span><span class="p">()</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">randomPart</span><span class="p">.</span><span class="nf">description</span><span class="p">())</span>
+    <span class="c1">// unless we explicitly check</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"is it an AirFilter? ${randomPart is AirFilter}"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>On diagram it will look like that:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="493.2494px" preserveAspectRatio="none" style="width:891px;height:493px;" version="1.1" viewBox="0 0 891 493" width="891.762px" zoomAndPan="magnify"><defs><filter height="300%" id="f18hz912x43ad9" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.059496567505721" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.118993135011442" dy="4.118993135011442" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[6c11516a5600b02d02bec5551b645149]
+class Part--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="49.4279" id="Part" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="58.6957" x="507.151" y="164.7597" /><ellipse cx="522.5973" cy="181.2357" fill="#B4A7E5" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M518.3978,176.8754 L518.3978,174.655 L526.0083,174.655 L526.0083,176.8754 L523.4661,176.8754 L523.4661,185.1938 L526.0083,185.1938 L526.0083,187.4142 L518.3978,187.4142 L518.3978,185.1938 L520.94,185.1938 L520.94,176.8754 L518.3978,176.8754 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="25.7437" x="537.0137" y="185.5136">Part</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="508.1808" x2="564.8169" y1="197.7117" y2="197.7117" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="508.1808" x2="564.8169" y1="205.9497" y2="205.9497" /><!--MD5=[8f01ff398afef1a5ae04815b0f3e928e]
+class PartFactory--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="62.6135" id="PartFactory" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="152.4027" x="283.1808" y="282.6659" /><ellipse cx="298.627" cy="299.1419" fill="#B4A7E5" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M294.4276,294.7815 L294.4276,292.5611 L302.038,292.5611 L302.038,294.7815 L299.4959,294.7815 L299.4959,303.1 L302.038,303.1 L302.038,305.3204 L294.4276,305.3204 L294.4276,303.1 L296.9698,303.1 L296.9698,294.7815 L294.4276,294.7815 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="74.1419" x="313.0435" y="303.4198">PartFactory</text><rect fill="#FFFFFF" height="16.4438" style="stroke: #000000; stroke-width: 1.0297482837528604; stroke-dasharray: 2.0,2.0;" width="43.2494" x="395.4233" y="279.5767" /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="41.1899" x="396.4531" y="292.0764">T: Part</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="284.2105" x2="434.5538" y1="315.6178" y2="315.6178" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="284.2105" x2="434.5538" y1="323.8558" y2="323.8558" /><ellipse cx="294.508" cy="335.1831" fill="#84BE84" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="56.6362" x="303.7757" y="338.489">create():T</text><!--MD5=[de0312f2d93992341e9cb4d680e1f13c]
+class AirFilter--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="75.7991" id="AirFilter" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="129.7483" x="471.6247" y="275.9725" /><ellipse cx="508.8501" cy="292.4485" fill="#ADD1B2" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M511.9072,298.2569 Q511.3119,298.5626 510.6522,298.7075 Q509.9925,298.8683 509.2684,298.8683 Q506.6941,298.8683 505.3264,297.1789 Q503.9749,295.4734 503.9749,292.2554 Q503.9749,289.0375 505.3264,287.332 Q506.6941,285.6264 509.2684,285.6264 Q509.9925,285.6264 510.6522,285.7873 Q511.3279,285.9482 511.9072,286.2539 L511.9072,289.0536 Q511.2636,288.4582 510.6522,288.1847 Q510.0408,287.8951 509.3972,287.8951 Q508.0134,287.8951 507.3055,289.0053 Q506.5975,290.0994 506.5975,292.2554 Q506.5975,294.4115 507.3055,295.5217 Q508.0134,296.6158 509.3972,296.6158 Q510.0408,296.6158 510.6522,296.3422 Q511.2636,296.0526 511.9072,295.4573 L511.9072,298.2569 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="48.3982" x="528.1064" y="296.7264">AirFilter</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="472.6545" x2="600.3432" y1="308.9245" y2="308.9245" /><ellipse cx="482.9519" cy="320.2517" fill="none" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="102.9748" x="492.2197" y="323.5577">companion object</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="472.6545" x2="600.3432" y1="330.3481" y2="330.3481" /><rect fill="#F24D5C" height="6.1785" style="stroke: #C82930; stroke-width: 1.0297482837528604;" width="6.1785" x="479.8627" y="338.5861" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="75.1716" x="492.2197" y="344.9813">constructor()</text><!--MD5=[c67ba9fff0649d5a6cfe2aa56a517cd6]
+class AirFilterFactory--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="68.7277" id="AirFilterFactory" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="208.0092" x="6.1785" y="413.9588" /><ellipse cx="21.6247" cy="433.4918" fill="#FF7700" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M21.7373,428.9384 Q20.772,428.9384 20.3214,429.9682 Q19.887,430.9979 19.887,433.2988 Q19.887,435.5996 20.3214,436.6294 Q20.772,437.6591 21.7373,437.6591 Q22.7188,437.6591 23.1532,436.6294 Q23.6038,435.5996 23.6038,433.2988 Q23.6038,430.9979 23.1532,429.9682 Q22.7188,428.9384 21.7373,428.9384 Z M17.2644,433.2988 Q17.2644,430.0325 18.3907,428.3592 Q19.533,426.6698 21.7373,426.6698 Q23.9577,426.6698 25.084,428.3592 Q26.2264,430.0325 26.2264,433.2988 Q26.2264,436.565 25.084,438.2383 Q23.9577,439.9117 21.7373,439.9117 Q19.533,439.9117 18.3907,438.2383 Q17.2644,436.565 17.2644,433.2988 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="126.659" x="33.9817" y="430.5776">«CompanionObject»</text><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="95.7666" x="49.4279" y="444.9619">AirFilterFactory</text><rect fill="#FFFFFF" height="16.4438" style="stroke: #000000; stroke-width: 1.0297482837528604; stroke-dasharray: 2.0,2.0;" width="50.4577" x="166.8192" y="410.8696" /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="48.3982" x="167.849" y="423.3693">AirFilter</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="7.2082" x2="213.1579" y1="453.0249" y2="453.0249" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="7.2082" x2="213.1579" y1="461.2629" y2="461.2629" /><ellipse cx="17.5057" cy="472.5901" fill="#84BE84" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="93.7071" x="26.7735" y="475.8961">create():AirFilter</text><!--MD5=[f7b62c41a0273eae28499ac15bd5a9da]
+class FuelFilter--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="62.6135" id="FuelFilter" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="129.7483" x="637.4142" y="282.6659" /><ellipse cx="670.0057" cy="299.1419" fill="#ADD1B2" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M673.0628,304.9503 Q672.4675,305.256 671.8078,305.4008 Q671.1481,305.5617 670.4241,305.5617 Q667.8497,305.5617 666.4821,303.8723 Q665.1305,302.1668 665.1305,298.9488 Q665.1305,295.7308 666.4821,294.0253 Q667.8497,292.3198 670.4241,292.3198 Q671.1481,292.3198 671.8078,292.4807 Q672.4836,292.6416 673.0628,292.9473 L673.0628,295.7469 Q672.4192,295.1516 671.8078,294.8781 Q671.1964,294.5885 670.5528,294.5885 Q669.1691,294.5885 668.4611,295.6987 Q667.7531,296.7928 667.7531,298.9488 Q667.7531,301.1048 668.4611,302.215 Q669.1691,303.3091 670.5528,303.3091 Q671.1964,303.3091 671.8078,303.0356 Q672.4192,302.746 673.0628,302.1507 L673.0628,304.9503 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="58.6957" x="688.2323" y="303.4198">FuelFilter</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="638.4439" x2="766.1327" y1="315.6178" y2="315.6178" /><ellipse cx="648.7414" cy="326.9451" fill="none" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="102.9748" x="658.0092" y="330.251">companion object</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="638.4439" x2="766.1327" y1="337.0414" y2="337.0414" /><!--MD5=[6b3b9243e93252a524240a0732ab87de]
+class FuelFilterFactory--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="68.7277" id="FuelFilterFactory" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="218.3066" x="250.2288" y="413.9588" /><ellipse cx="265.6751" cy="433.4918" fill="#FF7700" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M265.7877,428.9384 Q264.8223,428.9384 264.3718,429.9682 Q263.9374,430.9979 263.9374,433.2988 Q263.9374,435.5996 264.3718,436.6294 Q264.8223,437.6591 265.7877,437.6591 Q266.7692,437.6591 267.2036,436.6294 Q267.6541,435.5996 267.6541,433.2988 Q267.6541,430.9979 267.2036,429.9682 Q266.7692,428.9384 265.7877,428.9384 Z M261.3147,433.2988 Q261.3147,430.0325 262.441,428.3592 Q263.5834,426.6698 265.7877,426.6698 Q268.0081,426.6698 269.1344,428.3592 Q270.2767,430.0325 270.2767,433.2988 Q270.2767,436.565 269.1344,438.2383 Q268.0081,439.9117 265.7877,439.9117 Q263.5834,439.9117 262.441,438.2383 Q261.3147,436.565 261.3147,433.2988 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="126.659" x="278.032" y="430.5776">«CompanionObject»</text><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="106.0641" x="288.3295" y="444.9619">FuelFilterFactory</text><rect fill="#FFFFFF" height="16.4438" style="stroke: #000000; stroke-width: 1.0297482837528604; stroke-dasharray: 2.0,2.0;" width="60.7551" x="410.8696" y="410.8696" /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58.6957" x="411.8993" y="423.3693">FuelFilter</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="251.2586" x2="467.5057" y1="453.0249" y2="453.0249" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="251.2586" x2="467.5057" y1="461.2629" y2="461.2629" /><ellipse cx="261.5561" cy="472.5901" fill="#84BE84" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="101.9451" x="270.8238" y="475.8961">create():FuelFilter</text><!--MD5=[c86ce95fe6226f2d2796c0513d8e83fe]
+class Engine--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="49.4279" id="Engine" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="77.2311" x="803.7185" y="289.3593" /><ellipse cx="819.1648" cy="305.8352" fill="#ADD1B2" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M822.2218,311.6437 Q821.6265,311.9494 820.9668,312.0942 Q820.3071,312.2551 819.5831,312.2551 Q817.0087,312.2551 815.6411,310.5656 Q814.2895,308.8601 814.2895,305.6422 Q814.2895,302.4242 815.6411,300.7187 Q817.0087,299.0132 819.5831,299.0132 Q820.3071,299.0132 820.9668,299.1741 Q821.6426,299.335 822.2218,299.6407 L822.2218,302.4403 Q821.5782,301.845 820.9668,301.5714 Q820.3554,301.2818 819.7118,301.2818 Q818.3281,301.2818 817.6201,302.392 Q816.9122,303.4861 816.9122,305.6422 Q816.9122,307.7982 817.6201,308.9084 Q818.3281,310.0025 819.7118,310.0025 Q820.3554,310.0025 820.9668,309.729 Q821.5782,309.4394 822.2218,308.844 L822.2218,311.6437 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="44.2792" x="833.5812" y="310.1131">Engine</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="804.7483" x2="879.9199" y1="322.3112" y2="322.3112" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="804.7483" x2="879.9199" y1="330.5492" y2="330.5492" /><!--MD5=[c06e34460c7115e2c84428840d62a11b]
+class EngineFactory--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="49.4279" id="EngineFactory" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="172.9977" x="504.5767" y="423.7414" /><ellipse cx="520.0229" cy="440.2174" fill="#ADD1B2" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M523.0799,446.0258 Q522.4846,446.3315 521.8249,446.4763 Q521.1653,446.6372 520.4412,446.6372 Q517.8668,446.6372 516.4992,444.9478 Q515.1477,443.2423 515.1477,440.0243 Q515.1477,436.8064 516.4992,435.1008 Q517.8668,433.3953 520.4412,433.3953 Q521.1653,433.3953 521.8249,433.5562 Q522.5007,433.7171 523.0799,434.0228 L523.0799,436.8224 Q522.4364,436.2271 521.8249,435.9536 Q521.2135,435.664 520.5699,435.664 Q519.1862,435.664 518.4783,436.7742 Q517.7703,437.8683 517.7703,440.0243 Q517.7703,442.1803 518.4783,443.2905 Q519.1862,444.3847 520.5699,444.3847 Q521.2135,444.3847 521.8249,444.1111 Q522.4364,443.8215 523.0799,443.2262 L523.0799,446.0258 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="91.6476" x="534.4394" y="444.4953">EngineFactory</text><rect fill="#FFFFFF" height="16.4438" style="stroke: #000000; stroke-width: 1.0297482837528604; stroke-dasharray: 2.0,2.0;" width="46.3387" x="634.3249" y="420.6522" /><text fill="#000000" font-family="sans-serif" font-size="12.357" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="44.2792" x="635.3547" y="433.152">Engine</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="505.6064" x2="676.5446" y1="456.6934" y2="456.6934" /><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="505.6064" x2="676.5446" y1="464.9314" y2="464.9314" /><!--MD5=[4c4b5b491e1340049675f6e3d11ec587]
+class RandomPartCreator--><rect fill="#FEFECE" filter="url(#f18hz912x43ad9)" height="88.9847" id="RandomPartCreator" style="stroke: #A80036; stroke-width: 1.5446224256292906;" width="237.8719" x="372.254" y="12.357" /><ellipse cx="422.9691" cy="28.833" fill="#ADD1B2" rx="11.3272" ry="11.3272" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><path d="M426.0262,34.6414 Q425.4308,34.9471 424.7712,35.0919 Q424.1115,35.2528 423.3874,35.2528 Q420.8131,35.2528 419.4454,33.5634 Q418.0939,31.8578 418.0939,28.6399 Q418.0939,25.4219 419.4454,23.7164 Q420.8131,22.0109 423.3874,22.0109 Q424.1115,22.0109 424.7712,22.1718 Q425.4469,22.3327 426.0262,22.6384 L426.0262,25.438 Q425.3826,24.8427 424.7712,24.5692 Q424.1598,24.2795 423.5162,24.2795 Q422.1324,24.2795 421.4245,25.3897 Q420.7165,26.4838 420.7165,28.6399 Q420.7165,30.7959 421.4245,31.9061 Q422.1324,33.0002 423.5162,33.0002 Q424.1598,33.0002 424.7712,32.7267 Q425.3826,32.4371 426.0262,31.8417 L426.0262,34.6414 Z " /><text fill="#000000" font-family="sans-serif" font-size="12.357" lengthAdjust="spacingAndGlyphs" textLength="127.6888" x="444.0789" y="33.1108">RandomPartCreator</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="373.2838" x2="609.0961" y1="45.3089" y2="45.3089" /><rect fill="none" height="6.1785" style="stroke: #C82930; stroke-width: 1.0297482837528604;" width="6.1785" x="380.492" y="53.5469" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="189.4737" x="392.849" y="59.9421">partFactories: Set&lt;PartFactory&gt;</text><line style="stroke: #A80036; stroke-width: 1.5446224256292906;" x1="373.2838" x2="609.0961" y1="66.7325" y2="66.7325" /><ellipse cx="383.5812" cy="78.0597" fill="#84BE84" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="211.0984" x="392.849" y="81.3657">registerFactory(factory: PartFactory)</text><ellipse cx="383.5812" cy="91.2454" fill="#84BE84" rx="3.0892" ry="3.0892" style="stroke: #038048; stroke-width: 1.0297482837528604;" /><text fill="#000000" font-family="sans-serif" font-size="11.3272" lengthAdjust="spacingAndGlyphs" textLength="148.2838" x="392.849" y="94.5513">createRandomPart(): Part</text><!--MD5=[a8b559e0af1daa78015c130b827e9ee5]
+reverse link Part to AirFilter--><path d="M536.4989,235.2254 C536.4989,248.5092 536.4989,262.9153 536.4989,275.6739 " fill="none" id="Part&lt;-AirFilter" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="529.2906,235.0195,536.4989,214.4245,543.7071,235.0195,529.2906,235.0195" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[04668db00d5b6428035efff742568935]
+reverse link PartFactory to AirFilterFactory--><path d="M283.5927,355.3455 C248.3959,374.0355 207.0103,396.0103 173.5023,413.8043 " fill="none" id="PartFactory&lt;-AirFilterFactory" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="280.3284,348.9199,301.9016,345.6247,287.0938,361.6476,280.3284,348.9199" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[b26795f9f6019d07aa0ac632deb9f866]
+reverse link Part to FuelFilter--><path d="M582.9096,224.8043 C607.4588,242.9485 637.3421,265.0469 661.0778,282.5835 " fill="none" id="Part&lt;-FuelFilter" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="578.4199,230.4474,566.135,212.4062,586.9874,218.8524,578.4199,230.4474" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[aa7ed36695fdfe30b5d95f3e8e228431]
+reverse link PartFactory to FuelFilterFactory--><path d="M359.3822,366.5904 C359.3822,382.3867 359.3822,399.357 359.3822,413.6499 " fill="none" id="PartFactory&lt;-FuelFilterFactory" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="352.1739,366.3844,359.3822,345.7895,366.5904,366.3844,352.1739,366.3844" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[0fa1ddf938f661d4717de0e9e19f648e]
+reverse link Part to Engine--><path d="M586.2357,203.5915 C637.5995,218.008 719.3719,243.5252 785.6979,275.9725 C793.5137,279.7929 801.5355,284.4989 809.0011,289.2666 " fill="none" id="Part&lt;-Engine" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="584.1762,210.5011,566.2174,198.103,587.9863,196.5995,584.1762,210.5011" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[daa9e004e1163c3c5be38d95bda25e4d]
+reverse link PartFactory to EngineFactory--><path d="M430.9085,355.9531 C469.7918,378.1648 516.532,404.8455 549.4531,423.6487 " fill="none" id="PartFactory&lt;-EngineFactory" style="stroke: #A80036; stroke-width: 1.0297482837528604; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="427.1396,362.1007,412.8261,345.6247,434.286,349.5789,427.1396,362.1007" style="stroke: #A80036; stroke-width: 1.0297482837528604;" /><!--MD5=[2afda335af07fd41b49e7358e64744ef]
+link RandomPartCreator to Part--><path d="M611.6705,88.5584 C648.0618,88.5584 604.524,131.4165 570.1613,160.9805 " fill="none" id="RandomPartCreator-&gt;Part" style="stroke: #A80036; stroke-width: 2.059496567505721;" /><polygon fill="#A80036" points="566.0217,164.5229,575.7389,161.6189,569.931,161.1721,570.3777,155.3641,566.0217,164.5229" style="stroke: #A80036; stroke-width: 2.059496567505721;" /><!--MD5=[1b1721f898d9e9946c11e1bbd6fe5fc3]
+reverse link RandomPartCreator to PartFactory--><path d="M366.1888,76.4382 C291.7586,82.833 328.0881,220.0984 348.6007,282.5629 " fill="none" id="RandomPartCreator&lt;-PartFactory" style="stroke: #A80036; stroke-width: 2.059496567505721;" /><polygon fill="#A80036" points="371.7391,76.2014,362.3035,72.483,366.5951,76.4218,362.6563,80.7134,371.7391,76.2014" style="stroke: #A80036; stroke-width: 2.059496567505721;" /><!--MD5=[0aa31e15aa824c24566da5612a2462ee]
+link Part to PartFactory--><!--MD5=[892f21118bb324c144a23dab66309735]
+@startuml
+scale 900 width
+
+interface Part
+
+interface PartFactory<T: Part>{
++create():T
+}
+
+class AirFilter implements Part{
+-constructor()
++companion object
+}
+
+class AirFilterFactory<AirFilter><< (O,#FF7700) CompanionObject >> implements PartFactory{
++create():AirFilter
+}
+
+class FuelFilter implements Part{
++companion object
+}
+class FuelFilterFactory<FuelFilter><< (O,#FF7700) CompanionObject >> implements PartFactory{
++create():FuelFilter
+}
+
+class Engine implements Part
+
+class EngineFactory<Engine> implements PartFactory
+
+class RandomPartCreator{
+-partFactories: Set<PartFactory>
++registerFactory(factory: PartFactory)
++createRandomPart(): Part
+}
+
+RandomPartCreator::createRandomPart-[bold]->Part
+RandomPartCreator::registerFactory<-[bold]-PartFactory
+Part-[hidden]->PartFactory
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>And can be implemented like this:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// interface implemented by every Part constructed by the Factory</span>
+<span class="kd">interface</span> <span class="nc">Part</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">description</span><span class="p">():</span> <span class="nc">String</span>
+<span class="p">}</span>
+
+<span class="c1">// interface used by companion objects, building concrete `Part` type</span>
+<span class="kd">interface</span> <span class="nc">PartFactory</span><span class="p">&lt;</span><span class="nc">T</span> <span class="p">:</span> <span class="nc">Part</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">create</span><span class="p">():</span> <span class="nc">T</span>
+<span class="p">}</span>
+
+<span class="c1">// concrete Part implementation with private construcotr</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">FuelFilter</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="nc">Part</span> <span class="p">{</span>
+    <span class="c1">// companion object implementing Factory interface</span>
+    <span class="k">companion</span> <span class="k">object</span> <span class="nc">Factory</span> <span class="p">:</span> <span class="nc">PartFactory</span><span class="p">&lt;</span><span class="nc">FuelFilter</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="c1">// Static Factory Method creating an instance of the declared type</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">create</span><span class="p">():</span> <span class="nc">FuelFilter</span> <span class="p">=</span> <span class="nc">FuelFilter</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">description</span><span class="p">()</span> <span class="p">=</span> <span class="s">"I'm a Fuel Filter"</span>
+<span class="p">}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">AirFilter</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="nc">Part</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">OilFilter</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">()</span> <span class="p">:</span> <span class="nc">Part</span> <span class="p">{</span><span class="o">..</span><span class="p">.}</span>
+
+<span class="c1">// class without companion object also can be used</span>
+<span class="kd">class</span> <span class="nc">Engine</span><span class="p">:</span> <span class="nc">Part</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">description</span><span class="p">()</span> <span class="p">=</span> <span class="s">"I'm an Engine!"</span>
+<span class="p">}</span>
+<span class="c1">// with an external factory</span>
+<span class="kd">class</span> <span class="nc">EngineFactory</span> <span class="p">:</span> <span class="nc">PartFactory</span><span class="p">&lt;</span><span class="nc">Engine</span><span class="p">&gt;{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">create</span><span class="p">():</span> <span class="nc">Engine</span> <span class="p">{</span>
+        <span class="c1">// Engine class can't have private constructor though</span>
+        <span class="k">return</span> <span class="nc">Engine</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">object</span> <span class="nc">RandomPartCreator</span> <span class="p">{</span>
+    <span class="c1">// registry of internal factories, so Static Factory Methods</span>
+    <span class="c1">// Set for no duplicates</span>
+    <span class="c1">// object created by Static Factory Method has to extend `Part`</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">partFactories</span> <span class="p">=</span> <span class="n">mutableSetOf</span><span class="p">&lt;</span><span class="nc">PartFactory</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Part</span><span class="p">&gt;&gt;()</span>
+
+    <span class="c1">// adding new internal factory to the registry</span>
+    <span class="k">fun</span> <span class="nf">registerFactory</span><span class="p">(</span><span class="n">factory</span><span class="p">:</span> <span class="nc">PartFactory</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Part</span><span class="p">&gt;)</span> <span class="p">{</span>
+        <span class="n">partFactories</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">factory</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// so called generator - creates instance without any parameters passed</span>
+    <span class="k">fun</span> <span class="nf">createRandomPart</span><span class="p">():</span> <span class="nc">Part</span> <span class="p">{</span>
+        <span class="c1">// random number from the registry size range</span>
+        <span class="kd">val</span> <span class="py">randomFactory</span> <span class="p">=</span> <span class="nc">Random</span><span class="p">.</span><span class="nf">nextInt</span><span class="p">(</span><span class="n">partFactories</span><span class="p">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="c1">// calling `create()` on picked factory</span>
+        <span class="c1">// unfortunately you can't take n-th element from Set without making it a list</span>
+        <span class="k">return</span> <span class="n">partFactories</span><span class="p">.</span><span class="nf">toList</span><span class="p">()[</span><span class="n">randomFactory</span><span class="p">].</span><span class="nf">create</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Nothing forbids using a more extensive registry, like a map with <code class="language-plaintext highlighter-rouge">enum</code> as key and Static Factory Method as value.</p>
+
+<h1 id="summary">Summary</h1>
+<p>Factory Method is a commonly used design pattern, especially in the variant with <code class="language-plaintext highlighter-rouge">enum</code> types. Although it can take multiple forms main rule is the same: isolating object creation from its implementation hidden behind the interface. When having a whole family of objects it makes the program much more elastic, allowing effortless switching objects and easy mocking in tests.</p>
+
+<p>Kotlin helps a lot with hiding implementation with <code class="language-plaintext highlighter-rouge">internal</code> classes, and with handling all the subclass cases thanks to the <code class="language-plaintext highlighter-rouge">sealed</code> class.</p>
+
+<h2 id="pros">Pros</h2>
+<ul>
+  <li><strong>isolating implementation from the interface</strong> - the factory client is aware only about the interface, which allows adding new implementations without updating client.</li>
+  <li><strong>limiting types visibility</strong> - it’s useful when you are developing a library and want to hide the internal implementation from the users.</li>
+  <li><strong>ease of testing</strong> - just the fact of using interfaces rather than concrete types makes creating a mock or stub easy. Connect this with injecting a whole configured for testing factory, and you can focus on what you actually want to test rather than building pieces around it.</li>
+  <li><strong>reusing objects</strong> - similar to Builder, returned object doesn’t necessarily have to be a new instance. The constructor always returns a new instance, but Factory can have some sort of internal cache and if it makes sense return previously created instance. However, this may conflict with the intuitive understanding of what a “factory” does - building new products like a car factory will assemble new cars rather than renting them from a parking lot.</li>
+</ul>
+
+<h2 id="cons">Cons</h2>
+<ul>
+  <li><strong>additional boilerplate</strong> - the need for interfaces, factories, enum types etc. This is not necessarily a problem, especially when thinking about interfaces and testing the code later. But you have to be prudent here, when you want to build single class instance without clear perspective of having more classes in the family - maybe you don’t need a whole factory.</li>
+</ul>
+
+<hr />
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:design_patterns" role="doc-endnote">
+      <p><a href="https://books.google.pl/books?id=Mkn6uAEACAAJ&amp;dq=isbn:0201633612&amp;hl=pl&amp;sa=X&amp;ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg">Design Patterns: Elements of Reusable Object-Oriented Software</a> <a href="#fnref:design_patterns" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:thinking_in_java" role="doc-endnote">
+      <p><a href="https://books.google.pl/books?id=bQVvAQAAQBAJ&amp;dq=isbn:9780131872486&amp;hl=pl&amp;sa=X&amp;ved=2ahUKEwjO6uawvojvAhVRtIsKHchPBwUQ6AEwAHoECAAQAg">Thinking in Java</a> <a href="#fnref:thinking_in_java" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Factory Method-ref">
+                    Factory Method <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#construction design pattern-ref">
+                    construction design pattern <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Kotlin Factory Method"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-static-factory-methods"
+                                    title="Kotlin Static Factory Methods">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/kotlin-abstract-factory" title="Kotlin Abstract Factory">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/go_mobile.png);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Would you go for mobile development again, after 10 years of doing it? </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   January
+	   29th,
+	   
+	   2023
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        8 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#would-i">Would I?</a></li>
+<li class="toc-entry toc-h2"><a href="#and-it-got-me-thinking">And it got me thinking</a></li>
+<li class="toc-entry toc-h2"><a href="#here-is-why">Here is why</a></li>
+<li class="toc-entry toc-h2"><a href="#there-are-some-caveats-though">There are some caveats though</a></li>
+<li class="toc-entry toc-h2"><a href="#would-i-recommend-mobile-development-to-others">Would I recommend mobile development to others?</a></li>
+</ul>
+            </nav>
+
+            <h2 id="would-i">Would I?</h2>
+
+<p>I went to a meetup in my city last week and a guy I just met there popped a question after a while of conversation: with my experience, <strong>would I go for mobile software development again</strong> or pick a different area?</p>
+
+<h2 id="and-it-got-me-thinking">And it got me thinking</h2>
+
+<p><img src="assets/posts/mobile-meme.jpg" alt="My answer in form of meme" /></p>
+
+<p><strong>Yes, I would do this again, I’m even more motivated now.</strong></p>
+
+<p>I remember how excited I was about the idea that you can write software for a tiny computer that lives in your pocket. The possibilities you can give to people, feed them with information at any time and place, use data from GPS, accelerometer, or camera… it was so much more than web apps that I’ve been working on previously. And the UI had to be adjusted because screens are tiny, so a whole new design language was created over time.<br />
+It was a wild-west greenfield, nothing was written in stone.</p>
+
+<p>Some things changed over the 10+ years since I started, but the excitement grew bigger.</p>
+
+<h2 id="here-is-why">Here is why</h2>
+<blockquote>
+  <p>I’m talking from an Android dev perspective, but some points are true for any mobile OS</p>
+</blockquote>
+
+<h4 id="1-we-all-use-mobile-devices">1. We all use mobile devices</h4>
+<p>I mean personally, with our own hands. We use backend services as well, but it’s not that visible.</p>
+
+<p>Apps are often the only user-facing entry point of a complex system, that can make or break the whole business. Apps are always waiting in the user’s pocket and offer a better experience than browser apps.</p>
+
+<p>We are paying for groceries with our phones, editing clips for Instagram, scanning invoices for accounting, recording or writing notes, managing todo-lists, listening to music… the number of stuff we do on mobile devices is countless.</p>
+
+<p>There are people that don’t own a computer anymore, all they need is a smartphone.</p>
+
+<h4 id="2-its-easy-to-show">2. It’s easy to show</h4>
+<p>This is kinda true for all front-end tech, but for websites, you need to host it somewhere. For Android, there is no need to publish your app or even have a Google Play account. You can just pop out your phone and show your friends what you are working on and gather feedback and ideas:)</p>
+
+<h4 id="3-tools-got-decent-over-time">3. Tools got decent over time</h4>
+<p>Just to mention way better device emulators, Kotlin instead of Java, Jetpack Compose instead of XML views. Error reporting, logging, test running, app deployment, etc.</p>
+
+<h4 id="4-mobile-is-not-just-phones">4. Mobile is not just phones</h4>
+<p>There is Android Auto, Android TVs, wearables, card terminals, IoT devices… and more. It’s great if you like working with hardware, but not all the way (embedded low-level stuff). I once wrote an app that was talking via Bluetooth to an Arduino controller for cars’ pneumatic suspension. Try doing this with Spring Boot.</p>
+
+<h4 id="5-we-got-fairly-good-standards">5. We got fairly good standards</h4>
+<p>Of quality, architecture, designs, and testing. <strong>I honestly sometimes think we are rediscovering what backend/desktop devs already did</strong> in the past 50 years, but we are getting there way faster. Mobile technology matured a lot. This allows us to focus on what is important (the User experience) without struggling with basics.</p>
+
+<h4 id="6-cross-platform-solutions">6. Cross-platform solutions</h4>
+<p>As a native Android developer with PTSD from using Cordova/Phonegap, I was very skeptical about any cross-platform solution. But there is Flutter now… and it runs nicely on both platforms (and possibly on the Web, but I didn’t test it). Of course, there is the always-present cross-platform issue with the need of implementing pieces of native code and bridging them to the shared parts, but often you don’t have to do it, depending on the app.</p>
+
+<h4 id="7-it-allows-me-to-work-in-other-areas">7. It allows me to work in other areas</h4>
+<p>As mentioned before, I’m Android developer, not backend, but I’m fairly confident about working with Spring services. Modern backend apps use Kotlin so the doors are even more open. I found it valuable to be able to work outside my comfort zone, and it’s highly appreciated in the workplace. On the other hand, I’ve noticed a lot of backend devs are petrified of anything even remotely having UI or not running in a container :)</p>
+
+<h4 id="8-it-has-multiple-faces">8. It has multiple faces</h4>
+<p>There is more UI-oriented work, and there is more backend (on mobile) work. You can develop apps, libraries, or even tools. The whole spectrum of domains is available without prior knowledge. I used to work with IoT, fintech, e-learning, car navigation, and others. My colleagues worked in health, sports apps, tv streaming, and even a toothbrush app - beer conversations are entertaining.</p>
+
+<h4 id="9-its-challenging">9. It’s challenging</h4>
+<p>Even with tools and patterns, there are still a lot of unknown areas when you start developing an app. The UI or navigation may (and will) change to serve users in a better way, reacting to their feedback. Running your code on a device you have no control over is causing hard-to-track bugs. 
+There are thousands of Android devices that your app should run without issues, with different screen densities and sizes. Android is known for OS version fragmentation and targeting only the latest one will cut out a lot of potential users. Some devices don’t use Google Services like Huawei, so you have to do workarounds to provide functionalities.</p>
+
+<p>The OS is changing each year more-less, new APIs, deprecated ones, new requirements and guidelines to follow. Be prepared.</p>
+
+<h4 id="10-accessibility">10. Accessibility</h4>
+<p>The right setup of apps can allow sight-challenged people to see, read and write, or navigate to destination, amplifying their independence. With virtual assistants you can write emails, call people and perform other tasks without using hands. Thanks to mobile devices and accessibility supported apps disabled people can now have better life quality than before.</p>
+
+<p>And while you most likely won’t develop a next live changing app, following guidelines for accessibility will also make a change.</p>
+
+<h4 id="11-the-job-market-is-good">11. The job market is good</h4>
+<p>This might be true for almost all sorts of software development. Because of the reason #1 mobile developers are always needed.</p>
+
+<h2 id="there-are-some-caveats-though">There are some caveats though</h2>
+<h3 id="mobile-is-considered-front-end">Mobile is considered front-end</h3>
+<p>The focus is on UX and not really on the scalability or maintainability of the whole system. And usually, you need the backend to even justify having an app. Depending on the project and organization, it may leave you as a mere consumer of the API without any impact on the whole system - I don’t enjoy that. I remember when the app I was working on was called <em>“<strong>just a skin</strong>”</em> for <em><strong>the real app</strong></em> running on the server. It didn’t feel good.</p>
+
+<h3 id="users-will-always-blame-the-app">Users will always blame the app</h3>
+<p>Not the backend services, not the infrastructure, not the security team neglecting dangers, not the DevOps messing something up, not the managers, product people, or designers for wrong decisions. It will be your baby app getting dreadful reviews in the app store. There will be also kind reviews, don’t worry :)</p>
+
+<h3 id="career-limiting">Career limiting?</h3>
+<p>At some point, I’d like to design systems. But I don’t have much experience with the backend, I’m a bit scared of the infrastructure setup, binding everything together, handling AWS, containers, orchestrators, load-balancers, deployment schemes, etc. I understand the concepts though. I can learn that stuff but most likely I won’t get much experience. Most system architects (I guess) are former backend devs. Rarely there are mobile ones that step outside their comfort zone.</p>
+
+<p>Of course, there is also a need for mobile architects in bigger organizations or complex apps, but it’s a bit boring for me, I like playing with bigger boxes.</p>
+
+<p>I believe doing mobile may give me some advantages that hardcore backend devs won’t have. Understanding the user perspective, UX, connectivity issues, and backward compatibility for APIs are just a few to mention. But still, there are huge gaps to fill.</p>
+
+<h2 id="would-i-recommend-mobile-development-to-others">Would I recommend mobile development to others?</h2>
+<p><strong>It depends on you, but generally, I would.</strong></p>
+
+<p>I saw skeptical backend devs getting excited after a while because they could develop the button that was calling their API and see the result :)
+We have UI, UX, and App architecture patterns, no need to reinvent the wheel. Multiple paradigms were announced, tested, hyped, and forgotten. It’s a stable and mature environment now. Just like the tools we are using.</p>
+
+<p>If you already know Java or Kotlin it may be a safe and fun way to develop additional “leg” in your skill tree and get a feeling of how the whole system is working.</p>
+
+<p>If you are just starting <strong>don’t you want to run your code on your phone?</strong> :) Play with a camera or GPS? Design a smartwatch face or complication? A widget for your home screen?</p>
+
+<p><strong>Then go for it!</strong></p>
+
+<hr />
+
+<p>Thanks <a href="https://lyumotech.com">Mariia Saveleva</a> for reviewing and tip about accessibility :)</p>
+
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#rss-ref">-->
+        <!--                rss <span>(15)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#career-ref">
+                    career <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#mobile-ref">
+                    mobile <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#android-ref">
+                    android <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#ios-ref">
+                    ios <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#flutter-ref">
+                    flutter <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Would you go for mobile development again, after 10 years of doing it?"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/tech_proposals"
+                                    title="Dlaczego warto korzystać z Tech proposals">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/2023-06-16-ci-is-your-friend" title="Continuous Integration and Deployment: A Developer's Best Friends">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

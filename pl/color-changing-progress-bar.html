@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	">
+    <h1>Color changing progress bar </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   April
+	   24th,
+	   
+	   2016
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        2 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+</ul>
+            </nav>
+
+            <p>In my project I wanted to have progress bar that shows how much time you have until
+your food is not good to eat any longer. I’m not UX specialist, but I know that
+usually when you see green color you think <strong>it’s all ok</strong> and red is <strong>some danger</strong>.
+So I decided to have small progress bar in each product list item
+showing time till it should land in trashcan.</p>
+
+<p>So we need a progressbar that goes from green to red (with ugly mid-green mid-red in middle…)</p>
+
+<p><strong>Please remember following code is in <a href="https://kotlinlang.org/">Kotlin</a></strong></p>
+
+<p>Standard Android ProgressBar can be set to value 0-100, by using</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">    <span class="n">progressBar</span><span class="o">.</span><span class="na">setProgress</span><span class="o">(</span><span class="mi">69</span><span class="o">);</span></code></pre></figure>
+
+<p>Let’s keep it, all we need is ProgressBar to set color according to this value, so we don’t
+have to change our other code where ProgressBar is used.</p>
+
+<p>Let’s create new class extending Progres Bar</p>
+
+<script src="https://gist.github.com/asvid/ddcb0907c5fea68639b57b38ca03dabe.js"></script>
+
+<p>And use it in Layout</p>
+
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml">    <span class="nt">&lt;com.example.app.customViews.ProductProgressBar</span>
+            <span class="na">android:id=</span><span class="s">"@+id/progressBar"</span>
+            <span class="na">android:layout_width=</span><span class="s">"fill_parent"</span>
+            <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span><span class="nt">/&gt;</span></code></pre></figure>
+
+<p>For now, it acts exactly like standard ProgressBar, so how to make it do what we want?
+Let’s override <code class="language-plaintext highlighter-rouge">setProgress</code> method :)</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">    <span class="n">override</span> <span class="n">fun</span> <span class="nf">setProgress</span><span class="o">(</span><span class="nl">progress:</span> <span class="nc">Int</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">setProgress</span><span class="o">(</span><span class="n">progress</span><span class="o">)</span>
+        <span class="n">val</span> <span class="nl">progressDrawable:</span> <span class="nc">Drawable</span> <span class="o">=</span> <span class="n">getProgressDrawable</span><span class="o">()</span>
+        <span class="n">progressDrawable</span><span class="o">.</span><span class="na">colorFilter</span> <span class="o">=</span> <span class="n">translateValueToColor</span><span class="o">(</span><span class="n">progress</span><span class="o">)</span>
+        <span class="n">setProgressDrawable</span><span class="o">(</span><span class="n">progressDrawable</span><span class="o">)</span>
+    <span class="o">}</span></code></pre></figure>
+
+<p>All I’ve done here is taking current ProgressDrawable, and set color to value I get from <code class="language-plaintext highlighter-rouge">translateValueToColor</code></p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java">   <span class="n">fun</span> <span class="nf">translateValueToColor</span><span class="o">(</span><span class="nl">value:</span> <span class="nc">Int</span><span class="o">):</span> <span class="nc">PorterDuffColorFilter</span> <span class="o">{</span>
+       <span class="n">val</span> <span class="no">R</span> <span class="o">=</span> <span class="o">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">value</span><span class="o">)</span> <span class="o">/</span> <span class="mi">100</span>
+       <span class="n">val</span> <span class="no">G</span> <span class="o">=</span> <span class="o">(</span><span class="mi">255</span> <span class="o">*</span> <span class="o">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">value</span><span class="o">))</span> <span class="o">/</span> <span class="mi">100</span>
+       <span class="n">val</span> <span class="no">B</span> <span class="o">=</span> <span class="mi">0</span>
+       <span class="n">val</span> <span class="n">color</span> <span class="o">=</span> <span class="n">android</span><span class="o">.</span><span class="na">graphics</span><span class="o">.</span><span class="na">Color</span><span class="o">.</span><span class="na">argb</span><span class="o">(</span><span class="mi">255</span><span class="o">,</span> <span class="no">R</span><span class="o">,</span> <span class="no">G</span><span class="o">,</span> <span class="no">B</span><span class="o">)</span>
+       <span class="n">val</span> <span class="n">colorFilter</span> <span class="o">=</span> <span class="nc">PorterDuffColorFilter</span><span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="nc">PorterDuff</span><span class="o">.</span><span class="na">Mode</span><span class="o">.</span><span class="na">MULTIPLY</span><span class="o">)</span>
+       <span class="k">return</span> <span class="n">colorFilter</span>
+   <span class="o">}</span></code></pre></figure>
+
+<p>I’m setting RGB values (not variables :) ) accordingly to value so <code class="language-plaintext highlighter-rouge">value == 0</code> gets all green and <code class="language-plaintext highlighter-rouge">value == 100</code> gets all red.</p>
+
+<p>And result can look like that:</p>
+
+<p><img src="/assets/Screenshot_20160424-001620.png" alt="alt text" width="300px" /></p>
+
+<p>If you need more specific behaviour or different colors, all you need to do is change <strong>translateValueToColor</strong> method, by using <strong>if</strong> statement or anything you’ll find suitable for your case.</p>
+
+<p>Hope you enjoyed this quite short tutorial, be prepared for more :]</p>
+
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#rss-ref">-->
+        <!--                rss <span>(15)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#UI-ref">
+                    UI <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#custom view-ref">
+                    custom view <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Color changing progress bar"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/first-post"
+                                    title="First post">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/android-local-maven" title="Android local libraries with Maven">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

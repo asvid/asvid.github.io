@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/overmodularity/overmodularity.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Overlibrarization </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   January
+	   20th,
+	   
+	   2019
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        8 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#it-seems-great">It seems great</a></li>
+<li class="toc-entry toc-h2"><a href="#but-why">But why?</a></li>
+<li class="toc-entry toc-h2"><a href="#story-time">Story time</a></li>
+<li class="toc-entry toc-h2"><a href="#too-much-love-will-kill-you">Too much love will kill you</a></li>
+<li class="toc-entry toc-h2"><a href="#final-thought">Final thought</a></li>
+</ul>
+            </nav>
+
+            <h2 id="it-seems-great">It seems great</h2>
+<p>Write code once use it many times. Creating smaller pieces of code forces developers to write encapsulated software that follows single responsibility principle and is easy to test. Such code piece (AKA module) can be then published as a versioned artifact - a private library, that can be reused in more than one project. We are getting quality and reusability, how cool is that! Well that’s the theory. I’d like to share fictional story (that could be real) when modularization went wrong and some ideas how to avoid that.</p>
+
+<h2 id="but-why">But why?</h2>
+<p>So some say it’s good to create libraries, but why exactly?</p>
+
+<p>If you are (like me) an Android developer it’s highly probable you’ve handled input fields, like email, password, IP address etc. Handling such fields usually means creating some <code class="language-plaintext highlighter-rouge">helper</code> class to verify if typed text is in correct form. Yes, there are libs for that, but checking input fields may be very usecase specific - I remember checking if typed IP address is available in local network or outside of it. For me it was faster to create and unit test my own solution than look for library providing such validator. After a while there were few <code class="language-plaintext highlighter-rouge">helpers</code> like that, and new project appeared were they could be used. So what now, copy and paste code from one project to another? Hell no. I’ve created library for internal usage that I’ve shared between both projects.
+<!-- some graph of shared components --></p>
+
+<p><img src="assets/posts/overmodularity/simple_module.png" alt="Simple module dependency graph" class="center-image" /></p>
+
+<h2 id="story-time">Story time</h2>
+<p><em>Disclaimer: This is pure fictional story, based on my own experience and other developer stories I’ve heard, oversimplified and overcolorized</em></p>
+
+<p>Now imagine complex user flow shared between projects, like login or registration to cloud service. Basically it’s few screens with inputs, some HTTP requests, maybe data persistence. On the end you want to know if user is properly logged in and get auth data for future HTTP requests. If the flow itself is not that straightforward, has some weird branches only business seems to understand, it appears really worthy to write it once and use in upcoming project that will share this functionality.
+<!-- complicated flow example --></p>
+
+<p><img src="assets/posts/overmodularity/complex_module.png" alt="Complex module dependency graph" class="center-image" /></p>
+
+<h3 id="here-fun-begins">Here fun begins</h3>
+<p>But what to put into this login module? It needs to talk with cloud, so maybe HTTP client should be added. User email should be saved so some simple key-value persistence will come handy. Layouts, fragments, presenters and whole navigation - after all we just need to get logged user data from this module. Library is using other shared modules like <code class="language-plaintext highlighter-rouge">Commons Library</code> from first example, also some custom views like input fields with fancy error showing. Library API was made in fancy at the time RxJava 1. Everything versioned and kept on internal artifact server (like JFrog Artifactory), ready to use in future projects. Business assured that nothing will change in user login flow so developers were sure they are making good decision cuppling it all together.</p>
+
+<h3 id="more-fun">More fun</h3>
+<p>The second project is launched some time after development of <code class="language-plaintext highlighter-rouge">Login Library</code> was finished and it has been released with first project. New project is also developed by other team than first. There is the same requirement of logging to cloud service in new project, so developers decided to use <code class="language-plaintext highlighter-rouge">Login Library</code> from first project. But how to use it if there is no <code class="language-plaintext highlighter-rouge">README</code> or example in library repository? Just check the first project… Second project business requirement was to have all persisted data encoded but <code class="language-plaintext highlighter-rouge">Login Library</code> was using internaly simple key-value storage without any encoding possibilities. It can be easly fixed since it’s internal project.</p>
+
+<p>Second project team updated <code class="language-plaintext highlighter-rouge">Login Library</code> so it can go along with various business requirements (for faster development they’ve used <strong><a href="/android-local-maven">local Maven library</a></strong>), and created pull request with changes, original authors of library were added as rewievers. But the reviewers were busy with their own project so it took them a week to check the PR, it got accepted, new version of library was released and used in second project.</p>
+
+<p>Then business has great idea to change look of login screens in second app to be more up to date. Developers added injecting styles to library, but they broke backwards compatibility during the process. Another change in <code class="language-plaintext highlighter-rouge">Login Library</code>, another pull request, another week.
+Meanwhile developers of first project have found a bug in <code class="language-plaintext highlighter-rouge">Login Library</code>, they created fix and wanted to release it fast… but now they need to change their application because of changes made by second team, or fork it and begin linux-distro-like hell.</p>
+
+<p>And now business has another great idea to change flow for second project only…</p>
+
+<h3 id="please-stahp">Please stahp</h3>
+<p>You see where I’m going with it? And list of potential problems can be easily extended: second project uses RxJava2, HTTP client headers may be different for each project, analytics of login flow should be separate for each project, diferent ideas how to maintain library, etc.</p>
+
+<p>At the end creating such shared module didn’t solve any problems, but generated new ones. It didn’t speed up development but made it slower and annoying, possibly creating useless tension between teams and people.</p>
+
+<h2 id="too-much-love-will-kill-you">Too much love will kill you</h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ivbO3s1udic" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<p>Somehow this song fits to above story: great idea of sharing code, so much passion in developing library module that would solve so many problems, team cooperation… so much love. But yet it sucks. But it doesn’t have to, here is how:</p>
+
+<ul>
+  <li>Never believe when business tells you “we won’t be changing that”</li>
+  <li>Each shared module should have an owner, person who knows why and how it works and decides about direction of module development. And I mean 1 person, not team - any project will die with big enough decision committee. Shared ownership means shared responsibility - will work as great as communism.</li>
+  <li>Creating shared library is no different from adding new internal service or class and the same rules apply.
+    <ul>
+      <li>reduce outside dependencies</li>
+      <li>consciously design your API</li>
+      <li>think about various configuration variants rather than current use cases</li>
+      <li>shared code is to be used by application so don’t force clients of your lib to change application architecture just to use it</li>
+      <li>SOLID, DRY bla bla bla…</li>
+    </ul>
+  </li>
+  <li>Think few times do you really need to create shared library, talk with other teams what they think about it. Something that seems a great idea at first may be overkill or not be used at all on the end. Sometimes well designed module or even package in monolith app is good enough, and can be moved to library when the need comes.</li>
+  <li>Create README, and make it a good one. Examples, explanations, <strong><a href="/android-build-hacks-3-documentation">generated documentation</a></strong>. You will thank me later.</li>
+  <li>Create example application that uses your shared code, so going through old projects won’t be necessary to understand it.</li>
+  <li>Always add tests (unit, functional) in your library</li>
+  <li>CI/CD will make your life easer</li>
+</ul>
+
+<p>So for my example with <code class="language-plaintext highlighter-rouge">Login Library</code>:</p>
+<ul>
+  <li>Putting views and whole navigation is asking for problems: UI will change for different reasons than business logic and each change has to be released as new version of library and updated dependency in app, it may also limit navigation control and changing user flows.</li>
+  <li>Putting HTTP client and persistence directly into library is easy, but also may cause problems. Such dependencies should be injected by application that uses library.</li>
+  <li>External dependency used for library public API is risky, it’s probably better idea to keep it bare bones and then add <code class="language-plaintext highlighter-rouge">reactive extensions</code>.</li>
+  <li>Select owner - faster pull requests and better overall library maintenance.</li>
+  <li>Add README, code examples, documentation.</li>
+</ul>
+
+<h2 id="final-thought">Final thought</h2>
+<p>It’s good to learn from yor own mistakes, but engineers should mostly learn from mistakes made by others. If you rush into creating libraries without learning a lesson from other developers errors - you will surely recreate some of them. And those errors cost a lot of time, frustration and useless work.</p>
+
+<p>If you are working with a lot of short term projects, you’ll probably need only something like <code class="language-plaintext highlighter-rouge">commons library</code> or not even that. For bigger/longer projects creating library should be conscious decision made by mature developers creating balanced teams. Each internal library requires time for setup and maintenance, and even more if you decide to publish it as open source.</p>
+
+<p>There are other ways to share code between projects, like <code class="language-plaintext highlighter-rouge">monorepo</code> or <code class="language-plaintext highlighter-rouge">git subtree</code>, but they cause other problems. As they say in IBM - <em><a href="https://en.wikipedia.org/wiki/Think_(IBM)">THINK</a></em> and select best solution for your case.</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#architecture-ref">
+                    architecture <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#library-ref">
+                    library <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#modularization-ref">
+                    modularization <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Overlibrarization"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/android-build-hacks-3-documentation"
+                                    title="Android build hacks #3 - documentation with Dokka">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/shellscriptbasics" title="Shell script basics">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

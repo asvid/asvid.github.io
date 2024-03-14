@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/adapter.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Adapter w Kotlinie </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   June
+	   26th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        19 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#implementacja">Implementacja</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstrakcyjna">Abstrakcyjna</a></li>
+<li class="toc-entry toc-h2"><a href="#listy">Listy</a></li>
+<li class="toc-entry toc-h2"><a href="#duck-typing">Duck Typing</a></li>
+<li class="toc-entry toc-h2"><a href="#shapes">Shapes</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#nazewnictwo">Nazewnictwo</a></li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#konsekwencje">Konsekwencje</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+<p>Jak sama nazwa sugeruje, wzorzec <code class="language-plaintext highlighter-rouge">Adapter</code> przekształca interfejs klasy na inny, wymagany przez klienta. Zastosowanie <code class="language-plaintext highlighter-rouge">Adaptera</code> pozwala na współdziałanie klas, które przez niezgodne interfejsy nie mogłyby tego robić. Innym określeniem na ten wzorzec jest <code class="language-plaintext highlighter-rouge">Wrapper</code>.</p>
+
+<p>Adapter umożliwia “zmapowanie” adaptowanego interfejsu (<code class="language-plaintext highlighter-rouge">Adaptee</code>) na oczekiwany (<code class="language-plaintext highlighter-rouge">Target</code>) przez klasę kliencką bez dokładania kolejnego poziomu dziedziczenia. Takie dziedziczenie nawet nie zawsze byłoby możliwe, jeśli <code class="language-plaintext highlighter-rouge">Target</code> byłby klasą, a nie interfejsem. Nowa klasa musiałaby być jednocześnie i <code class="language-plaintext highlighter-rouge">Target</code>, i <code class="language-plaintext highlighter-rouge">Adaptee</code>.</p>
+
+<p>Zamiast tworzyć nową klasę <code class="language-plaintext highlighter-rouge">Adapter</code> można również dodać metodę w kliencie, która przyjmie obiekt z interfejsem <code class="language-plaintext highlighter-rouge">Adaptee</code>, ale to powoduje rozrost klasy o metody robiące to samo, tylko dla różnych argumentów. Klasa kliencka może też pochodzić z zewnątrz i wtedy nie będzie możliwości zmiany.</p>
+<h1 id="implementacja">Implementacja</h1>
+<p><code class="language-plaintext highlighter-rouge">Adapter</code> to w zasadzie pojedyncza klasa, ale ważne jest zrozumienie jej otoczenia.</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="217px" preserveAspectRatio="none" style="width:307px;height:217px;" version="1.1" viewBox="0 0 307 217" width="307px" zoomAndPan="magnify"><defs><filter height="300%" id="f137twkhxxdijq" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[ed6624c6556d5e7b1bd23032162d20b7]
+class Client--><rect fill="#FEFECE" filter="url(#f137twkhxxdijq)" height="60.8047" id="Client" style="stroke: #A80036; stroke-width: 1.5;" width="92" x="67.5" y="8" /><ellipse cx="93.75" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M96.7188,29.6406 Q96.1406,29.9375 95.5,30.0781 Q94.8594,30.2344 94.1563,30.2344 Q91.6563,30.2344 90.3281,28.5938 Q89.0156,26.9375 89.0156,23.8125 Q89.0156,20.6875 90.3281,19.0313 Q91.6563,17.375 94.1563,17.375 Q94.8594,17.375 95.5,17.5313 Q96.1563,17.6875 96.7188,17.9844 L96.7188,20.7031 Q96.0938,20.125 95.5,19.8594 Q94.9063,19.5781 94.2813,19.5781 Q92.9375,19.5781 92.25,20.6563 Q91.5625,21.7188 91.5625,23.8125 Q91.5625,25.9063 92.25,26.9844 Q92.9375,28.0469 94.2813,28.0469 Q94.9063,28.0469 95.5,27.7813 Q96.0938,27.5 96.7188,26.9219 L96.7188,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="35" x="110.25" y="28.1543">Client</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="68.5" x2="158.5" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="68.5" x2="158.5" y1="48" y2="48" /><rect fill="#F24D5C" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="75.5" y="56" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="66" x="87.5" y="62.2104">useTarget()</text><!--MD5=[fc07866a383d07d405a25512054a0e5c]
+class Target--><rect fill="#FEFECE" filter="url(#f137twkhxxdijq)" height="60.8047" id="Target" style="stroke: #A80036; stroke-width: 1.5;" width="77" x="195" y="8" /><ellipse cx="211.8" cy="24" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M207.7219,19.7656 L207.7219,17.6094 L215.1125,17.6094 L215.1125,19.7656 L212.6438,19.7656 L212.6438,27.8438 L215.1125,27.8438 L215.1125,30 L207.7219,30 L207.7219,27.8438 L210.1906,27.8438 L210.1906,19.7656 L207.7219,19.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="41" x="226.2" y="28.1543">Target</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="196" x2="271" y1="40" y2="40" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="196" x2="271" y1="48" y2="48" /><ellipse cx="206" cy="59" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="51" x="215" y="62.2104">method()</text><!--MD5=[f38a85e47f7d4f812523dd9b6d7d2c16]
+class Adapter--><rect fill="#FEFECE" filter="url(#f137twkhxxdijq)" height="73.6094" id="Adapter" style="stroke: #A80036; stroke-width: 1.5;" width="126" x="170.5" y="133" /><ellipse cx="205.3" cy="149" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M208.2688,154.6406 Q207.6906,154.9375 207.05,155.0781 Q206.4094,155.2344 205.7063,155.2344 Q203.2063,155.2344 201.8781,153.5938 Q200.5656,151.9375 200.5656,148.8125 Q200.5656,145.6875 201.8781,144.0313 Q203.2063,142.375 205.7063,142.375 Q206.4094,142.375 207.05,142.5313 Q207.7063,142.6875 208.2688,142.9844 L208.2688,145.7031 Q207.6438,145.125 207.05,144.8594 Q206.4563,144.5781 205.8313,144.5781 Q204.4875,144.5781 203.8,145.6563 Q203.1125,146.7188 203.1125,148.8125 Q203.1125,150.9063 203.8,151.9844 Q204.4875,153.0469 205.8313,153.0469 Q206.4563,153.0469 207.05,152.7813 Q207.6438,152.5 208.2688,151.9219 L208.2688,154.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="223.7" y="153.1543">Adapter</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="171.5" x2="295.5" y1="165" y2="165" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="178.5" y="173" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="100" x="190.5" y="179.2104">adaptee: Adaptee</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="171.5" x2="295.5" y1="185.8047" y2="185.8047" /><ellipse cx="181.5" cy="196.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="51" x="190.5" y="200.0151">method()</text><!--MD5=[7393b79429f23cd61e6e6a493d3a2b14]
+class Adaptee--><rect fill="#FEFECE" filter="url(#f137twkhxxdijq)" height="60.8047" id="Adaptee" style="stroke: #A80036; stroke-width: 1.5;" width="105" x="14" y="139" /><ellipse cx="38" cy="155" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M33.9219,150.7656 L33.9219,148.6094 L41.3125,148.6094 L41.3125,150.7656 L38.8438,150.7656 L38.8438,158.8438 L41.3125,158.8438 L41.3125,161 L33.9219,161 L33.9219,158.8438 L36.3906,158.8438 L36.3906,150.7656 L33.9219,150.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="54" y="159.1543">Adaptee</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="118" y1="171" y2="171" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="118" y1="179" y2="179" /><ellipse cx="25" cy="190" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="79" x="34" y="193.2104">otherMethod()</text><!--MD5=[e8afce381d6978114aa9e217ec9a4ba2]
+reverse link Target to Adapter--><path d="M233.5,89.37 C233.5,102.39 233.5,116.23 233.5,128.62 " fill="none" id="Target&lt;-Adapter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="none" points="226.5,89.3,233.5,69.3,240.5,89.3,226.5,89.3" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[f542aae18a442658068046d736555ab7]
+reverse link Adaptee to Adapter--><path d="M127.06,173.68 C140.98,174.45 155.75,175 169.5,175 " fill="none" id="Adaptee&lt;-Adapter" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="127.06,173.68,132.8299,178.0053,139.0417,174.3428,133.2718,170.0175,127.06,173.68" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[ac16be24c016d0cc1b5b2bfc6dfbddbe]
+link Adapter to Adaptee--><path d="M169.5,195 C151.33,195 144.7,190.89 130.49,189.47 " fill="none" id="Adapter-&gt;Adaptee" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#A80036" points="120.5,189,129.2947,193.4331,125.4941,189.2433,129.684,185.4426,120.5,189" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[431c3f1848dccc83292155c400886313]
+link Client to Target--><path d="M159.91,38.5 C169.86,38.5 179.82,38.5 189.77,38.5 " fill="none" id="Client-&gt;Target" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="194.98,38.5,185.98,34.5,189.98,38.5,185.98,42.5,194.98,38.5" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[b503d32f81b95c05489d2d43666a4a07]
+@startuml
+skinparam groupComposition 1
+class Client{
+- useTarget()
+}
+interface Target{
++ method()
+}
+class Adapter extends Target{
++ method()
+- adaptee: Adaptee
+}
+interface Adaptee{
+ + otherMethod() 
+}
+
+Adapter::adaptee -right-* Adaptee
+Client-right->Target
+Adapter::method..>Adaptee::otherMethod
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<ul>
+  <li><strong>Client</strong> - klasa korzystająca z obiektu <code class="language-plaintext highlighter-rouge">Target</code></li>
+  <li><strong>Target</strong> - interfejs wymagany przez klasę <code class="language-plaintext highlighter-rouge">Client</code></li>
+  <li><strong>Adapter</strong> - klasa z interfejsem <code class="language-plaintext highlighter-rouge">Target</code> adaptująca obiekt <code class="language-plaintext highlighter-rouge">Adaptee</code>, najczęściej obiekt adaptowany będzie przypisany do pola w tej klasie</li>
+  <li><strong>Adaptee</strong> - klasa adaptowana z niepasującym interfejsem, którą chcemy użyć razem z <code class="language-plaintext highlighter-rouge">Client</code></li>
+</ul>
+
+<h2 id="abstrakcyjna">Abstrakcyjna</h2>
+<p>W kodzie powyższy diagram może wyglądać następująco:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Client</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">target</span><span class="p">:</span> <span class="nc">Target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">argument</span> <span class="p">=</span> <span class="nc">BigDecimal</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+
+    <span class="k">fun</span> <span class="nf">doWork</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">target</span><span class="p">.</span><span class="nf">method</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// klient akceptuje tylko ten interfejs</span>
+<span class="kd">interface</span> <span class="nc">Target</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">method</span><span class="p">(</span><span class="n">argument</span><span class="p">:</span> <span class="nc">BigDecimal</span><span class="p">):</span> <span class="nc">Double</span>
+<span class="p">}</span>
+<span class="c1">// interfejs obiektu który chcemy użyć z klientem</span>
+<span class="kd">interface</span> <span class="nc">Adaptee</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">originalMethod</span><span class="p">(</span><span class="n">argument</span><span class="p">:</span> <span class="nc">CustomArgument</span><span class="p">):</span> <span class="nc">CustomResult</span>
+<span class="p">}</span>
+<span class="c1">// adapter implementujący Target i przyjmujący Adaptee w konstruktorze</span>
+<span class="kd">class</span> <span class="nc">Adapter</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">adaptee</span><span class="p">:</span> <span class="nc">Adaptee</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Target</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">method</span><span class="p">(</span><span class="n">argument</span><span class="p">:</span> <span class="nc">BigDecimal</span><span class="p">):</span> <span class="nc">Double</span> <span class="p">{</span>
+        <span class="kd">val</span> <span class="py">stringArgument</span> <span class="p">=</span> <span class="n">argument</span><span class="p">.</span><span class="nf">toCustomArgument</span><span class="p">()</span>
+		<span class="c1">// wywołanie metody adaptowanej klasy</span>
+        <span class="k">return</span> <span class="n">adaptee</span><span class="p">.</span><span class="nf">originalMethod</span><span class="p">(</span><span class="n">stringArgument</span><span class="p">).</span><span class="nf">toDouble</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// użycie</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">target1</span><span class="p">:</span> <span class="nc">Target</span> <span class="p">=</span> <span class="nc">TargetImpl</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">adaptee</span><span class="p">:</span> <span class="nc">Adaptee</span> <span class="p">=</span> <span class="nc">AdapteeImpl</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">adapter</span><span class="p">:</span> <span class="nc">Target</span> <span class="p">=</span> <span class="nc">Adapter</span><span class="p">(</span><span class="n">adaptee</span><span class="p">)</span>
+
+    <span class="kd">val</span> <span class="py">client1</span><span class="p">:</span> <span class="nc">Client</span> <span class="p">=</span> <span class="nc">Client</span><span class="p">(</span><span class="n">target1</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">client2</span><span class="p">:</span> <span class="nc">Client</span> <span class="p">=</span> <span class="nc">Client</span><span class="p">(</span><span class="n">adaptee</span><span class="p">)</span> <span class="c1">// błąd! zły interfejs</span>
+    <span class="kd">val</span> <span class="py">client3</span><span class="p">:</span> <span class="nc">Client</span> <span class="p">=</span> <span class="nc">Client</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span> <span class="c1">// użycie adaptera z obiektem Adaptee</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Widać tutaj jak klasa <code class="language-plaintext highlighter-rouge">Adapter</code> używa obiektu <code class="language-plaintext highlighter-rouge">Adaptee</code> w ramach interfejsu <code class="language-plaintext highlighter-rouge">Target</code>. <code class="language-plaintext highlighter-rouge">Adapter</code> enkapsuluje logikę mapowania jednego interfejsu na drugi. Pozwala to uniknąć niepotrzebnego rozszerzania czy modyfikacji klienta lub <code class="language-plaintext highlighter-rouge">Adaptee</code> tylko pod konkretnego klienta.</p>
+
+<p>Różne klienty mogą korzystać z różnych adapterów tej samej klasy <code class="language-plaintext highlighter-rouge">Adaptee</code>. Dzięki temu nie ma potrzeby dostosowywania <code class="language-plaintext highlighter-rouge">Adaptee</code> pod konkretnego klienta lub klika klientów. Tylko spójrz na tego potworka:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Adaptee implementuje interfejsy wymagane przez klienty</span>
+<span class="kd">class</span> <span class="nc">Adaptee</span><span class="p">:</span> <span class="nc">Target1</span><span class="p">,</span> <span class="nc">Target2</span><span class="p">,</span> <span class="nc">Target3</span><span class="p">{</span>
+	<span class="c1">// jedyna faktyczna metoda klasy Adaptee</span>
+    <span class="k">fun</span> <span class="nf">originalMethod</span><span class="p">(</span><span class="n">argument</span><span class="p">:</span> <span class="nc">CustomArgument</span><span class="p">):</span> <span class="nc">CustomResult</span>
+    <span class="c1">// metody z interfejsów klientów, gdzie Adaptee jest używany</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target1Method</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target2Method</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target3Method</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>A z Adapterami:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// niezmieniona klasa</span>
+<span class="kd">class</span> <span class="nc">Adaptee</span><span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">originalMethod</span><span class="p">(</span><span class="n">argument</span><span class="p">:</span> <span class="nc">CustomArgument</span><span class="p">):</span> <span class="nc">CustomResult</span>
+<span class="p">}</span>
+<span class="c1">// Adaptery mogą znajdować się pakietowo bliżej Klienta niż adaptowanej klasy</span>
+<span class="kd">class</span> <span class="nc">Adapter1</span><span class="p">(</span><span class="kd">val</span> <span class="py">adaptee</span><span class="p">:</span> <span class="nc">Adaptee</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Target1</span><span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target1Method</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">Adapter2</span><span class="p">(</span><span class="kd">val</span> <span class="py">adaptee</span><span class="p">:</span> <span class="nc">Adaptee</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Target2</span><span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target2Method</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">Adapter3</span><span class="p">(</span><span class="kd">val</span> <span class="py">adaptee</span><span class="p">:</span> <span class="nc">Adaptee</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Target3</span><span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">target3Method</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="listy">Listy</h2>
+<p>Adapter dobrze sprawdzi się w przypadku listy elementów, na których chcemy wykonać operację, do której nie zostały stworzone.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// załóżmy że ta klasa pochodzi z zewnętrznej biblioteki</span>
+<span class="c1">// `data class` nie może być rozszerzone</span>
+<span class="kd">data class</span> <span class="nc">Item</span><span class="p">(</span><span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span>
+
+<span class="c1">// w naszym kodzie mamy interface</span>
+<span class="kd">interface</span> <span class="nc">PrettyPrintableItem</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">prettyPrint</span><span class="p">():</span> <span class="nc">String</span>
+<span class="p">}</span>
+
+<span class="c1">// Adapter/Wrapper zapewniający funkcjonalność `PrettyPrintableItem` dla obiektu `Item`</span>
+<span class="kd">class</span> <span class="nc">ItemAdapter</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">item</span><span class="p">:</span> <span class="nc">Item</span><span class="p">)</span> <span class="p">:</span> <span class="nc">PrettyPrintableItem</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">prettyPrint</span><span class="p">():</span> <span class="nc">String</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">"hello, my name is: ${item.name}"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// użycie</span>
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// lista elementów zwrócona przez bibliotekę, którą chcemy "ładnie wydrukować"</span>
+    <span class="kd">val</span> <span class="py">list</span><span class="p">:</span> <span class="nc">List</span><span class="p">&lt;</span><span class="nc">Item</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nf">listOf</span><span class="p">(</span>
+            <span class="nc">Item</span><span class="p">(</span><span class="s">"Adam"</span><span class="p">),</span>
+            <span class="nc">Item</span><span class="p">(</span><span class="s">"Not Adam"</span><span class="p">),</span>
+            <span class="nc">Item</span><span class="p">(</span><span class="s">"Adam Maybe"</span><span class="p">),</span>
+            <span class="nc">Item</span><span class="p">(</span><span class="s">"Yes"</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">list</span><span class="p">.</span><span class="nf">forEach</span> <span class="p">{</span>
+		<span class="c1">// adaptowanie obiektów</span>
+        <span class="kd">val</span> <span class="py">adapted</span> <span class="p">=</span> <span class="nc">ItemAdapter</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="n">adapted</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">())</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Zastosowanie <code class="language-plaintext highlighter-rouge">Adaptera</code> w czysty sposób pozwala nam łączyć klasy, nad którymi nie mamy kontroli (pochodzą z zewnętrznych bibliotek), z naszym kodem o innych interfejsach. Dobrą praktyką jest nieużywanie, o ile to możliwe, interfejsów niezależnych zewnętrznych bibliotek (3rd party libraries) w całym systemie, a jedynie w punkcie styku biblioteki z naszym kodem. Zapewnia to wymienialność bibliotek, łatwiejszy update wersji oraz pozwala uchronić nasz system przed koniecznością zmian podyktowanych zmianami w niezależnym od nas oprogramowaniu.</p>
+
+<p>Zdaję sobie sprawę, że nie zawsze się tak da, a czasami wręcz nie warto tworzyć pośrednie interface. Jednak głupio byłoby w długożyjącym projekcie, nad którym pracuje wiele zespołów, mieć problem — bo jakaś prosta pomocnicza biblioteka zmieniła API z jednej wersji na drugą.</p>
+
+<h2 id="duck-typing">Duck Typing</h2>
+<p>Kaczko-typowanie, czyli jeśli coś kwacze jak kaczka, pływa jak kaczka i lata jak kaczka, to musi być kaczką. W przeciwieństwie do silnego typowania gdzie wiemy na 100%, że obiekt jest kaczką, bo dziedziczy po klasie <code class="language-plaintext highlighter-rouge">Duck</code>, tutaj interesuje nas faktyczne zachowanie obiektu. Można to zaobserwować np. w Pythonie czy JavaScript. Kotlin jest silnie typowany i nie pozwala na wielodziedziczenie, ale extension functions umożliwiają “dopisanie” funkcjonalności do obiektu. Możemy więc mieć gatunkowo-płynnego psa:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">York</span><span class="p">:</span> <span class="nc">Dog</span><span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">bark</span><span class="p">(){}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nc">York</span><span class="p">.</span><span class="nf">quack</span><span class="p">(){}</span>
+<span class="c1">//</span>
+<span class="nc">York</span><span class="p">().</span><span class="nf">bark</span><span class="p">()</span>
+<span class="nc">York</span><span class="p">().</span><span class="nf">quack</span><span class="p">()</span>
+</code></pre></div></div>
+<p><img src="assets/posts/york_duck.jpg" alt="York duck" class="center-image" /></p>
+
+<p>Ten York nie wygląda na szczęśliwego. I zdecydowanie nie jest kaczką. Ale jeśli potrafi kwaczeć, a tylko tego potrzebujemy, to chyba wystarczy?</p>
+
+<p>Wracając do przykładu z listą, zamiast tworzyć <code class="language-plaintext highlighter-rouge">Adapter</code> wystarczyłoby dodać extension function dla <code class="language-plaintext highlighter-rouge">Item</code>:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nc">Item</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">():</span> <span class="nc">String</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">"hello, my name is: ${this.name}"</span>
+<span class="p">}</span>
+
+<span class="c1">// Item potrafi się "ładnie wydrukować" bez dodatkowego Adaptera	</span>
+<span class="n">list</span><span class="p">.</span><span class="nf">forEach</span> <span class="p">{</span>
+	<span class="nf">println</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">())</span>
+<span class="p">}</span>
+<span class="c1">// wersja z Adapterem</span>
+<span class="n">list</span><span class="p">.</span><span class="nf">forEach</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">adapted</span> <span class="p">=</span> <span class="nc">ItemAdapter</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="n">adapted</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">Extension functions</code> ogólnie są super i w takim prostym przykładzie chyba sprawdzą się lepiej niż dodatkowa klasa <code class="language-plaintext highlighter-rouge">Adapter</code>. Można je dodawać także do klas, nad którymi nie mamy kontroli, np. pochodzących z bibliotek.</p>
+
+<p>Problem pojawia się, kiedy zaczynamy tych metod do konkretnej klasy dodawać coraz więcej, w dodatku w różnych miejscach w kodzie. IDE świetnie podpowiada możliwe metody, łatwo można przejść do implementacji, ale w trakcie code review może być ciężko się połapać, skąd klasa ma daną metodę — bo nie ma jej w implementacji klasy. Może to też prowadzić do zaspamowania interfejsu klasy lub niejawnego przesłaniania metod.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Item</span>
+
+<span class="kd">class</span> <span class="nc">FirstItem</span> <span class="p">:</span> <span class="nc">Item</span>
+<span class="kd">class</span> <span class="nc">AnotherItem</span> <span class="p">:</span> <span class="nc">Item</span>
+
+<span class="c1">// funkcja rozszerzająca ogólny interface `Item`</span>
+<span class="k">fun</span> <span class="nc">Item</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">():</span> <span class="nc">String</span> <span class="p">=</span> <span class="s">"hello, I'm: $this"</span>
+<span class="c1">// funkcja rozszerzająca konkretną klasę `AnotherItem`</span>
+<span class="k">fun</span> <span class="nc">AnotherItem</span><span class="p">.</span><span class="nf">betterPrint</span><span class="p">():</span> <span class="nc">String</span> <span class="p">=</span> <span class="s">"greetings, I'm: $this"</span>
+<span class="c1">// funkcja przesłaniająca `prettyPrint` dodaną do interejsu `Item`</span>
+<span class="k">fun</span> <span class="nc">AnotherItem</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">():</span> <span class="nc">String</span> <span class="p">=</span> <span class="s">"yo, I'm: $this"</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="kd">val</span> <span class="py">item1</span><span class="p">:</span> <span class="nc">Item</span> <span class="p">=</span> <span class="nc">FirstItem</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">item2</span><span class="p">:</span> <span class="nc">Item</span> <span class="p">=</span> <span class="nc">AnotherItem</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">item3</span><span class="p">:</span> <span class="nc">AnotherItem</span> <span class="p">=</span> <span class="nc">AnotherItem</span><span class="p">()</span>
+
+    <span class="n">item1</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">()</span>
+    <span class="n">item2</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">()</span>
+    <span class="n">item3</span><span class="p">.</span><span class="nf">prettyPrint</span><span class="p">()</span> <span class="c1">// która metoda tutaj się wywoła?</span>
+    <span class="n">item3</span><span class="p">.</span><span class="nf">betterPrint</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>W tym przykładzie dodałem 3 funkcje rozszerzeń. Szczególnie ciekawy jest przypadek z <code class="language-plaintext highlighter-rouge">prettyPrint</code>, gdzie implementacja jest inna dla ogólnego interfejsu <code class="language-plaintext highlighter-rouge">Item</code> i dla konkretnej klasy <code class="language-plaintext highlighter-rouge">AnotherItem</code>. IDE ani kompilator nie widzą żadnego problemu, po prostu z typem <code class="language-plaintext highlighter-rouge">AnotherItem</code> zostanie użyta druga metoda. Ale <code class="language-plaintext highlighter-rouge">extension functions</code> można napisać gdziekolwiek w kodzie, nawet w bardzo odległych miejscach od miejsca zadeklarowania klasy.</p>
+
+<p>Wyobraźcie sobie sytuację, gdzie napisaliście do ogólnego interfejsu <code class="language-plaintext highlighter-rouge">extension function</code> i korzystacie z niej przez długi czas bez problemu z różnymi typami implementującymi ten interfejs. W którymś momencie zupełnie inny zespół potrzebował <code class="language-plaintext highlighter-rouge">extension function</code> dla konkretnego typu, więc ktoś napisał w dogodnym dla siebie miejscu metodę o takiej samej nazwie i sygnaturze, nadpisując metodę dla ogólnego interfejsu. Bez żadnego <code class="language-plaintext highlighter-rouge">override</code> :) testy mogą to wyłapać, ale nie muszą. Code Review robił pewnie ktoś z drugiego zespołu, więc dopóki się coś nie zacznie się zachowywać w niespodziewany sposób, prawdopodobnie nie dowiesz się o całej operacji. A potem szukanie przyczyny błędu może nie być najprzyjemniejsze…</p>
+
+<p>Mamy tutaj kilka problemów:</p>
+<ul>
+  <li>uzależnienie od <code class="language-plaintext highlighter-rouge">extension functions</code> dla interfejsu, którą można łatwo można nadpisać</li>
+  <li>rozsiewanie <code class="language-plaintext highlighter-rouge">extension functions</code> po całym systemie</li>
+  <li>code review ograniczone do członków 1 zespołu (to jest w ogóle temat na osobnego posta)</li>
+</ul>
+
+<p>Zamknięcie całej “rozszerzonej” funkcjonalności w Adapterze np. <code class="language-plaintext highlighter-rouge">ItemPrinter</code> pozwoliłoby uniknąć nieporozumień i ułatwić code review. W Git można łatwo sprawdzić, kto jest autorem lub modyfikował ostatnio tę klasę i również dodać do pull requesta. W przypadku <code class="language-plaintext highlighter-rouge">extension functions</code> taka opcja też istnieje, ale metody mogą być rozsiane po systemie, co utrudnia znalezienie autorów, a jeśli coś jest trudniejsze niż bezproblemowe, to nikt tego nie będzie robił.</p>
+
+<h2 id="shapes">Shapes</h2>
+<p>We wpisie o <a href="https://asvid.github.io/pl/kotlin-factory-method">Factory Method</a> korzystałem z przykładu z figurami geometrycznymi, który tutaj też się fajnie nadaje.</p>
+
+<p>Dla przypomnienia:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Shape</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">draw</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">():</span> <span class="nc">ShapeManipulator</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Shape</span><span class="p">&gt;</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">ShapeManipulator</span><span class="p">&lt;</span><span class="nc">T</span> <span class="p">:</span> <span class="nc">Shape</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span>
+    <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">Circle</span> <span class="p">:</span> <span class="nc">Shape</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">draw</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">()</span> <span class="p">=</span> <span class="nc">CircleManipulator</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">internal</span> <span class="kd">class</span> <span class="nc">CircleManipulator</span><span class="p">&lt;</span><span class="nc">T</span><span class="p">&gt;(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">shape</span><span class="p">:</span> <span class="nc">T</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ShapeManipulator</span><span class="p">&lt;</span><span class="nc">Circle</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"CircleManipulator is manipulating circle $shape"</span><span class="p">)</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span> <span class="p">=</span> <span class="nf">println</span><span class="p">(</span><span class="s">"CircleManipulator is resizing circle $shape"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Mamy interfejs <code class="language-plaintext highlighter-rouge">Shape</code> który implementuje np. <code class="language-plaintext highlighter-rouge">Circle</code>. Do tego, każda figura ma swój <code class="language-plaintext highlighter-rouge">ShapeManipulator</code> czyli obiejkt, który wie jak modyfikować rozmiar, kształt itd. konkretnej figury.
+Figury na ekranie wyświetla klasa <code class="language-plaintext highlighter-rouge">Window</code></p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Window</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">drawShape</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="nc">Shape</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// magia</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>I teraz chcemy móc wyświetlić tekst na ekranie, obok figur geometrycznych. Jednak klasa <code class="language-plaintext highlighter-rouge">TextView</code> nie jest figurą, ma inny interfejs i pochodzi np. z jakiejś biblioteki. Jest też na tyle skomplikowaną klasą, że nie ma szans na przepisanie jej z wykorzystaniem interfejsu <code class="language-plaintext highlighter-rouge">Shape</code>, ani na zmianę działania klasy <code class="language-plaintext highlighter-rouge">Window</code>.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">TextView</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">displayText</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">fun</span> <span class="nf">changeSize</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="k">fun</span> <span class="nf">changePosition</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Z pomocą przychodzi <code class="language-plaintext highlighter-rouge">Adapter</code></p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">TextViewAdapter</span><span class="p">(</span><span class="kd">val</span> <span class="py">textView</span><span class="p">:</span> <span class="nc">TextView</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Shape</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">draw</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">textView</span><span class="p">.</span><span class="nf">displayText</span><span class="p">()</span>
+    <span class="p">}</span>
+	
+	<span class="c1">// anonimowy obiekt zamiast osobnej klasy</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createManipulator</span><span class="p">():</span> <span class="nc">ShapeManipulator</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">Shape</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">ShapeManipulator</span><span class="p">&lt;</span><span class="nc">Shape</span><span class="p">&gt;</span> <span class="p">{</span>
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">drag</span><span class="p">()</span> <span class="p">{</span>
+                <span class="n">textView</span><span class="p">.</span><span class="nf">changePosition</span><span class="p">()</span>
+            <span class="p">}</span>
+
+            <span class="k">override</span> <span class="k">fun</span> <span class="nf">resize</span><span class="p">(</span><span class="n">scale</span><span class="p">:</span> <span class="nc">Float</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">textView</span><span class="p">.</span><span class="nf">changeSize</span><span class="p">()</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Który dla <code class="language-plaintext highlighter-rouge">Window</code> zachowuje się jak każda inna figura</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">window</span> <span class="p">=</span> <span class="nc">Window</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">circle</span> <span class="p">=</span> <span class="nc">Circle</span><span class="p">()</span>
+    <span class="n">window</span><span class="p">.</span><span class="nf">drawShape</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+
+    <span class="kd">val</span> <span class="py">textView</span> <span class="p">=</span> <span class="nc">TextView</span><span class="p">()</span>
+    <span class="n">window</span><span class="p">.</span><span class="nf">drawShape</span><span class="p">(</span><span class="n">textView</span><span class="p">)</span> <span class="c1">// błąd! zły interfejs</span>
+    <span class="n">window</span><span class="p">.</span><span class="nf">drawShape</span><span class="p">(</span><span class="nc">TextViewAdapter</span><span class="p">(</span><span class="n">textView</span><span class="p">))</span> <span class="c1">// użycie adaptera</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Specjalnie pominąłem tutaj zwracane typy czy logikę wyświetlania elementów. Taki <code class="language-plaintext highlighter-rouge">Adapter</code> w prawdziwym projekcie byłby dużo bardziej skomplikowany, ale mam nadzieję, że idea jest widoczna.</p>
+
+<h1 id="nazewnictwo">Nazewnictwo</h1>
+<p>Tutaj mam mieszane uczucia, czy dodawanie w nazwie <code class="language-plaintext highlighter-rouge">Adapter</code> jest konieczne. Z jednej strony to wyraźna informacja, że obiekt tylko mapuje jeden interfejs na inny. Z drugiej — ta informacja może nie być wcale potrzebna, klienty interesuje tylko interfejs. Czy <code class="language-plaintext highlighter-rouge">ItemAdapter</code> lub <code class="language-plaintext highlighter-rouge">ItemWrapper</code> mówi więcej od <code class="language-plaintext highlighter-rouge">ItemWithPrettyPrint</code>? Co więcej, jeśli dla <code class="language-plaintext highlighter-rouge">Item</code> stworzymy więcej adapterów dla różnych klientów, nazywanie ich <code class="language-plaintext highlighter-rouge">ItemForClient1Adapter</code> nie wygląda najlepiej.</p>
+
+<p>Dlatego skłaniam się raczej do nazywania adapterów od obiektu, który adaptują i implementowanego interfejsu.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>Adapter lub Wrapper pozwala “przetłumaczyć” jeden interfejs na inny, oczekiwany przez klienta. Jest to szczególnie przydatne, gdy adaptowany interfejs pochodzi z niezależnej biblioteki i nie chcesz uzależniać od niego swojego systemu, tworząc tzw. <code class="language-plaintext highlighter-rouge">anticorruption layer</code>. Zmiany tego interfejsu wpłyną tylko na <code class="language-plaintext highlighter-rouge">Adapter</code>, a nie na resztę kodu w projekcie.</p>
+
+<p>Kotlin pozwala w pewnym sensie, przez <code class="language-plaintext highlighter-rouge">extension functions</code>, zapewnić podobną do <code class="language-plaintext highlighter-rouge">Adaptera</code> funkcjonalność bez konieczności tworzenia całej klasy. Będzie to sensownie działać w przypadku, kiedy nie interesuje nas typ obiektu, a jego możliwości co jest często określane jako <code class="language-plaintext highlighter-rouge">Duck Typing</code>. Jednak <code class="language-plaintext highlighter-rouge">extension functions</code> mogą zaciemniać faktyczny interfejs klasy, przesłaniać się nawzajem i ogólnie wprowadzać chaos. Ograniczając ich zasięg, można sobie z tym poradzić, ale jeśli zaczyna ich przybywać dla konkretnej klasy, może warto wydzielić osobną klasę.</p>
+
+<h2 id="konsekwencje">Konsekwencje</h2>
+<ul>
+  <li><strong>pojedyncza odpowiedzialność klas</strong> - nie trzeba zmieniać klasy adaptowanej pod konkretnego klienta, a jedynie dodać <code class="language-plaintext highlighter-rouge">Adapter</code> pod wymagany interfejs. Klasa adaptowana może się zmieniać niezależnie od klientów, a zadaniem <code class="language-plaintext highlighter-rouge">Adaptera</code> jest pogodzić te zmiany z interfejsem klienta.</li>
+  <li><strong>anticorruption layer</strong> - oddziela interfejs, nad którym nie mamy kontroli i “tłumaczy” go na nasz własny. Zmiany w interfejsie obiektu pochodzącego np. z biblioteki nie mają wpływu na działanie systemu, a jedynie na <code class="language-plaintext highlighter-rouge">Adapter</code>.</li>
+  <li><strong>dostępność dla podklas</strong> - jak w przykładzie abstrakcyjnym, stworzenie adaptera dla ogólnego interfejsu umożliwia stosowanie każdej klasy implementującej ten interfejs.</li>
+  <li><strong>ostrożnie z extension functions</strong> - czasami może się wydawać, że <code class="language-plaintext highlighter-rouge">extension function</code> zapewni wystarczającą funkcjonalność, ale w dużych projektach z wieloma zespołami pracującymi na tym samym kodzie może to powodować nieprzewidziane konsekwencje. Ograniczając zasięg <code class="language-plaintext highlighter-rouge">extension functions</code> można ten problem częściowo rozwiązać.</li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Adapter Pattern-ref">
+                    Adapter Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#structural design pattern-ref">
+                    structural design pattern <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Adapter w Kotlinie"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/intellij-latex-editor"
+                                    title="IntelliJ IDEA jako edytor LaTeX">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin-decorator-pattern" title="Dekorator w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

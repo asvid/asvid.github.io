@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/kotlin-builder-pattern/pkin.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Kotlin Builder Pattern </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   January
+	   20th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        16 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#purpose">Purpose</a></li>
+<li class="toc-entry toc-h2"><a href="#elements">Elements</a></li>
+<li class="toc-entry toc-h2"><a href="#implementation">Implementation</a></li>
+<li class="toc-entry toc-h2"><a href="#alternative">Alternative</a></li>
+<li class="toc-entry toc-h2"><a href="#summary">Summary</a></li>
+</ul>
+            </nav>
+
+            <h2 id="purpose">Purpose</h2>
+<p>Builder pattern is used to simplify creating complex objects with non-trivial building logic, or with many constructor parameters. It allows making immutable objects because all properties can be set by the Builder with no need to use object setters.</p>
+
+<p>Builder sort of removes from the user the need to understand the internal object create implementation and guarantees correct object setup or returning an error.</p>
+
+<p>The advantage of using Builder over traditional constructor is being able to pass many <code class="language-plaintext highlighter-rouge">vararg</code> arguments, because every Builder method can take one, while the whole constructor can take only one.</p>
+
+<p>Builder solves problem of telescopic constructors, when many variants of constructor are created with increasing number of arguments.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">constructor</span><span class="p">(</span><span class="n">firstName</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="k">this</span><span class="p">(</span><span class="n">firstName</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">constructor</span><span class="p">(</span><span class="n">firstName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">lastName</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="k">this</span><span class="p">(</span><span class="n">firstName</span><span class="p">,</span> <span class="n">lastName</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">constructor</span><span class="p">(</span><span class="n">firstName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">lastName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="k">this</span><span class="p">(</span><span class="n">firstName</span><span class="p">,</span> <span class="n">lastName</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Technically they allow you to use the constructor with just enough arguments you want to set, but in practice adding a new field to the class forces you to modify each constructor. Fortunately in Kotlin you can use named arguments and you don’t have to mimic Java.</p>
+
+<p>From my personal experience, you will more often use Builder than create your own, but I believe it’s worth understanding how it works and be comfortable using it when the need comes.</p>
+
+<h3 id="example-usage">Example usage</h3>
+<p>Because of my professional bias, examples are coming from Android world.</p>
+
+<h4 id="notificationbuilder">NotificationBuilder</h4>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">notificationBuilder</span> <span class="p">=</span> <span class="nc">Notification</span><span class="p">.</span><span class="nc">Builder</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">"channelId"</span><span class="p">)</span>
+<span class="n">notificationBuilder</span><span class="p">.</span><span class="nf">setContentTitle</span><span class="p">(</span><span class="s">"Title"</span><span class="p">)</span>
+<span class="n">notificationBuilder</span><span class="p">.</span><span class="nf">setContentText</span><span class="p">(</span><span class="s">"Content"</span><span class="p">)</span>
+<span class="n">notificationBuilder</span><span class="p">.</span><span class="nf">setSmallIcon</span><span class="p">(</span><span class="nc">R</span><span class="p">.</span><span class="n">mipmap</span><span class="p">.</span><span class="n">ic_launcher</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">notification</span> <span class="p">=</span> <span class="n">notificationBuilder</span><span class="p">.</span><span class="nf">build</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Most traditional usage of the Builder Pattern. Builders Constructor takes 2 arguments necessary for proper object creation, other fields are getting values through setter methods called on the Builder instance. Finally the <code class="language-plaintext highlighter-rouge">build()</code> method is called that returns desired notification object.</p>
+
+<h4 id="dexter">Dexter</h4>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">DialogOnAnyDeniedMultiplePermissionsListener</span><span class="p">.</span><span class="nc">Builder</span>
+        <span class="p">.</span><span class="nf">withContext</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">withTitle</span><span class="p">(</span><span class="s">"Camera permission"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">withMessage</span><span class="p">(</span><span class="s">"Camera permission is needed to take pictures of your cat"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">withButtonText</span><span class="p">(</span><span class="n">android</span><span class="p">.</span><span class="nc">R</span><span class="p">.</span><span class="n">string</span><span class="p">.</span><span class="n">ok</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">withIcon</span><span class="p">(</span><span class="nc">R</span><span class="p">.</span><span class="n">mipmap</span><span class="p">.</span><span class="n">my_icon</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">build</span><span class="p">()</span>
+</code></pre></div></div>
+<p>In this example Builder methods are connected in a chain. It’s possible because each one of them returns Builder instance, so <code class="language-plaintext highlighter-rouge">this</code>. With proper method naming you can almost read it like a sentence. Of course modern IDEs can display parameters name in methods to help with the correct order, but during code review when all we have is text, well named methods building instance can be a huge help.</p>
+
+<h4 id="alertdialog">AlertDialog</h4>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">dialog</span> <span class="p">=</span> <span class="nc">AlertDialog</span><span class="p">.</span><span class="nc">Builder</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">apply</span> <span class="p">{</span>
+            <span class="nf">setTitle</span><span class="p">(</span><span class="s">"Title"</span><span class="p">)</span>
+            <span class="nf">setIcon</span><span class="p">(</span><span class="nc">R</span><span class="p">.</span><span class="n">mipmap</span><span class="p">.</span><span class="n">ic_launcher</span><span class="p">)</span>
+        <span class="p">}.</span><span class="nf">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Very Kotlin style with utilizing the <code class="language-plaintext highlighter-rouge">apply</code>. Interestingly enough there is no <code class="language-plaintext highlighter-rouge">build()</code> method but <code class="language-plaintext highlighter-rouge">show()</code> that is not only returning dialog object but also displays it. Sounds like a bad idea for a method to do more than one thing, but in this case I believe it was done on purpose to avoid a common mistake of creating a dialog but forgetting to display it with a separate method.</p>
+
+<h2 id="elements">Elements</h2>
+<p>Builder is basically a single internal helper class. I won’t be covering approach with <code class="language-plaintext highlighter-rouge">Director</code> and <code class="language-plaintext highlighter-rouge">ConcreteBuilder</code> proposed by the Gang of Four, I’ve never seen it in production code yet :)</p>
+
+<h3 id="constructor">Constructor</h3>
+<p>Surprisingly, Builders constructor is very important, even when it doesn’t usually take any arguments. Constructor should require all arguments that are needed to build correct object. You can’t expect Builder user will know which setters to use, or will read documentation :)</p>
+<blockquote>
+  <p>It seems obvious, but some time ago on Android platform you could legaly build a notification that had no chance to be displayed by the system. All you had to do was to not set the title or content text or an icon - none of those things were required by the Builder constructor. There was also no exception thrown when trying to display such notification…</p>
+</blockquote>
+
+<h3 id="methods">Methods</h3>
+<p>Besides constructor Builder gives you methods to set the object.</p>
+
+<p>In case of not setting some property with a dedicated method, default value should be used. It can also be <code class="language-plaintext highlighter-rouge">null</code>. Thanks to great nullability handling in Kotlin it is much better to use default <code class="language-plaintext highlighter-rouge">null</code> value than for example: “” (empty <code class="language-plaintext highlighter-rouge">String</code>) or magic value like <code class="language-plaintext highlighter-rouge">-1</code> when only positive number is expected. To detect if value was set or not simple null-check <code class="language-plaintext highlighter-rouge">.?</code> can be used instead of comparing to some default value used for certain type in project or class.</p>
+
+<p>Methods should be allowed to be called in any given order.</p>
+
+<p>Mandatory <code class="language-plaintext highlighter-rouge">build()</code> method, or other reasonably named (like <code class="language-plaintext highlighter-rouge">show()</code> for dialog) returning the desired object.</p>
+
+<p>When using Builder Pattern, it’s good to make objects constructor private to limit creating the object just for internal Builder.</p>
+
+<h3 id="verifying-the-arguments">Verifying the arguments</h3>
+<p>When using Builder you pass wrong values, not allowed in the object, when should you be notified about it?
+There are at least few approaches:</p>
+<ol>
+  <li>ASAP, when Builder method gets wrong argument it should check if its OK for the object, but:
+    <ul>
+      <li>what if correct argument value depends on argument set by other method? If order of calling methods matters then what is the point of even using Builder over traditional constructor?</li>
+      <li>checking values at Builder methods may not be enough, <code class="language-plaintext highlighter-rouge">build()</code> method should also verify arguments all together</li>
+    </ul>
+  </li>
+  <li>Only the <code class="language-plaintext highlighter-rouge">build()</code> method should check all arguments at once, because there may be some dependencies between them, and this was the first thing why the Builder Pattern was used, so:
+    <ul>
+      <li>well constructed Builder allows chaining methods so validation in <code class="language-plaintext highlighter-rouge">build()</code> method isn’t much later that checking in each setter method</li>
+      <li>dependencies between arguments can be verified</li>
+      <li>but if Builder is not the only way of creating the object then validations have to be copy-pasted to every place that is creating the object</li>
+    </ul>
+  </li>
+  <li>The object itself should verify its correctness
+    <ul>
+      <li>minding SRP (Single-Responsibility Principle), Builder just constructs the objects with all required data, but object can verify if the data is correct</li>
+      <li>no need to copy-paste validations, every place creating the object will have to pass the same checks</li>
+    </ul>
+  </li>
+</ol>
+
+<p><a href="https://softwareengineering.stackexchange.com/questions/241309/builder-pattern-when-to-fail">Interesting thread at StackExchange about it</a>,
+where some users suggest merging approach 2 and 3. The point is for Builder to verify its contracts, and for the object to verify its own contracts. Nice example of Builder that creates a String containing number ranges like “1-2,3-4,5-6”. <code class="language-plaintext highlighter-rouge">String</code> class can’t verify if range edges have correct values - it was made to just handle string of characters. But Builder on the other hand, can and should check if added range makes sense, or if ranges are not overlapping if that is the requirement. Then the method <code class="language-plaintext highlighter-rouge">addRange(min Int,max Int)</code> should throw <code class="language-plaintext highlighter-rouge">IllegalArgumentException</code> when <code class="language-plaintext highlighter-rouge">min &gt; max</code> and <code class="language-plaintext highlighter-rouge">build()</code> method should throw exception when ranges like <code class="language-plaintext highlighter-rouge">1-4</code> and <code class="language-plaintext highlighter-rouge">2-6</code> are added. Or maybe the <code class="language-plaintext highlighter-rouge">addRange()</code> method should throw, that’s debatable.</p>
+
+<p>In any case, I would stick to the rule that created object verifies its contracts, and Builder checks its own contracts.</p>
+
+<p><a href="https://pl.wikipedia.org/wiki/Joshua_Bloch">Joshua Bloch</a> in his famous book “Effective Java”
+(chapter 2, topic 2) also suggests verifying value correctness after coping values from Builder, not in Builder itself.</p>
+
+<h2 id="implementation">Implementation</h2>
+<p>I guess this is the part you were waiting for :)</p>
+
+<h3 id="java-style">Java style</h3>
+<p>Barebone example of the simplest possible Builder. Basically, Java translated to Kotlin without using any language fireworks.
+We have here:</p>
+<ul>
+  <li>private constructor in <code class="language-plaintext highlighter-rouge">Product</code> to limit creating instances only to inner Builder class</li>
+  <li>required <code class="language-plaintext highlighter-rouge">requiredProperty</code> argument in Builders constructor</li>
+  <li>optional field set by <code class="language-plaintext highlighter-rouge">optionalProperty()</code>, default value is <code class="language-plaintext highlighter-rouge">null</code> and that is OK for <code class="language-plaintext highlighter-rouge">Product</code></li>
+  <li>method <code class="language-plaintext highlighter-rouge">optionalProperty()</code> is returning <code class="language-plaintext highlighter-rouge">this</code> to allow method chaining</li>
+  <li><code class="language-plaintext highlighter-rouge">build()</code> method creating instance of <code class="language-plaintext highlighter-rouge">Product</code> with all fields set with values from Builder</li>
+</ul>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Product</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">property</span><span class="p">:</span> <span class="nc">Any</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">optionalProperty</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">class</span> <span class="nc">Builder</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">requiredProperty</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">private</span> <span class="kd">var</span> <span class="py">optionalProperty</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>
+
+        <span class="k">fun</span> <span class="nf">optionalProperty</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?):</span> <span class="nc">Builder</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="n">optionalProperty</span> <span class="p">=</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="k">this</span>
+        <span class="p">}</span>
+
+        <span class="k">fun</span> <span class="nf">build</span><span class="p">():</span> <span class="nc">Product</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nc">Product</span><span class="p">(</span><span class="n">requiredProperty</span><span class="p">,</span> <span class="n">optionalProperty</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>And usage</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">product</span> <span class="p">=</span> <span class="nc">Product</span><span class="p">.</span><span class="nc">Builder</span><span class="p">(</span><span class="s">"required"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">optionalProperty</span><span class="p">(</span><span class="s">"optional"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">build</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="more-like-kotlin">More like Kotlin</h3>
+<p>Builders constructor specifies all fields, and their possible default values. It could be a <code class="language-plaintext highlighter-rouge">data class</code> but in this case it wouldn’t provide any additional value. Lack of default value in the constructor is making argument mandatory.</p>
+
+<p>Using <code class="language-plaintext highlighter-rouge">apply</code> makes <code class="language-plaintext highlighter-rouge">optionalProperty()</code> to return instance of the Builder. I also used so called <a href="https://kotlinlang.org/docs/reference/functions.html#single-expression-functions">single-expression function</a> meaning no explicit return type declaration.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">FancyProduct</span> <span class="k">private</span> <span class="k">constructor</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">property</span><span class="p">:</span> <span class="nc">Any</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">optionalProperty</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">class</span> <span class="nc">Builder</span><span class="p">(</span>
+            <span class="k">private</span> <span class="kd">var</span> <span class="py">requiredProperty</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+            <span class="k">private</span> <span class="kd">var</span> <span class="py">optionalProperty</span><span class="p">:</span> <span class="nc">Any</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+    <span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">fun</span> <span class="nf">optionalProperty</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span> <span class="p">=</span> <span class="nf">apply</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="n">optionalProperty</span> <span class="p">=</span> <span class="n">value</span> <span class="p">}</span>
+
+        <span class="k">fun</span> <span class="nf">build</span><span class="p">():</span> <span class="nc">FancyProduct</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nc">FancyProduct</span><span class="p">(</span><span class="n">requiredProperty</span><span class="p">,</span> <span class="n">optionalProperty</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Such Builder can be used in few ways:</p>
+<ul>
+  <li>identical as in Java or Kotlin example above</li>
+  <li>providing both arguments (required and optional) at once in Builder constructor</li>
+  <li>providing both arguments but in random order using named arguments
+```kotlin
+val fancyProduct = FancyProduct.Builder(“required”)
+      .optionalProperty(“optional”)
+      .build()</li>
+</ul>
+
+<p>val fancyProduct2 = FancyProduct.Builder(
+        “required”,
+        “optional”
+).build()</p>
+
+<p>val fancyProduct3 = FancyProduct.Builder(
+        optionalProperty = “optional”,
+        requiredProperty = “required”
+).build()</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### Kotlin DSL
+[DSL (Domain Specific Language)](https://en.wikipedia.org/wiki/Domain-specific_language) is a domain-dedicated quasi language. Kotlin allows fairly easy and pleasant method creation, that can be later used to describe objects in a purely domain way.
+
+Builder looks the same as in previous example.
+
+Inside `DslProduct` class there is now a `companion object` with `dslProduct()` method that will allow us to create a desired object. This hides the Builder behind a method.
+```kotlin
+class DslProduct private constructor(
+        val requiredProperty: Any,
+        val optionalProperty: Any?
+) {
+    companion object {
+        inline fun dslProduct(requiredProperty: Any, block: Builder.() -&gt; Unit) =
+                Builder(requiredProperty)
+                        .apply(block)
+                        .build()
+    }
+
+    class Builder(
+            private val requiredProperty: Any,
+            private var optionalProperty: Any? = null
+    ) {
+       fun optionalProperty(value: Any?) = apply { this.optionalProperty = value }
+       fun build() = DslProduct(requiredProperty, optionalProperty)
+    }
+}
+</code></pre></div></div>
+<p>Using this simple DSL looks like this.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">dslProduct</span> <span class="p">=</span> <span class="nf">dslProduct</span><span class="p">(</span><span class="s">"required"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">optionalProperty</span><span class="p">(</span><span class="s">"optional"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>For such a simple object using DSL doesn’t look very tempting, but if object is a composition of other complex objects - each with its own builder than it start to look interesting. Example from one of my apps I created with <a href="https://kotlinlang.org/docs/reference/type-safe-builders.html">DslMaker</a>. It’s part of Kotlin standard library (so no extra dependencies) and additionaly it takes care for inner builder scope limits. Address, Location and OpenHours are using Builders and DSL to create instances.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">shop</span> <span class="p">=</span> <span class="nf">shop</span><span class="p">(</span><span class="s">"ID"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">address</span> <span class="p">=</span> <span class="nf">address</span> <span class="p">{</span>
+        <span class="n">cityName</span> <span class="p">=</span> <span class="s">"Poznań"</span>
+        <span class="n">streetName</span> <span class="p">=</span> <span class="s">"ul. Półwiejska"</span>
+        <span class="n">streetNumber</span> <span class="p">=</span> <span class="s">"123/2"</span>
+    <span class="p">}</span>
+    <span class="n">location</span> <span class="p">=</span> <span class="nf">location</span> <span class="p">{</span>
+        <span class="n">lat</span> <span class="p">=</span> <span class="mf">53.12</span>
+        <span class="n">lng</span> <span class="p">=</span> <span class="mf">23.4</span>
+    <span class="p">}</span>
+    <span class="n">openHours</span> <span class="p">=</span> <span class="nf">openHours</span> <span class="p">{</span>
+        <span class="n">weekDay</span> <span class="p">=</span> <span class="s">"6:00-22:00"</span>
+        <span class="n">saturday</span> <span class="p">=</span> <span class="s">"7:00-23:00"</span>
+        <span class="n">sunday</span> <span class="p">=</span> <span class="s">"closed"</span>
+    <span class="p">}</span>
+    <span class="nf">features</span><span class="p">(</span>
+            <span class="nc">Feature</span><span class="p">.</span><span class="nc">Bakery</span><span class="p">,</span>
+            <span class="nc">Feature</span><span class="p">.</span><span class="nc">Atm</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Full example with DslMaker -&gt; <a href="https://gist.github.com/asvid/5fed8dd3c831c2a72744e8ffe8f7dc0f">tutaj</a> &lt;- But still this is a fairly simple example and DSL itself in Kotlin deserves a separate post.</p>
+
+<p>However, the DSL approach requires you to write some boilerplate, that doesn’t look very inviting at first…</p>
+
+<h2 id="alternative">Alternative</h2>
+<p>Named arguments in constructor and default field values inside created object may in a way give you similar effect as Builder Pattern. This can be useful for rather simple objects. It’s also worth making sure that the default values create a sensible instance from domain point of view, not just so it compiles.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">person</span> <span class="p">=</span> <span class="nc">Person</span><span class="p">(</span>
+        <span class="n">firstName</span> <span class="p">=</span> <span class="s">"Adam"</span><span class="p">,</span>
+        <span class="n">lastName</span> <span class="p">=</span> <span class="s">"Świderski"</span><span class="p">,</span>
+        <span class="n">address</span> <span class="p">=</span> <span class="nc">Address</span><span class="p">(</span>
+                <span class="n">cityName</span> <span class="p">=</span> <span class="s">"Poznań"</span><span class="p">,</span>
+                <span class="n">streetName</span> <span class="p">=</span> <span class="s">"ul. Półwiejska"</span><span class="p">,</span>
+                <span class="n">streetNumber</span> <span class="p">=</span> <span class="s">"123/1"</span><span class="p">,</span>
+                <span class="n">country</span> <span class="p">=</span> <span class="s">"Poland"</span><span class="p">,</span>
+                <span class="n">postalCode</span> <span class="p">=</span> <span class="s">"60-000"</span>
+        <span class="p">),</span>
+        <span class="n">contact</span> <span class="p">=</span> <span class="nc">Contact</span><span class="p">(</span>
+                <span class="n">workEmail</span> <span class="p">=</span> <span class="s">"adam@work.email"</span><span class="p">,</span>
+                <span class="n">workPhoneNumber</span> <span class="p">=</span> <span class="s">"+48 123112312"</span><span class="p">,</span>
+                <span class="n">privateEmail</span> <span class="p">=</span> <span class="s">"adam@private.email"</span>
+        <span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>It even look kinda like DSL, but without need to use annotations and writing additional methods etc. You can notice fields like <code class="language-plaintext highlighter-rouge">val height: Float? = null</code> - I decided that this information is not required to create sensible <code class="language-plaintext highlighter-rouge">Person</code> instance so default value is set to <code class="language-plaintext highlighter-rouge">null</code>. Yup <code class="language-plaintext highlighter-rouge">null</code> and not <code class="language-plaintext highlighter-rouge">0.0</code> or <code class="language-plaintext highlighter-rouge">-1.0</code>, or some other magic <code class="language-plaintext highlighter-rouge">DEFAULT_HEIGHT</code> constant.</p>
+
+<p>Inside <code class="language-plaintext highlighter-rouge">init</code> blocks fields values are verified (check <code class="language-plaintext highlighter-rouge">Verifying the arguments</code> above). Passing wrong argument type is cought at compile time, but object can have some domain requirements like: height have to be a positive number, or shoe size (if provided) can’t be smaller than 4.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">data class</span> <span class="nc">Person</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">firstName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">lastName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">address</span><span class="p">:</span> <span class="nc">Address</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">contact</span><span class="p">:</span> <span class="nc">Contact</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">height</span><span class="p">:</span> <span class="nc">Float</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">shoeSize</span><span class="p">:</span> <span class="nc">Float</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="nf">init</span> <span class="p">{</span>
+        <span class="n">height</span><span class="o">?.</span><span class="nf">let</span> <span class="p">{</span> <span class="nf">require</span><span class="p">(</span><span class="mf">0f</span> <span class="p">&lt;</span> <span class="n">it</span><span class="p">)</span> <span class="p">{</span> <span class="s">"height is always greater than 0"</span> <span class="p">}</span> <span class="p">}</span>
+        <span class="n">shoeSize</span><span class="o">?.</span><span class="nf">let</span> <span class="p">{</span> <span class="nf">require</span><span class="p">(</span><span class="mf">4f</span> <span class="p">&lt;=</span> <span class="n">it</span><span class="p">)</span> <span class="p">{</span> <span class="s">"smallest standard shoe size is 4"</span> <span class="p">}</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">data class</span> <span class="nc">Address</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">country</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">cityName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">streetName</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">streetNumber</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">postalCode</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">district</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kd">data class</span> <span class="nc">Contact</span><span class="p">(</span>
+        <span class="kd">val</span> <span class="py">workPhoneNumber</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">workEmail</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">privatePhoneNumber</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+        <span class="kd">val</span> <span class="py">privateEmail</span><span class="p">:</span> <span class="nc">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="nf">init</span> <span class="p">{</span>
+        <span class="nf">require</span><span class="p">(</span><span class="n">workPhoneNumber</span><span class="p">.</span><span class="nf">isValidPhoneNumber</span><span class="p">())</span>
+        <span class="nf">require</span><span class="p">(</span><span class="n">workEmail</span><span class="p">.</span><span class="nf">isValidEmail</span><span class="p">())</span>
+        <span class="nf">require</span><span class="p">(</span><span class="n">privatePhoneNumber</span><span class="o">?.</span><span class="nf">isValidPhoneNumber</span><span class="p">()</span> <span class="o">?:</span> <span class="k">true</span><span class="p">)</span>
+        <span class="nf">require</span><span class="p">(</span><span class="n">privateEmail</span><span class="o">?.</span><span class="nf">isValidEmail</span><span class="p">()</span> <span class="o">?:</span> <span class="k">true</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="summary">Summary</h2>
+<p>Builder is quite useful construction Design Pattern and for sure you will come across it at some point. It can make creating complex objects easy. Well named Builder methods will make building object look like a sentence. Kotlin features allow reducing Builder boilerplate and using conveniences like DSL, named parameters and default values may allow you to get similar result without writing any additional code.</p>
+
+<p>In Design Patterns literature you can find more complex examples of Builder using elements like <code class="language-plaintext highlighter-rouge">Director</code> and <code class="language-plaintext highlighter-rouge">ConcreteBuilder</code>. I never encountered things like that in my career, but I believe there are usecases for it. If at same point, you need to have generic way of providing instances of objects using many types of Builders - maybe there are nicer ways of achieving this :)</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Builder Pattern-ref">
+                    Builder Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#construction design pattern-ref">
+                    construction design pattern <span>(4)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Kotlin Builder Pattern"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/code-review-retro"
+                                    title="Code Review Retro">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/kotlin-static-factory-methods" title="Kotlin Static Factory Methods">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

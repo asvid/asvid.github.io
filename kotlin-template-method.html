@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/pizza.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Kotlin Template Method </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   May
+	   18th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        18 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#purpose">Purpose</a></li>
+<li class="toc-entry toc-h1"><a href="#implementation-examples">Implementation examples</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#basic">Basic</a></li>
+<li class="toc-entry toc-h2"><a href="#pizza">Pizza</a></li>
+<li class="toc-entry toc-h2"><a href="#active-record">Active Record</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#pros">Pros</a></li>
+<li class="toc-entry toc-h2"><a href="#cons">Cons</a></li>
+<li class="toc-entry toc-h2"><a href="#inheritance-instead-of-composition-change-to-injecting-lambdas-in-the-constructor-is-creating-a-strategy-like-construction">inheritance instead of composition, change to injecting lambdas in the constructor is creating a Strategy-like construction</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="purpose">Purpose</h1>
+<p>The template method is a very simple design pattern, that separates the shared class parts from distinctive ones. The core idea is to have an abstract parent class containing the algorithm steps and allowing inheriting classes to overwrite individual steps, but not the algorithm that uses those steps itself.</p>
+
+<p>Think about Pizza - steps to make it are more-less the same, despite the type of pizza. You need to make a dough, apply sauce and ingredients, and finally bake it. Different types of pizza may have a different dough, sauce, or baking time (I guess, I don’t know how to make pizza :) ), but the order and steps would be always the same. So we can agree that there is an abstract <code class="language-plaintext highlighter-rouge">Pizza</code> with a method <code class="language-plaintext highlighter-rouge">make()</code>, but inheriting classes like <code class="language-plaintext highlighter-rouge">Pepperoni</code> or <code class="language-plaintext highlighter-rouge">Hawaiian</code> will override methods applying ingredients, without changing the algorithm of making pizza.</p>
+
+<p>We are having here the inversion of control, because parent class <code class="language-plaintext highlighter-rouge">Pizza</code> is calling overridden methods from inheriting class, and not the other way around (child class calling abstract parent methods).</p>
+
+<p>Template methods may be seen in libraries when the creator allows extending library classes and overriding some methods, but maintain control over calling those methods.</p>
+
+<h1 id="implementation-examples">Implementation examples</h1>
+<h2 id="basic">Basic</h2>
+<p>Let’s start with a generic example, picturing what this pattern is about:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">AbstractClass</span> <span class="p">{</span> <span class="c1">// parent class</span>
+
+	<span class="c1">// you cant override this method because it's not `open`</span>
+    <span class="k">fun</span> <span class="nf">templateMethod</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// the Template Method, so the algorithm with ordered steps</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"running template method"</span><span class="p">)</span>
+        <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="c1">// calling algorithm steps</span>
+        <span class="nf">primitiveOperation2</span><span class="p">()</span>
+        <span class="nf">primitiveOperation3</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="c1">// algorithm step to be overridden by concrete class</span>
+    
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">primitiveOperation2</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// algorithm step not to be overridden</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing abstract operation 2"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="c1">// another step</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">ConcreteClass</span> <span class="p">:</span> <span class="nc">AbstractClass</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// concrete class</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// step implementation for concrete class</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 1"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 3"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">AnotherConcreteClass</span> <span class="p">:</span> <span class="nc">AbstractClass</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// another concrete class</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation1</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing concrete operation 1"</span><span class="p">)</span> <span class="c1">// not cool duplicated implementation</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">primitiveOperation3</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"doing another concrete operation 3"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>We have here a <code class="language-plaintext highlighter-rouge">templateMethod()</code> in the abstract class, so our algorithm or rather list of steps, where each step is a method call representing a primitive operation. Those operations may have a default implementation already in the abstract class or require providing an implementation in inheriting classes. The term “primitive” is used for operations to suggest they are just steps and not the algorithm, and that their implementation can be replaced in concrete classes.</p>
+
+<p>The Template method can’t be overridden by inheriting classes. This would be possible if <code class="language-plaintext highlighter-rouge">templateMethod()</code> would be <code class="language-plaintext highlighter-rouge">open</code>, but Kotlin encourages encapsulation so by default methods and classes are <code class="language-plaintext highlighter-rouge">final</code>. Overriding <code class="language-plaintext highlighter-rouge">templateMethod()</code> would mean changing the algorithm, and its constant form is the reason for the Template Method pattern to be used. If there is a need to change the algorithm, maybe it’s better to use a pattern like <code class="language-plaintext highlighter-rouge">Strategy</code>.</p>
+
+<h2 id="pizza">Pizza</h2>
+<p>Now let’s look into more graphic example: <strong>Pizza</strong></p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span> <span class="p">{</span> <span class="c1">// base class for all pizza types</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// steps are the same for every pizza</span>
+        <span class="nf">makeDough</span><span class="p">()</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">bake</span><span class="p">()</span> <span class="p">{</span> 
+		<span class="c1">// default implementation for each step</span>
+		<span class="c1">// concrete classes needs to override only the distinctive ones</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">applySauce</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">makeDough</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// concrete type of pizza</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// overriding ingredients according to recipe</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+	<span class="c1">// but it's not controlling the process of making a pizza</span>
+	
+	<span class="c1">// all other methods are left with default implementation</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// same as previous but bigger</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">addIngredients</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// alas, duplicated implementation from previous class</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">makeDough</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// the only difference from standard pepperoni</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>Class <code class="language-plaintext highlighter-rouge">Pizza</code> contains shared steps for all types of pizza. Concrete types of pizza override only the distinctive steps, for example, pizza size, ingredients, or sauce. There is a problem though with sharing method implementation between <code class="language-plaintext highlighter-rouge">Pepperoni</code> and <code class="language-plaintext highlighter-rouge">BigPepperoni</code> classes - they have the same ingredients but <code class="language-plaintext highlighter-rouge">BigPepperoni</code> has a bigger dough size. It may seem that <code class="language-plaintext highlighter-rouge">BigPepperoni</code> should just extend the <code class="language-plaintext highlighter-rouge">Pepperoni</code> class and override just the <code class="language-plaintext highlighter-rouge">makeDough()</code> method. Then <code class="language-plaintext highlighter-rouge">Pepperoni</code> would need to be <code class="language-plaintext highlighter-rouge">open</code> and it would create another level of inheritance. You can easily imagine an ongoing class explosion where every pizza type has 3 sizes and 2 sauces to choose from. It may look like the reason to use the <code class="language-plaintext highlighter-rouge">Factory</code> pattern…</p>
+
+<h3 id="pizza-lambdas">Pizza Lambdas</h3>
+<p>Instead of overriding methods of base class <code class="language-plaintext highlighter-rouge">Pizza</code> interface, we can try to make use of passing lambdas in the constructor:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span><span class="p">(</span> <span class="c1">// base class constructor is taking lambdas but provides default implementation</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">makeDough</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">applySauce</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">addIngredients</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">bake</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// unchanged template method</span>
+        <span class="nf">makeDough</span><span class="p">()</span> <span class="c1">// calling lambda parameter from constructor that can be replaced</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span> <span class="c1">// concrete class</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// passing lambda overriding default implementation</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// duplicated implementation, again</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// dough size lambda replaced</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>Looks way more Kotlin style :) In the book <sup id="fnref:effective_java" role="doc-noteref"><a href="#fn:effective_java" class="footnote" rel="footnote">1</a></sup> Joshua Bloch mentions that after Java incorporated lambdas, the <code class="language-plaintext highlighter-rouge">Template Method</code> pattern became irrelevant. It is more convenient to inject behavior as lambdas in the base class constructor than create concrete classes overriding selected methods.</p>
+
+<p>There is still a problem with duplicated implementation. It’s possible to keep common implementation inside a variable and pass it to all classes that require it.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">pepperoniAddons</span><span class="p">:</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">Unit</span> <span class="p">=</span> <span class="p">{</span> <span class="c1">// functions are first class citizens</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="n">pepperoniAddons</span> <span class="c1">// passing the lambda</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="n">pepperoniAddons</span><span class="p">,</span> <span class="c1">// passing the same lambda</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>It works. But passing in every parameter the generic lambda <code class="language-plaintext highlighter-rouge">() -&gt; Unit</code> is not really safe and allows stupid errors to happen, like wrong argument order. It can be partially avoided with using named arguments.</p>
+
+<h3 id="pizza-interfaces">Pizza interfaces</h3>
+<p>Assuming primitive operations are not returning anything, and just changing the Pizza instance, it’s safer to use concrete interfaces corresponding to algorithm steps.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">DoughMaker</span> <span class="p">{</span> <span class="c1">// algorithm step interface</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// this allows to use interface instance as lambda</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"making dough"</span><span class="p">)</span> <span class="c1">// default implementation, Kotlin allows it inside interfaces</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">SauceApplier</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"applying sauce"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">AddonsApplier</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"applying addons"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Baker</span> <span class="p">{</span>
+	<span class="k">operator</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nf">println</span><span class="p">(</span><span class="s">"baking"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Having such interfaces, abstract class <code class="language-plaintext highlighter-rouge">Pizza</code> may look like this:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Pizza</span><span class="p">(</span> 
+	<span class="c1">// distinctive types makes passing arguments easy, no need to remember order</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">makeDough</span><span class="p">:</span> <span class="nc">DoughMaker</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">DoughMaker</span> <span class="p">{</span> 
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"making 30cm dough"</span><span class="p">)</span> <span class="c1">// overridden default implementation</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">applySauce</span><span class="p">:</span> <span class="nc">SauceApplier</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">SauceApplier</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"applying tomato sauce"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">addIngredients</span><span class="p">:</span> <span class="nc">AddonsApplier</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">AddonsApplier</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">bake</span><span class="p">:</span> <span class="nc">Baker</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Baker</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"baking for 20 minutes"</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">fun</span> <span class="nf">make</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// the same Template Method</span>
+        <span class="nf">makeDough</span><span class="p">()</span> <span class="c1">// here we don't run lambda, but the `invoke()` method of the interface</span>
+        <span class="nf">applySauce</span><span class="p">()</span>
+        <span class="nf">addIngredients</span><span class="p">()</span>
+        <span class="nf">bake</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>Concrete classes may have the same objects implementing interface injected, resolving problem with duplicated code:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">PepperoniAddonsApplier</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">.</span><span class="nc">AddonsApplier</span> <span class="p">{</span> <span class="c1">// common object for all Pepperoni pizza sizes</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding salami"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding onion"</span><span class="p">)</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"adding cheese"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">BigPizzaDoughMaker</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">.</span><span class="nc">DoughMaker</span> <span class="p">{</span> <span class="c1">// sizing object can be used with all Pizza types</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"making 50cm dough"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Pepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="nc">PepperoniAddonsApplier</span>
+<span class="p">)</span>
+
+<span class="kd">class</span> <span class="nc">BigPepperoni</span> <span class="p">:</span> <span class="nc">Pizza</span><span class="p">(</span>
+    <span class="n">addIngredients</span> <span class="p">=</span> <span class="nc">PepperoniAddonsApplier</span><span class="p">,</span>
+    <span class="n">makeDough</span> <span class="p">=</span> <span class="nc">BigPizzaDoughMaker</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<p>This allows you to create totally custom Pizza, without creating a concrete class:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">customPizza</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Pizza</span><span class="p">(</span>
+	<span class="n">applySauce</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">SauceApplier</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"adding super sauce"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">makeDough</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">DoughMaker</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"making super dough 48cm"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">addIngredients</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">AddonsApplier</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"no addons, its super by itself"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+	<span class="n">bake</span> <span class="p">=</span> <span class="kd">object</span> <span class="err">: </span><span class="nc">Baker</span> <span class="p">{</span>
+		<span class="k">override</span> <span class="k">fun</span> <span class="nf">invoke</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nf">println</span><span class="p">(</span><span class="s">"I like it raw"</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">)</span> <span class="p">{}</span>
+<span class="n">customPizza</span><span class="p">.</span><span class="nf">make</span><span class="p">()</span>
+</code></pre></div></div>
+<blockquote>
+  <p>Is it still a <code class="language-plaintext highlighter-rouge">Template Method</code> or rather a <code class="language-plaintext highlighter-rouge">Strategy</code>?</p>
+</blockquote>
+
+<h2 id="active-record">Active Record</h2>
+<p>This example is taken from the world of Ruby (that I’m not familiar with), where it came from a pattern proposed by Martin Folwer in book <sup id="fnref:fowler" role="doc-noteref"><a href="#fn:fowler" class="footnote" rel="footnote">2</a></sup>. In general, you have a class - a model in MVC understanding, that contains data and also methods to manipulate and save this object in database. More about <sup id="fnref:active_record" role="doc-noteref"><a href="#fn:active_record" class="footnote" rel="footnote">3</a></sup>.</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">Ruby on Rails</code> that kind of model also has a lot of callbacks <sup id="fnref:ruby_active_record" role="doc-noteref"><a href="#fn:ruby_active_record" class="footnote" rel="footnote">4</a></sup> or so-called hooks, that are called before saving to DB or in case of an error. This is exactly where <code class="language-plaintext highlighter-rouge">Template Method</code> fits perfectly. In Kotlin, it can be implemented like that:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">ActiveRecord</span> <span class="p">{</span> <span class="c1">// base ActiveRecord class</span>
+	
+	<span class="c1">// template method calling hooks in right order</span>
+    <span class="k">fun</span> <span class="nf">save</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// the generic save to DB method</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"saving record $this"</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nf">beforeSave</span><span class="p">()</span> <span class="c1">// calling hook</span>
+        <span class="kd">val</span> <span class="py">isSuccess</span> <span class="p">=</span> <span class="nc">DB</span><span class="p">.</span><span class="nf">save</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="c1">// saving to DB may be success or fail</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isSuccess</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nf">afterSave</span><span class="p">()</span> <span class="c1">// calling hook on success</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nf">failedSave</span><span class="p">()</span> <span class="c1">// and another one for error</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">beforeSave</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// hook with default implementation, open to be overridden</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP beforeSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">afterSave</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP afterSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">open</span> <span class="k">fun</span> <span class="nf">failedSave</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// NOOP</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"NOOP failedSave()"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">DB</span> <span class="p">{</span> <span class="c1">// some stub of DB</span>
+    <span class="k">fun</span> <span class="nf">save</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">):</span> <span class="nc">Boolean</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"DB is saving record: $record"</span><span class="p">)</span>
+        <span class="c1">// here would be saving entity in DB and returning if it was successful or not</span>
+        <span class="k">return</span> <span class="k">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">User</span><span class="p">(</span><span class="k">private</span> <span class="kd">var</span> <span class="py">username</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// concrete model extending ActiveRecord</span>
+	
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">beforeSave</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// hook is overridden</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"$this beforeSave()"</span><span class="p">)</span>
+        <span class="nf">sanitizeRecord</span><span class="p">()</span> <span class="c1">// calling fixing the data before its saved in DB</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nf">sanitizeRecord</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// fixing model data</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"$this sanitizeRecord()"</span><span class="p">)</span>
+        <span class="n">username</span><span class="p">.</span><span class="nf">trim</span><span class="p">()</span>
+        <span class="n">username</span> <span class="p">=</span> <span class="n">username</span><span class="p">.</span><span class="nf">filter</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="nf">isLetter</span><span class="p">()</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Post</span><span class="p">(</span><span class="kd">val</span> <span class="py">text</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ActiveRecord</span><span class="p">()</span> <span class="c1">// another model, without hooks</span>
+</code></pre></div></div>
+<p>Having <code class="language-plaintext highlighter-rouge">ActiveRecord</code> constructed with hooks in mind, you can easily plugin for example logging, error handling, or fixing data before it’s saved in DB. A very similar idea is used in <code class="language-plaintext highlighter-rouge">JUnit</code> tests, where you have methods annotated with <code class="language-plaintext highlighter-rouge">@BeforeEach</code> or <code class="language-plaintext highlighter-rouge">@AfterAll</code>, to run some actions before each test, or clean up after all of them are done.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ActiveRecord</code> itself is sometimes called as <sup id="fnref:active_record_antipatern" role="doc-noteref"><a href="#fn:active_record_antipatern" class="footnote" rel="footnote">5</a></sup> and there are good reasons for it: SRP violation (single class to keep data, DB operations, validate model, etc.), direct mapping DB structure to model fields, troubles with testing. But as I mentioned - Ruby is not my world, and this post is not about <code class="language-plaintext highlighter-rouge">ActiveRecord</code>, just <code class="language-plaintext highlighter-rouge">Template Method</code> fits nicely for this case.</p>
+
+<h1 id="summary">Summary</h1>
+<p>The <code class="language-plaintext highlighter-rouge">Template Method</code> pattern is simple in design, and I think I was using it without even knowing that it has a name. The pattern creates a template of the algorithm, and at the same time requires (or just allows to) override its steps in concrete class (see Pizza examples).</p>
+
+<p>Despite its simple construction and a bit archaic approach it still has its place in modern projects, especially libraries. It has some shortcomings, that can be overcome with using lambdas or injecting whole objects, but then it becomes more a <code class="language-plaintext highlighter-rouge">Strategy</code> than <code class="language-plaintext highlighter-rouge">Template Method</code>. It’s not necessarily bad, but it’s something you should be aware of. This might not be the best pattern to use in every case when you have a family of classes with some shared behavior. But for implementing hooks it seems perfect.</p>
+
+<h2 id="pros">Pros</h2>
+<ul>
+  <li>fairly simple implementation for a class family with only some distinctive behaviors but shared core</li>
+  <li>interesting use-case with <code class="language-plaintext highlighter-rouge">ActiveRecord</code>, well suited for hooks</li>
+  <li>maintaining control over method call order, even when objects are being extended, useful for library creators</li>
+</ul>
+
+<h2 id="cons">Cons</h2>
+<ul>
+  <li>potential class explosion</li>
+  <li>inheriting class needs to know a bit about the parent to know which methods to override, where to call <code class="language-plaintext highlighter-rouge">super()</code> etc.</li>
+  <li>
+    <h2 id="inheritance-instead-of-composition-change-to-injecting-lambdas-in-the-constructor-is-creating-a-strategy-like-construction">inheritance instead of composition, change to injecting lambdas in the constructor is creating a <code class="language-plaintext highlighter-rouge">Strategy</code>-like construction</h2>
+  </li>
+</ul>
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:effective_java" role="doc-endnote">
+      <p><a href="https://books.google.pl/books/about/Effective_Java.html?id=ka2VUBqHiWkC&amp;redir_esc=y">“Effective Java”</a> <a href="#fnref:effective_java" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:fowler" role="doc-endnote">
+      <p><a href="https://books.google.pl/books?id=FyWZt5DdvFkC&amp;q=active+record&amp;pg=PT187&amp;redir_esc=y">“Patterns of Enterprise Application Architecture”</a> <a href="#fnref:fowler" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:active_record" role="doc-endnote">
+      <p><a href="https://en.wikipedia.org/wiki/Active_record_pattern">Active Record</a> <a href="#fnref:active_record" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:ruby_active_record" role="doc-endnote">
+      <p><a href="https://guides.rubyonrails.org/active_record_callbacks.html">Active Record in Ruby</a> <a href="#fnref:ruby_active_record" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:active_record_antipatern" role="doc-endnote">
+      <p><a href="https://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record">antipattern</a> <a href="#fnref:active_record_antipatern" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Template Method-ref">
+                    Template Method <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#behavioral design pattern-ref">
+                    behavioral design pattern <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Kotlin Template Method"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-abstract-factory"
+                                    title="Kotlin Abstract Factory">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/kotlin-strategy-pattern" title="Strategy Pattern in Kotlin">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

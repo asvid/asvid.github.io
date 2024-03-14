@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/facade.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Facade Pattern in Kotlin </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   June
+	   13th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(read time:-->
+         <!--      -->
+         <!--      -->
+         <!--        18 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#purpose">Purpose</a></li>
+<li class="toc-entry toc-h1"><a href="#implementation">Implementation</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstract">Abstract</a></li>
+<li class="toc-entry toc-h2"><a href="#repository">Repository</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#naming">Naming</a></li>
+<li class="toc-entry toc-h1"><a href="#summary">Summary</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#pros">Pros</a></li>
+<li class="toc-entry toc-h2"><a href="#cons">Cons</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="purpose">Purpose</h1>
+<p>The facade is a very basic pattern, whose task is to obscure the details of a group of classes - the module responsible for some functionality.</p>
+
+<p>This can be compared to the facade of the building, which in itself has no function. The building consists of rooms, corridors, stairs, installations. It is the facade that indicates the entrance to the building, and the appearance may suggest its purpose.</p>
+
+<p>The purpose of the pattern is to simplify customer access to the functionality of the obscured module. So that they don’t have to know implementation details, class dependencies, which version of the object to inject, etc.</p>
+
+<p>By <code class="language-plaintext highlighter-rouge">module</code> I will understand here some consistent and relatively independent parts of the system. Not necessarily a separate module in the project or a library - it can be, for example, a separate package.</p>
+
+<h1 id="implementation">Implementation</h1>
+<p>The facade is basically single class. In the diagram it looks like this:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="365px" preserveAspectRatio="none" style="width:388px;height:365px;" version="1.1" viewBox="0 0 388 365" width="388px" zoomAndPan="magnify"><defs><filter height="300%" id="fhzmuvcmqtfl3" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[0e004d10fa3aa19825bb85d3d0c3cd6e]
+cluster module--><polygon fill="#FFFFFF" filter="url(#fhzmuvcmqtfl3)" points="22,183,32,173,321,173,321,343,311,353,22,353,22,183" style="stroke: #000000; stroke-width: 1.5;" /><line style="stroke: #000000; stroke-width: 1.5;" x1="311" x2="320" y1="183" y2="174" /><line style="stroke: #000000; stroke-width: 1.5;" x1="22" x2="311" y1="183" y2="183" /><line style="stroke: #000000; stroke-width: 1.5;" x1="311" x2="311" y1="183" y2="353" /><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="58" x="138.5" y="198.9951">module</text><!--MD5=[a46ee5ce0ceb0380cf446a08a056dce4]
+class A--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="A" style="stroke: #A80036; stroke-width: 1.5;" width="40" x="190" y="305" /><ellipse cx="205" cy="321" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M207.9688,326.6406 Q207.3906,326.9375 206.75,327.0781 Q206.1094,327.2344 205.4063,327.2344 Q202.9063,327.2344 201.5781,325.5938 Q200.2656,323.9375 200.2656,320.8125 Q200.2656,317.6875 201.5781,316.0313 Q202.9063,314.375 205.4063,314.375 Q206.1094,314.375 206.75,314.5313 Q207.4063,314.6875 207.9688,314.9844 L207.9688,317.7031 Q207.3438,317.125 206.75,316.8594 Q206.1563,316.5781 205.5313,316.5781 Q204.1875,316.5781 203.5,317.6563 Q202.8125,318.7188 202.8125,320.8125 Q202.8125,322.9063 203.5,323.9844 Q204.1875,325.0469 205.5313,325.0469 Q206.1563,325.0469 206.75,324.7813 Q207.3438,324.5 207.9688,323.9219 L207.9688,326.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="219" y="325.1543">A</text><!--MD5=[69c451c751c414e37549b782190fef46]
+class B--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="B" style="stroke: #A80036; stroke-width: 1.5;" width="40" x="190" y="213" /><ellipse cx="205" cy="229" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M207.9688,234.6406 Q207.3906,234.9375 206.75,235.0781 Q206.1094,235.2344 205.4063,235.2344 Q202.9063,235.2344 201.5781,233.5938 Q200.2656,231.9375 200.2656,228.8125 Q200.2656,225.6875 201.5781,224.0313 Q202.9063,222.375 205.4063,222.375 Q206.1094,222.375 206.75,222.5313 Q207.4063,222.6875 207.9688,222.9844 L207.9688,225.7031 Q207.3438,225.125 206.75,224.8594 Q206.1563,224.5781 205.5313,224.5781 Q204.1875,224.5781 203.5,225.6563 Q202.8125,226.7188 202.8125,228.8125 Q202.8125,230.9063 203.5,231.9844 Q204.1875,233.0469 205.5313,233.0469 Q206.1563,233.0469 206.75,232.7813 Q207.3438,232.5 207.9688,231.9219 L207.9688,234.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="219" y="233.1543">B</text><!--MD5=[378b18254a1b2429f435e93f5e5cc50c]
+class C--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="C" style="stroke: #A80036; stroke-width: 1.5;" width="40" x="265" y="213" /><ellipse cx="280" cy="229" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M282.9688,234.6406 Q282.3906,234.9375 281.75,235.0781 Q281.1094,235.2344 280.4063,235.2344 Q277.9063,235.2344 276.5781,233.5938 Q275.2656,231.9375 275.2656,228.8125 Q275.2656,225.6875 276.5781,224.0313 Q277.9063,222.375 280.4063,222.375 Q281.1094,222.375 281.75,222.5313 Q282.4063,222.6875 282.9688,222.9844 L282.9688,225.7031 Q282.3438,225.125 281.75,224.8594 Q281.1563,224.5781 280.5313,224.5781 Q279.1875,224.5781 278.5,225.6563 Q277.8125,226.7188 277.8125,228.8125 Q277.8125,230.9063 278.5,231.9844 Q279.1875,233.0469 280.5313,233.0469 Q281.1563,233.0469 281.75,232.7813 Q282.3438,232.5 282.9688,231.9219 L282.9688,234.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="294" y="233.1543">C</text><!--MD5=[69b356fec5e4f53d7535011b6fc9d60b]
+class D--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="D" style="stroke: #A80036; stroke-width: 1.5;" width="41" x="113.5" y="213" /><ellipse cx="128.5" cy="229" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M131.4688,234.6406 Q130.8906,234.9375 130.25,235.0781 Q129.6094,235.2344 128.9063,235.2344 Q126.4063,235.2344 125.0781,233.5938 Q123.7656,231.9375 123.7656,228.8125 Q123.7656,225.6875 125.0781,224.0313 Q126.4063,222.375 128.9063,222.375 Q129.6094,222.375 130.25,222.5313 Q130.9063,222.6875 131.4688,222.9844 L131.4688,225.7031 Q130.8438,225.125 130.25,224.8594 Q129.6563,224.5781 129.0313,224.5781 Q127.6875,224.5781 127,225.6563 Q126.3125,226.7188 126.3125,228.8125 Q126.3125,230.9063 127,231.9844 Q127.6875,233.0469 129.0313,233.0469 Q129.6563,233.0469 130.25,232.7813 Q130.8438,232.5 131.4688,231.9219 L131.4688,234.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="9" x="142.5" y="233.1543">D</text><!--MD5=[54d0f7ca6f9898010b87b67e67e7a5e0]
+class E--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="E" style="stroke: #A80036; stroke-width: 1.5;" width="40" x="38" y="213" /><ellipse cx="53" cy="229" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M55.9688,234.6406 Q55.3906,234.9375 54.75,235.0781 Q54.1094,235.2344 53.4063,235.2344 Q50.9063,235.2344 49.5781,233.5938 Q48.2656,231.9375 48.2656,228.8125 Q48.2656,225.6875 49.5781,224.0313 Q50.9063,222.375 53.4063,222.375 Q54.1094,222.375 54.75,222.5313 Q55.4063,222.6875 55.9688,222.9844 L55.9688,225.7031 Q55.3438,225.125 54.75,224.8594 Q54.1563,224.5781 53.5313,224.5781 Q52.1875,224.5781 51.5,225.6563 Q50.8125,226.7188 50.8125,228.8125 Q50.8125,230.9063 51.5,231.9844 Q52.1875,233.0469 53.5313,233.0469 Q54.1563,233.0469 54.75,232.7813 Q55.3438,232.5 55.9688,231.9219 L55.9688,234.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="67" y="233.1543">E</text><!--MD5=[cc7353c6743ff8a5cd46192e652143fd]
+class F--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="F" style="stroke: #A80036; stroke-width: 1.5;" width="39" x="265.5" y="305" /><ellipse cx="280.5" cy="321" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M283.4688,326.6406 Q282.8906,326.9375 282.25,327.0781 Q281.6094,327.2344 280.9063,327.2344 Q278.4063,327.2344 277.0781,325.5938 Q275.7656,323.9375 275.7656,320.8125 Q275.7656,317.6875 277.0781,316.0313 Q278.4063,314.375 280.9063,314.375 Q281.6094,314.375 282.25,314.5313 Q282.9063,314.6875 283.4688,314.9844 L283.4688,317.7031 Q282.8438,317.125 282.25,316.8594 Q281.6563,316.5781 281.0313,316.5781 Q279.6875,316.5781 279,317.6563 Q278.3125,318.7188 278.3125,320.8125 Q278.3125,322.9063 279,323.9844 Q279.6875,325.0469 281.0313,325.0469 Q281.6563,325.0469 282.25,324.7813 Q282.8438,324.5 283.4688,323.9219 L283.4688,326.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="7" x="294.5" y="325.1543">F</text><!--MD5=[790e9955d9690e5344ead96b2c38e22e]
+class Facade--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="52.8047" id="Facade" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="241" y="100" /><ellipse cx="260.5" cy="116" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M263.4688,121.6406 Q262.8906,121.9375 262.25,122.0781 Q261.6094,122.2344 260.9063,122.2344 Q258.4063,122.2344 257.0781,120.5938 Q255.7656,118.9375 255.7656,115.8125 Q255.7656,112.6875 257.0781,111.0313 Q258.4063,109.375 260.9063,109.375 Q261.6094,109.375 262.25,109.5313 Q262.9063,109.6875 263.4688,109.9844 L263.4688,112.7031 Q262.8438,112.125 262.25,111.8594 Q261.6563,111.5781 261.0313,111.5781 Q259.6875,111.5781 259,112.6563 Q258.3125,113.7188 258.3125,115.8125 Q258.3125,117.9063 259,118.9844 Q259.6875,120.0469 261.0313,120.0469 Q261.6563,120.0469 262.25,119.7813 Q262.8438,119.5 263.4688,118.9219 L263.4688,121.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="46" x="275.5" y="120.1543">Facade</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="242" x2="328" y1="132" y2="132" /><ellipse cx="252" cy="143" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="62" x="261" y="146.2104">operation()</text><!--MD5=[fc941546ba6ec07214c79fa55ccccc53]
+class ClientA--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="ClientA" style="stroke: #A80036; stroke-width: 1.5;" width="75" x="192.5" y="8" /><ellipse cx="207.5" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M210.4688,29.6406 Q209.8906,29.9375 209.25,30.0781 Q208.6094,30.2344 207.9063,30.2344 Q205.4063,30.2344 204.0781,28.5938 Q202.7656,26.9375 202.7656,23.8125 Q202.7656,20.6875 204.0781,19.0313 Q205.4063,17.375 207.9063,17.375 Q208.6094,17.375 209.25,17.5313 Q209.9063,17.6875 210.4688,17.9844 L210.4688,20.7031 Q209.8438,20.125 209.25,19.8594 Q208.6563,19.5781 208.0313,19.5781 Q206.6875,19.5781 206,20.6563 Q205.3125,21.7188 205.3125,23.8125 Q205.3125,25.9063 206,26.9844 Q206.6875,28.0469 208.0313,28.0469 Q208.6563,28.0469 209.25,27.7813 Q209.8438,27.5 210.4688,26.9219 L210.4688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="43" x="221.5" y="28.1543">ClientA</text><!--MD5=[90ce42e95c7bc50d9ed4716ba9f9bcb3]
+class ClientB--><rect fill="#FEFECE" filter="url(#fhzmuvcmqtfl3)" height="32" id="ClientB" style="stroke: #A80036; stroke-width: 1.5;" width="75" x="302.5" y="8" /><ellipse cx="317.5" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M320.4688,29.6406 Q319.8906,29.9375 319.25,30.0781 Q318.6094,30.2344 317.9063,30.2344 Q315.4063,30.2344 314.0781,28.5938 Q312.7656,26.9375 312.7656,23.8125 Q312.7656,20.6875 314.0781,19.0313 Q315.4063,17.375 317.9063,17.375 Q318.6094,17.375 319.25,17.5313 Q319.9063,17.6875 320.4688,17.9844 L320.4688,20.7031 Q319.8438,20.125 319.25,19.8594 Q318.6563,19.5781 318.0313,19.5781 Q316.6875,19.5781 316,20.6563 Q315.3125,21.7188 315.3125,23.8125 Q315.3125,25.9063 316,26.9844 Q316.6875,28.0469 318.0313,28.0469 Q318.6563,28.0469 319.25,27.7813 Q319.8438,27.5 320.4688,26.9219 L320.4688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="43" x="331.5" y="28.1543">ClientB</text><!--MD5=[5ef6a23d13d41aa0be0e9a6609db73ce]
+link ClientA to Facade--><path d="M238.35,40.26 C247.01,56.08 260.69,81.07 271,99.91 " fill="none" id="ClientA-Facade" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[703dc84b21bc583374852f1aa6a929ef]
+link ClientB to Facade--><path d="M331.65,40.26 C322.99,56.08 309.31,81.07 299,99.91 " fill="none" id="ClientB-Facade" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[4283240474b3c92ed7269859e9314aa0]
+reverse link B to A--><path d="M210,258.34 C210,273.79 210,292.28 210,304.96 " fill="none" id="B&lt;-A" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="210,245.27,206,251.27,210,257.27,214,251.27,210,245.27" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[cd25d8247324207f828a4db9f58ed69d]
+link B to C--><path d="M230.21,229 C237.44,229 244.66,229 251.88,229 " fill="none" id="B-&gt;C" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="264.88,229,258.88,225,252.88,229,258.88,233,264.88,229" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[dd279d86604081708109ffa5c10dbded]
+link D to A--><path d="M146.89,245.27 C158.32,258.8 175.22,278.81 188.66,294.73 " fill="none" id="D-&gt;A" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="197.3,304.96,196.4894,297.7946,189.5635,295.7869,190.374,302.9523,197.3,304.96" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[ee70846fe14f0b996068852809ecc970]
+link A to F--><path d="M230.21,321 C237.53,321 244.84,321 252.15,321 " fill="none" id="A-&gt;F" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="265.31,321,259.31,317,253.31,321,259.31,325,265.31,321" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[5ebc1f44a7c66b9e925829b6b9c43293]
+link D to B--><path d="M154.78,229 C162.06,229 169.34,229 176.62,229 " fill="none" id="D-&gt;B" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="189.72,229,183.72,225,177.72,229,183.72,233,189.72,229" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[589afa23cec0594aba0f16a02d39dc3f]
+reverse link Facade to F--><path d="M319.05,157.58 C320.58,159.96 321.93,162.43 323,165 C336.72,197.8 331.26,210.42 323,245 C317.71,267.15 304.76,290.15 295.44,304.75 " fill="none" id="Facade&lt;-F" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="316.09,153.41,318.0309,163.0657,318.9813,157.4893,324.5577,158.4397,316.09,153.41" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[079ea6726f56638bae63da64adcd2b42]
+reverse link Facade to E--><path d="M235.46,132.75 C187.22,138.67 118.06,149.52 96,165 C79.38,176.67 68.74,198.14 63.07,212.74 " fill="none" id="Facade&lt;-E" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="240.64,132.13,231.2246,129.2404,235.6762,132.7308,232.1859,137.1825,240.64,132.13" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[2a17a046ee01c965026d9a1c9cee0476]
+reverse link Facade to C--><path d="M285,158.57 C285,176.57 285,198.43 285,212.75 " fill="none" id="Facade&lt;-C" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="285,153.12,281,162.12,285,158.12,289,162.12,285,153.12" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[7f5cf9e7a14830be9b51fbd533e56978]
+@startuml
+skinparam groupComposition 1
+hide members
+show Facade methods
+class ClientA
+class ClientB
+  
+ClientA-down-Facade
+ClientB-down-Facade
+
+package module <<Node>> {
+
+class Facade{
+	+ operation()
+  }
+
+class A
+class B
+class C
+class D
+class E
+class F
+
+A-down-*B
+B-*C
+D-*A
+A-*F
+D-*B
+}
+
+F-up->Facade
+E-up->Facade
+C-up->Facade
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>The classes <code class="language-plaintext highlighter-rouge">A, B, C, D, E, F</code> together form a module and provide some functionality. The facade is the access point to this functionality. As a result, no customer need not know the details of the module, to know how to create class instances and how to use them. Customers only need to know the facade, which can build a tree of dependencies for all classes, hide their implementations and provide a simple API for customers.</p>
+
+<p>I was wondering if the <code class="language-plaintext highlighter-rouge">Facade</code> class shouldn’t be inside a module. Such use of the facades is often found in libraries - they have a lot of internal logic, but provide only a simple API inside a single class and, if necessary, several configuration objects. However, Facade can be used to cover code that we have no control over, creating a so-called <code class="language-plaintext highlighter-rouge">Anticorruption Layer</code>. Then the code that changes behind it does not spoil the clients.</p>
+
+<h2 id="abstract">Abstract</h2>
+<p>Let’s assume the following situation: a client class needs the result of a method from one class, but this method requires the result of another class, which has several dependencies.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="nc">E</span><span class="p">().</span><span class="nf">finishTheWork</span><span class="p">(</span> <span class="c1">// I want this result</span>
+        <span class="nc">D</span><span class="p">().</span><span class="nf">doAnotherPart</span><span class="p">(</span> <span class="c1">// but first I need to feed it with this one</span>
+            <span class="nc">A</span><span class="p">(</span> <span class="c1">// that requires A</span>
+            	<span class="nc">B</span><span class="p">(</span> <span class="c1">// that requires B</span>
+                	<span class="nc">C</span><span class="p">()</span> <span class="c1">// that uses C</span>
+                <span class="p">)</span>
+			<span class="p">).</span><span class="nf">doPartOfWork</span><span class="p">()</span> <span class="c1">// to yield the mid-result</span>
+        <span class="p">)</span>
+	<span class="p">)</span>
+
+<span class="c1">// module classes look like that:</span>
+<span class="kd">class</span> <span class="nc">A</span><span class="p">(</span><span class="kd">val</span> <span class="py">b</span><span class="p">:</span> <span class="nc">B</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">doPartOfWork</span><span class="p">()</span> <span class="p">=</span> <span class="s">"result"</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">B</span><span class="p">(</span><span class="kd">val</span> <span class="py">c</span><span class="p">:</span> <span class="nc">C</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">C</span>
+<span class="kd">class</span> <span class="nc">D</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">doAnotherPart</span><span class="p">(</span><span class="n">input</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">E</span> <span class="p">{</span>
+	<span class="c1">// to simplify this example I used `Any` and I return `String`</span>
+	<span class="c1">// but this can be any domain object etc.</span>
+    <span class="k">fun</span> <span class="nf">finishTheWork</span><span class="p">(</span><span class="n">input</span><span class="p">:</span> <span class="nc">Any</span><span class="p">)</span> <span class="p">=</span> <span class="s">"finish"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The result of the method from class <code class="language-plaintext highlighter-rouge">E</code> is available only after building the entire dependency tree of class <code class="language-plaintext highlighter-rouge">A</code>, calling the appropriate method, the result of which is passed to <code class="language-plaintext highlighter-rouge">D.doAnotherPart()</code>, the result of which is needed in the method <code class="language-plaintext highlighter-rouge">E.finishTheWork()</code>. To use this code, you need to know quite a bit of module detail, which probably necessitates the creation and maintenance (!!!) of documentation.</p>
+
+<p>So how can Facade help here?</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// calling the same logic from Facade</span>
+<span class="kd">val</span> <span class="py">result2</span> <span class="p">=</span> <span class="nc">Facade</span><span class="p">().</span><span class="nf">complexWork</span><span class="p">()</span> <span class="c1">// lovely isn't it?</span>
+
+<span class="kd">class</span> <span class="nc">Facade</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// create dependencies internally</span>
+    <span class="c1">// can be delegated to DI framework</span>
+    <span class="c1">// but shouldn't be expected from module client to use the same framework, or be aware of it</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">c</span> <span class="p">=</span> <span class="nc">C</span><span class="p">()</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">b</span> <span class="p">=</span> <span class="nc">B</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">a</span><span class="p">:</span> <span class="nc">A</span> <span class="p">=</span> <span class="nc">A</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">d</span> <span class="p">=</span> <span class="nc">D</span><span class="p">()</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">e</span> <span class="p">=</span> <span class="nc">E</span><span class="p">()</span>
+
+    <span class="k">fun</span> <span class="nf">complexWork</span><span class="p">():</span> <span class="nc">Any</span> <span class="p">{</span> 
+		<span class="c1">// reminds a bit of Template Method</span>
+		<span class="c1">// or a Strategy, if instances would be injected</span>
+		<span class="c1">// nothing is stopping Facade to use other patterns internally</span>
+		<span class="c1">// for the client it won't matter after all</span>
+        <span class="kd">val</span> <span class="py">firstResult</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="nf">doPartOfWork</span><span class="p">()</span>
+        <span class="kd">val</span> <span class="py">secondResult</span> <span class="p">=</span> <span class="n">d</span><span class="p">.</span><span class="nf">doAnotherPart</span><span class="p">(</span><span class="n">firstResult</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">e</span><span class="p">.</span><span class="nf">finishTheWork</span><span class="p">(</span><span class="n">secondResult</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="law-of-demeter">Law of Demeter</h3>
+<p>In other words, “the principle of minimum knowledge” or the “rule of limiting interactions”. <strong>The idea is for classes to use only their methods or fields, and objects created by themselves or passed directly in method parameters</strong>. The facade perfectly helps to keep this good practice.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">a</span> <span class="p">=</span> <span class="nc">A</span><span class="p">(</span><span class="nc">B</span><span class="p">(</span><span class="nc">C</span><span class="p">(</span><span class="nc">D</span><span class="p">())))</span>
+<span class="c1">// if you need to use method from class D</span>
+<span class="c1">// you should have direct access to the instance of D</span>
+<span class="c1">// not chained object field calls like that</span>
+<span class="c1">// also private fields wouldn't allow this, but public getters would</span>
+<span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="n">b</span><span class="p">.</span><span class="n">c</span><span class="p">.</span><span class="n">d</span><span class="p">.</span><span class="nf">theMethod</span><span class="p">()</span>
+<span class="c1">// creating 'theMethod' call in each class and passing it to class A is also bad</span>
+<span class="c1">// it means probably A is doing too much, and all those classes are coupled</span>
+</code></pre></div></div>
+<p>Looking at the previous example, without Facade, the client had to “know” a lot about the dependencies that had to be met to get the expected result. All these details were then hidden behind the Facade. In a way, the client may now say “I need the result, I don’t care how you get it.”</p>
+
+<p>The downside of strictly applying this rule can be creating multiple methods that only delegate method calls to other internal objects. But if a class does have many delegating methods, maybe it does too much and should be broken down into smaller, more detailed classes?</p>
+
+<h2 id="repository">Repository</h2>
+<p>A special case of Facade is the Repository. It allows access to domain objects, hiding the details of their storage. The <code class="language-plaintext highlighter-rouge">Repository</code> can hide the database, cache, or even communicate with a remote server. Or all of these things at once as in the example below:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// clients care only about those 2 things:</span>
+<span class="kd">data class</span> <span class="nc">User</span><span class="p">(</span><span class="kd">val</span> <span class="py">id</span><span class="p">:</span> <span class="nc">UUID</span><span class="p">,</span> <span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span>
+<span class="kd">interface</span> <span class="nc">UserRepository</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">getUser</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="nc">UUID</span><span class="p">):</span> <span class="nc">User</span>
+<span class="p">}</span>
+
+<span class="c1">// `Fake` because DB is in memory, and API returns hardcoded results</span>
+<span class="c1">// repository variant to use in unit tests for example</span>
+<span class="kd">class</span> <span class="nc">FakeUserRepo</span><span class="p">(</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">userDb</span><span class="p">:</span> <span class="nc">UserDb</span> <span class="p">=</span> <span class="nc">InMemoryUserDb</span><span class="p">(),</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">userApi</span><span class="p">:</span> <span class="nc">UserApi</span> <span class="p">=</span> <span class="nc">FakeUserApi</span><span class="p">(),</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">userCache</span><span class="p">:</span> <span class="nc">UserCache</span> <span class="p">=</span> <span class="nc">SimpleCache</span><span class="p">()</span>
+<span class="p">)</span> <span class="p">:</span> <span class="nc">UserRepository</span> <span class="p">{</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getUser</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="nc">UUID</span><span class="p">):</span> <span class="nc">User</span> <span class="p">{</span>
+        <span class="c1">// check if the object is in the cache</span>
+        <span class="kd">val</span> <span class="py">cashedUser</span> <span class="p">=</span> <span class="n">userCache</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cashedUser</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// if not, check database</span>
+            <span class="kd">val</span> <span class="py">dbUser</span> <span class="p">=</span> <span class="n">userDb</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">dbUser</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// if not, check on remote server</span>
+                <span class="kd">val</span> <span class="py">userDto</span> <span class="p">=</span> <span class="n">userApi</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">userDto</span><span class="p">.</span><span class="nf">toUser</span><span class="p">().</span><span class="nf">also</span> <span class="p">{</span>
+                    <span class="c1">// after getting the object, put it in DB and cache</span>
+                    <span class="n">userDb</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="nf">toEntity</span><span class="p">())</span>
+                    <span class="n">userCache</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="c1">// if object is in DB, return it and put it in cache</span>
+                <span class="k">return</span> <span class="n">dbUser</span><span class="p">.</span><span class="nf">toUser</span><span class="p">().</span><span class="nf">also</span> <span class="p">{</span>
+                    <span class="n">userCache</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">cashedUser</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+	<span class="c1">// useful extension functions, mapping entity and DTO to domain class</span>
+    <span class="k">private</span> <span class="k">fun</span> <span class="nc">UserDto</span><span class="p">.</span><span class="nf">toUser</span><span class="p">():</span> <span class="nc">User</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">User</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nc">UserEntity</span><span class="p">.</span><span class="nf">toUser</span><span class="p">():</span> <span class="nc">User</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">User</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">fun</span> <span class="nc">User</span><span class="p">.</span><span class="nf">toEntity</span><span class="p">():</span> <span class="nc">UserEntity</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nc">UserEntity</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Pay attention to the object interfaces. Both <code class="language-plaintext highlighter-rouge">UserRepository</code> and<code class="language-plaintext highlighter-rouge"> UserDb</code>, <code class="language-plaintext highlighter-rouge">UserApi</code> and<code class="language-plaintext highlighter-rouge"> UserCache</code> may have different implementations, but it doesn’t matter for the client.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// UserRepository instance could be injected instead of created here</span>
+<span class="c1">// then for testing you could use instance without real DB and access to HTTP client</span>
+<span class="kd">val</span> <span class="py">userRepo</span><span class="p">:</span> <span class="nc">UserRepository</span> <span class="p">=</span> <span class="nc">FakeUserRepo</span><span class="p">()</span>
+<span class="c1">// Repository is a Facade for overall data access</span>
+<span class="c1">// client doesn't have to bother with cache, API call, DB etc.</span>
+<span class="kd">val</span> <span class="py">user</span> <span class="p">=</span> <span class="n">userRepo</span><span class="p">.</span><span class="nf">getUser</span><span class="p">(</span><span class="nc">UUID</span><span class="p">.</span><span class="nf">randomUUID</span><span class="p">())</span>
+</code></pre></div></div>
+<p>The repository takes care of storing objects in the cache or filling in the gaps in the local database with information from a remote server. The customer gets only the data in the fastest way possible. This approach makes testing incredibly easy, especially when you use interfaces and dependency injection. It also allows for the parallelization of the work of several people, where one deals with, for example, the UI layer displaying data, and the other creates its storage and access via HTTP or cache policy. It is especially interesting in interdisciplinary teams, where a mobile programmer can deal with the UI, and the backend one can deal with the data access layer in the application, without any knowledge of e.g. Android.</p>
+
+<h1 id="naming">Naming</h1>
+<p>As in <a href="https://asvid.github.io/kotlin-strategy-pattern#naming">the previous post</a>, I rather favor not adding “Facade” to the class name, which is a facade. This is seen in the example of the ‘Repository’, there is no need to inform customers that they are only dealing with the facade. Clients want it to perform an action, provided by the class, they do not need to know whether it is a facade. This is different for example for the <a href="https://asvid.github.io/kotlin-builder-pattern">Builder Pattern</a>, which by definition should have the <code class="language-plaintext highlighter-rouge">build()</code> method. The facade does not have API enforced by the pattern itself.</p>
+
+<h1 id="summary">Summary</h1>
+<p>The facade allows you to hide the details of the module from clients. It ensures compliance with <code class="language-plaintext highlighter-rouge">Law Demeter</code>. Using the generic interface and various implementations greatly simplifies testing. It blends well with other patterns like <code class="language-plaintext highlighter-rouge">Strategy</code>,<code class="language-plaintext highlighter-rouge"> Template Method</code>, or construction patterns, allowing configuration of the object available for the clients. The facade is a good entry point for libraries, giving customers access to high-level functionality and hiding all internal logic and classes.</p>
+
+<h2 id="pros">Pros</h2>
+<ul>
+  <li><strong>simple interface for clients</strong> - Facade provides minimal module interface, instead of expecting implementation details knowledge from clients, that should be documented and maintained</li>
+  <li><strong>Law of Demeter compliant</strong> - the clients “talk” only with a Facade, not with internal module classes. Clients don’t have to even know them or their details.</li>
+  <li><strong>testing</strong> - switching the Facade instance from production to test variant can simulate the whole module, so clients can be tested in isolated way.</li>
+  <li><strong>refactoring</strong> - clients are loosely couppled with the module, they only now the Facade so all refactoring changes won’t affect them. Think about it as of interior design change but leaving the outside structure of the building untouched.</li>
+  <li><strong>control over what client knows</strong> - useful in case of libraries, where you may not want to expose all internal classes to the clients, but only a consciously selected part.
+    <h2 id="cons">Cons</h2>
+  </li>
+  <li><strong>limiting clients options</strong> - if the client needs access objects from inside the module, Facade may not allow it. Changes in customer requirements can lead to the addition of new methods in the Facade until it is no longer just a “simple interface”. This may not be a big problem if you have control over the facade, and the module it obscures. If Facade is part of an external library, the constraint may take away the sense of using the library or force a hacky extraction of objects from inside the module.</li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#rss-ref">-->
+        <!--                rss <span>(33)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Facade Pattern-ref">
+                    Facade Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#structural design pattern-ref">
+                    structural design pattern <span>(2)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Facade Pattern in Kotlin"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/kotlin-strategy-pattern"
+                                    title="Strategy Pattern in Kotlin">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/intellij-latex-editor" title="IntelliJ IDEA as a LaTeX editor">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/command.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Wzorzec Command (Polecenie) w Kotlinie </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   August
+	   22nd,
+	     
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        31 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#implementacja">Implementacja</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#abstrakcyjna">Abstrakcyjna</a></li>
+<li class="toc-entry toc-h2"><a href="#przykład-z-home-automation">Przykład z Home Automation</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#nazewnictwo">Nazewnictwo</a></li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#zalety">Zalety</a></li>
+<li class="toc-entry toc-h2"><a href="#wady">Wady</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+<p>Wzorzec <code class="language-plaintext highlighter-rouge">Command</code> polega na opakowaniu żądania w konkretny obiekt, posiadający wszystkie informacje niezbędne do wykonania swojego zadania. Można o tym pomyśleć jak o kolejnym etapie refaktoryzacji, gdzie najpierw wydzielamy kod do osobnej metody, a następnie do osobnego obiektu, przyjmującego w konstruktorze argumenty potrzebne do wykonania żądania.</p>
+
+<p>Dzięki temu, że żądanie jest obiektem, może zostać przekazane do wykonania do osobnego obiektu (<code class="language-plaintext highlighter-rouge">CommandProcessor</code>), co pozwala na ich kolejkowanie i ułatwia logowanie zdarzeń. To samo polecenie może być wykorzystywane w różnych miejscach systemu, enkapsulując całą logikę wykonania żądania, co zapobiega duplikacji kodu. Nie musi to być ta sama instancja obiektu, ale klasa polecenia.</p>
+
+<p>Obiekt żądania, oprócz standardowej metody <code class="language-plaintext highlighter-rouge">execute()</code> może zawierać metodę w stylu <code class="language-plaintext highlighter-rouge">undo()</code> czyli cofnięcie wprowadzanych przez żądanie zmian. Praktycznie wszystkie programy graficzne czy edytory tekstu mają taką opcję. Przechowują każdą zmianę w formie <code class="language-plaintext highlighter-rouge">Polecenia</code> w jakimś buforze o ograniczonej pojemności (stąd możliwość np. tylko 3 cofnięć), i jeśli użytkownik chce cofnąć ostatnią wprowadzoną zmianę, <code class="language-plaintext highlighter-rouge">Polecenie</code> jest ściągane z bufora i wprowadzane przez nie zmiany są cofane.</p>
+
+<h1 id="implementacja">Implementacja</h1>
+
+<h2 id="abstrakcyjna">Abstrakcyjna</h2>
+<p>Jak już wspomniałem, standardowo obiekt <code class="language-plaintext highlighter-rouge">Command</code> ma metodę <code class="language-plaintext highlighter-rouge">execute()</code> (lub analogiczną). Oprócz samego obiektu żądania występuje w tym wzorcu kilka innych klas:</p>
+<ul>
+  <li><strong>Receiver</strong> - to na nim <code class="language-plaintext highlighter-rouge">Command</code> wykonuje żądania. Jeśli <code class="language-plaintext highlighter-rouge">Polecenie</code> polega na ściągnięciu pogody z internetu, <code class="language-plaintext highlighter-rouge">Receiver</code> będzie np. klientem HTTP. Może to być dowolna klasa.</li>
+  <li><strong>Invoker</strong> - klasa, która żąda obsłużenia polecenia</li>
+  <li><strong>Client</strong> - tworzy obiekt polecenia <code class="language-plaintext highlighter-rouge">ConcreteCommand</code> i wiąże go z odbiorcą <code class="language-plaintext highlighter-rouge">Receiver</code> oraz <code class="language-plaintext highlighter-rouge">Invokerem</code></li>
+  <li><strong>ConcreteCommand</strong> - konkretne polecenie. Posiada wszystkie inne obiekty potrzebne do wykonania żądania.</li>
+</ul>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="680px" preserveAspectRatio="none" style="width:601px;height:680px;" version="1.1" viewBox="0 0 601 680" width="601px" zoomAndPan="magnify"><defs><filter height="300%" id="fhiu776335y6q" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[ed6624c6556d5e7b1bd23032162d20b7]
+class Client--><rect fill="#FEFECE" filter="url(#fhiu776335y6q)" height="32" id="Client" style="stroke: #A80036; stroke-width: 1.5;" width="67" x="97" y="8" /><ellipse cx="112" cy="24" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M114.9688,29.6406 Q114.3906,29.9375 113.75,30.0781 Q113.1094,30.2344 112.4063,30.2344 Q109.9063,30.2344 108.5781,28.5938 Q107.2656,26.9375 107.2656,23.8125 Q107.2656,20.6875 108.5781,19.0313 Q109.9063,17.375 112.4063,17.375 Q113.1094,17.375 113.75,17.5313 Q114.4063,17.6875 114.9688,17.9844 L114.9688,20.7031 Q114.3438,20.125 113.75,19.8594 Q113.1563,19.5781 112.5313,19.5781 Q111.1875,19.5781 110.5,20.6563 Q109.8125,21.7188 109.8125,23.8125 Q109.8125,25.9063 110.5,26.9844 Q111.1875,28.0469 112.5313,28.0469 Q113.1563,28.0469 113.75,27.7813 Q114.3438,27.5 114.9688,26.9219 L114.9688,29.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="35" x="126" y="28.1543">Client</text><!--MD5=[521817ab83e81da341a3f4b5e91bae41]
+class Command--><rect fill="#FEFECE" filter="url(#fhiu776335y6q)" height="60.8047" id="Command" style="stroke: #A80036; stroke-width: 1.5;" width="94" x="259.5" y="331" /><ellipse cx="274.5" cy="347" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M270.4219,342.7656 L270.4219,340.6094 L277.8125,340.6094 L277.8125,342.7656 L275.3438,342.7656 L275.3438,350.8438 L277.8125,350.8438 L277.8125,353 L270.4219,353 L270.4219,350.8438 L272.8906,350.8438 L272.8906,342.7656 L270.4219,342.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="62" x="288.5" y="351.1543">Command</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="260.5" x2="352.5" y1="363" y2="363" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="260.5" x2="352.5" y1="371" y2="371" /><ellipse cx="270.5" cy="382" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="52" x="279.5" y="385.2104">execute()</text><!--MD5=[6fb1311da0745c184c648aedb301439e]
+class ConcreteCommand--><rect fill="#FEFECE" filter="url(#fhiu776335y6q)" height="86.4141" id="ConcreteCommand" style="stroke: #A80036; stroke-width: 1.5;" width="151" x="55" y="456" /><ellipse cx="70" cy="472" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M72.9688,477.6406 Q72.3906,477.9375 71.75,478.0781 Q71.1094,478.2344 70.4063,478.2344 Q67.9063,478.2344 66.5781,476.5938 Q65.2656,474.9375 65.2656,471.8125 Q65.2656,468.6875 66.5781,467.0313 Q67.9063,465.375 70.4063,465.375 Q71.1094,465.375 71.75,465.5313 Q72.4063,465.6875 72.9688,465.9844 L72.9688,468.7031 Q72.3438,468.125 71.75,467.8594 Q71.1563,467.5781 70.5313,467.5781 Q69.1875,467.5781 68.5,468.6563 Q67.8125,469.7188 67.8125,471.8125 Q67.8125,473.9063 68.5,474.9844 Q69.1875,476.0469 70.5313,476.0469 Q71.1563,476.0469 71.75,475.7813 Q72.3438,475.5 72.9688,474.9219 L72.9688,477.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="119" x="84" y="476.1543">ConcreteCommand</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="56" x2="205" y1="488" y2="488" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="63" y="496" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="102" x="75" y="502.2104">receiver: Receiver</text><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="63" y="508.8047" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="44" x="75" y="515.0151">params</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="56" x2="205" y1="521.6094" y2="521.6094" /><ellipse cx="66" cy="532.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="52" x="75" y="535.8198">execute()</text><!--MD5=[bcee973e2623bef0127252815a37a6e8]
+class Receiver--><rect fill="#FEFECE" filter="url(#fhiu776335y6q)" height="60.8047" id="Receiver" style="stroke: #A80036; stroke-width: 1.5;" width="85" x="14" y="609" /><ellipse cx="29" cy="625" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M31.9688,630.6406 Q31.3906,630.9375 30.75,631.0781 Q30.1094,631.2344 29.4063,631.2344 Q26.9063,631.2344 25.5781,629.5938 Q24.2656,627.9375 24.2656,624.8125 Q24.2656,621.6875 25.5781,620.0313 Q26.9063,618.375 29.4063,618.375 Q30.1094,618.375 30.75,618.5313 Q31.4063,618.6875 31.9688,618.9844 L31.9688,621.7031 Q31.3438,621.125 30.75,620.8594 Q30.1563,620.5781 29.5313,620.5781 Q28.1875,620.5781 27.5,621.6563 Q26.8125,622.7188 26.8125,624.8125 Q26.8125,626.9063 27.5,627.9844 Q28.1875,629.0469 29.5313,629.0469 Q30.1563,629.0469 30.75,628.7813 Q31.3438,628.5 31.9688,627.9219 L31.9688,630.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="53" x="43" y="629.1543">Receiver</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="98" y1="641" y2="641" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="15" x2="98" y1="649" y2="649" /><ellipse cx="25" cy="660" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="42" x="34" y="663.2104">action()</text><!--MD5=[d01e39adb8cc3240d418de1aedb45e74]
+class Invoker--><rect fill="#FEFECE" filter="url(#fhiu776335y6q)" height="86.4141" id="Invoker" style="stroke: #A80036; stroke-width: 1.5;" width="166" x="216.5" y="185" /><ellipse cx="272.75" cy="201" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M275.7188,206.6406 Q275.1406,206.9375 274.5,207.0781 Q273.8594,207.2344 273.1563,207.2344 Q270.6563,207.2344 269.3281,205.5938 Q268.0156,203.9375 268.0156,200.8125 Q268.0156,197.6875 269.3281,196.0313 Q270.6563,194.375 273.1563,194.375 Q273.8594,194.375 274.5,194.5313 Q275.1563,194.6875 275.7188,194.9844 L275.7188,197.7031 Q275.0938,197.125 274.5,196.8594 Q273.9063,196.5781 273.2813,196.5781 Q271.9375,196.5781 271.25,197.6563 Q270.5625,198.7188 270.5625,200.8125 Q270.5625,202.9063 271.25,203.9844 Q271.9375,205.0469 273.2813,205.0469 Q273.9063,205.0469 274.5,204.7813 Q275.0938,204.5 275.7188,203.9219 L275.7188,206.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="45" x="293.25" y="205.1543">Invoker</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="217.5" x2="381.5" y1="217" y2="217" /><rect fill="none" height="6" style="stroke: #C82930; stroke-width: 1.0;" width="6" x="224.5" y="225" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="122" x="236.5" y="231.2104">command: Command</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="217.5" x2="381.5" y1="237.8047" y2="237.8047" /><ellipse cx="227.5" cy="248.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="140" x="236.5" y="252.0151">setCommand(command)</text><ellipse cx="227.5" cy="261.6094" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="110" x="236.5" y="264.8198">executeCommand()</text><path d="M36.5,334 L36.5,389.3984 L224.5,389.3984 L224.5,344 L214.5,334 L36.5,334 " fill="#FBFB77" filter="url(#fhiu776335y6q)" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M214.5,334 L214.5,344 L224.5,344 L214.5,334 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="167" x="42.5" y="351.0669">tworzy instancję polecenia</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="127" x="42.5" y="366.1997">przekazuje Receiver</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="139" x="42.5" y="381.3325">i parametry polecenia</text><path d="M196,100 L196,125.1328 L391,125.1328 L391,110 L381,100 L196,100 " fill="#FBFB77" filter="url(#fhiu776335y6q)" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M381,100 L381,110 L391,110 L381,100 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="174" x="202" y="117.0669">ustawia instancję polecenia</text><path d="M418,203 L418,219.1328 L346.5,261.0117 L418,227.1328 L418,243.2656 A0,0 0 0 0 418,243.2656 L589,243.2656 A0,0 0 0 0 589,243.2656 L589,213 L579,203 L418,203 A0,0 0 0 0 418,203 " fill="#FBFB77" filter="url(#fhiu776335y6q)" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M579,203 L579,213 L589,213 L579,203 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="123" x="424" y="220.0669">wykonuje polecenie</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="150" x="424" y="235.1997">kiedy jest to wymagane</text><path d="M248.5,481 L248.5,489.5664 L127,532.0117 L248.5,497.5664 L248.5,506.1328 A0,0 0 0 0 248.5,506.1328 L444.5,506.1328 A0,0 0 0 0 444.5,506.1328 L444.5,491 L434.5,481 L248.5,481 A0,0 0 0 0 248.5,481 " fill="#FBFB77" filter="url(#fhiu776335y6q)" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M434.5,481 L434.5,491 L444.5,491 L434.5,481 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="175" x="254.5" y="498.0669">wywołuje metodę Receivera</text><!--MD5=[71d76317347f4c6586f3f69fe5800413]
+reverse link Command to ConcreteCommand--><path d="M306.5,412.01 C306.5,412.01 306.5,467 306.5,467 C306.5,467 259.53,467 214.12,467 " fill="none" id="Command&lt;-ConcreteCommand" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="299.5,412.02,306.5,392.01,313.5,412.01,299.5,412.02" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[1fc7c1e446da3eb9b78b8bbcd1524564]
+link Invoker to Command--><path d="M306.5,283.34 C306.5,283.34 306.5,317.62 306.5,317.62 " fill="none" id="Invoker-Command" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="306.5,330.62,310.5,321.62,306.5,325.62,302.5,321.62,306.5,330.62" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="306.5" x2="306.5" y1="325.62" y2="317.62" /><polygon fill="#A80036" points="306.5,271.34,302.5,277.34,306.5,283.34,310.5,277.34,306.5,271.34" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[f6648c1eba52664df97c67a3949cfb3d]
+link Client to Receiver--><path d="M96.83,24 C64.73,24 21.25,24 21.25,24 C21.25,24 21.25,599.62 21.25,599.62 " fill="none" id="Client-&gt;Receiver" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="21.25,604.62,25.25,595.62,21.25,599.62,17.25,595.62,21.25,604.62" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[61226423da3d0f874329010916e4aeca]
+link ConcreteCommand to Receiver--><path d="M77,537.65 C77,537.65 77,647.91 77,647.91 " fill="none" id="ConcreteCommand-&gt;Receiver" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="77,652.91,81,643.91,77,647.91,73,643.91,77,652.91" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[5e920e61ecf8bb81a63f43343e05388c]
+link Client to N1--><path d="M119.33,40.28 C119.33,94 119.33,266.08 119.33,333.77 " fill="none" id="Client-N1" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><!--MD5=[853c1e71779f7b22cfbcd07cfb2ceac4]
+link N1 to ConcreteCommand--><path d="M130.5,389.22 C130.5,389.22 130.5,446.93 130.5,446.93 " fill="none" id="N1-&gt;ConcreteCommand" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#A80036" points="130.5,451.93,134.5,442.93,130.5,446.93,126.5,442.93,130.5,451.93" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[3c4c24853e1b2b913dd9918c77bd818d]
+link Client to N2--><path d="M141.67,40.32 C141.67,66.02 141.67,113 141.67,113 C141.67,113 166.25,113 195.62,113 " fill="none" id="Client-N2" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><!--MD5=[6f0fa59d77c0bf0114a7895af38201cd]
+link N2 to Invoker--><path d="M299.5,125.3 C299.5,125.3 299.5,179.82 299.5,179.82 " fill="none" id="N2-&gt;Invoker" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="#A80036" points="299.5,184.82,303.5,175.82,299.5,179.82,295.5,175.82,299.5,184.82" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[d6440b1528c5d8a54c5ac9be99371a25]
+link Invoker to Invoker$$$RIGHT--><!--MD5=[5965f7576d30534d903c34de7613da6c]
+link ConcreteCommand to ConcreteCommand$$$RIGHT--><!--MD5=[7e92e02573c66a82556a330d28ec223d]
+@startuml
+hide Client members
+  skinparam linetype ortho
+
+interface Command{
+	+ execute()
+}
+
+class ConcreteCommand implements Command{
+	- receiver: Receiver
+	- params
++ execute()
+}
+
+class Receiver{
+	+ action()
+}
+
+class Client
+class Invoker{
+- command: Command
++ setCommand(command)
++ executeCommand()
+}
+
+Invoker *- ->Command
+Client - -> Receiver
+ConcreteCommand::execute - -> Receiver::action
+note "tworzy instancję polecenia\nprzekazuje Receiver\ni parametry polecenia" as N1
+Client .. N1
+N1 ..> ConcreteCommand
+
+note "ustawia instancję polecenia" as N2
+Client .. N2
+N2 ..> Invoker
+
+note right of Invoker::executeCommand
+	wykonuje polecenie
+	kiedy jest to wymagane
+end note
+
+note right of ConcreteCommand::execute
+	wywołuje metodę Receivera
+end note
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<p>Kolejność interakcji przedstawia się następująco:</p>
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="244px" preserveAspectRatio="none" style="width:441px;height:244px;" version="1.1" viewBox="0 0 441 244" width="441px" zoomAndPan="magnify"><defs><filter height="300%" id="f1eit4l22kgw2d" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><rect fill="#FFFFFF" filter="url(#f1eit4l22kgw2d)" height="29.1328" style="stroke: #A80036; stroke-width: 1.0;" width="10" x="131.5" y="98.5625" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="51" x2="51" y1="38.2969" y2="203.9609" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="136" x2="136" y1="38.2969" y2="203.9609" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="299" x2="299" y1="38.2969" y2="203.9609" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 5.0,5.0;" x1="396" x2="396" y1="38.2969" y2="203.9609" /><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="82" x="8" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="68" x="15" y="22.9951">aReceiver</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="82" x="8" y="202.9609" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="68" x="15" y="222.9561">aReceiver</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="61" x="104" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="47" x="111" y="22.9951">aClient</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="61" x="104" y="202.9609" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="47" x="111" y="222.9561">aClient</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="93" x="251" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="79" x="258" y="22.9951">aCommand</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="93" x="251" y="202.9609" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="79" x="258" y="222.9561">aCommand</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="72" x="358" y="3" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="58" x="365" y="22.9951">aInvoker</text><rect fill="#FEFECE" filter="url(#f1eit4l22kgw2d)" height="30.2969" style="stroke: #A80036; stroke-width: 1.5;" width="72" x="358" y="202.9609" /><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="58" x="365" y="222.9561">aInvoker</text><rect fill="#FFFFFF" filter="url(#f1eit4l22kgw2d)" height="29.1328" style="stroke: #A80036; stroke-width: 1.0;" width="10" x="131.5" y="98.5625" /><polygon fill="#A80036" points="62,65.4297,52,69.4297,62,73.4297,58,69.4297" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 2.0,2.0;" x1="56" x2="135.5" y1="69.4297" y2="69.4297" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="50" x="68" y="64.3638">posiada</text><polygon fill="#A80036" points="287.5,94.5625,297.5,98.5625,287.5,102.5625,291.5,98.5625" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 2.0,2.0;" x1="141.5" x2="293.5" y1="98.5625" y2="98.5625" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="139" x="148.5" y="93.4966">Command(aReceiver)</text><polygon fill="#A80036" points="384,123.6953,394,127.6953,384,131.6953,388,127.6953" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="136.5" x2="390" y1="127.6953" y2="127.6953" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="172" x="143.5" y="122.6294">setCommand(aCommand)</text><polygon fill="#A80036" points="310.5,152.8281,300.5,156.8281,310.5,160.8281,306.5,156.8281" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="304.5" x2="395" y1="156.8281" y2="156.8281" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="61" x="316.5" y="151.7622">execute()</text><polygon fill="#A80036" points="62,181.9609,52,185.9609,62,189.9609,58,185.9609" style="stroke: #A80036; stroke-width: 1.0;" /><line style="stroke: #A80036; stroke-width: 1.0;" x1="56" x2="298.5" y1="185.9609" y2="185.9609" /><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="49" x="68" y="180.895">action()</text><!--MD5=[dd07b7a8f90fbe517b76e57a4924bd8f]
+@startuml
+
+participant aReceiver
+aClient - -> aReceiver : posiada
+aClient - -> aCommand: Command(aReceiver)
+activate aClient
+aClient -> aInvoker : setCommand(aCommand)
+deactivate aClient
+aInvoker -> aCommand : execute()
+aCommand -> aReceiver : action()
+
+@enduml
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">Client</code> tworzy obiekt konkretnego polecenia <code class="language-plaintext highlighter-rouge">Command</code>, przekazując odbiorcę <code class="language-plaintext highlighter-rouge">Receiver</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">Invoker</code> dostaje konkretną instancję polecenia.</li>
+  <li><code class="language-plaintext highlighter-rouge">Invoker</code> wykorzystuje metodę <code class="language-plaintext highlighter-rouge">execute()</code> przekazanego polecenia do wykonania własnych zadań. Może to być np. wykonanie akcji po kliknięciu, jeśli <code class="language-plaintext highlighter-rouge">Invoker</code> jest przyciskiem UI.</li>
+  <li><code class="language-plaintext highlighter-rouge">Command</code> wywołuje odpowiednie metody swojej instancji obiektu <code class="language-plaintext highlighter-rouge">Receiver</code>.</li>
+</ol>
+
+<p>W takiej najbardziej ogólnej formie można to zaimplementować następująco:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ogólny interfejs polecenia</span>
+<span class="c1">// związanie już w tym momencie z klasą Receiver pozwala w pewnym sensie grupować polecenia</span>
+<span class="c1">// związane np. z edytorem tekstu, grafiki czy zapytaniami HTTP</span>
+<span class="c1">// ale nie jest to wymagane przez sam wzorzec</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Command</span><span class="p">(</span><span class="kd">val</span> <span class="py">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// konketne polecenie przyjmujące Receiver w konstruktorze</span>
+<span class="kd">class</span> <span class="nc">ConcreteCommand</span><span class="p">(</span><span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span><span class="p">(</span><span class="n">receiver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"executing ConcreteCommand"</span><span class="p">)</span>
+        <span class="c1">// wywołanie odpowiedniej akcji na odbiorcy</span>
+        <span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// rzeczywisty "wykonawca" akcji, znający szczegóły implementacji</span>
+<span class="c1">// np. edytor tekstu lub klient HTTP</span>
+<span class="kd">class</span> <span class="nc">Receiver</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">action</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"performing action in Receiver"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// obiekt wykonujący polecenie, które jest ustawiane setterem</span>
+<span class="c1">// np. przycisk wywołujący polecenie po kliknięciu</span>
+<span class="kd">class</span> <span class="nc">Invoker</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">lateinit</span> <span class="kd">var</span> <span class="py">aCommand</span><span class="p">:</span> <span class="nc">Command</span>
+
+    <span class="k">fun</span> <span class="nf">setCommand</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nc">Command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">aCommand</span> <span class="p">=</span> <span class="n">command</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">performAction</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">aCommand</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// klasa łącząca odbiorcę, polecenie i obiekt wywołujący polecenie</span>
+<span class="kd">class</span> <span class="nc">Client</span><span class="p">(</span><span class="n">invoker</span><span class="p">:</span> <span class="nc">Invoker</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">receiver</span> <span class="p">=</span> <span class="nc">Receiver</span><span class="p">()</span>
+
+    <span class="nf">init</span> <span class="p">{</span>
+		<span class="c1">// ustawienie polecenia dla Invokera</span>
+        <span class="kd">val</span> <span class="py">concreteCommand</span> <span class="p">=</span> <span class="nc">ConcreteCommand</span><span class="p">(</span><span class="n">receiver</span><span class="p">)</span>
+        <span class="n">invoker</span><span class="p">.</span><span class="nf">setCommand</span><span class="p">(</span><span class="n">concreteCommand</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">invoker</span> <span class="p">=</span> <span class="nc">Invoker</span><span class="p">()</span>
+	
+    <span class="nc">Client</span><span class="p">(</span><span class="n">invoker</span><span class="p">)</span>
+    <span class="n">invoker</span><span class="p">.</span><span class="nf">performAction</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="result">Result</h3>
+<p>Polecenie może zwracać jakąś wartość. Nie zawsze będzie to jednak dobra praktyka. O ile zwracanie <code class="language-plaintext highlighter-rouge">Success/Failure</code> zwykle będzie OK, żeby poinformować klasę wywołującą o statusie wykonania polecenia, o tyle zwracanie jakichś konkretnych danych będzie kłócić się z podejściem <code class="language-plaintext highlighter-rouge">CQRS</code> - command query responsibility segregation. Ogólnie chodzi o to, że polecenie albo coś zmienia, albo coś zwraca.</p>
+
+<p>Weźmy taką sytuację: wyświetlamy listę imion, każdy obiekt listy można edytować i zmienić imię. Zmiana imienia jest poleceniem, które wykonuje operację na jakimś repozytorium danych. Czy takie polecenie powinno cokolwiek zwracać, a jeśli tak, to co dokładnie? Całą listę imion wraz ze zmienionym przez polecenie? A jeśli lista jest stronicowana, zwracać tylko stronę ze zmianą czy wszystkie elementy aż do strony ze zmianą? Czy może zwracać samo zmienione imię, które potem <code class="language-plaintext highlighter-rouge">Invoker</code> musi wrzucić do wyświetlanej listy. Wtedy mamy 2 reprezentacje listy imion: w repozytorium i w widoku, nawet jeśli mają te same wartości, nic nie daje takiej gwarancji. Najbezpieczniej będzie, jeśli polecenie zwróci <code class="language-plaintext highlighter-rouge">Success</code> co spowoduje, że widok pobierze sobie aktualną listę imion z repozytorium. Lub jeszcze lepiej, widok zawsze ma aktualną listę z repozytorium przy pomocy jakiegoś <code class="language-plaintext highlighter-rouge">data-bindingu</code> czy <code class="language-plaintext highlighter-rouge">Obserwatora</code>. Po wykonaniu polecenia lista sama się zaktualizuje i nie ma nawet potrzeby zwracania <code class="language-plaintext highlighter-rouge">success/failure</code> z polecenia, o ile nie ma potrzeby obsłużenia błędu.</p>
+
+<p>Kolejnym pomysłem może być przesłanie jakiegoś callbacka w <code class="language-plaintext highlighter-rouge">execute()</code>, ale może nie idźmy tą drogą :)</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// wynik polecenia</span>
+<span class="c1">// `sealed` pasuje tutaj idealnie</span>
+<span class="k">sealed</span> <span class="kd">class</span> <span class="nc">CommandResult</span> <span class="p">{</span>
+	<span class="c1">// zwracane wartości mogą być `object` jeśli nie mają własnych parametrów jak np. powód błędu </span>
+    <span class="kd">class</span> <span class="nc">Success</span> <span class="p">:</span> <span class="nc">CommandResult</span><span class="p">()</span>
+    <span class="kd">class</span> <span class="nc">Fail</span> <span class="p">:</span> <span class="nc">CommandResult</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// tym razem `interface` a nie `abstract class` bo nie mamy tutaj wymuszonego argumentu konstruktora</span>
+<span class="kd">interface</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">execute</span><span class="p">():</span> <span class="nc">CommandResult</span>
+<span class="p">}</span>
+<span class="c1">// `receiver` pojawia się dopiero tutaj</span>
+<span class="kd">class</span> <span class="nc">ConcreteCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span> <span class="p">{</span>
+	<span class="c1">// wykonanie polecenia zwraca rezultat</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">():</span> <span class="nc">CommandResult</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"executing ConcreteCommand"</span><span class="p">)</span>
+		<span class="c1">// w zależności od wyniku z `receivera`</span>
+        <span class="k">return</span> <span class="k">if</span> <span class="p">(</span><span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nc">CommandResult</span><span class="p">.</span><span class="nc">Success</span><span class="p">()</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nc">CommandResult</span><span class="p">.</span><span class="nc">Fail</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// `receiver` zwraca losowo True lub False</span>
+<span class="kd">class</span> <span class="nc">Receiver</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">action</span><span class="p">():</span> <span class="nc">Boolean</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"performing action in Receiver"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nc">Random</span><span class="p">.</span><span class="nf">nextBoolean</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">receiver</span> <span class="p">=</span> <span class="nc">Receiver</span><span class="p">()</span>
+    <span class="c1">// pominąłem `Invoker` w tym przykładzie, wywołanie polecenia mamy po prostu w main()</span>
+    <span class="kd">val</span> <span class="py">result</span> <span class="p">=</span> <span class="nc">ConcreteCommand</span><span class="p">(</span><span class="n">receiver</span><span class="p">).</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"Command result is: $result"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="commandprocessor">CommandProcessor</h3>
+<p>Zamknięcie całości polecenia w obiekcie umożliwia przesłanie go do <code class="language-plaintext highlighter-rouge">Processora</code> zamiast natychmiastowego wykonania. Procesor może zgodnie ze swoją wewnętrzną logiką kolejkować i wykonywać polecenia, ale z punktu widzenia <code class="language-plaintext highlighter-rouge">Invokera</code> nie ma to znaczenia. <code class="language-plaintext highlighter-rouge">Receiver</code> może zostać przeniesiony z polecenia do <code class="language-plaintext highlighter-rouge">Processora</code>, dzięki temu polecenia będą zawierać wyłącznie parametry, a resztę dostarczy <code class="language-plaintext highlighter-rouge">Processor</code> podczas wywoływania <code class="language-plaintext highlighter-rouge">execute()</code>. Należy jednak uważać, żeby metoda <code class="language-plaintext highlighter-rouge">execute()</code> miała zawsze taką samą sygnaturę i nie trzeba było w <code class="language-plaintext highlighter-rouge">Processorze</code> robić osobnego wywoływania ze względu na klasę polecenia. O ile <code class="language-plaintext highlighter-rouge">Command</code> i <code class="language-plaintext highlighter-rouge">Processor</code> znajdują się w tej samej domenie (np. zapytania HTTP do konkretnego API, wysłanie wiadomości przez Bluetooth), nie powinno być z tym problemów. Jeśli dany <code class="language-plaintext highlighter-rouge">Processor</code> musi przekazywać różne obiekty <code class="language-plaintext highlighter-rouge">Receiver</code> w trakcie wykonywania poleceń, może to oznaczać, że powinny one trafić do różnych <code class="language-plaintext highlighter-rouge">Processorów</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// pomocna funkcja do losowego opóźnienia</span>
+<span class="k">fun</span> <span class="nf">randomDelay</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Random</span><span class="p">.</span><span class="nf">nextLong</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">)</span>
+
+<span class="kd">interface</span> <span class="nc">Command</span> <span class="p">{</span>
+	<span class="c1">// Receiver jest przekazywany dopiero w momencie wykonania polecenia</span>
+    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">(</span><span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// polecenia przyjmują tylko własne parametry, bez Receivera</span>
+<span class="kd">class</span> <span class="nc">FirstCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">param</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">(</span><span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"executing FirstCommand $param"</span><span class="p">)</span>
+        <span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">SecondCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">param</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">(</span><span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"executing SecondCommand $param"</span><span class="p">)</span>
+        <span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">Receiver</span> <span class="p">{</span>
+	<span class="c1">// wykonanie akcji Receivera może chwilę zająć, stąd `suspend` i `delay()`</span>
+    <span class="k">suspend</span> <span class="k">fun</span> <span class="nf">action</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"performing action in Receiver"</span><span class="p">)</span>
+        <span class="nf">delay</span><span class="p">(</span><span class="nf">randomDelay</span><span class="p">())</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"action finished!"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// najważniejsza klasa w tym przykładzie</span>
+<span class="c1">// zawiera obiekt Receivera używany przy wykonaniu poleceń</span>
+<span class="c1">// same polecenia są odkładane na kolejkę FIFO w postaci `Channel`</span>
+<span class="kd">object</span> <span class="nc">CommandProcessor</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">commands</span> <span class="p">=</span> <span class="nc">Channel</span><span class="p">&lt;</span><span class="nc">Command</span><span class="p">&gt;()</span>
+	<span class="c1">// użycie osobnych Scope na dodawanie i wykonywanie poleceń powoduje brak blokowania</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">processScope</span> <span class="p">=</span> <span class="nc">CoroutineScope</span><span class="p">(</span><span class="nc">Executors</span><span class="p">.</span><span class="nf">newSingleThreadExecutor</span><span class="p">().</span><span class="nf">asCoroutineDispatcher</span><span class="p">())</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">executeScope</span> <span class="p">=</span> <span class="nc">CoroutineScope</span><span class="p">(</span><span class="nc">Executors</span><span class="p">.</span><span class="nf">newSingleThreadExecutor</span><span class="p">().</span><span class="nf">asCoroutineDispatcher</span><span class="p">())</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">receiver</span> <span class="p">=</span> <span class="nc">Receiver</span><span class="p">()</span>
+
+    <span class="k">fun</span> <span class="nf">process</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nc">Command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">processScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+			<span class="c1">// dodanie opóźnienia nie powoduje blokowania dodawania kolejnych poleceń</span>
+            <span class="nf">delay</span><span class="p">(</span><span class="nf">randomDelay</span><span class="p">())</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"adding $command to the queue"</span><span class="p">)</span>
+            <span class="n">commands</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nf">init</span> <span class="p">{</span>
+		<span class="c1">// nasłuchiwanie na nowe polecenia w kolejce i wykonywanie ich jak tylko się pojawią</span>
+        <span class="n">executeScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">command</span> <span class="k">in</span> <span class="n">commands</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">command</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="n">receiver</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// Invoker bez zmian</span>
+<span class="kd">class</span> <span class="nc">Invoker</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">lateinit</span> <span class="kd">var</span> <span class="py">aCommand</span><span class="p">:</span> <span class="nc">Command</span>
+
+    <span class="k">fun</span> <span class="nf">setCommand</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nc">Command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">aCommand</span> <span class="p">=</span> <span class="n">command</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">performAction</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nc">CommandProcessor</span><span class="p">.</span><span class="nf">process</span><span class="p">(</span><span class="n">aCommand</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">firstInvoker</span> <span class="p">=</span> <span class="nc">Invoker</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">secondInvoker</span> <span class="p">=</span> <span class="nc">Invoker</span><span class="p">()</span>
+
+	<span class="c1">// polecenia przyjmują tylko własne parametry, bez Receivera</span>
+    <span class="n">firstInvoker</span><span class="p">.</span><span class="nf">setCommand</span><span class="p">(</span><span class="nc">FirstCommand</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">secondInvoker</span><span class="p">.</span><span class="nf">setCommand</span><span class="p">(</span><span class="nc">SecondCommand</span><span class="p">(</span><span class="s">"2"</span><span class="p">))</span>
+
+	<span class="c1">// wykonanie poleceń po 10x</span>
+    <span class="nf">repeat</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">firstInvoker</span><span class="p">.</span><span class="nf">performAction</span><span class="p">()</span>
+        <span class="n">secondInvoker</span><span class="p">.</span><span class="nf">performAction</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">CommandProcessor</code> to obiekt, który przetwarza wysłane do niego polecenia. Dodawanie poleceń nie blokuje ich wykonywania lub dodawania kolejnych. W takim przypadku najlepiej sprawdzą się polecenia, które nic nie zwracają. Po prostu wrzucamy je na kolejkę, a efekt polecenia (o ile jest potrzebny) powinien przyjść innym kanałem, jak na prawilne <code class="language-plaintext highlighter-rouge">CQRS</code> przystało. Zarządzanie kolejką i wątkami znajduje się po stronie <code class="language-plaintext highlighter-rouge">Processora</code>, <code class="language-plaintext highlighter-rouge">Invoker</code> nie musi się tym zajmować, ani nawet wiedzieć, czy są tam <code class="language-plaintext highlighter-rouge">coroutines</code>, Javowe wątki czy jakiś <code class="language-plaintext highlighter-rouge">RX</code>. Polecenia są wykonywane sekwencyjnie, jedno po drugim. W połączeniu z <code class="language-plaintext highlighter-rouge">delay()</code> na wykonanie daje to efekt natychmiastowego dodania poleceń na kolejkę, i mozolnego wykonywania ich.</p>
+
+<p>Wykonywanie poleceń z kolejki może zostać zrównoleglone w łatwy sposób, przy użyciu <code class="language-plaintext highlighter-rouge">launchProcessor</code> przyjmującego <code class="language-plaintext highlighter-rouge">Channel</code>:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// najprawdopodobniej byłby dostarczany przez DI, ale na potrzeby przykładu `object` wystarczy</span>
+<span class="kd">object</span> <span class="nc">CommandProcessor</span> <span class="p">{</span>
+	<span class="c1">// tutaj wszystko bez zmian</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">commands</span> <span class="p">=</span> <span class="nc">Channel</span><span class="p">&lt;</span><span class="nc">Command</span><span class="p">&gt;()</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">processScope</span> <span class="p">=</span> <span class="nc">CoroutineScope</span><span class="p">(</span><span class="nc">Executors</span><span class="p">.</span><span class="nf">newSingleThreadExecutor</span><span class="p">().</span><span class="nf">asCoroutineDispatcher</span><span class="p">())</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">executeScope</span> <span class="p">=</span> <span class="nc">CoroutineScope</span><span class="p">(</span><span class="nc">Executors</span><span class="p">.</span><span class="nf">newSingleThreadExecutor</span><span class="p">().</span><span class="nf">asCoroutineDispatcher</span><span class="p">())</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">receiver</span> <span class="p">=</span> <span class="nc">Receiver</span><span class="p">()</span>
+
+    <span class="k">fun</span> <span class="nf">process</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nc">Command</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">processScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+            <span class="nf">delay</span><span class="p">(</span><span class="nf">randomDelay</span><span class="p">())</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"adding $command to the queue"</span><span class="p">)</span>
+            <span class="n">commands</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nf">init</span> <span class="p">{</span>
+        <span class="n">executeScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+			<span class="c1">// uruchamiamy 5 wewnętrznych procesorów operujących na tej samej kolejce</span>
+            <span class="c1">// jednocześnie może być wykonywanych 5 poleceń, tyle ile wewnętrznych processorów</span>
+            <span class="nf">repeat</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nf">launchProcessor</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+	<span class="c1">// prywatna `extension function` pozwalająca wielu konsumentom ściągać polecenia z kolejki</span>
+	<span class="c1">// polecenia są wykonywane tylko raz</span>
+	<span class="c1">// po zakończeniu wykonania polecenia, wew. procesor ściąga z kolejki następne</span>
+    <span class="k">private</span> <span class="k">fun</span> <span class="nc">CoroutineScope</span><span class="p">.</span><span class="nf">launchProcessor</span><span class="p">(</span><span class="n">channel</span><span class="p">:</span> <span class="nc">ReceiveChannel</span><span class="p">&lt;</span><span class="nc">Command</span><span class="p">&gt;)</span> <span class="p">=</span> <span class="nf">launch</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">command</span> <span class="k">in</span> <span class="n">channel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">command</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="n">receiver</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Ale będzie to również oznaczać, że np. jeśli wykonanie „Polecenia 1” trwa dłużej niż „Polecenie 2”, to drugie zostanie ukończone wcześniej, co nie zawsze będzie poprawne. To zależy w dużej mierze od konkretnego przypadku.</p>
+
+<h3 id="undo">Undo</h3>
+<p>Polecenia mogą posiadać metodę umożliwiającą cofnięcie wprowadzonych przez siebie zmian, czyli <code class="language-plaintext highlighter-rouge">undo()</code> znane z edytorów graficznych lub tekstowych. Sposób jej implementacji będzie mocno zależał od sytuacji, ale można przyjąć, że polecenie zapamiętuje stan sprzed zmiany i w razie potrzeby go przywraca. Trzymanie wielu stanów w historii pochłania pamięć i z tego powodu bufor historii jest często ograniczony do ostatnich 3 poleceń.
+Cofnięcie wykonania polecenia może również być osiągnięte przez wykonanie polecenia z przeciwnymi parametrami, nie trzeba wtedy trzymać stanu, a samo wykonanie <code class="language-plaintext highlighter-rouge">undo()</code> może być zapisane w historii. Cofnięte polecenia mogą trafiać na osobny bufor, co umożliwi ich ponowne wykonanie <code class="language-plaintext highlighter-rouge">redo()</code>.</p>
+
+<p>Poniżej mocno uproszczony przykład <code class="language-plaintext highlighter-rouge">undo()</code> z zachowaniem stanu sprzed wykonania polecenia:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// generyczne polecenie rysowania "czegoś" na obiekcie `Canvas`</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">DrawCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">canvas</span><span class="p">:</span> <span class="nc">Canvas</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// stan sprzed wykonania polecenia - lista już narysowanych elementów</span>
+    <span class="k">private</span> <span class="kd">var</span> <span class="py">preCommandState</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">&lt;</span><span class="nc">Shape</span><span class="p">&gt;()</span>
+
+    <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span>
+    <span class="c1">// zachowanie stanu</span>
+    <span class="k">fun</span> <span class="nf">saveState</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">preCommandState</span> <span class="p">=</span> <span class="n">canvas</span><span class="p">.</span><span class="n">shapes</span><span class="p">.</span><span class="nf">toList</span><span class="p">()</span>
+    <span class="p">}</span>
+
+	<span class="c1">// cofnięcie polecenia, czyli przywrócenie stanu sprzed jego wykonania</span>
+    <span class="k">fun</span> <span class="nf">undo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"undo ${this}"</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="p">.</span><span class="n">shapes</span> <span class="p">=</span> <span class="n">preCommandState</span><span class="p">.</span><span class="nf">toMutableList</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// interfejs i klasy kształtów</span>
+<span class="kd">interface</span> <span class="nc">Shape</span>
+<span class="kd">data class</span> <span class="nc">Line</span><span class="p">(</span><span class="kd">val</span> <span class="py">length</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Shape</span>
+<span class="kd">data class</span> <span class="nc">Circle</span><span class="p">(</span><span class="kd">val</span> <span class="py">diameter</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Shape</span>
+<span class="c1">// polecenia rysujące kształty</span>
+<span class="kd">class</span> <span class="nc">DrawLine</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">length</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="k">private</span> <span class="kd">val</span> <span class="py">canvas</span><span class="p">:</span> <span class="nc">Canvas</span><span class="p">)</span> <span class="p">:</span> <span class="nc">DrawCommand</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">saveState</span><span class="p">()</span>
+        <span class="n">canvas</span><span class="p">.</span><span class="nf">draw</span><span class="p">(</span><span class="nc">Line</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">class</span> <span class="nc">DrawCircle</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">diameter</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="k">private</span> <span class="kd">val</span> <span class="py">canvas</span><span class="p">:</span> <span class="nc">Canvas</span><span class="p">)</span> <span class="p">:</span> <span class="nc">DrawCommand</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">saveState</span><span class="p">()</span>
+        <span class="n">canvas</span><span class="p">.</span><span class="nf">draw</span><span class="p">(</span><span class="nc">Circle</span><span class="p">(</span><span class="n">diameter</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Receiver</span>
+<span class="kd">class</span> <span class="nc">Canvas</span> <span class="p">{</span>
+	<span class="c1">// stan rysunku</span>
+    <span class="kd">var</span> <span class="py">shapes</span><span class="p">:</span> <span class="nc">MutableList</span><span class="p">&lt;</span><span class="nc">Shape</span><span class="p">&gt;</span> <span class="p">=</span> <span class="nf">mutableListOf</span><span class="p">()</span>
+	<span class="c1">// rysowanie elementu polega na dodaniu go do listy narysowanych</span>
+    <span class="k">fun</span> <span class="nf">draw</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="nc">Shape</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"drawing a $shape"</span><span class="p">)</span>
+        <span class="n">shapes</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="py">canvas</span> <span class="p">=</span> <span class="nc">Canvas</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">commandsHistory</span> <span class="p">=</span> <span class="n">mutableListOf</span><span class="p">&lt;</span><span class="nc">DrawCommand</span><span class="p">&gt;()</span>
+
+	<span class="c1">// po wykonaniu polecenia jest ono dodawane do historii</span>
+    <span class="kd">val</span> <span class="py">drawLine</span> <span class="p">=</span> <span class="nc">DrawLine</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">canvas</span><span class="p">)</span>
+    <span class="n">drawLine</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">drawLine</span><span class="p">)</span>
+
+    <span class="kd">val</span> <span class="py">drawCircle</span> <span class="p">=</span> <span class="nc">DrawCircle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">canvas</span><span class="p">)</span>
+    <span class="n">drawCircle</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">drawCircle</span><span class="p">)</span>
+
+    <span class="kd">val</span> <span class="py">drawLongLine</span> <span class="p">=</span> <span class="nc">DrawLine</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">canvas</span><span class="p">)</span>
+    <span class="n">drawLongLine</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">drawLongLine</span><span class="p">)</span>
+
+    <span class="kd">val</span> <span class="py">drawBigCircle</span> <span class="p">=</span> <span class="nc">DrawCircle</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">canvas</span><span class="p">)</span>
+    <span class="n">drawBigCircle</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">drawBigCircle</span><span class="p">)</span>
+
+    <span class="nf">println</span><span class="p">(</span><span class="s">"current shapes: ${canvas.shapes}"</span><span class="p">)</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"--- undo last 2 ---"</span><span class="p">)</span>
+	<span class="c1">// cofnięcie 2 ostatnich poleceń</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">removeLast</span><span class="p">().</span><span class="nf">undo</span><span class="p">()</span>
+    <span class="n">commandsHistory</span><span class="p">.</span><span class="nf">removeLast</span><span class="p">().</span><span class="nf">undo</span><span class="p">()</span>
+    <span class="nf">println</span><span class="p">(</span><span class="s">"current shapes: ${canvas.shapes}"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="a-może-lambdy-wystarczą">A może lambdy wystarczą?</h3>
+<p>Może się wydawać, że tworzenie całej klasy i potem obiektu do wykonania jakiejś akcji to zbytek oraz że taką samą funkcjonalność i czytelność uda się uzyskać korzystając z lambd.</p>
+
+<p>Przykład z wykorzystaniem podobnego processora z poprzedniego przykładu:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// polecenie przyjmuje Receiver w momencie wykonania</span>
+    <span class="kd">val</span> <span class="py">command</span> <span class="p">=</span> <span class="p">{</span> <span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span> <span class="p">-&gt;</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"this is a command to do stuff"</span><span class="p">)</span>
+        <span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="nf">repeat</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">CommandProcessor</span><span class="p">.</span><span class="nf">process</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+		
+		<span class="c1">// polecenia nie muszą być przypisane do konkretnych zmiennych</span>
+        <span class="nc">CommandProcessor</span><span class="p">.</span><span class="nf">process</span> <span class="p">{</span> <span class="n">receiver</span><span class="p">:</span> <span class="nc">Receiver</span> <span class="p">-&gt;</span>
+            <span class="nf">println</span><span class="p">(</span><span class="s">"this is a another command"</span><span class="p">)</span>
+            <span class="n">receiver</span><span class="p">.</span><span class="nf">action</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>W zasadzie mówimy do <code class="language-plaintext highlighter-rouge">CommandProcessor</code>: wykonaj ten blok korzystając ze swojej instancji <code class="language-plaintext highlighter-rouge">Receivera</code>. Jednak tracimy możliwość zwinnego parametryzowania obiektów poleceń. Lambda może przyjmować parametry, ale będą użyte w momencie wykonania, czyli w <code class="language-plaintext highlighter-rouge">CommandProcessor</code>. Można je oczywiście przekazać w metodzie <code class="language-plaintext highlighter-rouge">process()</code>, ale trudno wtedy mówić o enkapsulacji poleceń, jeśli blok kodu mamy w jednym miejscu a w innym trzeba przekazać parametry. 
+Gdyby metoda <code class="language-plaintext highlighter-rouge">action()</code> była <code class="language-plaintext highlighter-rouge">suspend</code> to należałoby to obsłużyć w Lambdzie, owijając wywołanie w jakiś <code class="language-plaintext highlighter-rouge">CoroutineScope</code>. Mógłby on pochodzić z <code class="language-plaintext highlighter-rouge">CommandProcessor</code> podobnie jak <code class="language-plaintext highlighter-rouge">Receiver</code> ale jest to kolejna komplikacja, która dochodzi w momencie tworzenia Lambdy.
+Podsumowując: jeśli chcesz mieć parametryzowaną Lambdę, przekazywaną do procesora i wykorzystywać ją w wielu miejscach systemu - <strong>stwórz klasę</strong>.</p>
+
+<h2 id="przykład-z-home-automation">Przykład z Home Automation</h2>
+<p>Może to moje skrzywienie zawodowe, ale sterowanie zdalnymi urządzeniami idealnie nadaje się na życiowy przykład użycia wzorca <code class="language-plaintext highlighter-rouge">Command</code>.</p>
+
+<p>Mamy urządzenia, które można włączyć lub wyłączyć oraz pilota do sterowania tymi urządzeniami. Pilot nie jest na sztywno związany z żadnym konkretnym urządzeniem, może sterować każdym lub wieloma jednocześnie. Nie ma też świadomości, którym urządzeniem steruje, po prostu obsługuje wciśnięcia swoich przycisków.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Invoker, przujmuje polecenia w konstruktorze, ale mógłby też mieć settery</span>
+<span class="kd">class</span> <span class="nc">RemoteController</span><span class="p">(</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">firstButtonAction</span><span class="p">:</span> <span class="nc">Command</span><span class="p">,</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">secondButtonAction</span><span class="p">:</span> <span class="nc">Command</span><span class="p">,</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">firstButton</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">firstButtonAction</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">fun</span> <span class="nf">secondButton</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">secondButtonAction</span><span class="p">.</span><span class="nf">execute</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// Receiver</span>
+<span class="kd">class</span> <span class="nc">Device</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// action</span>
+    <span class="k">fun</span> <span class="nf">switch</span><span class="p">(</span><span class="n">on</span><span class="p">:</span> <span class="nc">Boolean</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">println</span><span class="p">(</span><span class="s">"turning device $name ${if (on) "</span><span class="nc">ON</span><span class="s">" else "</span><span class="nc">OFF</span><span class="s">"}"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// polecenie przyjmuje Receiver w konstruktorze</span>
+<span class="kd">class</span> <span class="nc">TurnOnCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">device</span><span class="p">:</span> <span class="nc">Device</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// i wywołuje na nim akcję zgodną ze swoim przeznaczeniem</span>
+        <span class="n">device</span><span class="p">.</span><span class="nf">switch</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">TurnOffCommand</span><span class="p">(</span><span class="k">private</span> <span class="kd">val</span> <span class="py">device</span><span class="p">:</span> <span class="nc">Device</span><span class="p">)</span> <span class="p">:</span> <span class="nc">Command</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">execute</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">device</span><span class="p">.</span><span class="nf">switch</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">fun</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// instancja Receivera</span>
+    <span class="kd">val</span> <span class="py">lightBulb</span> <span class="p">=</span> <span class="nc">Device</span><span class="p">(</span><span class="s">"living room light"</span><span class="p">)</span>
+
+    <span class="c1">// przekazana do poleceń</span>
+    <span class="kd">val</span> <span class="py">turnOn</span><span class="p">:</span> <span class="nc">Command</span> <span class="p">=</span> <span class="nc">TurnOnCommand</span><span class="p">(</span><span class="n">lightBulb</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">turnOff</span><span class="p">:</span> <span class="nc">Command</span> <span class="p">=</span> <span class="nc">TurnOffCommand</span><span class="p">(</span><span class="n">lightBulb</span><span class="p">)</span>
+
+    <span class="c1">// invoker (pilot) otrzymuje polecenia pod konkretne przyciski</span>
+    <span class="kd">val</span> <span class="py">remote</span> <span class="p">=</span> <span class="nc">RemoteController</span><span class="p">(</span><span class="n">turnOn</span><span class="p">,</span> <span class="n">turnOff</span><span class="p">)</span>
+
+    <span class="c1">// ale sam invoker tylko wywołuje polecenia, nie wie co dokładnie się dzieje i z jakim urządzeniem</span>
+    <span class="n">remote</span><span class="p">.</span><span class="nf">firstButton</span><span class="p">()</span>
+
+    <span class="n">remote</span><span class="p">.</span><span class="nf">secondButton</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="nazewnictwo">Nazewnictwo</h1>
+<p>Dodawanie <code class="language-plaintext highlighter-rouge">Command</code> do nazw konkretnych poleceń wydaje się mieć sens, bo jednoznacznie określa, do czego służy dana klasa. W przypadku <code class="language-plaintext highlighter-rouge">Receivera</code> czy <code class="language-plaintext highlighter-rouge">Invokera</code>, które z natury mają już swoje określone zadania i znalazły się w tym wzorcu trochę “przy okazji” tylko wprowadzałoby zamieszanie. Dobrze widać to w ostatnim przykładzie <em>Home Automation</em>.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p><code class="language-plaintext highlighter-rouge">Command</code> jest jednym z moich ulubionych wzorców, najczęściej stosowałem go z użyciem jakiejś formy <code class="language-plaintext highlighter-rouge">CommandProcessora</code>. Świetnie enkapsuluje żądanie i pozwala na jego przekazywanie i wielokrotne używanie. Ułatwia refaktoryzację, bo łatwo zamienić jedno polecenie na inne, lub zmienić implementację wewnętrzną bez wpływu na klienty klasy.</p>
+
+<p>Obiekty poleceń mogą zawierać metodę do cofania wprowadzanych przez nie zmian. Dzieje się to przez przechowanie stanu <code class="language-plaintext highlighter-rouge">Receivera</code> sprzed wykonania polecenia, lub wykonanie polecenia z przeciwnymi parametrami. Cofnięte polecenia moga być odkładane na osobny bufor co pozwala na ich ponowne wykonanie w razie potrzeby.</p>
+
+<h2 id="zalety">Zalety</h2>
+<ul>
+  <li><strong>enkapsulacja</strong> - zawarcie całej logiki potrzebnej do wykonania zadania w obiekcie z ogólnym interfejsem ma wiele zalet. Pozwala odkładać w czasie wykonanie zadania, ułatwia ponowne użycie kodu, testowanie i refaktoryzację.</li>
+  <li><strong>dynamiczna zmiana zachowania</strong> - przekazywanie obiektów polecenia pozwala w czasie wykonywania programu zmieniać zachowanie <code class="language-plaintext highlighter-rouge">Invokerów</code>, np. po zmianie konfiguracji przesłanej zdalnie</li>
+  <li><strong>zamiana wielu wywołań na jedno polecenie</strong> - zamiast wywoływać w odpowiedniej kolejności kilka metod <code class="language-plaintext highlighter-rouge">Receivera</code> można stworzyć polecenie, które to zrobi.</li>
+  <li><strong>undo/redo</strong> - w naturalny sposób pozwala cofnąć i wykonać ponownie zestaw instrukcji</li>
+  <li><strong>łatwe rozszerzanie możliwości</strong> - dodanie nowego polecenia nie wpływa na poprzednie, ani na wywołanie w <code class="language-plaintext highlighter-rouge">Invokerze</code></li>
+</ul>
+
+<h2 id="wady">Wady</h2>
+<ul>
+  <li><strong>wiele podobnych klas</strong> - w zależności od sytuacji, użycie wzorca <code class="language-plaintext highlighter-rouge">Command</code> może spowodować powstanie wielu klas różniących się 1 linią kodu.</li>
+  <li><strong>przedwczesna komplikacja</strong> - zastosowanie tego wzorca zbyt wcześnie, może skończyć się pojedynczą klasą polecenia użytą w jednym miejscu, ale obwarowaną dodatkowymi interfejsami, <code class="language-plaintext highlighter-rouge">CommandProcessorem</code> itd.</li>
+</ul>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#kotlin-ref">
+                    kotlin <span>(3)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Command Pattern-ref">
+                    Command Pattern <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Wzorzec Command (Polecenie) w Kotlinie"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/remote-logger"
+                                    title="Remote Logger">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/2021-09-03-android-service-binding-on-api30" title="Android service binding fix for API 30">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

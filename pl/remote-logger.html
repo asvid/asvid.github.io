@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/remote_logger_top.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Remote Logger </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   August
+	   6th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        6 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#szanuj-logcata">Szanuj Logcata</a></li>
+<li class="toc-entry toc-h1"><a href="#wyzwanie">Wyzwanie</a></li>
+<li class="toc-entry toc-h1"><a href="#rozwiązanie">Rozwiązanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#server">Server</a></li>
+<li class="toc-entry toc-h2"><a href="#android-lib">Android Lib</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#użycie">Użycie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#nie-chciej-tego-używać">Nie chciej tego używać</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="szanuj-logcata">Szanuj Logcata</h1>
+<p>Podstawowe narzędzie programisty Android — Logcat. Jest tak powszechnie używane, zawsze pod ręką, że trudno sobie wyobrazić sytuację, gdy trzeba pracować bez niego. Mnie jednak udało się w takiej sytuacji znaleźć. I postanowiłem napisać i udostępnić narzędzie, które pomogło mi ten dramat przetrwać.</p>
+
+<h1 id="wyzwanie">Wyzwanie</h1>
+<p>Dostałem zadanie przetestowania pewnej biblioteki w ramach naszego SDK. Z racji, że pracuję w <code class="language-plaintext highlighter-rouge">#fintech</code> to często dochodzi dodatkowy rygor bezpieczeństwa. Owa biblioteka nie pozwalała się zainicjalizować, jeśli:</p>
+<ul>
+  <li>aplikacja była zbudowana w trybie <code class="language-plaintext highlighter-rouge">debug</code></li>
+  <li>została zainstalowana przez Android Studio, lub <code class="language-plaintext highlighter-rouge">adb install</code></li>
+  <li>nie została podpisana (to akurat wynika z instalowania aplikacji w wersji <code class="language-plaintext highlighter-rouge">release</code>)</li>
+  <li>opcje deweloperskie były włączone</li>
+  <li>została uruchomiona na urządzeniu lub wersji systemu spoza listy dopuszczonych</li>
+</ul>
+
+<p>Brak opcji deweloperskich oznacza <strong>brak logów</strong>. Już samo zbudowanie aplikacji w wersji <code class="language-plaintext highlighter-rouge">release</code> ogranicza logi, ale przynajmniej wyjątki są logowane. Aplikacja wywalała się dość często, podejrzewałem jakieś standardowe <code class="language-plaintext highlighter-rouge">NPE</code>, bo np. zapomniałem czegoś zainicjalizować, zastubować itd. ale nie miałem pojęcia gdzie. Nie mogłem po prostu napisać testów ze względu na wymagania biblioteki ani jej zastubować, bo na tym polegało moje zadanie — na przetestowaniu jak się sprawdzi w możliwie “prawdziwym” środowisku.</p>
+
+<p>Crashlytics lub inne narzędzie do zdalnego zbierania raportów crashy aplikacji, mogłoby w pewnym stopniu pomóc. Jednak raportowanie nie jest natychmiastowe, logowane są crashe aplikacji i jakieś metryki, a przydałoby mi się też logowanie zwykłych eventów.</p>
+
+<h1 id="rozwiązanie">Rozwiązanie</h1>
+<p>Gdyby tylko dało się wysyłać logi Logcata, np. przez websocket i potem łapać je na swoim komputerze… Nie znalazłem takiego narzędzia, więc je sobie napisałem.</p>
+
+<h2 id="server">Server</h2>
+<p>Potrzebowałem czegoś maksymalnie prostego, co pozwoliłoby postawić serwer WebSocket i wyświetlać logi w formie HTMLa, lub logować do pliku. Padło na <a href="https://expressjs.com/">ExpressJS</a> z którym miałem trochę do czynienia hobbystycznie.</p>
+
+<h3 id="websocket">WebSocket</h3>
+<p>Postawienie serwera WS jest dość proste:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">ws</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">ws</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">wsServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ws</span><span class="p">.</span><span class="nc">Server</span><span class="p">({</span> <span class="na">noServer</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span>
+
+<span class="nx">wsServer</span><span class="p">.</span><span class="nf">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">connection</span><span class="dl">'</span><span class="p">,</span> <span class="nx">socket</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">events</span><span class="p">.</span><span class="nf">clear</span><span class="p">();</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">clearing events</span><span class="dl">"</span><span class="p">);</span>
+	<span class="nx">socket</span><span class="p">.</span><span class="nf">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span><span class="p">,</span> <span class="nx">message</span> <span class="o">=&gt;</span><span class="p">{</span>
+		<span class="nx">events</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="nx">message</span><span class="p">))</span>
+	<span class="p">})</span>
+<span class="p">});</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">app</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">WS_PORT</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">1234</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Remote Logger is starting on port: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">WS_PORT</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">1234</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">server</span><span class="p">.</span><span class="nf">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">upgrade</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">socket</span><span class="p">,</span> <span class="nx">head</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+	<span class="nx">wsServer</span><span class="p">.</span><span class="nf">handleUpgrade</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">socket</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">socket</span> <span class="o">=&gt;</span><span class="p">{</span>
+		<span class="nx">wsServer</span><span class="p">.</span><span class="nf">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">connection</span><span class="dl">'</span><span class="p">,</span> <span class="nx">socket</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
+	<span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div></div>
+<p>Serwer nasłuchuje eventów na porcie przekazanym podczas odpalenia aplikacji <code class="language-plaintext highlighter-rouge">WS_PORT</code> lub domyślnym <code class="language-plaintext highlighter-rouge">1234</code>, nastepnie wrzuca je do obiektu listy <code class="language-plaintext highlighter-rouge">events</code>.</p>
+
+<h3 id="web-ui">Web UI</h3>
+<p>Mając już logi zarejestrowane w obiekcie <code class="language-plaintext highlighter-rouge">events</code>, mogłem je wyświetlić jako HTML. Użyłem do tego szablonów <a href="https://pugjs.org/api/getting-started.html">pug</a>. W kodzie aplikacji wystarczy:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">app</span><span class="p">.</span><span class="nf">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">view engine</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">pug</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nf">render</span><span class="p">(</span><span class="dl">'</span><span class="s1">index</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">title</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Remote Logger</span><span class="dl">'</span><span class="p">,</span> <span class="na">message</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Remote Logger!</span><span class="dl">'</span><span class="p">,</span> <span class="na">data</span><span class="p">:</span> <span class="nx">events</span><span class="p">.</span><span class="nf">toArray</span><span class="p">()</span> <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>A użyty szablon to:</p>
+<pre><code class="language-pug">html
+  head
+    title= title
+    style
+      include style.css
+  body
+    h1= message
+    ul
+      each event in data
+          li(class=event.level)!= event.time+' &lt;b&gt;['+event.level+'] '+event.tag+'&lt;/b&gt;  : ' + '&lt;span style="white-space: pre-wrap"&gt;'+event.message+'&lt;/span&gt;'
+</code></pre>
+<p>Czyli prosta lista zasilana elementami z obiektu <code class="language-plaintext highlighter-rouge">events</code> i podstawowymi kolorami na tekst w zależności od poziomu logów.</p>
+
+<p>Same logi prezentują się tak:
+<img src="assets/posts/remotelogger.png" alt="Remote Logger web interface" class="center-image" /></p>
+
+<h3 id="extra">Extra</h3>
+<p>Nie mogłem sobie odpuścić dodania jakichś smaczków, więc po uruchomieniu serwera witają nas informacje o użytym porcie, IP do wpisania w kodzie aplikacji Android oraz nazwa narzędzia. Dodatkowo strona z logami otwiera się automatycznie.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>❯ node index.js
+Remote Logger is starting on port:  1234
+Application started on port 3000 at IP: 192.168.1.87
+██████╗ ███████╗███╗   ███╗ ██████╗ ████████╗███████╗
+██╔══██╗██╔════╝████╗ ████║██╔═══██╗╚══██╔══╝██╔════╝
+██████╔╝█████╗  ██╔████╔██║██║   ██║   ██║   █████╗
+██╔══██╗██╔══╝  ██║╚██╔╝██║██║   ██║   ██║   ██╔══╝
+██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝   ██║   ███████╗
+╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝
+
+██╗      ██████╗  ██████╗  ██████╗ ███████╗██████╗
+██║     ██╔═══██╗██╔════╝ ██╔════╝ ██╔════╝██╔══██╗
+██║     ██║   ██║██║  ███╗██║  ███╗█████╗  ██████╔╝
+██║     ██║   ██║██║   ██║██║   ██║██╔══╝  ██╔══██╗
+███████╗╚██████╔╝╚██████╔╝╚██████╔╝███████╗██║  ██║
+╚══════╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝
+</code></pre></div></div>
+<h2 id="android-lib">Android Lib</h2>
+<p>Inicjalizacja części androidowej narzędzia jest bardzo prosta, najlepiej zrobić to w metodzie <code class="language-plaintext highlighter-rouge">onCreate()</code> klasy dziedziczącej po <code class="language-plaintext highlighter-rouge">Application</code>:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">App</span> <span class="p">:</span> <span class="nc">Application</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">()</span>
+        <span class="nc">RemoteLogger</span><span class="p">().</span><span class="nf">initialize</span><span class="p">(</span>
+            <span class="nc">Config</span><span class="p">(</span>
+                <span class="s">"192.168.1.87"</span><span class="p">,</span>
+                <span class="mi">1234</span><span class="p">,</span>
+                <span class="n">applicationContext</span><span class="p">.</span><span class="n">packageName</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Inicjalizujemy bibliotekę i zapominamy o sprawie, logi lecą do naszego lokalnego serwera. To nie jest narzędzie, które zastąpi zdalne zbieranie crashy aplikacji albo samego Logcata. Chodzi tylko o rozwiązanie specyficznego problemu, gdzie aplikacja musi być uruchomiona w środowisku niepozwalającym na korzystanie z Logcata, ale nadal w fazie developmentu potrzebujemy dostępu do logów. Inicjalizacja loggera, jak i sama biblioteka nie powinna trafić do publicznie wydanej wersji aplikacji.</p>
+
+<h1 id="użycie">Użycie</h1>
+<ol>
+  <li>Pobierz <a href="https://github.com/asvid/RemoteLogger">repo</a></li>
+  <li>Dodaj bibliotekę do projektu <a href="https://jitpack.io/#asvid/RemoteLogger">JitPack</a></li>
+  <li>Odpal serwer w folderze /server <code class="language-plaintext highlighter-rouge">node index.js</code></li>
+  <li>Odpal swoją aplikację z dodaną biblioteką</li>
+  <li>Odśwież stronę <a href="http://localhost:3000/">remote loggera</a></li>
+</ol>
+
+<p>Biblioteka sama połączy się do serwera w momencie startu aplikacji, dlatego serwer musi być odpalony wcześniej. Na razie nie chciało mi się tego robić ładniej. To narzędzie jest przeznaczone dla programistów i do rozwiązania konkretnego problemu, a nie stosowania na co dzień w każdym projekcie :)</p>
+
+<p>Wszystkie logi z Androida są zbierane od momentu startu aplikacji, jeszcze przed wywołaniem <code class="language-plaintext highlighter-rouge">onCreate()</code> w <code class="language-plaintext highlighter-rouge">App</code>. Zwykle pierwszym wpisem jest <code class="language-plaintext highlighter-rouge">Fri Aug 06 08:58:54 GMT+02:00 2021 [DEBUG] LOGGER : --------- beginning of system</code>. Logi są zbierane na jednym wątku a po połączeniu z serwerem WS są wysyłane na innym. Zbierane są logi wyłącznie dla pakietu aplikacji, dlatego trzeba go podać w metodzie <code class="language-plaintext highlighter-rouge">initialize()</code>.</p>
+
+<p>RemoteLogger przejmuje obsługę niewyłapanych wyjątków przez ustawienie <code class="language-plaintext highlighter-rouge">Thread.setDefaultUncaughtExceptionHandler</code>. Po wystąpieniu wyjątku, który wywala aplikację, jest on logowany na lokalnym serwerze, po czym aplikacja wyłącza się z kodem błędu <code class="language-plaintext highlighter-rouge">1</code>. Nie miałem okazji sprawdzić, czy nie gryzie się to z Firebase Crashlytics, ale jeśli masz już to skonfigurowane, najprawdopodobniej nie potrzebujesz mojego narzędzia.</p>
+
+<h2 id="nie-chciej-tego-używać">Nie chciej tego używać</h2>
+<p>Zdaję sobie sprawę, że to narzędzie jest raczej spartańskie… ale mi sporo pomogło, a więcej niż jedno popołudnie nie chciałem na nie poświęcać. I życzę Ci, żeby nigdy nie nastała potrzeba użycia go :) Szanuj Logcata.</p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#tools-ref">-->
+        <!--                tools <span>(1)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#tools-ref">
+                    tools <span>(2)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Android-ref">
+                    Android <span>(13)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Logcat-ref">
+                    Logcat <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Remote Logger"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin_mediator_pattern"
+                                    title="Mediator w Kotlinie">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin-command-pattern" title="Wzorzec Command (Polecenie) w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

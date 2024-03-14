@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/ghpages/cover.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Ultimate Github Page Deployment </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   August
+	   4th,
+	   
+	   2020
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        5 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#pan-hyde">Pan Hyde</a></li>
+<li class="toc-entry toc-h2"><a href="#standardowy-proces">Standardowy proces</a></li>
+<li class="toc-entry toc-h2"><a href="#zachcia%C5%82o-si%C4%99-plugin%C3%B3w">Zachciało się pluginów</a></li>
+<li class="toc-entry toc-h2"><a href="#ale-ja-chce-ten-plugin">Ale ja chce ten plugin</a></li>
+</ul>
+            </nav>
+
+            <h2 id="pan-hyde">Pan Hyde</h2>
+
+<p>Tekst który czytasz, znajduje się na stronie postawionej na Jekyll’u i hostowanej na GitHubie, za pomocą darmowych <a href="https://pages.github.com/">Github Pages</a>. 
+Tak w skrócie: <a href="https://jekyllrb.com/">Jekyll</a> to silnik szablonów, zamieniający <code class="language-plaintext highlighter-rouge">markdown</code> na statyczne strony <code class="language-plaintext highlighter-rouge">HTML</code>, które potem można sobie hostować gdziekolwiek,
+bo nie ma potrzeby podpinania bazy danych, czy obsługi PHP czy innego Pythona po stronie serwera.</p>
+
+<h2 id="standardowy-proces">Standardowy proces</h2>
+
+<p>Standardowy proces wrzucenia nowego posta wygląda następująco:</p>
+<ul>
+  <li>piszę post w <code class="language-plaintext highlighter-rouge">markdown</code> ustawiając parametry takie jak tytuł, data czy tagi.</li>
+  <li>kiedy jestem zadowolony z tego co napisałem (nigdy), commituję zmiany i wrzucam na repozytorium na GitHubie, które nazywa się od mojego nicku <code class="language-plaintext highlighter-rouge">asvid.github.io</code>
+</li>
+  <li>Github po pushu na branch <code class="language-plaintext highlighter-rouge">master</code> buduje stronę HTML ze źródeł, korzystając z silnika Jekyll - czyli pewnie odpala <code class="language-plaintext highlighter-rouge">jekyll build</code>
+</li>
+  <li>to co, Jekyll wypluje, nie jest widoczne w repozytorium, ale po wejściu pod <a href="https://asvid.github.io/pl/">adres bloga</a> jest widoczne jako statyczna strona WWW</li>
+</ul>
+
+<p>Powyższy proces działa zupełnie automatycznie, nie trzeba nic konfigurować po stronie repozytorium czy GitHuba, wystarczy, że repozytorium nazywa się wg szablonu: <code class="language-plaintext highlighter-rouge">{nazwa_użytkownika}.github.io</code>.
+I zwykle to wystarcza. Ale…</p>
+
+<h2 id="zachciało-się-pluginów">Zachciało się pluginów</h2>
+
+<p>Czasami chce się dodać coś fajnego na stronę. Mi zachciało się mieć ją po polsku i po angielsku. Jekyll natywnie tego nie wspiera… ale też nie uniemożliwia <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">
+Znalazłem więc plugin <a href="https://polyglot.untra.io/">Polyglot</a>, który daje mi możliwość mieć wiele języków na jednej stronie i robi to bez większego bólu ze zmianą struktury projektu czy konfiguracją.
+Dodałem go do strony, po chwili zabawy zaczął troche działać. Po dłuższej chwili działał, jak chciałem. <strong>Lokalnie</strong>.</p>
+
+<p>Po wrzuceniu na Githuba niestety strona się posypała. Okazuje się, że Github nie buduje tak po prostu wszystkiego jak leci, 
+ale ma <a href="https://github.com/github/pages-gem/blob/master/lib/github-pages/plugins.rb#L20">whitelistę</a> (pewnie niedługo zmienią tą nazwę…) pluginów, które wspiera. 
+Polyglot nie ma na tej liście mimo starań autora. Sama idea whitelist’y jest zrozumiała ze względów bezpieczeństwa, nie chcemy, żeby GitHub padł, bo ktoś odpalił złośliwy plugin albo kopał bitcoiny na ich serwerach.</p>
+
+<h2 id="ale-ja-chce-ten-plugin">Ale ja chce ten plugin</h2>
+
+<p>Na szczęście da się ten problem rozwiązać. I to nawet na kilka sposobów. Najprościej jest zbudować stronę lokalnie i wrzucić zawartość na branch <code class="language-plaintext highlighter-rouge">master</code> a samą stronę rozwijać np. na branchu <code class="language-plaintext highlighter-rouge">develop</code>.
+Jest też <a href="https://www.npmjs.com/package/gh-pages">paczka do NodeJS</a>, która publikuje aplikacje w NodeJS jako strony na GitHubie.</p>
+
+<p>Ale że jestem leniwy i nie chce za każdym razem budować ręcznie i wrzucać na 2 branche źródeł i strony, i nie mam aplikacji na NodeJS, korzystam z 3 sposobu.</p>
+
+<h3 id="github-actions">GitHub Actions</h3>
+
+<p><a href="https://github.com/features/actions">GitHub Actions</a> to taki bardzo podstawowy CI dostępny za darmo na dla każdego repozytorium. 
+W ramach tego CI tworzymy sobie <code class="language-plaintext highlighter-rouge">Workflows</code> które w pliku <code class="language-plaintext highlighter-rouge">yaml</code> określają co i kiedy ma się zadziać. Dostępnych akcji jest <a href="https://github.com/marketplace?type=actions">cały katalog</a>,
+a jeśli czegoś brakuje zawsze można stworzyć samemu, lub połączyć w jeden workflow kilka akcji.
+Dodać workflow do repozytorium można przez repository-&gt;actions-&gt;New workflow i kliknięcie w link <code class="language-plaintext highlighter-rouge">set up a workflow yourself</code>.
+<img src="assets/posts/ghpages/workflow.png" alt="new workflow">
+<img src="assets/posts/ghpages/setup.png" alt="setup">
+Doda to plik <code class="language-plaintext highlighter-rouge">yaml</code> z konfitugracją w repozytorium w katalogu <code class="language-plaintext highlighter-rouge">.github/workflows</code></p>
+
+<p>Do publikacji bloga z nieobsługiwanymi pluginami użyłem akcji <a href="https://github.com/marketplace/actions/jekyll-actions">Jekyll-Actions</a> skonfigurowanej w Workflow:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">GitHub Pages publication</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="s">push</span>
+    
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">jekyll</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-16.04</span>
+    <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+    <span class="c1"># Use GitHub Actions' cache to shorten build times and decrease load on servers</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v1</span>
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">vendor/bundle</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s">$-gems-$</span>
+        <span class="na">restore-keys</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">$-gems-</span>
+    <span class="c1"># Standard usage</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span>  <span class="s">helaili/jekyll-action@2.0.3</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="na">JEKYLL_PAT</span><span class="pi">:</span> <span class="s">$</span>
+    
+    <span class="c1"># Specify the Jekyll source location as a parameter</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">helaili/jekyll-action@2.0.3</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="na">JEKYLL_PAT</span><span class="pi">:</span> <span class="s">$</span>
+</code></pre></div></div>
+<p>Widać, że akcja odpala się w kontenerze z <code class="language-plaintext highlighter-rouge">ubuntu-16.04</code>, a następnie:</p>
+<ul>
+  <li>pobiera repozytorium po każdym pushu (na dowolny branch co generuje pewien problem)</li>
+  <li>korzysta z cache żeby nie pobierać tych samych <code class="language-plaintext highlighter-rouge">Gemów</code> za każdym razem</li>
+  <li>odpala akcję, czyli buduje stronę i publikuje na branchu <code class="language-plaintext highlighter-rouge">master</code>, za pomocą pusha z wykorzystaniem <code class="language-plaintext highlighter-rouge">secrets.JEKYLL_PAT</code>
+</li>
+</ul>
+
+<p>I publikacja na branchu <code class="language-plaintext highlighter-rouge">master</code> sprawia, że nie możemy na niego wypychać zmian na stronie. 
+Jeśli chcemy korzystać z tej akcji, musimy zmiany wrzucać np. na <code class="language-plaintext highlighter-rouge">develop</code> a <code class="language-plaintext highlighter-rouge">master</code> zostawić tylko na potrzeby plików wygenerowanych przez skrypt.</p>
+
+<h3 id="jak-stworzyć-secretjekyll_pat">Jak stworzyć secret.JEKYLL_PAT</h3>
+
+<p>Skrypt sam z siebie działa w odizolowanym kontenerze i nie ma dostępu do zapisu w naszym repozytorium. Odczytać może, bo to publiczne repozytorium.
+Żeby to umożliwić, potrzebujemy wygenerować token dostępu do <code class="language-plaintext highlighter-rouge">public_repo</code>, a następnie podać go w repozytorium jako sekret pod nazwą podaną w konfiguracji workflow.</p>
+
+<p>Token generujemy, przechodząc do ustawień konta Github: Settings-&gt;Developer Settings-&gt;Personal Access Tokens. 
+Po kliknięciu na <code class="language-plaintext highlighter-rouge">Generate new token</code> uzupełniamy nazwę i zaznaczamy checkbox <code class="language-plaintext highlighter-rouge">public_repo</code>.</p>
+
+<p><img src="assets/posts/ghpages/token.png" alt="nowy token"></p>
+
+<p>Po kliknięciu zielonego przycisku na dole strony <code class="language-plaintext highlighter-rouge">Generate token</code> będziemy mieć jedyną szansę na skopiowanie go, polecam skorzystać <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20"></p>
+
+<p>Skopiowany token wklejamy do sekretów repozytorium: Settings-&gt;Secrets-&gt;New secret. Nazwa jak w konfiguracji <code class="language-plaintext highlighter-rouge">secrets.JEKYLL_PAT</code> a wartość to nowy token.</p>
+
+<p><img src="assets/posts/ghpages/secret.png" alt="nowy secret"></p>
+
+<p>I powinno działać. Przynajmniej u mnie działa, bo czytasz ten tekst <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20"></p>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/pl/tags.html#Github%20Pages-ref">
+                    Github Pages <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Jekyll-ref">
+                    Jekyll <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Github%20Actions-ref">
+                    Github Actions <span>(1)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Ultimate%20Github%20Page%20Deployment" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus" onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png" class="img-rounded author-image" style="max-width: 64px; max-height: 64px;">
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/intellij-settings-repo" title="IntelliJ settings repo">← Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/code-review-retro" title="Code Review Retro">Next
+                →</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

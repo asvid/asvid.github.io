@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=https://swiderski.tech/" />
+    <title>Redirecting...</title>
+    <script>
+      var currentUrl = window.location.href
+      var path = currentUrl.split('asvid.github.io')[1]
+      window.location.href = 'https://swiderski.tech' + path
+    </script>
+  </head>
+  <body>
+    <div class="post-header" style="
+	
+	background:	url(/assets/posts/abstract_factory.jpg);
+    background-size: cover;
+    background-position: center;
+	">
+    <h1>Kotlin Abstract Factory </h1>
+</div>
+
+<article>
+
+    <div class="col-sm-10">
+	 <span class="post-date">
+
+	   
+	   March
+	   7th,
+	   
+	   2021
+
+         <!--    <span class="read_time">(czas czytania:-->
+         <!--      -->
+         <!--      -->
+         <!--        32 min)-->
+         <!--      -->
+         <!--      </span>-->
+	 </span>
+
+        <span class="reading-time" title="Estimated read time">
+
+   </span>
+
+        <div class="article_body">
+
+            <nav aria-label="Table of Contents">
+                <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#przeznaczenie">Przeznaczenie</a></li>
+<li class="toc-entry toc-h1"><a href="#przykłady-implementacji">Przykłady implementacji</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#podstawowa">Podstawowa</a></li>
+<li class="toc-entry toc-h2"><a href="#rodzina-elementów-gui">Rodzina elementów GUI</a></li>
+<li class="toc-entry toc-h2"><a href="#fabryka-z-rejestrem">Fabryka z rejestrem</a></li>
+<li class="toc-entry toc-h2"><a href="#metoda-make-raz-jeszcze">Metoda Make raz jeszcze</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#podsumowanie">Podsumowanie</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#zalety">Zalety</a></li>
+<li class="toc-entry toc-h2"><a href="#wady">Wady</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+
+            <h1 id="przeznaczenie">Przeznaczenie</h1>
+
+<p>Nazwa tego wzorca nie do końca sugeruje, czym się wyróżnia od innych wzorców konstrukcyjnych, takich jak Builder czy
+Factory. W Abstract Factory nie chodzi o dostarczenie pojedynczej instancji — a całej <code class="language-plaintext highlighter-rouge">rodziny powiązanych obiektów</code>.
+Nadal brzmi to podobnie jak zwykłe Factory, które może produkować np. obiekty kontrolek GUI. Żeby
+otrzymać <code class="language-plaintext highlighter-rouge">Abstract Factory</code> musimy właśnie dodać kolejną warstwę abstrakcji, i stworzyć mechanizm produkujący obiekty
+kontrolek GUI, ale w wariantach dla np. Linuxa, Windowsa i MacOS, które nadal będą miały generyczne API dla klienta
+wzorca.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Abstract Factory</code> to <strong>fabryka fabryk</strong>, dostarczająca klientom wybraną wersję fabryki spośród tworzących obiekty o
+takim samym interfejsie. Rodziny obiektów będą powiązane przez konkretną fabrykę, która je buduje. Trzymając się tematu
+GUI, będziemy mieć rodziny kontrolek dla Windowsa, Linuxa i MacOS — zapobiegnie to sytuacji użycia przycisku z MacOS
+obok pola tekstowego z Windowsa. Klienta nie będzie jakoś szczególnie interesowało to, z której rodziny (i z którego
+dokładnie factory) otrzyma obiekt, ponieważ jego API będzie takie samo. I na tym polega <code class="language-plaintext highlighter-rouge">Abstrakcja</code> tej fabryki, na **
+udostępnieniu interfejsu fabryk rodzin obiektów**.</p>
+
+<p>Przydatne informacje przed lekturą tego posta:</p>
+
+<ul>
+  <li><a href="https://asvid.github.io/pl/kotlin-static-factory-methods">Static Factory Method</a></li>
+  <li><a href="https://asvid.github.io/pl/kotlin-factory-method">“Typowe” Factory Method</a></li>
+</ul>
+
+<h1 id="przykłady-implementacji">Przykłady implementacji</h1>
+
+<p>Sam miałem problem to zrozumieć zanim nie zobaczyłem kodu i jakichś diagramów, dlatego nejlepiej od razu przejść do
+przykładów.</p>
+
+<h2 id="podstawowa">Podstawowa</h2>
+
+<p>Książkowy przykład pochodzący z “Wzorców Programowania”<sup id="fnref:design_patterns" role="doc-noteref"><a href="#fn:design_patterns" class="footnote" rel="footnote">1</a></sup> “bandy czworga”. Jest to dość nomen omen
+abstrakcyjny przykład, jednak dobrze pokazuje ideę wzorca <code class="language-plaintext highlighter-rouge">Abstract Factory</code>.</p>
+
+<p>Interfejs fabryki dostarczającej rodzinę produktów. Na rodzinę składają się 2 produkty: <code class="language-plaintext highlighter-rouge">ProductA</code> i <code class="language-plaintext highlighter-rouge">ProductB</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Factory</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">createProductA</span><span class="p">():</span> <span class="nc">ProductA</span>
+    <span class="k">fun</span> <span class="nf">createProductB</span><span class="p">():</span> <span class="nc">ProductB</span>
+
+    <span class="k">companion</span> <span class="k">object</span> <span class="c1">// może się przydać</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Każdy z produktów ma 2 warianty <code class="language-plaintext highlighter-rouge">1</code> i <code class="language-plaintext highlighter-rouge">2</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// produkty</span>
+<span class="kd">interface</span> <span class="nc">ProductA</span>
+<span class="kd">interface</span> <span class="nc">ProductB</span>
+
+<span class="c1">// wariant 1</span>
+<span class="kd">class</span> <span class="nc">Product1A</span> <span class="p">:</span> <span class="nc">ProductA</span>
+<span class="kd">class</span> <span class="nc">Product1B</span> <span class="p">:</span> <span class="nc">ProductB</span>
+
+<span class="c1">// wariant 2</span>
+<span class="kd">class</span> <span class="nc">Product2A</span> <span class="p">:</span> <span class="nc">ProductA</span>
+<span class="kd">class</span> <span class="nc">Product2B</span> <span class="p">:</span> <span class="nc">ProductB</span>
+</code></pre></div></div>
+
+<p>Każdy wariant ma osobną konkretną fabrykę, dostarczającą oba produkty w odpowiednim dla siebie wariancie. <code class="language-plaintext highlighter-rouge">internal</code>
+gwarantuje niewyciekanie klasy poza moduł. Konkretnych fabryki są dobrym kandydatem do Singletona, stąd <code class="language-plaintext highlighter-rouge">object</code>.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// fabryka produktów w wariancie 1</span>
+<span class="k">internal</span> <span class="kd">object</span> <span class="nc">ConcreteFactory1</span> <span class="p">:</span> <span class="nc">Factory</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createProductA</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Product1A</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createProductB</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Product1B</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// fabryka produktów w wariancie 2</span>
+<span class="k">internal</span> <span class="kd">object</span> <span class="nc">ConcreteFactory2</span> <span class="p">:</span> <span class="nc">Factory</span> <span class="p">{</span> <span class="c1">// </span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createProductA</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Product2A</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createProductB</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Product2B</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Fabryka abstrakcyjna, czyli zwracanie odpowiedniej konkretnej fabryki (odpowiedniego wariantu) ale schowanej za
+generycznym interfejsem <code class="language-plaintext highlighter-rouge">Factory</code>. W ten sposób klienty nie muszą nawet znać implementacji konkretnej fabryki. Klienty
+wiedzą tylko, że dostaną <code class="language-plaintext highlighter-rouge">Factory</code> i że będzie ono potrafiło zbudować <code class="language-plaintext highlighter-rouge">ProductA</code> i <code class="language-plaintext highlighter-rouge">ProductB</code>. Metody <code class="language-plaintext highlighter-rouge">getFactory()</code>
+jest tutaj tzw. <code class="language-plaintext highlighter-rouge">top-level function</code> bo znajduje się poza jakąkolwiek klasą, ale może Być częścią np. <code class="language-plaintext highlighter-rouge">companion object</code>
+interfejsu Factory. Jednak sam interfejs Factory niekoniecznie powinien znać swoje implementacje, na szczęście może mieć
+pusty <code class="language-plaintext highlighter-rouge">companion object</code>, który dostanie w odpowiednim miejscu <code class="language-plaintext highlighter-rouge">extension function</code>. Szerzej pisałem o
+tym <a href="https://asvid.github.io/pl/kotlin-builder-pattern">tutaj</a></p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// naiwna ale działająca implementacja ze zwykłym Int-em</span>
+<span class="k">fun</span> <span class="nf">getFactory</span><span class="p">(</span><span class="n">whichOne</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Factory</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">whichOne</span><span class="p">)</span> <span class="p">{</span>
+        <span class="mi">1</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory1</span>
+        <span class="mi">2</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory2</span>
+        <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="nc">IllegalArgumentException</span><span class="p">(</span><span class="s">"value: $whichOne is not available"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// warianty jako enum</span>
+<span class="k">enum</span> <span class="kd">class</span> <span class="nc">FactoryVariant</span> <span class="p">{</span>
+    <span class="nc">Variant1</span><span class="p">,</span>
+    <span class="nc">Variant2</span>
+<span class="p">}</span>
+
+<span class="c1">// mniej naiwna ale w zasadzie taka sama implementacja z enumem</span>
+<span class="k">fun</span> <span class="nf">getFactory</span><span class="p">(</span><span class="n">whichOne</span><span class="p">:</span> <span class="nc">FactoryVariant</span><span class="p">):</span> <span class="nc">Factory</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">whichOne</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">FactoryVariant</span><span class="p">.</span><span class="nc">Variant1</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory1</span>
+        <span class="nc">FactoryVariant</span><span class="p">.</span><span class="nc">Variant2</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory2</span>
+        <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="nc">IllegalArgumentException</span><span class="p">(</span><span class="s">"value: $whichOne is not available"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// extension function dla companion objectu Factory</span>
+<span class="k">fun</span> <span class="nc">Factory</span><span class="p">.</span><span class="nc">Companion</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="n">whichOne</span><span class="p">:</span> <span class="nc">Int</span><span class="p">):</span> <span class="nc">Factory</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">whichOne</span><span class="p">)</span> <span class="p">{</span>
+        <span class="mi">1</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory1</span>
+        <span class="mi">2</span> <span class="p">-&gt;</span> <span class="nc">ConcreteFactory2</span>
+        <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="nc">IllegalArgumentException</span><span class="p">(</span><span class="s">"value: $whichOne is not available"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Użycie:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">factory</span><span class="p">:</span> <span class="nc">Factory</span> <span class="p">=</span> <span class="nf">getFactory</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">factory</span><span class="p">.</span><span class="nf">createProductA</span><span class="p">()</span> <span class="c1">//  Product2A</span>
+<span class="n">factory</span><span class="p">.</span><span class="nf">createProductB</span><span class="p">()</span> <span class="c1">//  Product2B</span>
+
+<span class="kd">val</span> <span class="py">factory2</span><span class="p">:</span> <span class="nc">Factory</span> <span class="p">=</span> <span class="nf">getFactory</span><span class="p">(</span><span class="nc">FactoryVariant</span><span class="p">.</span><span class="nc">Variant1</span><span class="p">)</span>
+<span class="n">factory2</span><span class="p">.</span><span class="nf">createProductA</span><span class="p">()</span> <span class="c1">// Product1A</span>
+<span class="n">factory2</span><span class="p">.</span><span class="nf">createProductB</span><span class="p">()</span> <span class="c1">//Product1B</span>
+
+<span class="c1">// lub jako metoda companion object interfejsu Factory</span>
+<span class="nc">Factory</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">createProductA</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<p>Na diagramie prezentuje się to następująco:</p>
+
+<div class="jekyll-diagrams diagrams plantuml">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="340px" preserveAspectRatio="none" style="width:866px;height:340px;" version="1.1" viewBox="0 0 866 340" width="866px" zoomAndPan="magnify"><defs><filter height="300%" id="f1bbv8lmf0teou" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0" /><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0" /><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3" /><feBlend in="SourceGraphic" in2="blurOut3" mode="normal" /></filter></defs><g><!--MD5=[dcda66dabdb739ec36f1175150e3c9d5]
+class Factory--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="73.6094" id="Factory" style="stroke: #A80036; stroke-width: 1.5;" width="184" x="163.5" y="140" /><ellipse cx="227.75" cy="156" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M223.6719,151.7656 L223.6719,149.6094 L231.0625,149.6094 L231.0625,151.7656 L228.5938,151.7656 L228.5938,159.8438 L231.0625,159.8438 L231.0625,162 L223.6719,162 L223.6719,159.8438 L226.1406,159.8438 L226.1406,151.7656 L223.6719,151.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="47" x="248.25" y="160.1543">Factory</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="164.5" x2="346.5" y1="172" y2="172" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="164.5" x2="346.5" y1="180" y2="180" /><ellipse cx="174.5" cy="191" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="156" x="183.5" y="194.2104">createProductA() : ProductA</text><ellipse cx="174.5" cy="203.8047" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="158" x="183.5" y="207.0151">createProductB() : ProductB</text><!--MD5=[5f2bd739ea74403c351f6842fe5c7ba2]
+class ProductA--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="48" id="ProductA" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="630.5" y="152" /><ellipse cx="645.5" cy="168" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M641.4219,163.7656 L641.4219,161.6094 L648.8125,161.6094 L648.8125,163.7656 L646.3438,163.7656 L646.3438,171.8438 L648.8125,171.8438 L648.8125,174 L641.4219,174 L641.4219,171.8438 L643.8906,171.8438 L643.8906,163.7656 L641.4219,163.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="56" x="659.5" y="172.1543">ProductA</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="631.5" x2="717.5" y1="184" y2="184" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="631.5" x2="717.5" y1="192" y2="192" /><!--MD5=[7d8bbe38ae7838c4b875a286fbfa656f]
+class ProductB--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="48" id="ProductB" style="stroke: #A80036; stroke-width: 1.5;" width="88" x="390.5" y="152" /><ellipse cx="405.5" cy="168" fill="#B4A7E5" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M401.4219,163.7656 L401.4219,161.6094 L408.8125,161.6094 L408.8125,163.7656 L406.3438,163.7656 L406.3438,171.8438 L408.8125,171.8438 L408.8125,174 L401.4219,174 L401.4219,171.8438 L403.8906,171.8438 L403.8906,163.7656 L401.4219,163.7656 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="56" x="419.5" y="172.1543">ProductB</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="391.5" x2="477.5" y1="184" y2="184" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="391.5" x2="477.5" y1="192" y2="192" /><!--MD5=[259b73820a26b94919f9e3f534685ba5]
+class Product1A--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="Product1A" style="stroke: #A80036; stroke-width: 1.5;" width="97" x="626" y="276" /><ellipse cx="641" cy="294.9688" fill="#FF7700" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M643.9688,300.6094 Q643.3906,300.9063 642.75,301.0469 Q642.1094,301.2031 641.4063,301.2031 Q638.9063,301.2031 637.5781,299.5625 Q636.2656,297.9063 636.2656,294.7813 Q636.2656,291.6563 637.5781,290 Q638.9063,288.3438 641.4063,288.3438 Q642.1094,288.3438 642.75,288.5 Q643.4063,288.6563 643.9688,288.9531 L643.9688,291.6719 Q643.3438,291.0938 642.75,290.8281 Q642.1563,290.5469 641.5313,290.5469 Q640.1875,290.5469 639.5,291.625 Q638.8125,292.6875 638.8125,294.7813 Q638.8125,296.875 639.5,297.9531 Q640.1875,299.0156 641.5313,299.0156 Q642.1563,299.0156 642.75,298.75 Q643.3438,298.4688 643.9688,297.8906 L643.9688,300.6094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="654" y="292.1387">«Variant1»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="655" y="306.1074">Product1A</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="627" x2="722" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="627" x2="722" y1="321.9375" y2="321.9375" /><!--MD5=[f608b24725105f0775e60925e5cbf29d]
+class Product1B--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="Product1B" style="stroke: #A80036; stroke-width: 1.5;" width="97" x="362" y="276" /><ellipse cx="377" cy="294.9688" fill="#FF7700" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M379.9688,300.6094 Q379.3906,300.9063 378.75,301.0469 Q378.1094,301.2031 377.4063,301.2031 Q374.9063,301.2031 373.5781,299.5625 Q372.2656,297.9063 372.2656,294.7813 Q372.2656,291.6563 373.5781,290 Q374.9063,288.3438 377.4063,288.3438 Q378.1094,288.3438 378.75,288.5 Q379.4063,288.6563 379.9688,288.9531 L379.9688,291.6719 Q379.3438,291.0938 378.75,290.8281 Q378.1563,290.5469 377.5313,290.5469 Q376.1875,290.5469 375.5,291.625 Q374.8125,292.6875 374.8125,294.7813 Q374.8125,296.875 375.5,297.9531 Q376.1875,299.0156 377.5313,299.0156 Q378.1563,299.0156 378.75,298.75 Q379.3438,298.4688 379.9688,297.8906 L379.9688,300.6094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="390" y="292.1387">«Variant1»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="391" y="306.1074">Product1B</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="363" x2="458" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="363" x2="458" y1="321.9375" y2="321.9375" /><!--MD5=[f4897f14148e3fb624519f601f480cf4]
+class Product2A--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="Product2A" style="stroke: #A80036; stroke-width: 1.5;" width="97" x="758" y="276" /><ellipse cx="773" cy="294.9688" fill="#FF0077" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M775.9688,300.6094 Q775.3906,300.9063 774.75,301.0469 Q774.1094,301.2031 773.4063,301.2031 Q770.9063,301.2031 769.5781,299.5625 Q768.2656,297.9063 768.2656,294.7813 Q768.2656,291.6563 769.5781,290 Q770.9063,288.3438 773.4063,288.3438 Q774.1094,288.3438 774.75,288.5 Q775.4063,288.6563 775.9688,288.9531 L775.9688,291.6719 Q775.3438,291.0938 774.75,290.8281 Q774.1563,290.5469 773.5313,290.5469 Q772.1875,290.5469 771.5,291.625 Q770.8125,292.6875 770.8125,294.7813 Q770.8125,296.875 771.5,297.9531 Q772.1875,299.0156 773.5313,299.0156 Q774.1563,299.0156 774.75,298.75 Q775.3438,298.4688 775.9688,297.8906 L775.9688,300.6094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="786" y="292.1387">«Variant2»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="787" y="306.1074">Product2A</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="759" x2="854" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="759" x2="854" y1="321.9375" y2="321.9375" /><!--MD5=[a6f4f09bb0dbc4209cda72965927b407]
+class Product2B--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="Product2B" style="stroke: #A80036; stroke-width: 1.5;" width="97" x="494" y="276" /><ellipse cx="509" cy="294.9688" fill="#FF0077" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M511.9688,300.6094 Q511.3906,300.9063 510.75,301.0469 Q510.1094,301.2031 509.4063,301.2031 Q506.9063,301.2031 505.5781,299.5625 Q504.2656,297.9063 504.2656,294.7813 Q504.2656,291.6563 505.5781,290 Q506.9063,288.3438 509.4063,288.3438 Q510.1094,288.3438 510.75,288.5 Q511.4063,288.6563 511.9688,288.9531 L511.9688,291.6719 Q511.3438,291.0938 510.75,290.8281 Q510.1563,290.5469 509.5313,290.5469 Q508.1875,290.5469 507.5,291.625 Q506.8125,292.6875 506.8125,294.7813 Q506.8125,296.875 507.5,297.9531 Q508.1875,299.0156 509.5313,299.0156 Q510.1563,299.0156 510.75,298.75 Q511.3438,298.4688 511.9688,297.8906 L511.9688,300.6094 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="522" y="292.1387">«Variant2»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="523" y="306.1074">Product2B</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="495" x2="590" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="495" x2="590" y1="321.9375" y2="321.9375" /><!--MD5=[40032afdf3b7ba11206d848f1b965299]
+class ConcreteFactory1--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="ConcreteFactory1" style="stroke: #A80036; stroke-width: 1.5;" width="143" x="6" y="276" /><ellipse cx="21" cy="294.9688" fill="#FF0077" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M21.1094,290.5469 Q20.1719,290.5469 19.7344,291.5469 Q19.3125,292.5469 19.3125,294.7813 Q19.3125,297.0156 19.7344,298.0156 Q20.1719,299.0156 21.1094,299.0156 Q22.0625,299.0156 22.4844,298.0156 Q22.9219,297.0156 22.9219,294.7813 Q22.9219,292.5469 22.4844,291.5469 Q22.0625,290.5469 21.1094,290.5469 Z M16.7656,294.7813 Q16.7656,291.6094 17.8594,289.9844 Q18.9688,288.3438 21.1094,288.3438 Q23.2656,288.3438 24.3594,289.9844 Q25.4688,291.6094 25.4688,294.7813 Q25.4688,297.9531 24.3594,299.5781 Q23.2656,301.2031 21.1094,301.2031 Q18.9688,301.2031 17.8594,299.5781 Q16.7656,297.9531 16.7656,294.7813 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="57" y="292.1387">«Variant1»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="111" x="35" y="306.1074">ConcreteFactory1</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="148" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="148" y1="321.9375" y2="321.9375" /><!--MD5=[e7b84ce2505fe77d924ba186871d0b8b]
+class ConcreteFactory2--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="53.9375" id="ConcreteFactory2" style="stroke: #A80036; stroke-width: 1.5;" width="143" x="184" y="276" /><ellipse cx="199" cy="294.9688" fill="#FF7700" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M199.1094,290.5469 Q198.1719,290.5469 197.7344,291.5469 Q197.3125,292.5469 197.3125,294.7813 Q197.3125,297.0156 197.7344,298.0156 Q198.1719,299.0156 199.1094,299.0156 Q200.0625,299.0156 200.4844,298.0156 Q200.9219,297.0156 200.9219,294.7813 Q200.9219,292.5469 200.4844,291.5469 Q200.0625,290.5469 199.1094,290.5469 Z M194.7656,294.7813 Q194.7656,291.6094 195.8594,289.9844 Q196.9688,288.3438 199.1094,288.3438 Q201.2656,288.3438 202.3594,289.9844 Q203.4688,291.6094 203.4688,294.7813 Q203.4688,297.9531 202.3594,299.5781 Q201.2656,301.2031 199.1094,301.2031 Q196.9688,301.2031 195.8594,299.5781 Q194.7656,297.9531 194.7656,294.7813 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="67" x="235" y="292.1387">«Variant2»</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="111" x="213" y="306.1074">ConcreteFactory2</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="185" x2="326" y1="313.9375" y2="313.9375" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="185" x2="326" y1="321.9375" y2="321.9375" /><!--MD5=[536fe7577e8cf19597ee85886b82cd6a]
+class AbstractFactory--><rect fill="#FEFECE" filter="url(#f1bbv8lmf0teou)" height="60.8047" id="AbstractFactory" style="stroke: #A80036; stroke-width: 1.5;" width="185" x="162" y="12" /><ellipse cx="201.3" cy="28" fill="#ADD1B2" rx="11" ry="11" style="stroke: #A80036; stroke-width: 1.0;" /><path d="M204.2688,33.6406 Q203.6906,33.9375 203.05,34.0781 Q202.4094,34.2344 201.7063,34.2344 Q199.2063,34.2344 197.8781,32.5938 Q196.5656,30.9375 196.5656,27.8125 Q196.5656,24.6875 197.8781,23.0313 Q199.2063,21.375 201.7063,21.375 Q202.4094,21.375 203.05,21.5313 Q203.7063,21.6875 204.2688,21.9844 L204.2688,24.7031 Q203.6438,24.125 203.05,23.8594 Q202.4563,23.5781 201.8313,23.5781 Q200.4875,23.5781 199.8,24.6563 Q199.1125,25.7188 199.1125,27.8125 Q199.1125,29.9063 199.8,30.9844 Q200.4875,32.0469 201.8313,32.0469 Q202.4563,32.0469 203.05,31.7813 Q203.6438,31.5 204.2688,30.9219 L204.2688,33.6406 Z " /><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="99" x="220.7" y="32.1543">AbstractFactory</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="163" x2="346" y1="44" y2="44" /><line style="stroke: #A80036; stroke-width: 1.5;" x1="163" x2="346" y1="52" y2="52" /><ellipse cx="173" cy="63" fill="#84BE84" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;" /><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacingAndGlyphs" textLength="159" x="182" y="66.2104">getFactory(variant) : Factory</text><!--MD5=[a806ae4301bd391cbdb58a25a642bd09]
+reverse link ProductA to Product1A--><path d="M674.5,220.35 C674.5,238.85 674.5,259.82 674.5,275.88 " fill="none" id="ProductA&lt;-Product1A" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="667.5,220.22,674.5,200.22,681.5,220.22,667.5,220.22" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[90b869cafe71e93b56064ec070c4c21f]
+reverse link ProductB to Product1B--><path d="M426.23,220.05 C422.67,238.62 418.61,259.74 415.51,275.88 " fill="none" id="ProductB&lt;-Product1B" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="419.4,218.54,430.04,200.22,433.15,221.18,419.4,218.54" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[3f307d07488f4b6c7cd0cc282a418859]
+reverse link ProductA to Product2A--><path d="M713.71,214.13 C734.69,234 760.03,257.99 778.92,275.88 " fill="none" id="ProductA&lt;-Product2A" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="708.73,219.05,699.02,200.22,718.35,208.89,708.73,219.05" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[eed046ea8954a36a7e3c3b2acdb58400]
+reverse link ProductB to Product2B--><path d="M467.84,215.59 C484.75,235.16 504.85,258.43 519.93,275.88 " fill="none" id="ProductB&lt;-Product2B" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="462.34,219.93,454.56,200.22,472.93,210.78,462.34,219.93" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[59ade520ef6dcbe54fac3c41491fa038]
+reverse link Factory to ConcreteFactory1--><path d="M183.28,227.71 C159.7,244.28 134.48,261.99 114.58,275.96 " fill="none" id="Factory&lt;-ConcreteFactory1" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="179.28,221.97,199.67,216.21,187.32,233.43,179.28,221.97" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[5a67b6e97e055d43d44ef0d8ee82fd16]
+reverse link Factory to ConcreteFactory2--><path d="M255.5,236.68 C255.5,250.49 255.5,264.48 255.5,275.96 " fill="none" id="Factory&lt;-ConcreteFactory2" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;" /><polygon fill="none" points="248.5,236.21,255.5,216.21,262.5,236.21,248.5,236.21" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[7c85439b43f6896b7717621391c8d0de]
+link Factory to ProductA--><path d="M348.5,190 C390.34,190 354.72,126.84 391,106 C464.5,63.78 562.93,106.57 622.37,141.34 " fill="none" id="Factory-&gt;ProductA" style="stroke: #A80036; stroke-width: 2.0;" /><polygon fill="none" points="626.05,135.38,639.49,151.77,618.77,147.34,626.05,135.38" style="stroke: #A80036; stroke-width: 2.0;" /><!--MD5=[d4e9478bef55ff017e4123dba8a149ae]
+link Factory to ProductB--><path d="M348.5,202 C365.97,209.52 384.61,208.63 399.97,203.82 " fill="none" id="Factory-&gt;ProductB" style="stroke: #A80036; stroke-width: 2.0;" /><polygon fill="none" points="388.36,200.78,409.54,200.15,393.38,213.85,388.36,200.78" style="stroke: #A80036; stroke-width: 2.0;" /><!--MD5=[7de6d7d7de04ba16b2a9601712372aef]
+link AbstractFactory to Factory--><path d="M348.5,62 C386.37,62 348.61,100.32 310.45,132.32 " fill="none" id="AbstractFactory-&gt;Factory" style="stroke: #A80036; stroke-width: 1.0;" /><polygon fill="#A80036" points="306.28,135.8,315.7557,133.1147,310.1223,132.6005,310.6365,126.967,306.28,135.8" style="stroke: #A80036; stroke-width: 1.0;" /><!--MD5=[42d99cd8a2609a71b57d341ee1ebac24]
+@startuml 
+
+interface Factory{
++ createProductA() : ProductA
++ createProductB() : ProductB 
+  }
+
+interface ProductA 
+interface ProductB
+
+class Product1A<< (C,#FF7700) Variant1 >> implements ProductA 
+class Product1B<< (C,#FF7700) Variant1 >> implements ProductB
+
+class Product2A<< (C,#FF0077) Variant2 >> implements ProductA 
+class Product2B<< (C,#FF0077) Variant2 >> implements ProductB
+
+class ConcreteFactory1<< (O,#FF0077) Variant1 >> implements Factory
+class ConcreteFactory2<< (O,#FF7700) Variant2 >> implements Factory
+
+Factory::createProductA-right[bold]-|>ProductA 
+Factory::createProductB-right[bold]-|>ProductB
+
+class AbstractFactory{ 
++getFactory(variant) : Factory 
+}
+
+AbstractFactory::getFactory- ->Factory
+
+@enduml 
+
+PlantUML version 1.2020.01(Sun Feb 16 17:40:32 GMT 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 1.8.0_392-b08
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
+</div>
+
+<h2 id="rodzina-elementów-gui">Rodzina elementów GUI</h2>
+
+<p>Konkretny przykład wykorzystujący wspomniane już rodziny kontrolek GUI. Nadal wydaje mi się nie do końca “życiowy” ale
+mi osobiście najbardziej pomógł zrozumieć do czego <code class="language-plaintext highlighter-rouge">Abstract Factory</code> właściwie może posłużyć.</p>
+
+<p>Mamy więc kilka kontrolek GUI</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">View</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Button</span> <span class="p">:</span> <span class="nc">View</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Image</span> <span class="p">:</span> <span class="nc">View</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">GridView</span> <span class="p">:</span> <span class="nc">View</span>
+</code></pre></div></div>
+
+<p>Oraz interfejs fabryki, który je dostarcza</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="c1">// typy znane Factory</span>
+    <span class="k">enum</span> <span class="kd">class</span> <span class="nc">OS</span> <span class="p">{</span>
+        <span class="nc">Linux</span><span class="p">,</span> <span class="nc">Windows</span>
+    <span class="p">}</span>
+
+    <span class="c1">// metody dostarczające generyczne kontrolki, niezależne od OS</span>
+    <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span>
+    <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span>
+
+    <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span>
+        <span class="c1">// "statyczna" metoda zwracająca konkretne factory</span>
+        <span class="k">fun</span> <span class="nf">createFactory</span><span class="p">(</span><span class="n">os</span><span class="p">:</span> <span class="nc">OS</span><span class="p">):</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">os</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span> <span class="p">-&gt;</span> <span class="nc">LinuxViewViewFactory</span>
+                <span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span> <span class="p">-&gt;</span> <span class="nc">WindowsViewViewFactory</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Interfejs <code class="language-plaintext highlighter-rouge">ViewFactory</code> jest implementowany przez konkretne fabryki dla Windowsa i Linuxa</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">LinuxViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="c1">// konkretne typy zwracane dla konkretnego OSa</span>
+    <span class="c1">// internal zapobiega wyciekaniu ich</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="c1">// klienty widzą tylko generyczny interfejs kontrolki</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">LinuxButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">LinuxImage</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">WindowsViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">WindowsButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">WindowsImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">WindowsButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">WindowsImage</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Powyższy kod można użyć tak:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">winViewFactory</span> <span class="p">=</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nf">createFactory</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">button</span> <span class="p">=</span> <span class="n">winViewFactory</span><span class="p">.</span><span class="nf">createButton</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Ale w ten sposób, interfejs fabryki abstrakcyjnej musi znać swoje implementacje — czyli konkretne fabryki kontrolek.
+Można do tego podejść inaczej i nie tworzyć w <code class="language-plaintext highlighter-rouge">ViewFactory</code> <code class="language-plaintext highlighter-rouge">companion object</code> który zwraca fabryki, tylko stworzyć nową
+klasę, która zajmie się dostarczaniem konkretnych kontrolek przy pomocy każdej dostępnej fabryki kontrolek.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// klasa przesłaniająca używane fabryki ale implementująca ten sam interfejs</span>
+<span class="kd">class</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="n">os</span><span class="p">:</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">)</span> <span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+
+    <span class="c1">// instancja ViewCreatora dostarcza kontrolki tylko dla konkretnego OS-a</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">factory</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="n">os</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span> <span class="p">-&gt;</span> <span class="nc">LinuxViewViewFactory</span>
+        <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span> <span class="p">-&gt;</span> <span class="nc">WindowsViewViewFactory</span>
+    <span class="p">}</span>
+
+    <span class="c1">// metody zwracająca generyczne kontrolki, </span>
+    <span class="c1">// z factory na podstawie argumentu konstruktora</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="n">factory</span><span class="p">.</span><span class="nf">createButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="n">factory</span><span class="p">.</span><span class="nf">createImage</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// użycie</span>
+<span class="kd">val</span> <span class="py">linuxButton</span> <span class="p">=</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span><span class="p">).</span><span class="nf">createButton</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Klienty nadal nie znają konkretnej fabryki kontrolek, ale teraz również interfejs <code class="language-plaintext highlighter-rouge">ViewFactory</code> nie musi ich znać. Nie
+ma też potrzeby rozszerzania <code class="language-plaintext highlighter-rouge">companion object</code>. Po prostu tworzymy instancję fabryki pod konkretny OS, która pod spodem
+używa konkretnych fabryk zgodnych z przekazanym OS-em.</p>
+
+<p>Łatwo zauważyć, że wraz ze wzrostem liczby kontrolek sporo kodu będzie wyglądać niemal identycznie, w zasadzie proxując
+wywołania metod do konkretnych fabryk. Ciekawym i mało ortodoksyjnym pomysłem jest użycie jednej metody <code class="language-plaintext highlighter-rouge">make&lt;Typ&gt;()</code>
+zamiast osobnych metod dla każdego typu kontrolki. Wtedy <code class="language-plaintext highlighter-rouge">ViewCreator</code> mógłby wyglądać tak:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// nie implementuje już interfejsu `ViewFactory`</span>
+<span class="kd">class</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="n">os</span><span class="p">:</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// pole musi być publiczne, bo jest wykorzystywane w metodzie `inline`</span>
+    <span class="kd">val</span> <span class="py">factory</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="n">os</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span> <span class="p">-&gt;</span> <span class="nc">LinuxViewViewFactory</span>
+        <span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span> <span class="p">-&gt;</span> <span class="nc">WindowsViewViewFactory</span>
+    <span class="p">}</span>
+
+    <span class="c1">// `inline` i `reified` pozwalają na użycie typu nieznanego w czasie kompilacji</span>
+    <span class="k">inline</span> <span class="k">fun</span> <span class="p">&lt;</span><span class="k">reified</span> <span class="nc">T</span> <span class="p">:</span> <span class="nc">View</span><span class="p">&gt;</span> <span class="nf">make</span><span class="p">():</span> <span class="nc">T</span> <span class="p">=</span> <span class="k">when</span> <span class="p">(</span><span class="nc">T</span><span class="o">::</span><span class="k">class</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nc">Button</span><span class="o">::</span><span class="k">class</span> <span class="p">-&gt;</span> <span class="n">factory</span><span class="p">.</span><span class="nf">createButton</span><span class="p">()</span> <span class="k">as</span> <span class="nc">T</span>
+        <span class="nc">Image</span><span class="o">::</span><span class="k">class</span> <span class="p">-&gt;</span> <span class="n">factory</span><span class="p">.</span><span class="nf">createImage</span><span class="p">()</span> <span class="k">as</span> <span class="nc">T</span>
+        <span class="k">else</span> <span class="p">-&gt;</span> <span class="k">throw</span> <span class="nc">IllegalArgumentException</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// użycie</span>
+<span class="kd">val</span> <span class="py">windowsButton</span> <span class="p">=</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span><span class="p">).</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">GridView</span><span class="p">&gt;()</span>
+</code></pre></div></div>
+
+<p>Słówka kluczowe <code class="language-plaintext highlighter-rouge">inline</code> i <code class="language-plaintext highlighter-rouge">reified</code> to spokojnie temat na osobny post. Użycie ich tutaj pozwala na przekazanie typu rozszerzającego <code class="language-plaintext highlighter-rouge">View</code> i sprawia, że metoda <code class="language-plaintext highlighter-rouge">make()</code> zwróci właśnie taki typ. Dzięki temu nie trzeba dla każdej nowej kontrolki dodawać nowej metody typu <code class="language-plaintext highlighter-rouge">createButton()</code>. Wystarczy, że nowa kontrolka rozszerza <code class="language-plaintext highlighter-rouge">View</code> i nowy przypadek w <code class="language-plaintext highlighter-rouge">when</code> zostanie obsłużony.</p>
+
+<p>Co dokładnie daje <code class="language-plaintext highlighter-rouge">inline</code>? Kopiuje kod w miejsce wywołania, <strong>dosłownie</strong> :) i właśnie dlatego
+wszystkie wykorzystywane przez metody <code class="language-plaintext highlighter-rouge">inline</code> pola muszą być publicznie dostępne. Przy takiej implementacji metody <code class="language-plaintext highlighter-rouge">make()</code> potrzebujemy użyć <code class="language-plaintext highlighter-rouge">reified</code>, żeby móc wykorzystać **klasę przekazanego typu <T>** do znalezienia właściwej metody w konkretnych `ViewFactory`. A `reified` można użyć tylko w metodach `inline`, bo "wklejenie" kodu metody w miejsce wywołania pozwala w trakcie kompilacji poznać dokładny typ. Po wywołaniu odpowiedniej metody, np. `createButton()` należy wynik jeszcze zrzutować na `T`, ponieważ to `T` jest spodziewanym typem zwracanego obiektu, a nie `Button`, nawet jeśli `T::class == Button::class`.</T></p>
+
+<p>Kopiowanie kodu powoduje puchnięcie plików, np. wywołanie metody <code class="language-plaintext highlighter-rouge">make()</code> 2x:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">windowsButton</span> <span class="p">=</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span><span class="p">).</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">Button</span><span class="p">&gt;()</span>
+<span class="c1">// w ramach jednego moduły można niestety przekazać też typ klasy `internal`</span>
+<span class="c1">// więc typem zwracanym nie będzie generyczny Button a konkretny WindowsButton</span>
+<span class="kd">val</span> <span class="py">windowsButton2</span> <span class="p">=</span> <span class="nc">ViewCreator</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span><span class="p">).</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">WindowsViewViewFactory</span><span class="p">.</span><span class="nc">WindowsButton</span><span class="p">&gt;()</span>
+</code></pre></div></div>
+
+<p>Spowoduje wygenerowanie bytecode odpowiadającemu Javie:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// początek dla pierwszego Buttona</span>
+<span class="nc">ViewCreator</span> <span class="n">this_$iv</span><span class="o">=</span><span class="k">new</span> <span class="nc">ViewCreator</span><span class="o">(</span><span class="no">OS</span><span class="o">.</span><span class="na">Windows</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">$i$f$make</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span>
+<span class="nc">KClass</span> <span class="n">var4</span><span class="o">=</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">Button</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="nc">Button</span> <span class="n">var10000</span><span class="o">;</span>
+<span class="nc">View</span> <span class="n">var9</span><span class="o">;</span>
+<span class="nc">Image</span> <span class="n">var10</span><span class="o">;</span>
+<span class="k">if</span><span class="o">(</span><span class="nc">Intrinsics</span><span class="o">.</span><span class="na">areEqual</span><span class="o">(</span><span class="n">var4</span><span class="o">,</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">Button</span><span class="o">.</span><span class="na">class</span><span class="o">))){</span>
+<span class="n">var10000</span><span class="o">=</span><span class="n">this_$iv</span><span class="o">.</span><span class="na">getFactory</span><span class="o">().</span><span class="na">createButton</span><span class="o">();</span>
+<span class="k">if</span><span class="o">(</span><span class="n">var10000</span><span class="o">==</span><span class="kc">null</span><span class="o">){</span>
+<span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">(</span><span class="s">"null cannot be cast to non-null type abstract_factory.family.Button"</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">var9</span><span class="o">=(</span><span class="nc">View</span><span class="o">)</span><span class="n">var10000</span><span class="o">;</span>
+<span class="o">}</span><span class="k">else</span><span class="o">{</span>
+<span class="k">if</span><span class="o">(!</span><span class="nc">Intrinsics</span><span class="o">.</span><span class="na">areEqual</span><span class="o">(</span><span class="n">var4</span><span class="o">,</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">Image</span><span class="o">.</span><span class="na">class</span><span class="o">))){</span>
+<span class="k">throw</span><span class="o">(</span><span class="nc">Throwable</span><span class="o">)(</span><span class="k">new</span> <span class="nc">IllegalArgumentException</span><span class="o">());</span>
+<span class="o">}</span>
+
+<span class="n">var10</span><span class="o">=</span><span class="n">this_$iv</span><span class="o">.</span><span class="na">getFactory</span><span class="o">().</span><span class="na">createImage</span><span class="o">();</span>
+<span class="k">if</span><span class="o">(</span><span class="n">var10</span><span class="o">==</span><span class="kc">null</span><span class="o">){</span>
+<span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">(</span><span class="s">"null cannot be cast to non-null type abstract_factory.family.Button"</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">var9</span><span class="o">=(</span><span class="nc">View</span><span class="o">)((</span><span class="nc">Button</span><span class="o">)</span><span class="n">var10</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="c1">// koniec dla pierwszego Buttona</span>
+<span class="nc">Button</span> <span class="n">windowsButton</span><span class="o">=(</span><span class="nc">Button</span><span class="o">)</span><span class="n">var9</span><span class="o">;</span>
+<span class="c1">// ------------------------------------------------------------------------------------------</span>
+
+<span class="c1">// początek dla drugiego Buttona     </span>
+<span class="nc">ViewCreator</span> <span class="n">this_$iv</span><span class="o">=</span><span class="k">new</span> <span class="nc">ViewCreator</span><span class="o">(</span><span class="no">OS</span><span class="o">.</span><span class="na">Windows</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">$i$f$make</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span>
+<span class="nc">KClass</span> <span class="n">var5</span><span class="o">=</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">WindowsButton</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="k">if</span><span class="o">(</span><span class="nc">Intrinsics</span><span class="o">.</span><span class="na">areEqual</span><span class="o">(</span><span class="n">var5</span><span class="o">,</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">Button</span><span class="o">.</span><span class="na">class</span><span class="o">))){</span>
+<span class="n">var10000</span><span class="o">=</span><span class="n">this_$iv</span><span class="o">.</span><span class="na">getFactory</span><span class="o">().</span><span class="na">createButton</span><span class="o">();</span>
+<span class="k">if</span><span class="o">(</span><span class="n">var10000</span><span class="o">==</span><span class="kc">null</span><span class="o">){</span>
+<span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">(</span><span class="s">"null cannot be cast to non-null type abstract_factory.family.WindowsViewViewFactory.WindowsButton"</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">var9</span><span class="o">=(</span><span class="nc">View</span><span class="o">)((</span><span class="nc">WindowsButton</span><span class="o">)</span><span class="n">var10000</span><span class="o">);</span>
+<span class="o">}</span><span class="k">else</span><span class="o">{</span>
+<span class="k">if</span><span class="o">(!</span><span class="nc">Intrinsics</span><span class="o">.</span><span class="na">areEqual</span><span class="o">(</span><span class="n">var5</span><span class="o">,</span><span class="nc">Reflection</span><span class="o">.</span><span class="na">getOrCreateKotlinClass</span><span class="o">(</span><span class="nc">Image</span><span class="o">.</span><span class="na">class</span><span class="o">))){</span>
+<span class="k">throw</span><span class="o">(</span><span class="nc">Throwable</span><span class="o">)(</span><span class="k">new</span> <span class="nc">IllegalArgumentException</span><span class="o">());</span>
+<span class="o">}</span>
+
+<span class="n">var10</span><span class="o">=</span><span class="n">this_$iv</span><span class="o">.</span><span class="na">getFactory</span><span class="o">().</span><span class="na">createImage</span><span class="o">();</span>
+<span class="k">if</span><span class="o">(</span><span class="n">var10</span><span class="o">==</span><span class="kc">null</span><span class="o">){</span>
+<span class="k">throw</span> <span class="k">new</span> <span class="nf">NullPointerException</span><span class="o">(</span><span class="s">"null cannot be cast to non-null type abstract_factory.family.WindowsViewViewFactory.WindowsButton"</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">var9</span><span class="o">=(</span><span class="nc">View</span><span class="o">)((</span><span class="nc">WindowsButton</span><span class="o">)</span><span class="n">var10</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="c1">// koniec dla drugiego Buttona</span>
+<span class="nc">WindowsButton</span> <span class="n">windowsButton2</span><span class="o">=(</span><span class="nc">WindowsButton</span><span class="o">)</span><span class="n">var9</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>I tak w każdym miejscu, gdzie użyta jest metoda <code class="language-plaintext highlighter-rouge">inline</code>. Więc może nie jest to najlepsze rozwiązanie dla często
+używanych metod, a tworzenie kontrolek GUI w aplikacji, która potrzebuje do tego aż <code class="language-plaintext highlighter-rouge">Abstract Factory</code> raczej do takich
+przypadków się zalicza.</p>
+
+<p>To podejście również pochodzi z książki “Wzorce projektowe”<sup id="fnref:design_patterns:1" role="doc-noteref"><a href="#fn:design_patterns" class="footnote" rel="footnote">1</a></sup> i raczej zostało pomyślane dla języków
+Objective C czy Smalltalk, ale jeszcze do niego wrócę.</p>
+
+<h2 id="fabryka-z-rejestrem">Fabryka z rejestrem</h2>
+<p>W poprzednim wpisie o <a href="https://asvid.github.io/pl/kotlin-factory-method#factories-with-registry">Factory Method</a> wspomniałem o fabryce z rejestrem, pozwalającą na elastyczne dodawanie nowych fabryk. Podobną rzecz można zrobić z <code class="language-plaintext highlighter-rouge">Abstract Factory</code>. Posłużę się takim samym przykładem jak poprzednio, czyli factory budujące kontrolki GUI pod konkretny system operacyjny.</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// interfejs Factory które będzie rejestrowane</span>
+<span class="kd">interface</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span>
+    <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span>
+<span class="p">}</span>
+<span class="c1">// typy dostarczane przez Factory</span>
+<span class="kd">interface</span> <span class="nc">View</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Button</span> <span class="p">:</span> <span class="nc">View</span>
+<span class="k">abstract</span> <span class="kd">class</span> <span class="nc">Image</span> <span class="p">:</span> <span class="nc">View</span>
+</code></pre></div></div>
+<p>Konkretne Factory są takie same jak w poprzednim przykładzie.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">LinuxViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">LinuxButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">LinuxImage</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">WindowsViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">WindowsButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">WindowsImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">WindowsButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">WindowsImage</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>I samo rejestrowane Factory.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">ViewFactoryMaker</span> <span class="p">{</span>
+    <span class="c1">// rejestr konkretnych factory, klucz jest zwykłym Stringiem</span>
+    <span class="k">private</span> <span class="kd">val</span> <span class="py">registry</span> <span class="p">=</span> <span class="n">mutableMapOf</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">,</span> <span class="nc">ViewFactory</span><span class="p">&gt;()</span>
+
+    <span class="k">fun</span> <span class="nf">register</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="nc">ViewFactory</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="p">=</span> <span class="n">factory</span>
+    <span class="p">}</span>
+
+    <span class="c1">// zwracanie konkretnego factory na podstawie klucza</span>
+    <span class="c1">// w przypadku braku klucza zwrócony zostanie `null`</span>
+    <span class="k">fun</span> <span class="nf">getFactory</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nc">String</span><span class="p">):</span> <span class="nc">ViewFactory</span><span class="p">?</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Użycie wygląda następująco:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// w tym wypadku `xpButton1` będzie `null` bo nie ma fabryki pod kluczem "XP"</span>
+<span class="kd">val</span> <span class="py">xpButton1</span> <span class="p">=</span> <span class="nc">ViewFactoryMaker</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="s">"XP"</span><span class="p">)</span><span class="o">?.</span><span class="nf">createButton</span><span class="p">()</span>
+
+<span class="c1">// ale można ją stworzyć np. jako obiekt anonimowy i zarejestrować</span>
+<span class="nc">ViewFactoryMaker</span><span class="p">.</span><span class="nf">register</span><span class="p">(</span><span class="s">"XP"</span><span class="p">,</span> <span class="k">object</span><span class="p">:</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">{</span>
+    <span class="c1">// znów anonimowy obiekt rozszerzający klasę Button</span>
+    <span class="k">return</span> <span class="k">object</span><span class="p">:</span> <span class="nc">Button</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="p">}</span>
+
+  <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">object</span><span class="p">:</span> <span class="nc">Image</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1">// `xpButton2` teraz już nie będzie null-em</span>
+<span class="kd">val</span> <span class="py">xpButton2</span> <span class="p">=</span> <span class="nc">ViewFactoryMaker</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="s">"XP"</span><span class="p">)</span><span class="o">?.</span><span class="nf">createButton</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Rejestr umożliwia łatwe dodanie nowych fabryk, jeśli zajedzie taka potrzeba. Fabryka Abstrakcyjna dostarcza w zasadzie tylko interfejs konkretnych fabryk i obiektów przez nie tworzonych.</p>
+
+<h2 id="metoda-make-raz-jeszcze">Metoda Make raz jeszcze</h2>
+<p>Używając podejścia z metodą <code class="language-plaintext highlighter-rouge">make()</code> i rejestru fabryk, można osiągnąć ciekawy efekt.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">linuxButton</span> <span class="p">=</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span><span class="p">).</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">Button</span><span class="p">&gt;()</span>
+</code></pre></div></div>
+<p>Pozwala to na łatwe rozszerzanie możliwości fabryk, bez konieczności pisania proxy-metod. Aby to osiągnąć, należy rozbudować <code class="language-plaintext highlighter-rouge">ViewFactory</code> o companion object i metodę <code class="language-plaintext highlighter-rouge">inline</code>. Każda konkretna fabryka będzie rozszerzać abstrakcyjne <code class="language-plaintext highlighter-rouge">ViewFactory</code> i nadpisywać metody tworzące kontrolki GUI.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">abstract</span> <span class="kd">class</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+    <span class="c1">// typy znane Factory</span>
+    <span class="k">enum</span> <span class="kd">class</span> <span class="nc">OS</span> <span class="p">{</span>
+        <span class="nc">Linux</span><span class="p">,</span> <span class="nc">Windows</span>
+    <span class="p">}</span>
+
+    <span class="c1">// metody do nadpisania przez konkretne factory</span>
+    <span class="k">protected</span> <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span>
+    <span class="k">protected</span> <span class="k">abstract</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span>
+
+    <span class="c1">// rejestr teraz trzyma referencje do metod, a nie konkretnych factory</span>
+    <span class="c1">// kluczem jest generyczny typ zwracany przez metodę</span>
+    <span class="k">protected</span> <span class="kd">val</span> <span class="py">registry</span> <span class="p">=</span> <span class="n">mutableMapOf</span><span class="p">&lt;</span><span class="nc">KClass</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">View</span><span class="p">&gt;,</span> <span class="p">()</span> <span class="p">-&gt;</span> <span class="nc">View</span><span class="p">&gt;(</span>
+        <span class="nc">Button</span><span class="o">::</span><span class="k">class</span> <span class="n">to</span> <span class="o">::</span><span class="n">createButton</span><span class="p">,</span>
+        <span class="nc">Image</span><span class="o">::</span><span class="k">class</span> <span class="n">to</span> <span class="o">::</span><span class="n">createImage</span>
+    <span class="p">)</span>
+
+    <span class="c1">// tej metody nie da się przesłonić</span>
+    <span class="k">inline</span> <span class="k">fun</span> <span class="p">&lt;</span><span class="k">reified</span> <span class="nc">T</span> <span class="p">:</span> <span class="nc">View</span><span class="p">&gt;</span> <span class="nf">make</span><span class="p">():</span> <span class="nc">T</span><span class="p">?</span> <span class="p">{</span>
+        <span class="c1">// pole `registry` jest protected, </span>
+        <span class="c1">// więc metoda `inline` nie ma do niego bezpośredniego dostępu</span>
+        <span class="k">return</span> <span class="n">`access</span><span class="err">$</span><span class="n">registry`</span><span class="p">[</span><span class="nc">T</span><span class="o">::</span><span class="k">class</span><span class="p">]</span><span class="o">?.</span><span class="nf">invoke</span><span class="p">()</span> <span class="k">as</span> <span class="nc">T</span><span class="p">?</span>
+    <span class="p">}</span>
+
+    <span class="k">companion</span> <span class="k">object</span> <span class="p">{</span>
+        <span class="k">fun</span> <span class="nf">getFactory</span><span class="p">(</span><span class="n">os</span><span class="p">:</span> <span class="nc">OS</span><span class="p">):</span> <span class="nc">ViewFactory</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">when</span> <span class="p">(</span><span class="n">os</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span> <span class="p">-&gt;</span> <span class="nc">LinuxViewFactory</span> <span class="c1">// Singleton</span>
+                <span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span> <span class="p">-&gt;</span> <span class="nc">WindowsViewFactory</span><span class="p">()</span> <span class="c1">// normalny obiekt</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// sposób na udostępnienie rejestru metodzie `make()`</span>
+    <span class="c1">// metoda jest internal więc po skompilowaniu nie będzie dostępna</span>
+    <span class="nd">@PublishedApi</span>
+    <span class="k">internal</span> <span class="kd">val</span> <span class="py">`access</span><span class="err">$</span><span class="n">registry`</span><span class="p">:</span> <span class="nc">MutableMap</span><span class="p">&lt;</span><span class="nc">KClass</span><span class="p">&lt;</span><span class="k">out</span> <span class="nc">View</span><span class="p">&gt;,</span> <span class="err">()</span> <span class="err">-</span><span class="p">&gt;</span> <span class="nc">View</span><span class="p">&gt;</span>
+        <span class="k">get</span><span class="p">()</span> <span class="p">=</span> <span class="n">registry</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Czyli teraz mając już konkretne factory, dostarczone przez metodę <code class="language-plaintext highlighter-rouge">getFactory()</code> z companion object, zamiast wywoływać na nim konkretną metodę, np. <code class="language-plaintext highlighter-rouge">createButton()</code> używamy <code class="language-plaintext highlighter-rouge">make&lt;Button&gt;()</code> a rejestr znajdzie odpowiednią metodę na podstaie zwracanego typu i ją wywoła przez użycie <code class="language-plaintext highlighter-rouge">invoke()</code>.</p>
+
+<p>Konkretne factory może wyglądać tak:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// normalna klasa zamiast Singletona pozwala na wewnętrzne klasy</span>
+<span class="kd">class</span> <span class="nc">WindowsViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// private inner zapewnia że klasa jest niewidoczna poza Factory</span>
+    <span class="k">private</span> <span class="k">inner</span> <span class="kd">class</span> <span class="nc">WindowsButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">private</span> <span class="k">inner</span> <span class="kd">class</span> <span class="nc">WindowsImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="c1">// nadpisanie metod tworzących kontrolki</span>
+    <span class="c1">// referencje do nich trafiają do rejestru</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">WindowsButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">WindowsImage</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Lub tak, z dodaną nową kontrolką <code class="language-plaintext highlighter-rouge">GridView</code> którą tylko <code class="language-plaintext highlighter-rouge">LinuxViewFactory</code> potrafi stworzyć</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">LinuxViewViewFactory</span> <span class="p">:</span> <span class="nc">ViewFactory</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxButton</span> <span class="p">:</span> <span class="nc">Button</span><span class="p">()</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxImage</span> <span class="p">:</span> <span class="nc">Image</span><span class="p">()</span>
+
+    <span class="c1">// implementację GridView istnieje tylko dla Linuxa</span>
+    <span class="k">internal</span> <span class="kd">class</span> <span class="nc">LinuxGridView</span> <span class="p">:</span> <span class="nc">GridView</span><span class="p">()</span>
+
+    <span class="c1">// a factory ma w interfejsie tylko takie metody</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createButton</span><span class="p">():</span> <span class="nc">Button</span> <span class="p">=</span> <span class="nc">LinuxButton</span><span class="p">()</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">createImage</span><span class="p">():</span> <span class="nc">Image</span> <span class="p">=</span> <span class="nc">LinuxImage</span><span class="p">()</span>
+
+    <span class="c1">// dodanie nowej kontrolki specyficznej dla tylko dla tej fabryki</span>
+    <span class="nf">init</span> <span class="p">{</span>
+        <span class="c1">// wywołanie metody z parametrem LinuxGridView zwróci NULL-a</span>
+        <span class="n">registry</span><span class="p">[</span><span class="nc">GridView</span><span class="o">::</span><span class="k">class</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>
+            <span class="nc">LinuxGridView</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Kilka przykładów użycia:</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">linuxFactory</span> <span class="p">=</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Linux</span><span class="p">)</span>
+<span class="kd">val</span> <span class="py">windowsFactory</span> <span class="p">=</span> <span class="nc">ViewFactory</span><span class="p">.</span><span class="nf">getFactory</span><span class="p">(</span><span class="nc">ViewFactory</span><span class="p">.</span><span class="nc">OS</span><span class="p">.</span><span class="nc">Windows</span><span class="p">)</span>
+
+<span class="kd">val</span> <span class="py">linuxButton</span> <span class="p">=</span> <span class="n">linuxFactory</span><span class="p">.</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">Button</span><span class="p">&gt;()</span>
+<span class="kd">val</span> <span class="py">winButton</span> <span class="p">=</span> <span class="n">windowsFactory</span><span class="p">.</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">Button</span><span class="p">&gt;()</span>
+
+<span class="kd">val</span> <span class="py">gridView</span> <span class="p">=</span> <span class="n">linuxFactory</span><span class="p">.</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">GridView</span><span class="p">&gt;()</span> <span class="c1">// OK</span>
+<span class="kd">val</span> <span class="py">winGridView</span> <span class="p">=</span> <span class="n">windowsFactory</span><span class="p">.</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">GridView</span><span class="p">&gt;()</span> <span class="c1">// null</span>
+
+<span class="c1">// niestety `access$registry` jest publicznie dostępne w ramach modułu</span>
+<span class="kd">val</span> <span class="py">registry</span> <span class="p">=</span> <span class="n">linuxFactory</span><span class="p">.</span><span class="n">`access</span><span class="err">$</span><span class="n">registry`</span>
+<span class="c1">// i nic nas nie powstrzymuje przed dodaniem obsługi nowej kontrolki</span>
+<span class="c1">// tak długo jak rozszerza `View` z fabryki abstrakcyjnej</span>
+<span class="kd">class</span> <span class="nc">NewView</span><span class="p">:</span> <span class="nc">View</span>
+<span class="n">registry</span><span class="p">[</span><span class="nc">NewView</span><span class="o">::</span><span class="k">class</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> <span class="nc">NewView</span><span class="p">()</span> <span class="p">}</span>
+
+<span class="c1">// legalne użycie metody `make()` ale zwróci null</span>
+<span class="c1">// `View` nie ma w rejestrze metody tworzącej</span>
+<span class="kd">val</span> <span class="py">view</span> <span class="p">=</span> <span class="n">linuxFactory</span><span class="p">.</span><span class="n">make</span><span class="p">&lt;</span><span class="nc">View</span><span class="p">&gt;()</span>
+</code></pre></div></div>
+<p>Dodanie nowej kontrolki dla wszystkich konkretnych factory oznacza jedynie dodanie abstrakcyjnej metody do <code class="language-plaintext highlighter-rouge">ViewFactory</code> i rejestracja jej. Wszystkie klasy pochodne będą musiały ją zaimplementować. Dodanie kontrolki wyłącznie dla konkretnej fabryki również jest stosunkowo proste i implementacja zamyka się w kodzie konkretnej fabryki. W tym wypadku metoda <code class="language-plaintext highlighter-rouge">inline</code> nie spowoduje wygenerowania ogromnej ilości kodu w każdym miejscu, gdzie zostanie użyta, ponieważ jedyne co robi, to wywołuje metodę z rejestru.</p>
+
+<p>Kod wygenerowany dla użycia metody <code class="language-plaintext highlighter-rouge">make&lt;Button&gt;()</code>.</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// `var10000` to referencja do metody zwracającej `Button`</span>
+<span class="nc">Function0</span> <span class="n">var10000</span> <span class="p">=</span> <span class="p">(</span><span class="nc">Function0</span><span class="p">)</span><span class="n">linuxFactory</span><span class="p">.</span><span class="n">getAccess</span><span class="err">$</span><span class="nf">registry</span><span class="p">().</span><span class="k">get</span><span class="p">(</span><span class="nc">Reflection</span><span class="p">.</span><span class="nf">getOrCreateKotlinClass</span><span class="p">(</span><span class="nc">Button</span><span class="p">.</span><span class="k">class</span><span class="p">));</span>
+<span class="nc">Button</span> <span class="n">linuxButton</span> <span class="p">=</span> <span class="p">(</span><span class="nc">Button</span><span class="p">)((</span><span class="nc">View</span><span class="p">)((</span><span class="nc">Button</span><span class="p">)(</span><span class="n">var10000</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">?</span> <span class="p">(</span><span class="nc">View</span><span class="p">)</span><span class="n">var10000</span><span class="p">.</span><span class="nf">invoke</span><span class="p">()</span> <span class="p">:</span> <span class="k">null</span><span class="p">)));</span>
+</code></pre></div></div>
+
+<p>Jest więc to ciekawa i całkiem użyteczna hybryda fabryki z rejestrem oraz z pojedynczą metodą tworzącą obiekty. Niewątpliwą zaletą jest elastyczność tej implementacji, ale publiczny dostęp do rejestru metod, oraz brak pewności czy wybrana fabryka potrafi stworzyć żądany obiekt, mogą budzić wątpliwości.</p>
+
+<h1 id="podsumowanie">Podsumowanie</h1>
+<p>Wzorzec <code class="language-plaintext highlighter-rouge">Abstract Factory</code> przydaje się do tworzenia obiektów, które można połączyć w sensowne rodziny. Stanowi warstwę ponad standardowym <code class="language-plaintext highlighter-rouge">Factory Method</code>, serwując konkretne factory w zależności od potrzeb klientów. Może występować w kilku wariantach, np. w wersji z metodą <code class="language-plaintext highlighter-rouge">make()</code> lub rejestrem konkretnych fabryk, ale w każdym przypadku określa interfejs implementowany przez dostarczane fabryki. Dla klienta nie ma różnicy, z której konkretnej implementacji korzysta. Wady i zalety są bardzo zbliżone do tych z <code class="language-plaintext highlighter-rouge">Factory Method</code></p>
+
+<h2 id="zalety">Zalety</h2>
+<ul>
+  <li><strong>łatwe zarządzanie “rodzinami” obiektów</strong> - polegając wyłącznie na interfejsie fabryki, klient ma pewność, że dostarczone obiekty pochodzą z tej samej “rodziny” i będą poprawnie ze sobą współpracować</li>
+  <li><strong>całkowite oddzielenie implementacji od interfejsu</strong> - z poziomu klienta fabryki interesuje nas wyłącznie interfejs
+obiektu, co pozwala na łatwe dodawanie nowych implementacji bez konieczności zmian klienta.</li>
+</ul>
+
+<h2 id="wady">Wady</h2>
+<ul>
+  <li><strong>konieczność tworzenia dodatkowych klas</strong> - interfejsów, fabryk, typów wyliczeniowych itd. Niekoniecznie jest to  wada, zwłaszcza jeśli chodzi o interfejsy, bo znacząco pomaga to potem testować kod. Należy wykazać się tutaj  rozsądkiem, jeśli dostarczamy instancje pojedynczej klasy i nie ma perspektyw na zwiększenie liczby typów, to może nie  ma potrzeby tworzyć ten cały boilerplate.</li>
+  <li><strong>metody <code class="language-plaintext highlighter-rouge">inline</code></strong> - należy z nimi uważać, ponieważ potrafią generować sporo kodu który jest wielokrotnie kopiowany w projekcie</li>
+  <li><strong>dodatkowa praca podczas dodawania nowego typu</strong> - dodanie nowego typu tworzonego przez fabryki powoduje konieczność implementacji w każdej konkretnej fabryce. Dodanie nowej konkretnej fabryki również wymaga utworzenia lub nadpisania wszystkich metod. Niekoniecznie jest to wada, bo wzorzec wymusza dostarczenie klientowi w pełni sprawnej fabryki, ale jest to dodatkowa praca poza dodaniem samych klas obiektów z nowej rodziny.</li>
+</ul>
+
+<hr />
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:design_patterns" role="doc-endnote">
+      <p><a href="https://books.google.pl/books?id=Mkn6uAEACAAJ&amp;dq=isbn:0201633612&amp;hl=pl&amp;sa=X&amp;ved=2ahUKEwiQgZnevojvAhXeAxAIHerSDCsQ6AEwAHoECAAQAg">Wzorce projektowe - Elementy oprogramowania obiektowego wielokrotnego użytku</a> <a href="#fnref:design_patterns" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:design_patterns:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a></p>
+    </li>
+  </ol>
+</div>
+
+        </div>
+        <!--        -->
+        <!--        <ul class="tag_box list-unstyled list-inline">-->
+        <!--            <li><i class="fa fa-folder-open"></i></li>-->
+        <!--            -->
+        <!--            -->
+        <!--            -->
+        <!--            <li><a href="/pl/categories.html#pl-ref">-->
+        <!--                pl <span>(19)</span>-->
+        <!--                ,-->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            <li><a href="/categories.html#Design Patterns-ref">-->
+        <!--                Design Patterns <span>(11)</span>-->
+        <!--                -->
+        <!--            </a></li>-->
+        <!--            -->
+        <!--            -->
+        <!--        </ul>-->
+        <!--        -->
+
+        
+        <ul class="list-inline">
+            <li><i class="fa fa-tags"></i></li>
+            
+            
+            
+            <li>
+                <a href="/tags.html#design patterns-ref">
+                    design patterns <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/pl/tags.html#Kotlin-ref">
+                    Kotlin <span>(11)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#Abstract Factory-ref">
+                    Abstract Factory <span>(1)</span>
+                    ,
+                </a>
+            </li>
+            
+            <li>
+                <a href="/tags.html#construction design pattern-ref">
+                    construction design pattern <span>(3)</span>
+                    
+                </a>
+            </li>
+            
+            
+            
+        </ul>
+        
+
+        <hr>
+
+        <div>
+
+            <section class="share col-sm-12">
+                <h3 class="section-title">
+                    Like the post? Disagree? Let me know
+                    <a href="mailto:adam.swiderski89@gmail.com">
+                        with email.
+                    </a>
+                </h3>
+            </section>
+            <section class="share col-sm-6">
+                <h4 class="section-title">Share Post</h4>
+                <a class="btn btn-default btn-sm twitter"
+                   href="http://twitter.com/share?text=Kotlin Abstract Factory"
+                   onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="fa fa-twitter fa-lg"></i>
+                    Twitter
+                </a>
+                <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+                   onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="fa fa-facebook fa-lg"></i>
+                    Facebook
+                </a>
+                <a class="btn btn-default btn-sm gplus"
+                   onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="fa fa-google-plus fa-lg"></i>
+                    Google+
+                </a>
+            </section>
+
+            <section class="col-sm-6 author">
+                <img src="/assets/profile_picture.png"
+                     class="img-rounded author-image"
+                     style="max-width: 64px; max-height: 64px;"
+                />
+                <h4 class="section-title author-name">Adam Świderski</h4>
+                <p class="author-bio">software engineer</p>
+            </section>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <ul class="pager">
+            
+            <li class="previous"><a href="/pl/kotlin-factory-method"
+                                    title="Kotlin Factory Method">&larr; Previous</a></li>
+            
+            
+            <li class="next"><a href="/pl/kotlin-template-method" title="Metoda szablonowa w Kotlinie">Next
+                &rarr;</a></li>
+            
+        </ul>
+
+        <hr>
+    </div>
+
+    <div class="col-sm-2 sidebar-2">
+
+    </div>
+</article>
+<div class="clearfix"></div>
+
+
+
+  </body>
+</html>
+
+
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'G-313840737']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
