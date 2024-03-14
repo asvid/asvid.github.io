@@ -1,163 +1,303 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>{{ page.title }}</title>
     {% if page.description %}
-    <meta name="description" content="{{ page.description }}">
+    <meta name="description" content="{{ page.description }}" />
     {% endif %}
-    <meta name="author" content="{{ site.data.author.name }}">
+    <meta name="author" content="{{ site.data.author.name }}" />
+    <meta http-equiv="refresh" content="0; URL=https://swiderski.tech" />
 
-    <meta name="google-site-verification" content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo"/>
+    <meta
+      name="google-site-verification"
+      content="16LpcrHd_M03vADtS0inK7Nh5AcO1iTZQe6q57vCJfo"
+    />
     <!-- Enable responsive viewport -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="{{ site.BASE_PATH }}/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ site.BASE_PATH }}/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="{{ site.BASE_PATH }}/assets/resources/syntax/syntax.css" rel="stylesheet">
-    <link href="{{ site.BASE_PATH }}/assets/css/style.css" rel="stylesheet">
+    <link
+      href="{{
+        site.BASE_PATH
+      }}/assets/resources/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{
+        site.BASE_PATH
+      }}/assets/resources/font-awesome/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ site.BASE_PATH }}/assets/resources/syntax/syntax.css"
+      rel="stylesheet"
+    />
+    <link href="{{ site.BASE_PATH }}/assets/css/style.css" rel="stylesheet" />
 
     <!-- Le fav and touch icons -->
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ site.BASE_PATH }}/assets/ico/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ site.BASE_PATH }}/assets/ico/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ site.BASE_PATH }}/assets/ico/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ site.BASE_PATH }}/assets/ico/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ site.BASE_PATH }}/assets/ico/favicon-16x16.png">
-    <link rel="manifest" href="/assets/ico/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ site.BASE_PATH }}/assets/ico/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{ site.BASE_PATH }}/assets/ico/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="{{ site.BASE_PATH }}/assets/ico/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ site.BASE_PATH }}/assets/ico/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="{{ site.BASE_PATH }}/assets/ico/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{ site.BASE_PATH }}/assets/ico/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/assets/ico/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta
+      name="msapplication-TileImage"
+      content="{{ site.BASE_PATH }}/assets/ico/ms-icon-144x144.png"
+    />
+    <meta name="theme-color" content="#ffffff" />
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68530276-7"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-68530276-7"
+    ></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
+      window.dataLayer = window.dataLayer || []
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
+      function gtag() {
+        dataLayer.push(arguments)
+      }
 
-        gtag('js', new Date());
+      gtag('js', new Date())
 
-        gtag('config', 'UA-68530276-7');
+      gtag('config', 'UA-68530276-7')
     </script>
 
-    <link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="{{ site.BASE_PATH }}/feed.xml">
-    {% I18n_Headers %}
-    {% seo %}
-</head>
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="{{ site.name }}"
+      href="{{ site.BASE_PATH }}/feed.xml"
+    />
+    {% I18n_Headers %} {% seo %}
+  </head>
 
-<body>
-<nav class="navbar navbar-default visible-xs" role="navigation">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+  <body>
+    <nav class="navbar navbar-default visible-xs" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button
+          type="button"
+          class="navbar-toggle"
+          data-toggle="collapse"
+          data-target="#bs-example-navbar-collapse-1"
+        >
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
         </button>
         {% if site.data.author.github %}
-        <a type="button" class="navbar-toggle nav-link" href="http://github.com/{{ site.data.author.github }}">
-            <i class="fa fa-github"></i>
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="http://github.com/{{ site.data.author.github }}"
+        >
+          <i class="fa fa-github"></i>
         </a>
-        {% endif %}
-        {% if site.data.author.youtube %}
-        <a type="button" class="navbar-toggle nav-link" href="https://www.youtube.com/@{{ site.data.author.youtube }}">
-            <i class="fa fa-youtube"></i>
+        {% endif %} {% if site.data.author.youtube %}
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="https://www.youtube.com/@{{ site.data.author.youtube }}"
+        >
+          <i class="fa fa-youtube"></i>
         </a>
-        {% endif %}
-        {% if site.data.author.linkedin %}
-        <a type="button" class="navbar-toggle nav-link" href="https://linkedin.com/in/{{ site.data.author.linkedin }}">
-            <i class="fa fa-linkedin"></i>
+        {% endif %} {% if site.data.author.linkedin %}
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="https://linkedin.com/in/{{ site.data.author.linkedin }}"
+        >
+          <i class="fa fa-linkedin"></i>
         </a>
-        {% endif %}
-        {% if site.data.author.twitter %}
-        <a type="button" class="navbar-toggle nav-link" href="http://twitter.com/{{ site.data.author.twitter }}">
-            <i class="fa fa-twitter"></i>
+        {% endif %} {% if site.data.author.twitter %}
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="http://twitter.com/{{ site.data.author.twitter }}"
+        >
+          <i class="fa fa-twitter"></i>
         </a>
-        {% endif %}
-        {% if site.data.author.email %}
-        <a type="button" class="navbar-toggle nav-link" href="mailto:{{ site.data.author.email }}">
-            <i class="fa fa-envelope"></i>
+        {% endif %} {% if site.data.author.email %}
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="mailto:{{ site.data.author.email }}"
+        >
+          <i class="fa fa-envelope"></i>
         </a>
         {% endif %}
 
-        <a type="button" class="navbar-toggle nav-link" href="{{ site.BASE_PATH }}/{{ site.rss_path }}">
-            <i class="fa fa-rss fa-lg"></i>
+        <a
+          type="button"
+          class="navbar-toggle nav-link"
+          href="{{ site.BASE_PATH }}/{{ site.rss_path }}"
+        >
+          <i class="fa fa-rss fa-lg"></i>
         </a>
         <a class="navbar-brand" href="{{ site.BASE_PATH }}/">
-            <img src="/assets/profile_picture.png" class="img-circle" style="max-width: 35px; max-height: 35px;"/>
+          <img
+            src="/assets/profile_picture.png"
+            class="img-circle"
+            style="max-width: 35px; max-height: 35px"
+          />
         </a>
+      </div>
 
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="{{ site.BASE_PATH }}/">{{site.data.i18n.home}}</a></li>
-            <li><a href="{{ site.ABOUT }}">{{site.data.i18n.about}}</a></li>
-            <!--            <li><a href="{{ site.BASE_PATH}}/{{ site.categories_path }}">{{site.data.i18n.categories}}</a></li>-->
-            <li><a href="{{ site.BASE_PATH}}/{{ site.tags_path }}">{{site.data.i18n.tags}}</a></li>
+          <li class="active">
+            <a href="{{ site.BASE_PATH }}/">{{ site.data.i18n.home }}</a>
+          </li>
+          <li>
+            <a href="{{ site.ABOUT }}">{{ site.data.i18n.about }}</a>
+          </li>
+          <!--            <li><a href="{{ site.BASE_PATH}}/{{ site.categories_path }}">{{site.data.i18n.categories}}</a></li>-->
+          <li>
+            <a href="{{ site.BASE_PATH }}/{{ site.tags_path }}">{{
+              site.data.i18n.tags
+            }}</a>
+          </li>
         </ul>
-    </div><!-- /.navbar-collapse -->
-</nav>
+      </div>
+      <!-- /.navbar-collapse -->
+    </nav>
 
-<!-- nav-menu-dropdown -->
-<!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
+    <!-- nav-menu-dropdown -->
+    <!-- <div class="col-sm-9 col-sm-offset-3 hidden-xs" id="topMenu">
     <a type="button" class="" href="{{ site.BASE_PATH}}/"><i class="fa fa-home"></i>Home</a>
     <a type="button" class="" href="{{ site.ABOUT}}/"><i class="fa fa-user-circle"></i>About</a>
     <a type="button" class="" href="{{ site.BASE_PATH}}/{{ site.categories_path }}"><i class="fa fa-folder"></i>Categories</a>
     <a type="button" class="" href="{{ site.BASE_PATH}}/{{ site.tags_path }}"><i class="fa fa-tags"></i>Tags</a>
 </div> -->
 
-<div class="col-sm-3 sidebar hidden-xs"
-     style="
+    <div
+      class="col-sm-3 sidebar hidden-xs"
+      style="
 	{% if site.sidebar_background_image %}
-	background:	url({{site.sidebar_background_image}}) no-repeat center center !important;
+	background:	url({{
+        site.sidebar_background_image
+      }}) no-repeat center center !important;
 	background-size: auto 100%;
-	{% endif %}">
-    {% include sidebar.html %}
-</div>
+	{% endif %}"
+    >
+      {% include sidebar.html %}
+    </div>
 
-<div class="col-sm-9 col-sm-offset-3">
-    {{ content }}
-    <footer>
-        <hr/>
+    <div class="col-sm-9 col-sm-offset-3">
+      {{ content }}
+      <footer>
+        <hr />
         <p>
-            &copy; {{ site.time | date: '%Y' }} {{ site.data.author.name }} with Jekyll. Theme: <a
-                href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+          &copy; {{ site.time | date: '%Y' }} {{ site.data.author.name }} with
+          Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by
+          dbtek.
         </p>
-    </footer>
-</div>
+      </footer>
+    </div>
 
-<script type="text/javascript" src="{{ site.BASE_PATH }}/assets/resources/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="{{ site.BASE_PATH }}/assets/resources/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{ site.BASE_PATH }}/assets/js/app.js"></script>
-<script type="text/javascript" src="https://unpkg.com/mermaid@8.9.3/dist/mermaid.min.js"></script>
-<script>
-    $(document).ready(function () {
+    <script
+      type="text/javascript"
+      src="{{ site.BASE_PATH }}/assets/resources/jquery/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ site.BASE_PATH }}/assets/resources/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{{ site.BASE_PATH }}/assets/js/app.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/mermaid@8.9.3/dist/mermaid.min.js"
+    ></script>
+    <script>
+      $(document).ready(function () {
         mermaid.initialize({
-            startOnLoad: true,
-            theme: "default",
-        });
-        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
-    });
-</script>
-</body>
+          startOnLoad: true,
+          theme: 'default'
+        })
+        window.mermaid.init(
+          undefined,
+          document.querySelectorAll('.language-mermaid')
+        )
+      })
+    </script>
+  </body>
 </html>
